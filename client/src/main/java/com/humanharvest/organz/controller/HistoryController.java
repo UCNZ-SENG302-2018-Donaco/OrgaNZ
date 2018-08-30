@@ -42,6 +42,25 @@ public class HistoryController extends SubController {
     }
 
     /**
+     * Formats a table cell that holds a {@link LocalDateTime} value to display that value in the date time format.
+     *
+     * @return The cell with the date time formatter set.
+     */
+    private static TableCell<HistoryItem, LocalDateTime> formatDateTimeCell() {
+        return new TableCell<HistoryItem, LocalDateTime>() {
+            @Override
+            protected void updateItem(LocalDateTime item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    setText(item.format(dateTimeFormat));
+                }
+            }
+        };
+    }
+
+    /**
      * Initializes the UI for this page.
      * - Loads the sidebar.
      * - Sets up cell factories to generate the values for the history table.
@@ -87,23 +106,5 @@ public class HistoryController extends SubController {
         historyTable.setItems(FXCollections.observableArrayList(historyItems));
 
         FXCollections.sort(historyTable.getItems(), (h1, h2) -> h2.getTimestamp().compareTo(h1.getTimestamp()));
-    }
-
-    /**
-     * Formats a table cell that holds a {@link LocalDateTime} value to display that value in the date time format.
-     * @return The cell with the date time formatter set.
-     */
-    private static TableCell<HistoryItem, LocalDateTime> formatDateTimeCell() {
-        return new TableCell<HistoryItem, LocalDateTime>() {
-            @Override
-            protected void updateItem(LocalDateTime item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || (item == null)) {
-                    setText(null);
-                } else {
-                    setText(item.format(dateTimeFormat));
-                }
-            }
-        };
     }
 }

@@ -19,7 +19,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 @Entity
 @Table
 @Access(AccessType.FIELD)
-public class MedicationRecord implements Comparable<MedicationRecord> {
+public class MedicationRecord {
 
     private static DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
@@ -39,6 +39,7 @@ public class MedicationRecord implements Comparable<MedicationRecord> {
 
     /**
      * Creates a new MedicationRecord for a given medication name, with the given started date and stopped date.
+     *
      * @param medicationName The name of the medication to create a record for.
      * @param started The date on which the user started taking this medication.
      * @param stopped The date on which the user stopped taking this medication. If null, means the user is still
@@ -54,8 +55,22 @@ public class MedicationRecord implements Comparable<MedicationRecord> {
         return id;
     }
 
+    public void setId(long id) {
+        this.id = id;
+    }
+
     public Client getClient() {
         return client;
+    }
+
+    /**
+     * This method should be called only when this record is added to/removed from a client's collection.
+     * Therefore it is package-private so it may only be called from Client.
+     *
+     * @param client The client to set this record as belonging to.
+     */
+    public void setClient(Client client) {
+        this.client = client;
     }
 
     public String getMedicationName() {
@@ -66,25 +81,12 @@ public class MedicationRecord implements Comparable<MedicationRecord> {
         return started;
     }
 
-    public LocalDate getStopped() {
-        return stopped;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    /**
-     * This method should be called only when this record is added to/removed from a client's collection.
-     * Therefore it is package-private so it may only be called from Client.
-     * @param client The client to set this record as belonging to.
-     */
-    public void setClient(Client client) {
-        this.client = client;
-    }
-
     public void setStarted(LocalDate started) {
         this.started = started;
+    }
+
+    public LocalDate getStopped() {
+        return stopped;
     }
 
     public void setStopped(LocalDate stopped) {
@@ -98,10 +100,5 @@ public class MedicationRecord implements Comparable<MedicationRecord> {
             return String.format("%s (started using: %s, stopped using: %s)", medicationName,
                     started.format(dateFormat), stopped.format(dateFormat));
         }
-    }
-
-    @Override
-    public int compareTo(MedicationRecord other) {
-        return this.getMedicationName().compareTo(other.medicationName);
     }
 }

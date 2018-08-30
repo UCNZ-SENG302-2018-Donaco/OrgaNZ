@@ -9,6 +9,7 @@ import com.humanharvest.organz.resolvers.CommandRunner;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
+
 import org.junit.Test;
 
 public class MenuBarControllerAdminTest extends ControllerTest {
@@ -98,7 +99,6 @@ public class MenuBarControllerAdminTest extends ControllerTest {
             throw new RuntimeException(e);
         }
 
-        // TODO: Change this to actual output
         when(commandRunnerMock.execute("help")).thenReturn("Usage: OrgaNZ\nCommands:\nload");
 
         clickOn("#profilePrimaryItem");

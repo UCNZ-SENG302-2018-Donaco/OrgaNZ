@@ -1,15 +1,15 @@
 package com.humanharvest.organz.utilities.web;
 
-import com.google.api.client.http.HttpRequest;
-import com.google.api.client.http.HttpRequestFactory;
-import com.google.api.client.http.HttpTransport;
-import com.google.api.client.json.JsonObjectParser;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.google.api.client.http.HttpRequest;
+import com.google.api.client.http.HttpRequestFactory;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.json.JsonObjectParser;
 
 /**
  * A handler for requests to the drug autocompletion web API provided by MAPI.
@@ -44,6 +44,7 @@ public class MedAutoCompleteHandler extends WebAPIHandler {
         );
     }
 
+    @Override
     public List<String> getData(Object... arguments) {
         String queryString;
         if (arguments.length == 1 && arguments[0] instanceof String) {
@@ -56,6 +57,7 @@ public class MedAutoCompleteHandler extends WebAPIHandler {
 
     /**
      * Makes a request to the drug autocompletion web API and returns the results.
+     *
      * @param queryString The query string to send to the API.
      * @return A list of suggested drug names matching the query string.
      */

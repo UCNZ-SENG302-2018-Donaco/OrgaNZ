@@ -10,6 +10,7 @@ public class DeleteClinicianAction extends ClinicianAction {
 
     /**
      * Create a new Action
+     *
      * @param clinician The Clinician to be removed
      * @param manager The ClinicianManager to apply changes to
      */

@@ -13,6 +13,7 @@ import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 import com.humanharvest.organz.utilities.pico_type_converters.PicoOrganConverter;
+
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
@@ -26,6 +27,12 @@ public class RequestOrgan implements Runnable {
     private final ActionInvoker invoker;
     private final PrintStream outputStream;
 
+    @Option(names = {"-o", "-organ", "-organType"}, description = "Organ type", converter = PicoOrganConverter.class)
+    private Organ organType;
+
+    @Option(names = {"-u", "--uid"}, description = "User ID of user organ being requested", required = true)
+    private int uid;
+
     public RequestOrgan(PrintStream outputStream, ActionInvoker invoker) {
         this.invoker = invoker;
         this.outputStream = outputStream;
@@ -38,15 +45,10 @@ public class RequestOrgan implements Runnable {
         outputStream = System.out;
     }
 
-    @Option(names = {"-o", "-organ", "-organType"}, description = "Organ type", converter = PicoOrganConverter.class)
-    private Organ organType;
-
-    @Option(names = {"-u", "--uid"}, description = "User ID of user organ being requested", required = true)
-    private int uid;
-
     /**
      * Runs the request organ command
      */
+    @Override
     public void run() {
         // requestorgan -u 1 -o liver
         Optional<Client> client = manager.getClientByID(uid);
@@ -59,7 +61,7 @@ public class RequestOrgan implements Runnable {
         } else {
             boolean organCurrentlyRequested = false;
 
-            for (TransplantRequest tr: client.get().getTransplantRequests()) {
+            for (TransplantRequest tr : client.get().getTransplantRequests()) {
                 if (tr.getRequestedOrgan() == organType && tr.getStatus() == TransplantRequestStatus.WAITING) {
                     organCurrentlyRequested = true;
                     break;

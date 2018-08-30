@@ -21,6 +21,7 @@ import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
+
 import org.junit.Test;
 
 public class SubmitDeathDetailsControllerTest extends ControllerTest {

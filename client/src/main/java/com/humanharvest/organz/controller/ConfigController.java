@@ -1,14 +1,14 @@
 package com.humanharvest.organz.controller;
 
-import java.util.EnumSet;;
+import java.util.EnumSet;
 
 import javafx.fxml.FXML;
 import javafx.scene.layout.HBox;
+import org.controlsfx.control.CheckComboBox;
+import org.controlsfx.control.Notifications;
 
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Country;
-import org.controlsfx.control.CheckComboBox;
-import org.controlsfx.control.Notifications;
 
 public class ConfigController extends SubController {
 
@@ -40,7 +40,7 @@ public class ConfigController extends SubController {
     @Override
     public void refresh() {
         countries.getCheckModel().clearChecks();
-        for (Country country: State.getConfigManager().getAllowedCountries()) {
+        for (Country country : State.getConfigManager().getAllowedCountries()) {
             countries.getCheckModel().check(country);
         }
     }

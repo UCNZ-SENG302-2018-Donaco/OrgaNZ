@@ -5,6 +5,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import com.humanharvest.organz.Client;
+import com.humanharvest.organz.utilities.exceptions.BadDrugNameException;
+import com.humanharvest.organz.utilities.exceptions.BadGatewayException;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpRequest;
@@ -13,9 +17,6 @@ import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonObjectParser;
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.utilities.exceptions.BadDrugNameException;
-import com.humanharvest.organz.utilities.exceptions.BadGatewayException;
 
 /**
  * A handler for requests to a drug interaction API.
@@ -53,6 +54,7 @@ public class DrugInteractionsHandler extends WebAPIHandler {
     /**
      * Creates a URL for a request to the drug interactions API with the given drug names. Will sanitise the drug
      * name inputs so that they work correctly with the API.
+     *
      * @param drug1 The first drug name to use for the request.
      * @param drug2 The second drug name to use for the request.
      * @return The URL for the request.
@@ -71,6 +73,7 @@ public class DrugInteractionsHandler extends WebAPIHandler {
 
     /**
      * Makes a GET request to the given URL and returns the {@link HttpResponse}.
+     *
      * @param url The URL to send a GET request to.
      * @return The response from the given URL.
      * @throws IOException If the server at the URL cannot be reached, e.g. if there is no internet access.
@@ -80,6 +83,7 @@ public class DrugInteractionsHandler extends WebAPIHandler {
         return request.execute();
     }
 
+    @Override
     public List<String> getData(Object... arguments) throws IOException, BadDrugNameException, BadGatewayException {
         String drug1, drug2;
         if (arguments.length == 2 && arguments[0] instanceof String && arguments[1] instanceof String) {
@@ -96,19 +100,22 @@ public class DrugInteractionsHandler extends WebAPIHandler {
     /**
      * Makes a request to the drug interactions web API and returns a list of interactions between the two drugs
      * given that apply for the given client (based on age and gender).
+     *
      * @param client The client to check that the interactions apply for.
      * @param drug1 The name of the first drug to find interactions for.
      * @param drug2 The name of the second drug to find interactions for.
      * @return A list of strings that each contain the details of one interaction symptom. May be empty if there are
      * no results for that request.
-     * @throws IOException If the drug interactions web API cannot be reached, e.g. if there is no internet access.
+     * @throws IOException If the drug interactions web API cannot be reached,
+     * e.g. if there is no internet access.
      * @throws BadDrugNameException If the API returns a 404 response saying that the drug names are invalid.
      * @throws BadGatewayException If the API returns a 502 response.
      */
     public List<String> getInteractions(Client client, String drug1, String drug2)
             throws IOException, BadDrugNameException, BadGatewayException {
-        Optional<DrugInteractionsResponse> cachedResponse = getCachedData(new TypeReference<DrugInteractionsResponse>() {
-        }, drug1, drug2);
+        Optional<DrugInteractionsResponse> cachedResponse = getCachedData(
+                new TypeReference<DrugInteractionsResponse>() {
+                }, drug1, drug2);
         if (cachedResponse.isPresent()) {
             return cachedResponse.get().calculateClientInteractions(client);
         }

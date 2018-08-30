@@ -1,8 +1,6 @@
 package com.humanharvest.organz.controller.clinician;
 
 import static org.junit.Assert.assertEquals;
-import static org.testfx.api.FxAssert.verifyThat;
-import static org.testfx.matcher.base.NodeMatchers.isInvisible;
 
 import javafx.scene.input.KeyCode;
 
@@ -12,13 +10,14 @@ import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
-import org.junit.Ignore;
+
 import org.junit.Test;
 import org.testfx.api.FxRobotException;
 
 public class ViewClinicianControllerTest extends ControllerTest {
 
-    private final Clinician testClinician = new Clinician("x", "y", "z", "t", Region.UNSPECIFIED.toString(), null, 3, "p");
+    private final Clinician testClinician = new Clinician("x", "y", "z", "t",
+            Region.UNSPECIFIED.toString(), null, 3, "p");
 
     @Override
     protected Page getPage() {

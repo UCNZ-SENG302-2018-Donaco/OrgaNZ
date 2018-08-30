@@ -1,51 +1,58 @@
 package com.humanharvest.organz.controller.client;
 
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.MedicationRecord;
-import com.humanharvest.organz.controller.MainController;
-import com.humanharvest.organz.controller.SidebarController;
-import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.state.Session;
-import com.humanharvest.organz.state.Session.UserType;
-import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.exceptions.*;
-import com.humanharvest.organz.utilities.view.PageNavigator;
-import com.humanharvest.organz.utilities.web.DrugInteractionsHandler;
-import com.humanharvest.organz.utilities.web.MedActiveIngredientsHandler;
-import com.humanharvest.organz.utilities.web.MedAutoCompleteHandler;
-import com.humanharvest.organz.views.client.CreateMedicationRecordView;
-import impl.org.controlsfx.autocompletion.AutoCompletionTextFieldBinding;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
-import javafx.scene.Scene;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
+import javafx.scene.control.SelectionMode;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import org.controlsfx.control.Notifications;
+import impl.org.controlsfx.autocompletion.AutoCompletionTextFieldBinding;
 
-import java.io.IOException;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
+import com.humanharvest.organz.Client;
+import com.humanharvest.organz.MedicationRecord;
+import com.humanharvest.organz.controller.AlertHelper;
+import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.controller.SubController;
+import com.humanharvest.organz.state.Session;
+import com.humanharvest.organz.state.Session.UserType;
+import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.exceptions.BadDrugNameException;
+import com.humanharvest.organz.utilities.exceptions.BadGatewayException;
+import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
+import com.humanharvest.organz.utilities.exceptions.NotFoundException;
+import com.humanharvest.organz.utilities.exceptions.ServerRestException;
+import com.humanharvest.organz.utilities.view.PageNavigator;
+import com.humanharvest.organz.utilities.web.DrugInteractionsHandler;
+import com.humanharvest.organz.utilities.web.MedActiveIngredientsHandler;
+import com.humanharvest.organz.utilities.web.MedAutoCompleteHandler;
+import com.humanharvest.organz.views.client.CreateMedicationRecordView;
 
 /**
  * Controller for the view/edit medications page.
  */
 public class ViewMedicationsController extends SubController {
 
-    private static final Logger LOGGER = Logger.getLogger(SidebarController.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ViewMedicationsController.class.getName());
 
-    private Session session;
+    private final Session session;
     private Client client;
     private List<String> lastResponse;
     private MedAutoCompleteHandler autoCompleteHandler;
@@ -70,24 +77,24 @@ public class ViewMedicationsController extends SubController {
     @FXML
     private ListView<MedicationRecord> pastMedicationsView, currentMedicationsView;
 
-    private ListView<MedicationRecord> selectedListView = null;
-    private boolean selectingMultiple = false;
+    private ListView<MedicationRecord> selectedListView;
 
     public ViewMedicationsController() {
         session = State.getSession();
     }
 
     void setDrugInteractionsHandler(DrugInteractionsHandler handler) {
-        this.drugInteractionsHandler = handler;
+        drugInteractionsHandler = handler;
     }
 
     void setActiveIngredientsHandler(MedActiveIngredientsHandler handler) {
-        this.activeIngredientsHandler = handler;
+        activeIngredientsHandler = handler;
     }
 
     /**
      * Creates a cell factory for the list view, that allows cells to be deselected by clicking a second time
      * Only up to two cells may be selected at once
+     *
      * @param listView to create a cellfactory for
      */
     private void configureCellFactory(ListView<MedicationRecord> listView) {
@@ -96,10 +103,10 @@ public class ViewMedicationsController extends SubController {
                 @Override
                 public void updateItem(MedicationRecord record, boolean empty) {
                     super.updateItem(record, empty);
-                    if (!empty) {
-                        setText(record.toString());
-                    } else {
+                    if (empty) {
                         setText("");
+                    } else {
+                        setText(record.toString());
                     }
                 }
             };
@@ -111,13 +118,13 @@ public class ViewMedicationsController extends SubController {
 
                     if (listView.getSelectionModel().getSelectedIndices().contains(index)) {
                         listView.getSelectionModel().clearSelection(index);
-                    } else if (numSelected < 2){  // Only select if there are less than two currently selected
+                    } else if (numSelected < 2) {  // Only select if there are less than two currently selected
                         listView.getSelectionModel().select(index);
                     }
                     event.consume();
                 }
             });
-            return cell ;
+            return cell;
         });
     }
 
@@ -142,13 +149,13 @@ public class ViewMedicationsController extends SubController {
         configureCellFactory(pastMedicationsView);
 
         pastMedicationsView.getSelectionModel().selectedItemProperty().addListener(
-                (observable) -> {
+                observable -> {
                     selectedListView = pastMedicationsView;
                     updateMedicationInformation();
                 });
 
         currentMedicationsView.getSelectionModel().selectedItemProperty().addListener(
-                (observable) -> {
+                observable -> {
                     selectedListView = currentMedicationsView;
                     updateMedicationInformation();
                 });
@@ -163,6 +170,7 @@ public class ViewMedicationsController extends SubController {
      * - Checks if the session login type is a client or a clinician, and sets the viewed client appropriately.
      * - Refreshes the medication list views to set initial state based on the viewed client.
      * - Checks if the logged in user is a client, and if so, makes the page non-editable.
+     *
      * @param mainController The MainController for the window this page is loaded on.
      */
     @Override
@@ -184,7 +192,6 @@ public class ViewMedicationsController extends SubController {
         refreshMedicationLists();
 
         refresh();
-        trackControlOrShiftKeyPressed();
     }
 
     /**
@@ -208,18 +215,10 @@ public class ViewMedicationsController extends SubController {
             client.setMedicationHistory(State.getClientResolver().getMedicationRecords(client));
 
         } catch (NotFoundException e) {
-            LOGGER.log(Level.WARNING, "Client or medication not found");
-            Notifications.create()
-                    .title("Client not found")
-                    .text("The client or medication could not be found on the server, it may have been deleted")
-                    .showWarning();
+            AlertHelper.showNotFoundAlert(LOGGER, e, mainController);
             return;
         } catch (ServerRestException e) {
-            LOGGER.log(Level.WARNING, e.getMessage(), e);
-            Notifications.create()
-                    .title("Server error")
-                    .text("Could not apply changes on the server, please try again later")
-                    .showError();
+            AlertHelper.showRestAlert(LOGGER, e, mainController);
             return;
         }
 
@@ -229,6 +228,7 @@ public class ViewMedicationsController extends SubController {
 
     /**
      * Gets all selected medication records from both the current and past medication lists
+     *
      * @return list of all currently selected medication records
      */
     private List<MedicationRecord> getSelectedRecords() {
@@ -242,6 +242,7 @@ public class ViewMedicationsController extends SubController {
     /**
      * Creates and executes the resolver to update the given medication record, either setting it as a current
      * medication or a past one
+     *
      * @param date date to set the stop date of the medication record to, either null or the current date
      * @param record the record to modify
      */
@@ -251,19 +252,11 @@ public class ViewMedicationsController extends SubController {
             State.getClientResolver().modifyMedicationRecord(client, record, date);
             record.setStopped(date);
         } catch (NotFoundException e) {
-            LOGGER.log(Level.WARNING, "Client not found");
-            PageNavigator.showAlert(AlertType.WARNING, "Client or medication not found", "The client could not "
-                    + "be found on the "
-                    + "server, it may have been deleted");
+            AlertHelper.showNotFoundAlert(LOGGER, e, mainController);
         } catch (ServerRestException e) {
-            LOGGER.log(Level.WARNING, e.getMessage(), e);
-            PageNavigator.showAlert(AlertType.WARNING, "Server error", "Could not apply changes on the server, "
-                    + "please try again later");
+            AlertHelper.showRestAlert(LOGGER, e, mainController);
         } catch (IfMatchFailedException e) {
-            LOGGER.log(Level.INFO, "If-Match did not match");
-            PageNavigator.showAlert(AlertType.WARNING, "Outdated Data",
-                    "The client has been modified since you retrieved the data.\nIf you would still like to "
-                    + "apply these changes please submit again, otherwise refresh the page to update the data.");
+            AlertHelper.showIfMatchAlert(LOGGER, e, mainController);
         }
     }
 
@@ -301,6 +294,7 @@ public class ViewMedicationsController extends SubController {
     /**
      * Checks whether the key pressed was ENTER, and if so, adds a new medication with the current value of the new
      * medication text field.
+     *
      * @param keyEvent When a key is pressed and focus is on the new medication text field.
      */
     @FXML
@@ -308,23 +302,6 @@ public class ViewMedicationsController extends SubController {
         if (keyEvent.getCode() == KeyCode.ENTER) {
             addMedication(newMedField.getText());
         }
-    }
-
-    /**
-     * Tracks if the control key is pressed or released, and updates selectingMultiple accordingly.
-     */
-    private void trackControlOrShiftKeyPressed() {
-        Scene scene = mainController.getStage().getScene();
-        scene.setOnKeyPressed(e -> {
-            if (e.getCode() == KeyCode.CONTROL || e.getCode() == KeyCode.SHIFT) {
-                selectingMultiple = true;
-            }
-        });
-        scene.setOnKeyReleased(e -> {
-            if (e.getCode() == KeyCode.CONTROL || e.getCode() == KeyCode.SHIFT) {
-                selectingMultiple = false;
-            }
-        });
     }
 
     /**
@@ -338,6 +315,7 @@ public class ViewMedicationsController extends SubController {
     /**
      * Creates a new MedicationRecord for a medication with the given name, sets its 'started' date to the
      * current date, then adds it to the client's current medications list.
+     *
      * @param newMedName The name of the medication to add a new instance of.
      */
     private void addMedication(String newMedName) {
@@ -347,25 +325,13 @@ public class ViewMedicationsController extends SubController {
             try {
                 State.getClientResolver().addMedicationRecord(client, record);
             } catch (NotFoundException e) {
-                LOGGER.log(Level.WARNING, "Client not found");
-                Notifications.create()
-                        .title("Client not found")
-                        .text("The client could not be found on the server, it may have been deleted")
-                        .showWarning();
+                AlertHelper.showNotFoundAlert(LOGGER, e, mainController);
+                return;
             } catch (ServerRestException e) {
-                LOGGER.log(Level.WARNING, e.getMessage(), e);
-                Notifications.create()
-                        .title("Server error")
-                        .text("Could not apply changes on the server, please try again later")
-                        .showError();
+                AlertHelper.showRestAlert(LOGGER, e, mainController);
                 return;
             } catch (IfMatchFailedException e) {
-                LOGGER.log(Level.INFO, "If-Match did not match");
-                Notifications.create()
-                        .title("Outdated Data")
-                        .text("The client has been modified since you retrieved the data. If you would still like to "
-                                + "apply these changes please submit again, otherwise refresh the page to update the data.")
-                        .showWarning();
+                AlertHelper.showIfMatchAlert(LOGGER, e, mainController);
                 return;
             }
 
@@ -377,6 +343,7 @@ public class ViewMedicationsController extends SubController {
 
     /**
      * Returns the currently selected record from the currently selected list view.
+     *
      * @return The selected record, or null if no record is currently selected.
      */
     private MedicationRecord getSelectedRecord() {
@@ -399,19 +366,11 @@ public class ViewMedicationsController extends SubController {
 
             try {
                 State.getClientResolver().deleteMedicationRecord(client, record);
-
             } catch (NotFoundException e) {
-                LOGGER.log(Level.WARNING, "Medication not found");
-                Notifications.create()
-                        .title("Medication not found")
-                        .text("The medication could not be found on the server, it may have been deleted")
-                        .showWarning();
+                AlertHelper.showNotFoundAlert(LOGGER, e, mainController);
+                return;
             } catch (ServerRestException e) {
-                LOGGER.log(Level.WARNING, e.getMessage(), e);
-                Notifications.create()
-                        .title("Server error")
-                        .text("Could not apply changes on the server, please try again later")
-                        .showError();
+                AlertHelper.showRestAlert(LOGGER, e, mainController);
                 return;
             }
 
@@ -443,6 +402,7 @@ public class ViewMedicationsController extends SubController {
 
     /**
      * Displays the ingredients of the currently selected medication, given that it is a valid medication
+     *
      * @param selectedMedication Currently selected medication
      */
     private void setActiveIngredients(MedicationRecord selectedMedication) {
@@ -468,19 +428,18 @@ public class ViewMedicationsController extends SubController {
                     medicationIngredients.setText("No active ingredients found for " + medicationName);
                 } else {
                     // Build list of active ingredients into a string, each ingredient on a new line
-                    StringBuilder sb = new StringBuilder();
-                    for (String ingredient : activeIngredients) {
-                        sb.append(ingredient).append("\n");
-                    }
-                    String formattedIngredients = String.format("Active ingredients in %s: \n%s", medicationName, sb
-                            .toString());
+                    String sb = String.join("\n", activeIngredients);
+                    String formattedIngredients =
+                            String.format("Active ingredients in %s: %n%s",
+                                    medicationName,
+                                    sb);
                     medicationIngredients.setText(formattedIngredients);
                 }
             });
 
             task.setOnFailed(e -> {
                 medicationIngredients.setText("Error loading ingredients, please try again later");
-                System.out.println(e);
+                LOGGER.log(Level.WARNING, "Error loading ingredients", e);
             });
 
             new Thread(task).start();
@@ -490,10 +449,11 @@ public class ViewMedicationsController extends SubController {
 
     /**
      * Displays the interactions between the two currently selected medications, given that both are valid medications
+     *
      * @param selectedMedications The two currently selected medications
      */
     private void setInteractions(List<MedicationRecord> selectedMedications) {
-        Collections.sort(selectedMedications);
+        selectedMedications.sort(Comparator.comparing(MedicationRecord::getMedicationName));
         String medication1 = selectedMedications.get(0).getMedicationName();
         String medication2 = selectedMedications.get(1).getMedicationName();
 
@@ -509,24 +469,26 @@ public class ViewMedicationsController extends SubController {
         };
 
         task.setOnFailed(event -> {
-
             medicationInteractions.setText("An error occurred when retrieving drug interactions: \n" +
                     task.getException().getMessage());
-            task.getException().printStackTrace();
+            LOGGER.log(Level.WARNING, "Error when retrieving drug interactions", task.getException());
         });
 
         task.setOnSucceeded(event -> {
             List<String> interactions = task.getValue();
 
-            if (interactions.size() == 0) {
+            if (interactions.isEmpty()) {
 
                 medicationInteractions.setText(String.format(
                         "There is no information on interactions between %s and %s.",
                         medication1, medication2));
             } else {
-                String interactionsText = interactions.stream().collect(Collectors.joining("\n"));
-                String formattedInteractions = String.format("Interactions between %s and %s: \n%s", medication1, medication2,
-                        interactionsText);
+                String interactionsText = String.join("\n", interactions);
+                String formattedInteractions =
+                        String.format("Interactions between %s and %s: %n%s",
+                                medication1,
+                                medication2,
+                                interactionsText);
                 medicationInteractions.setText(formattedInteractions);
             }
         });
@@ -536,15 +498,16 @@ public class ViewMedicationsController extends SubController {
 
     /**
      * Gets a list of medication suggestions for the given input from the autocomplete WebAPIHandler.
+     *
      * @param input The string to search for suggested drug names that start with this.
      * @return The list of suggested medication names.
      */
     private List<String> getSuggestions(String input) {
-        if (input.equals("")) {
-            return null;
+        if (Objects.equals(input, "")) {
+            return Collections.emptyList();
         } else {
             List<String> results = autoCompleteHandler.getSuggestions(input);
-            if (input.equals(newMedField.getText())) {
+            if (Objects.equals(input, newMedField.getText())) {
                 lastResponse = results;
                 return results;
             } else {

@@ -8,11 +8,11 @@ import java.time.LocalDate;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.TransplantRequest;
-import com.humanharvest.organz.controller.ControllerTest;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
+
 import org.junit.Test;
 
 public class SidebarControllerTest extends ControllerTest {

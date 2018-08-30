@@ -23,6 +23,7 @@ public class ModifyProcedureRecordAction extends ClientAction {
     /**
      * Creates a new action to modify a procedure record. Will initialise all attributes to be the same as the
      * current ones.
+     *
      * @param record The procedure record to modify.
      */
     public ModifyProcedureRecordAction(ProcedureRecord record, ClientManager manager) {
@@ -50,6 +51,7 @@ public class ModifyProcedureRecordAction extends ClientAction {
 
     /**
      * Make the action change the procedure's date to the one given.
+     *
      * @param newDate The new procedure date.
      */
     public void changeDate(LocalDate newDate) {
@@ -62,6 +64,7 @@ public class ModifyProcedureRecordAction extends ClientAction {
 
     /**
      * Apply all changes to the procedure record.
+     *
      * @throws IllegalStateException If no changes were made.
      */
     @Override
@@ -112,16 +115,17 @@ public class ModifyProcedureRecordAction extends ClientAction {
         builder.append(String.format("Changed procedure record for '%s':", record.getSummary()));
 
         if (!Objects.equals(newSummary, oldSummary)) {
-            builder.append(String.format("\nProcedure summary changed from '%s' to '%s'", oldSummary, newSummary));
+            builder.append(String.format("%nProcedure summary changed from '%s' to '%s'", oldSummary, newSummary));
         }
         if (!Objects.equals(newDescription, oldDescription)) {
-            builder.append(String.format("\nProcedure description changed from '%s' to '%s'", oldDescription, newDescription));
+            builder.append(String.format("%nProcedure description changed from '%s' to '%s'",
+                    oldDescription, newDescription));
         }
         if (!Objects.equals(newDate, oldDate)) {
-            builder.append(String.format("\nProcedure date changed from %s to %s", oldDate, newDate));
+            builder.append(String.format("%nProcedure date changed from %s to %s", oldDate, newDate));
         }
         if (!Objects.equals(newAffectedOrgans, oldAffectedOrgans)) {
-            builder.append(String.format("\nAffected organs changed from '%s' to '%s'",
+            builder.append(String.format("%nAffected organs changed from '%s' to '%s'",
                     oldAffectedOrgans.stream().map(Organ::toString).collect(Collectors.joining(", ")),
                     newAffectedOrgans.stream().map(Organ::toString).collect(Collectors.joining(", "))));
         }
@@ -135,16 +139,17 @@ public class ModifyProcedureRecordAction extends ClientAction {
         builder.append(String.format("Reversed these changes to procedure record for '%s':", record.getSummary()));
 
         if (!Objects.equals(newSummary, oldSummary)) {
-            builder.append(String.format("\nProcedure summary changed from '%s' to '%s'", oldSummary, newSummary));
+            builder.append(String.format("%nProcedure summary changed from '%s' to '%s'", oldSummary, newSummary));
         }
         if (!Objects.equals(newDescription, oldDescription)) {
-            builder.append(String.format("\nProcedure description changed from '%s' to '%s'", oldDescription, newDescription));
+            builder.append(String.format("%nProcedure description changed from '%s' to '%s'",
+                    oldDescription, newDescription));
         }
         if (!Objects.equals(newDate, oldDate)) {
-            builder.append(String.format("\nProcedure date changed from %s to %s", oldDate, newDate));
+            builder.append(String.format("%nProcedure date changed from %s to %s", oldDate, newDate));
         }
         if (!Objects.equals(newAffectedOrgans, oldAffectedOrgans)) {
-            builder.append(String.format("\nAffected organs changed from '%s' to '%s'",
+            builder.append(String.format("%nAffected organs changed from '%s' to '%s'",
                     oldAffectedOrgans.stream().map(Organ::toString).collect(Collectors.joining(", ")),
                     newAffectedOrgans.stream().map(Organ::toString).collect(Collectors.joining(", "))));
         }

@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.state.State.DataStorageType;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -18,6 +19,7 @@ public class Application {
 
     /**
      * The main method for the server - handles all setup and runs the application.
+     *
      * @param args The arguments given to the server.
      */
     public static void main(String[] args) {
@@ -39,6 +41,7 @@ public class Application {
     /**
      * Determines which storage type should be used (from the argument given to the server), and initalizes the
      * {@link State} of the server using that. The default storage type is {@link DataStorageType#MEMORY}.
+     *
      * @param storageArg The value of the storage argument given to the server.
      */
     private static void initStorage(String storageArg) {

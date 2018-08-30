@@ -13,6 +13,7 @@ import com.humanharvest.organz.Client;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -49,7 +50,6 @@ public class ClientManagerMemoryTest extends BaseTest {
         assertTrue(manager.getClients().contains(client2));
     }
 
-
     @Test
     public void getClientsTest() {
         manager.addClient(client2);
@@ -74,7 +74,6 @@ public class ClientManagerMemoryTest extends BaseTest {
         assertTrue(manager.getClients().contains(client1));
         assertEquals("New", manager.getClientByID(1).orElseThrow(RuntimeException::new).getFirstName());
     }
-
 
     @Test
     public void collisionExsistsNoCollisionNameTest() {

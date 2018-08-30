@@ -20,6 +20,31 @@ public class WindowContext {
     }
 
     /**
+     * Creates a default WindowContext.
+     *
+     * @return a WindowContext with default parameters.
+     */
+    public static WindowContext defaultContext() {
+        return new WindowContextBuilder().build();
+    }
+
+    public boolean isSidebarEnabled() {
+        return sidebarEnabled;
+    }
+
+    public boolean isClinViewClientWindow() {
+        return isClinViewClientWindow;
+    }
+
+    public Client getViewClient() {
+        if (viewClient == null) {
+            return null;
+        } else {
+            return State.getClientManager().getClientByID(viewClient.getUid()).orElseThrow(IllegalStateException::new);
+        }
+    }
+
+    /**
      * A builder to allow easy customisation of the window parameters.
      * Has methods to set parameters that return the builder, in order to allow fluent interface usage.
      */
@@ -46,6 +71,7 @@ public class WindowContext {
 
         /**
          * Checks that the parameters given for the window would be valid, then creates the WindowContext if so.
+         *
          * @return the new WindowContext.
          */
         public WindowContext build() {
@@ -55,25 +81,5 @@ public class WindowContext {
                 return new WindowContext(this);
             }
         }
-    }
-
-    /**
-     * Creates a default WindowContext.
-     * @return a WindowContext with default parameters.
-     */
-    public static WindowContext defaultContext() {
-        return new WindowContextBuilder().build();
-    }
-
-    public boolean isSidebarEnabled() {
-        return sidebarEnabled;
-    }
-
-    public boolean isClinViewClientWindow() {
-        return isClinViewClientWindow;
-    }
-
-    public Client getViewClient() {
-        return State.getClientManager().getClientByID(viewClient.getUid()).orElseThrow(IllegalStateException::new);
     }
 }

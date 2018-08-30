@@ -1,6 +1,5 @@
 package com.humanharvest.organz.views.client;
 
-import com.humanharvest.organz.Client;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -15,7 +14,7 @@ public class CreateIllnessView {
     public CreateIllnessView() {
     }
 
-    public CreateIllnessView(String illnessName, LocalDate diagnosisDate,boolean isChronic) {
+    public CreateIllnessView(String illnessName, LocalDate diagnosisDate, boolean isChronic) {
         this.illnessName = illnessName;
         this.diagnosisDate = diagnosisDate;
         this.isChronic = isChronic;

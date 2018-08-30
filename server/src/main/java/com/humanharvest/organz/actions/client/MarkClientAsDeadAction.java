@@ -1,6 +1,5 @@
 package com.humanharvest.organz.actions.client;
 
-import com.humanharvest.organz.utilities.enums.Country;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -9,6 +8,7 @@ import java.util.stream.Collectors;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.state.ClientManager;
+import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 
@@ -28,6 +28,7 @@ public class MarkClientAsDeadAction extends ClientAction {
 
     /**
      * Creates a new action to mark the given client as dead.
+     *
      * @param client The client to mark as dead.
      * @param deathDate Their date of death.
      * @param deathTime Their time of death.
@@ -37,7 +38,7 @@ public class MarkClientAsDeadAction extends ClientAction {
      * @param manager The ClientManager to apply the changes to
      */
     public MarkClientAsDeadAction(Client client, LocalDate deathDate, LocalTime deathTime, String deathRegion,
-        String deathCity, Country deathCountry, ClientManager manager) {
+            String deathCity, Country deathCountry, ClientManager manager) {
         super(client, manager);
         this.deathDate = deathDate;
         this.deathTime = deathTime;
@@ -60,6 +61,7 @@ public class MarkClientAsDeadAction extends ClientAction {
     /**
      * Apply all changes to the client and their transplantRequests (all current requests are cancelled). Also marks
      * all the organs they were willing to donate as donated.
+     *
      * @throws IllegalStateException If no changes were made.
      */
     @Override

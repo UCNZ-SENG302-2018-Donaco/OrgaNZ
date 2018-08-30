@@ -1,0 +1,88 @@
+/* TODO fix the missing border when using context-menu inside the choice-box*/
+
+.context-menu {
+  -fx-skin: "com.humanharvest.organz.skin.MTContextMenuSkin";
+  -fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-body-color;
+  -fx-background-insets: 0.0 0.0 -2.0, -1.0, 0.0, 1.0 0.0 0.0;
+  -fx-padding: 0.0;
+  -fx-effect: dropshadow(gaussian, rgba(0.0, 0.0, 0.0, 0.2), 12.0, 0.0, 0.0, 8.0);
+  -fx-background-radius: 0.166667em;
+  -fx-text-fill: -fx-text-base-color;
+  -fx-font-size: 0.85em;
+}
+
+.combo-box {
+  -fx-skin: "com.humanharvest.organz.skin.CustomMTComboBoxListViewSkin";
+}
+
+.date-picker {
+  -fx-skin: "com.humanharvest.organz.skin.MTDatePickerSkin";
+}
+
+/* All below are defaults from TuioFX. All above are custom */
+
+.button,
+.button:focused {
+  -fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-body-color;
+  -fx-background-insets: 0.0 0.0 -2.0, -1.0, 0.0, 1.0 0.0 0.0;
+  -fx-background-radius: 2.0px;
+  -fx-padding: 0.433em 3.0em 0.433em;
+  -fx-text-fill: -fx-text-base-color;
+  -fx-font-size: 0.85em;
+  -fx-alignment: CENTER;
+  -fx-content-display: LEFT;
+  -fx-skin: "org.tuiofx.widgets.skin.MTButtonSkin";
+}
+
+.scroll-pane {
+  -fx-skin: "org.tuiofx.widgets.skin.MTScrollPaneSkin";
+}
+
+.check-box {
+  -fx-skin: "org.tuiofx.widgets.skin.MTCheckBoxSkin";
+  -fx-label-padding: 0.0em 0.0em 0.0em 0.384615em;
+  -fx-text-fill: -fx-text-background-color;
+}
+
+.choice-box {
+  -fx-skin: "org.tuiofx.widgets.skin.ChoiceBoxSkinAndroid";
+  -fx-background-color: transparent;
+  -fx-background-insets: 0.0;
+  -fx-background-radius: 0.0;
+  -fx-padding: 0.0;
+  -fx-text-fill: -fx-text-base-color;
+  -fx-font-size: 0.916667em;
+  -fx-alignment: LEFT;
+  -fx-content-display: LEFT;
+  -fx-border-color: -fx-text-box-border;
+  -fx-border-width: 0.0 0.0 0.083333em;
+  -fx-border-insets: 0.0;
+}
+
+.toggle-button {
+  -fx-skin: "org.tuiofx.widgets.skin.ToggleButtonSkinAndroid";
+}
+
+.slider {
+  -fx-skin: "org.tuiofx.widgets.skin.MTSliderSkin";
+}
+
+.text-field {
+  -fx-skin: "org.tuiofx.widgets.skin.TextFieldSkinAndroid";
+}
+
+.text-area {
+  -fx-skin: "org.tuiofx.widgets.skin.TextAreaSkinAndroid";
+  -fx-padding: 0.0;
+  -fx-cursor: default;
+  -fx-background-color: #454545, #5a5a5a, #2f3237, #2f3237;
+}
+
+.list-cell {
+  -fx-padding: 0.5em 0.583em 0.5em 0.583em;
+  -fx-border-color: #363636;
+  -fx-border-width: 0.0;
+  -fx-skin: "org.tuiofx.widgets.skin.MTListCellSkin";
+  /*    -fx-border-width: 0 0 0.083333em;
+    */
+}

@@ -1,10 +1,11 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <artifactId>organz</artifactId>
     <groupId>com.humanharvest.organz</groupId>
-    <version>0.5</version>
+    <version>0.7</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
@@ -15,7 +16,7 @@
     <dependency>
       <groupId>com.humanharvest.organz</groupId>
       <artifactId>organz-core</artifactId>
-      <version>0.5</version>
+      <version>0.7</version>
     </dependency>
 
     <dependency>
@@ -29,12 +30,6 @@
       <artifactId>mockito-core</artifactId>
       <version>2.19.1</version>
       <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>jline</groupId>
-      <artifactId>jline</artifactId>
-      <version>2.14.2</version>
     </dependency>
 
     <dependency>
@@ -69,6 +64,22 @@
       <groupId>org.testfx</groupId>
       <artifactId>testfx-junit</artifactId>
       <version>4.0.13-alpha</version>
+    </dependency>
+
+    <dependency>
+      <groupId>TUIO</groupId>
+      <artifactId>main</artifactId>
+      <version>1.1</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/../lib/libTUIO.jar</systemPath>
+    </dependency>
+
+    <dependency>
+      <groupId>org.tuiofx</groupId>
+      <artifactId>all</artifactId>
+      <version>0.10.4</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/../lib/tuiofx-all-0.10.4.jar</systemPath>
     </dependency>
 
     <dependency>
@@ -139,7 +150,8 @@
 
         <configuration>
           <transformers>
-            <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+            <transformer
+              implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
               <manifestEntries>
                 <Main-Class>com.humanharvest.organz.AppUI</Main-Class>
                 <X-Compile-Source-JDK>${maven.compiler.source}</X-Compile-Source-JDK>

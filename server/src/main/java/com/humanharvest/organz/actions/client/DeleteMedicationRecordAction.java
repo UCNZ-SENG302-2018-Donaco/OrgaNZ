@@ -13,6 +13,7 @@ public class DeleteMedicationRecordAction extends ClientAction {
 
     /**
      * Creates a new action to delete a medication record.
+     *
      * @param client The client whose history to delete it from.
      * @param record The medication record to delete.
      * @param manager The ClientManager to apply the changes to

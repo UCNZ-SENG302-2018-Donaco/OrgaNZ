@@ -4,6 +4,8 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.sun.jna.Native;
 import com.sun.jna.platform.win32.Shell32;
@@ -17,48 +19,15 @@ import com.sun.jna.platform.win32.WinNT;
  */
 public final class Config {
 
+    private static final Logger LOGGER = Logger.getLogger(Config.class.getName());
+
     private static final String APP_NAME = "OrgaNZ";
 
-    private static final String XDG_DATA_HOME = "XDG_DATA_HOME";
     private static final String XDG_CACHE_HOME = "XDG_CACHE_HOME";
 
-    private static String configDirectory;
     private static String cacheDirectory;
 
     private Config() {
-    }
-
-    /**
-     * This returns a platform dependant directory to store configuration data and other non-temporary data. Windows:
-     * %USER_DIR)\AppData\Roaming\%APP_NAME% Mac OS: /Users/%USER%/Library/Application Support/%APP_NAME% Linux:
-     * %HOME%/.local/share/%APP_NAME%
-     */
-    public static String getConfigDirectory() {
-        if (configDirectory == null) {
-            String os = System.getProperty("os.name").toLowerCase(Locale.ENGLISH);
-
-            if (os.contains("windows")) {
-                // This OS is windows
-                configDirectory = Paths.get(resolveFolder(ShlObj.CSIDL_APPDATA), APP_NAME).toString();
-            } else if (os.contains("mac os")) {
-                // This OS is mac
-                configDirectory = Paths.get(System.getProperty("user.home"), "Library/Application Support", APP_NAME)
-                        .toString();
-            } else {
-                // This OS is likely unix
-                Path userShare = Paths.get(System.getProperty("user.home"), ".local/share");
-                String dir = System.getProperty(XDG_DATA_HOME, userShare.toString());
-                configDirectory = Paths.get(dir, APP_NAME).toString();
-            }
-
-            File configFile = new File(configDirectory);
-            boolean failed = !configFile.mkdirs();
-            if (failed) {
-                //TODO: Log Error
-            }
-        }
-
-        return configDirectory;
     }
 
     /**
@@ -102,7 +71,7 @@ public final class Config {
             File configFile = new File(cacheDirectory);
             boolean failed = !configFile.mkdirs();
             if (failed) {
-                //TODO: Log Error
+                LOGGER.log(Level.WARNING, "Cache directory could not be created");
             }
         }
 

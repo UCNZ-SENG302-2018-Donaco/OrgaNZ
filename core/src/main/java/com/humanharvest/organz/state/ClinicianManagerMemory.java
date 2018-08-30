@@ -13,10 +13,11 @@ import com.humanharvest.organz.Clinician;
  * setting attributes and updating the values of the client.
  */
 
-public class ClinicianManagerMemory implements ClinicianManager{
+public class ClinicianManagerMemory implements ClinicianManager {
+
+    private static final int DEFAULT_CLINICIAN_ID = 0;
 
     private final List<Clinician> clinicians;
-    private static final int defaultClinicianId = 0;
 
     private final Clinician defaultClinician = new Clinician(
             "Default",
@@ -25,7 +26,7 @@ public class ClinicianManagerMemory implements ClinicianManager{
             "Unspecified",
             "Unspecified",
             null,
-            defaultClinicianId,
+            DEFAULT_CLINICIAN_ID,
             "clinician");
 
     public ClinicianManagerMemory() {
@@ -40,33 +41,47 @@ public class ClinicianManagerMemory implements ClinicianManager{
 
     /**
      * Add a clinician
+     *
      * @param clinician Clinician to be added
      */
+    @Override
     public void addClinician(Clinician clinician) {
         clinicians.add(clinician);
     }
 
     /**
      * Get the list of clinicians
+     *
      * @return ArrayList of current clinicians
      */
+    @Override
     public List<Clinician> getClinicians() {
         return Collections.unmodifiableList(clinicians);
     }
 
+    @Override
+    public void setClinicians(Collection<Clinician> clinicians) {
+        this.clinicians.clear();
+        this.clinicians.addAll(clinicians);
+    }
+
     /**
      * Remove a client object
+     *
      * @param clinician Clinician to be removed
      */
+    @Override
     public void removeClinician(Clinician clinician) {
         clinicians.remove(clinician);
     }
 
     /**
      * Checks if a user already exists with that staff id
+     *
      * @param staffId The id of the clinician
      * @return Boolean
      */
+    @Override
     public boolean doesStaffIdExist(int staffId) {
         for (Clinician clinician : clinicians) {
             if (clinician.getStaffId() == staffId) {
@@ -76,32 +91,32 @@ public class ClinicianManagerMemory implements ClinicianManager{
         return false;
     }
 
-    public void applyChangesTo(Clinician clinician){
+    @Override
+    public void applyChangesTo(Clinician clinician) {
         //Do Nothing for now....
     }
 
     /**
      * Return a clinician matching that UID
-     * @param id To be matched
+     *
+     * @param staffId To be matched
      * @return Clinician object or empty if none exists
      */
-    public Optional<Clinician> getClinicianByStaffId(int id) {
+    @Override
+    public Optional<Clinician> getClinicianByStaffId(int staffId) {
         return clinicians.stream()
-                .filter(o -> o.getStaffId() == id)
+                .filter(o -> o.getStaffId() == staffId)
                 .findFirst();
     }
 
     /**
      * Return the default clinician
+     *
      * @return the default clinician
      */
+    @Override
     public Clinician getDefaultClinician() {
-        return getClinicianByStaffId(defaultClinicianId).orElseThrow(IllegalStateException::new);
-    }
-
-    public void setClinicians(Collection<Clinician> clinicians) {
-        this.clinicians.clear();
-        this.clinicians.addAll(clinicians);
+        return getClinicianByStaffId(DEFAULT_CLINICIAN_ID).orElseThrow(IllegalStateException::new);
     }
 
 }

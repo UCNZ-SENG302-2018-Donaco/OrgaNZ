@@ -17,16 +17,17 @@ import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.ClientManagerMemory;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
+
 import org.junit.Before;
 import org.junit.Test;
 import picocli.CommandLine;
 
 public class PrintClientOrganTest extends BaseTest {
 
-    private ClientManager spyClientManager;
-    private PrintClientOrgan spyPrintClientOrgan;
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
+    private ClientManager spyClientManager;
+    private PrintClientOrgan spyPrintClientOrgan;
 
     @Before
     public void init() {

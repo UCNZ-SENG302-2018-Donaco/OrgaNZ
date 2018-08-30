@@ -1,6 +1,6 @@
 package com.humanharvest.organz.utilities.serialisation;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,6 +8,7 @@ import java.io.IOException;
 import org.junit.jupiter.api.Test;
 
 public class ClientImporterTest {
+
     @Test
     public void testImportJson() throws IOException {
         ClientImporter importer = new ClientImporter(new File("src/test/resources/test.json"),

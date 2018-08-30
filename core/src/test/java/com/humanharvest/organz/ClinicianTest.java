@@ -1,12 +1,11 @@
 package com.humanharvest.organz;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import com.humanharvest.organz.utilities.enums.Region;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
 public class ClinicianTest {
+
     @Test
     void getFullNameNoMiddleNameTest() {
         Clinician clinician = new Clinician("First", null, "Last", "Address", "UNSPECIFIED", null, 1, "pass");

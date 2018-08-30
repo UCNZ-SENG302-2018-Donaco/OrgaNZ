@@ -1,4 +1,5 @@
 Feature: Does POST /login/administrator/ work?
+
   Scenario: Login with valid credentials
     Given there is a test administrator with the username test and password test
     When I post to /login/administrator/ using { "username": "test", "password": "test" }

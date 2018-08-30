@@ -21,6 +21,7 @@ import com.humanharvest.organz.commands.view.PrintAllOrgan;
 import com.humanharvest.organz.commands.view.PrintClientInfo;
 import com.humanharvest.organz.commands.view.PrintClientOrgan;
 import com.humanharvest.organz.commands.view.SQL;
+
 import picocli.CommandLine.Command;
 import picocli.CommandLine.HelpCommand;
 
@@ -64,6 +65,7 @@ public class BaseCommand implements Runnable {
         this.outputStream = outputStream;
     }
 
+    @Override
     public void run() {
         outputStream.println("Invalid command");
     }

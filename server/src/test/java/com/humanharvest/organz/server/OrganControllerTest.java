@@ -16,6 +16,7 @@ import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,10 +32,9 @@ import org.springframework.web.context.WebApplicationContext;
 @WebAppConfiguration
 public class OrganControllerTest {
 
-    private MockMvc mockMvc;
-
     @Autowired
     WebApplicationContext webApplicationContext;
+    private MockMvc mockMvc;
 
     @Before
     public void init() {
@@ -62,17 +62,16 @@ public class OrganControllerTest {
         State.getClientManager().addClient(michaelShoeMaker);
         State.getClientManager().addClient(outsider);
 
-        MarkClientAsDeadAction action1  = new MarkClientAsDeadAction(janMichael, LocalDate.now(), LocalTime.now(),
-                "Auckland","Auckland", Country.NZ, State.getClientManager());
-        MarkClientAsDeadAction action2  = new MarkClientAsDeadAction(michaelShoeMaker, LocalDate.now(), LocalTime.now(),
-                "Canterbury","Canterbury", Country.NZ, State.getClientManager());
-        MarkClientAsDeadAction action3  = new MarkClientAsDeadAction(outsider, LocalDate.now(), LocalTime.now(),
-                "Rio","Rio", Country.BR, State.getClientManager());
+        MarkClientAsDeadAction action1 = new MarkClientAsDeadAction(janMichael, LocalDate.now(), LocalTime.now(),
+                "Auckland", "Auckland", Country.NZ, State.getClientManager());
+        MarkClientAsDeadAction action2 = new MarkClientAsDeadAction(michaelShoeMaker, LocalDate.now(), LocalTime.now(),
+                "Canterbury", "Canterbury", Country.NZ, State.getClientManager());
+        MarkClientAsDeadAction action3 = new MarkClientAsDeadAction(outsider, LocalDate.now(), LocalTime.now(),
+                "Rio", "Rio", Country.BR, State.getClientManager());
 
         State.getActionInvoker("").execute(action1);
         State.getActionInvoker("").execute(action2);
         State.getActionInvoker("").execute(action3);
-
 
     }
 
@@ -82,7 +81,6 @@ public class OrganControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.totalResults", is(5)));
     }
-
 
     @Test
     public void getFilteredOrgans() throws Exception {

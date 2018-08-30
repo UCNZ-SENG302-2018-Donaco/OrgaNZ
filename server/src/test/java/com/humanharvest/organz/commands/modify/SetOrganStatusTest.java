@@ -1,8 +1,9 @@
 package com.humanharvest.organz.commands.modify;
 
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
 import java.io.ByteArrayOutputStream;
@@ -17,6 +18,7 @@ import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.ClientManagerMemory;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -24,10 +26,10 @@ import picocli.CommandLine;
 
 public class SetOrganStatusTest extends BaseTest {
 
-    private ClientManager spyClientManager;
-    private SetOrganStatus spySetOrganStatus;
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
+    private ClientManager spyClientManager;
+    private SetOrganStatus spySetOrganStatus;
 
     @Before
     public void init() {
@@ -75,7 +77,7 @@ public class SetOrganStatusTest extends BaseTest {
 
         CommandLine.run(spySetOrganStatus, System.out, inputs);
 
-        assertEquals(true, client.getOrganDonationStatus().get(Organ.LIVER));
+        assertTrue(client.getOrganDonationStatus().get(Organ.LIVER));
     }
 
     @Test
@@ -89,7 +91,7 @@ public class SetOrganStatusTest extends BaseTest {
 
         CommandLine.run(spySetOrganStatus, System.out, inputs);
 
-        assertEquals(false, client.getOrganDonationStatus().get(Organ.LIVER));
+        assertFalse(client.getOrganDonationStatus().get(Organ.LIVER));
     }
 
     @Test
@@ -117,8 +119,8 @@ public class SetOrganStatusTest extends BaseTest {
 
         CommandLine.run(spySetOrganStatus, System.out, inputs);
 
-        assertEquals(true, client.getOrganDonationStatus().get(Organ.LIVER));
-        assertEquals(true, client.getOrganDonationStatus().get(Organ.KIDNEY));
+        assertTrue(client.getOrganDonationStatus().get(Organ.LIVER));
+        assertTrue(client.getOrganDonationStatus().get(Organ.KIDNEY));
     }
 
     @Test
@@ -135,7 +137,7 @@ public class SetOrganStatusTest extends BaseTest {
 
         assertThat(outContent.toString(), containsString("Liver is already registered for donation"));
 
-        assertEquals(true, client.getOrganDonationStatus().get(Organ.KIDNEY));
-        assertEquals(false, client.getOrganDonationStatus().get(Organ.BONE));
+        assertTrue(client.getOrganDonationStatus().get(Organ.KIDNEY));
+        assertFalse(client.getOrganDonationStatus().get(Organ.BONE));
     }
 }

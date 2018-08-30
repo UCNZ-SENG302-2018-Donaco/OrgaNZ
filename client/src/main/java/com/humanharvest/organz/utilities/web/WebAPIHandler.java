@@ -6,14 +6,15 @@ import java.time.Period;
 import java.util.List;
 import java.util.Optional;
 
+import com.humanharvest.organz.utilities.CacheManager;
+import com.humanharvest.organz.utilities.exceptions.BadDrugNameException;
+import com.humanharvest.organz.utilities.exceptions.BadGatewayException;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
-import com.humanharvest.organz.utilities.CacheManager;
-import com.humanharvest.organz.utilities.exceptions.BadDrugNameException;
-import com.humanharvest.organz.utilities.exceptions.BadGatewayException;
 
 /**
  * An abstract class for a generic WebAPIHandler.
@@ -32,10 +33,12 @@ public abstract class WebAPIHandler {
         this.httpTransport = httpTransport;
     }
 
-    public abstract List<String> getData(Object... arguments) throws IOException, BadDrugNameException, BadGatewayException;
+    public abstract List<String> getData(Object... arguments)
+            throws IOException, BadDrugNameException, BadGatewayException;
 
     /**
      * Adds the given data to the cache, with the arguments as the key.
+     *
      * @param value The value to be stored in the cache.
      * @param arguments The key used to retrieve the cached value.
      * @return The value variable.
@@ -48,6 +51,7 @@ public abstract class WebAPIHandler {
 
     /**
      * Retrieves the value from the cache, or an empty optional if it doesn't exist or is expired.
+     *
      * @param type The type of the value in the cache. Must be deserialisable using the GSON library.
      * @param arguments The key used to store the cached value.
      */

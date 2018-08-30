@@ -13,16 +13,17 @@ import com.humanharvest.organz.BaseTest;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.ClientManagerMemory;
+
 import org.junit.Before;
 import org.junit.Test;
 import picocli.CommandLine;
 
 public class PrintClientInfoTest extends BaseTest {
 
-    private ClientManager spyClientManager;
-    private PrintClientInfo spyPrintClientInfo;
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
+    private ClientManager spyClientManager;
+    private PrintClientInfo spyPrintClientInfo;
 
     @Before
     public void init() {

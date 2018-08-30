@@ -25,6 +25,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
+import org.controlsfx.control.CheckComboBox;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.TransplantRequest;
@@ -38,7 +39,6 @@ import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
 import com.humanharvest.organz.views.client.PaginatedTransplantList;
-import org.controlsfx.control.CheckComboBox;
 
 /**
  * Controller for the transplants waiting list page. Contains a table that shows all the current waiting requests for
@@ -51,7 +51,6 @@ public class TransplantsController extends SubController {
 
     @FXML
     private HBox menuBarPane;
-
 
     @FXML
     private TableView<TransplantRequest> tableView;
@@ -87,7 +86,15 @@ public class TransplantsController extends SubController {
     private SortedList<TransplantRequest> sortedTransplantRequests;
 
     /**
+     * Gets the client manager from the global state.
+     */
+    public TransplantsController() {
+        manager = State.getClientManager();
+    }
+
+    /**
      * Formats a table cell that holds a {@link LocalDateTime} value to display that value in the date time format.
+     *
      * @return The cell with the date time formatter set.
      */
     private static TableCell<TransplantRequest, LocalDateTime> formatDateTimeCell() {
@@ -107,6 +114,7 @@ public class TransplantsController extends SubController {
     /**
      * Formats a table row to be coloured if the {@link TransplantRequest} it holds is for an organ that the client
      * is also donating.
+     *
      * @return The row with the colouring callback set.
      */
     private TableRow<TransplantRequest> colourIfDonatedAndRequested() {
@@ -129,14 +137,8 @@ public class TransplantsController extends SubController {
     }
 
     /**
-     * Gets the client manager from the global state.
-     */
-    public TransplantsController() {
-        manager = State.getClientManager();
-    }
-
-    /**
      * Sets up the page, setting its title, loading the menu bar and doing the first refresh of the data.
+     *
      * @param mainController The main controller that defines which window this subcontroller belongs to.
      */
     @Override
@@ -182,7 +184,7 @@ public class TransplantsController extends SubController {
         }
         regionChoice.getItems().add("International");
 
-        tableView.setOnSort((o) -> createPage(pagination.getCurrentPageIndex()));
+        tableView.setOnSort(o -> createPage(pagination.getCurrentPageIndex()));
 
         organChoice.getItems().addAll(Organ.values());
 
@@ -191,7 +193,6 @@ public class TransplantsController extends SubController {
 
         organChoice.getCheckModel().getCheckedItems().addListener(
                 (ListChangeListener<Organ>) change -> updateTransplantRequestList());
-
 
         //On pagination update call createPage
         pagination.setPageFactory(this::createPage);
@@ -282,8 +283,6 @@ public class TransplantsController extends SubController {
         organsToFilter.addAll(organChoice.getCheckModel().getCheckedItems());
     }
 
-
-
     private void updateTransplantRequestList() {
         filterRegions();
         filterOrgans();
@@ -305,6 +304,7 @@ public class TransplantsController extends SubController {
 
     /**
      * Upon pagination, update the table to show the correct items
+     *
      * @param pageIndex The page we're now on (starts at 0)
      * @return An empty pane as pagination requires a non null return. Not used.
      */
@@ -315,6 +315,7 @@ public class TransplantsController extends SubController {
 
     /**
      * Set the text that advises the currently viewed and pending amount of results
+     *
      * @param totalCount The total amount of current results matching filter options
      */
     private void setupDisplayingXToYOfZText(int totalCount) {

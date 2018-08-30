@@ -2,6 +2,7 @@ package com.humanharvest.organz.controller.client;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javafx.collections.FXCollections;
@@ -37,6 +38,7 @@ public class ClientLoginController extends SubController {
 
     /**
      * Override so we can set the page title.
+     *
      * @param mainController The MainController
      */
     @Override
@@ -76,10 +78,11 @@ public class ClientLoginController extends SubController {
             List<Client> clients = clientManager.getClients();
             clientList.setItems(FXCollections.observableArrayList(clients));
         } catch (ServerRestException e) {
-            LOGGER.severe(e.getMessage());
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
             PageNavigator.showAlert(AlertType.ERROR,
                     "Server Error",
-                    "An error occurred while trying to fetch from the server.\nPlease try again later.");
+                    "An error occurred while trying to fetch from the server.\nPlease try again later.",
+                    mainController.getStage());
             PageNavigator.loadPage(Page.LANDING, mainController);
         }
     }
@@ -96,7 +99,9 @@ public class ClientLoginController extends SubController {
             try {
                 selectedClient = State.getAuthenticationManager().loginClient(selectedClient.getUid());
             } catch (AuthenticationException e) {
-                PageNavigator.showAlert(AlertType.ERROR, "Invalid login", e.getLocalizedMessage());
+                LOGGER.log(Level.WARNING, e.getMessage(), e);
+                PageNavigator.showAlert(AlertType.ERROR, "Invalid login", e.getLocalizedMessage(),
+                        mainController.getStage());
                 return;
             }
 

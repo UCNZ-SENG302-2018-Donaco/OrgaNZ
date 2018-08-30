@@ -6,6 +6,7 @@ import java.util.List;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.State;
+
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
@@ -19,6 +20,9 @@ public class PrintAllOrgan implements Runnable {
 
     private final ClientManager manager;
     private final PrintStream outputStream;
+
+    @Option(names = {"-t", "-type"}, description = "Organ donations or requests", required = true)
+    private String type;
 
     public PrintAllOrgan() {
         manager = State.getClientManager();
@@ -35,16 +39,13 @@ public class PrintAllOrgan implements Runnable {
         outputStream = System.out;
     }
 
-    @Option(names = {"-t", "-type"}, description = "Organ donations or requests", required = true)
-    private String type;
-
     @Override
     public void run() {
         List<Client> clients = manager.getClients();
 
         if (clients.isEmpty()) {
             outputStream.println("No clients exist");
-        } else if("donations".equals(type) || "requests".equals(type)) {
+        } else if ("donations".equals(type) || "requests".equals(type)) {
             for (Client client : clients) {
                 outputStream.println(client.getClientOrganStatusString(type));
             }

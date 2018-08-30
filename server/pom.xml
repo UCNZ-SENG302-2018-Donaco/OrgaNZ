@@ -1,10 +1,11 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <artifactId>organz</artifactId>
     <groupId>com.humanharvest.organz</groupId>
-    <version>0.5</version>
+    <version>0.7</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
@@ -15,7 +16,7 @@
     <dependency>
       <groupId>com.humanharvest.organz</groupId>
       <artifactId>organz-core</artifactId>
-      <version>0.5</version>
+      <version>0.7</version>
       <scope>compile</scope>
     </dependency>
 
@@ -98,7 +99,7 @@
       <version>3.0.2</version>
       <scope>test</scope>
     </dependency>
-    
+
     <!-- https://mvnrepository.com/artifact/io.cucumber/cucumber-junit -->
     <dependency>
       <groupId>io.cucumber</groupId>

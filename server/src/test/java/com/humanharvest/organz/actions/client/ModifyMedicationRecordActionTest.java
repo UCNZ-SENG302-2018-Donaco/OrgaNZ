@@ -10,6 +10,7 @@ import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.ClientManagerMemory;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -42,7 +43,6 @@ public class ModifyMedicationRecordActionTest extends BaseTest {
         assertEquals(newDate, baseClient.getCurrentMedications().get(0).getStarted());
     }
 
-
     @Test
     public void ModifySingleMedicationCurrentToPastTest() {
         ModifyMedicationRecordAction action = new ModifyMedicationRecordAction(record, manager);
@@ -56,7 +56,6 @@ public class ModifyMedicationRecordActionTest extends BaseTest {
         assertEquals(1, baseClient.getPastMedications().size());
         assertEquals(newDate, baseClient.getPastMedications().get(0).getStopped());
     }
-
 
     @Test
     public void ModifySingleMedicationCurrentUndoTest() {
@@ -72,7 +71,6 @@ public class ModifyMedicationRecordActionTest extends BaseTest {
         assertEquals(LocalDate.of(2018, 4, 9), baseClient.getCurrentMedications().get(0).getStarted());
     }
 
-
     @Test
     public void ModifySingleMedicationCurrentUndoRedoTest() {
         ModifyMedicationRecordAction action = new ModifyMedicationRecordAction(record, manager);
@@ -87,6 +85,5 @@ public class ModifyMedicationRecordActionTest extends BaseTest {
 
         assertEquals(newDate, baseClient.getCurrentMedications().get(0).getStarted());
     }
-
 
 }

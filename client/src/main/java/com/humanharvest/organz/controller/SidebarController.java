@@ -72,6 +72,7 @@ public class SidebarController extends SubController {
 
     /**
      * Evaluates if the request organs button should be displayed for the current user.
+     *
      * @param userType the type of current user
      * @return true if the button should be shown, false otherwise
      */
@@ -86,6 +87,7 @@ public class SidebarController extends SubController {
 
     /**
      * Hides all the buttons in the passed-in array.
+     *
      * @param buttons The buttons to hide
      */
     private void hideButtons(Button[] buttons) {
@@ -96,6 +98,7 @@ public class SidebarController extends SubController {
 
     /**
      * Hides the button from the sidebar.
+     *
      * @param button the button to hide
      */
     private void hideButton(Button button) {
@@ -106,6 +109,7 @@ public class SidebarController extends SubController {
     /**
      * Refreshes the undo/redo buttons based on if there are changes to be made
      */
+    @Override
     public void refresh() {
         ActionResponseView responseView = State.getActionResolver().getUndo();
         undoButton.setDisable(!responseView.isCanUndo());

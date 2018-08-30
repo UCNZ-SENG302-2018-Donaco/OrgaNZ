@@ -7,11 +7,10 @@ import java.lang.reflect.Field;
 import java.time.LocalDate;
 
 import com.humanharvest.organz.Client;
+
 import org.junit.Test;
 
 public class ClientValidatorTest {
-
-    private ClientValidator validator = new ClientValidator();
 
     private static Client getTestClient() {
         return new Client("Adam",
@@ -36,7 +35,7 @@ public class ClientValidatorTest {
         Client client = getTestClient();
         client.setUid(1);
 
-        assertNull(validator.validate(client));
+        assertNull(ClientValidator.validate(client));
     }
 
     @Test
@@ -44,7 +43,7 @@ public class ClientValidatorTest {
         Client client = getTestClient();
         client.setUid(-1);
 
-        assertNotNull(validator.validate(client));
+        assertNotNull(ClientValidator.validate(client));
     }
 
     @Test
@@ -52,7 +51,7 @@ public class ClientValidatorTest {
         Client client = getTestClient();
         client.setFirstName("Amy");
 
-        assertNull(validator.validate(client));
+        assertNull(ClientValidator.validate(client));
     }
 
     @Test
@@ -60,7 +59,7 @@ public class ClientValidatorTest {
         Client client = getTestClient();
         client.setFirstName("");
 
-        assertNotNull(validator.validate(client));
+        assertNotNull(ClientValidator.validate(client));
     }
 
     @Test
@@ -68,7 +67,7 @@ public class ClientValidatorTest {
         Client client = getTestClient();
         client.setLastName("Williams");
 
-        assertNull(validator.validate(client));
+        assertNull(ClientValidator.validate(client));
     }
 
     @Test
@@ -76,7 +75,7 @@ public class ClientValidatorTest {
         Client client = getTestClient();
         client.setLastName("");
 
-        assertNotNull(validator.validate(client));
+        assertNotNull(ClientValidator.validate(client));
     }
 
     @Test
@@ -85,7 +84,7 @@ public class ClientValidatorTest {
         LocalDate dob = LocalDate.of(2000, 5, 4);
         client.setDateOfBirth(dob);
 
-        assertNull(validator.validate(client));
+        assertNull(ClientValidator.validate(client));
     }
 
     @Test
@@ -95,6 +94,6 @@ public class ClientValidatorTest {
         editPrivateField(dob, "month", (short) 14);
         client.setDateOfBirth(dob);
 
-        assertNotNull(validator.validate(client));
+        assertNotNull(ClientValidator.validate(client));
     }
 }

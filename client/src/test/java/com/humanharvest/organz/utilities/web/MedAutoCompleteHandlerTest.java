@@ -6,8 +6,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import com.google.api.client.http.HttpTransport;
 import com.humanharvest.organz.BaseTest;
+
+import com.google.api.client.http.HttpTransport;
 import org.junit.Test;
 
 /**

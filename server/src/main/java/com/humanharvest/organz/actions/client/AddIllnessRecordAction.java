@@ -13,6 +13,7 @@ public class AddIllnessRecordAction extends ClientAction {
 
     /**
      * Creates a new action to add an illness record.
+     *
      * @param client The client whose medical history to add to.
      * @param record The illness record to add.
      * @param manager The ClientManager to apply the changes to

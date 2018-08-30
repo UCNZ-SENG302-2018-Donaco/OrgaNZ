@@ -17,6 +17,7 @@ public class ModifyClientAction extends ClientAction {
 
     /**
      * Create a new Action
+     *
      * @param client The client to be modified
      * @param manager The ClientManager to apply the changes to
      */
@@ -26,6 +27,7 @@ public class ModifyClientAction extends ClientAction {
 
     /**
      * Add a modification to the client
+     *
      * @param field The setter field of the client. Must match a valid setter in the Client object
      * @param oldValue The object the field initially had. Should be taken from the Clients equivalent getter
      * @param newValue The object the field should be update to. Must match the setters Object type
@@ -39,6 +41,7 @@ public class ModifyClientAction extends ClientAction {
 
     /**
      * Add a modification to the client
+     *
      * @param field The setter field of the client. Must match a valid setter in the Client object
      * @param newValue The object the field should be update to. Must match the setters Object type
      * @throws NoSuchFieldException Thrown if the Clients specified setter does not take the same type as given in one

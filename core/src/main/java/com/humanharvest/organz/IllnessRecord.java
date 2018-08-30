@@ -40,6 +40,7 @@ public class IllnessRecord {
 
     /**
      * Creates a new IllnessRecord for a given illness.
+     *
      * @param illnessName The name of the illness.
      * @param diagnosisDate The date the illness was diagnosed for the client.
      * @param curedDate The date the illness was cured.
@@ -54,6 +55,7 @@ public class IllnessRecord {
 
     /**
      * Creates a new IllnessRecord for a given illness.
+     *
      * @param illnessName The name of the illness.
      * @param diagnosisDate The date the illness was diagnosed for the client.
      * @param isChronic Whether the illness is chronic or not.
@@ -69,8 +71,22 @@ public class IllnessRecord {
         return id;
     }
 
+    public void setId(long id) {
+        this.id = id;
+    }
+
     public Client getClient() {
         return client;
+    }
+
+    /**
+     * This method should be called only when this record is added to/removed from a client's collection.
+     * Therefore it is package-private so it may only be called from Client.
+     *
+     * @param client The client to set this record as belonging to.
+     */
+    public void setClient(Client client) {
+        this.client = client;
     }
 
     public String getIllnessName() {
@@ -81,33 +97,20 @@ public class IllnessRecord {
         return diagnosisDate;
     }
 
-    public LocalDate getCuredDate() {
-        return curedDate;
-    }
-
-    public boolean isChronic() {
-        return isChronic;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    /**
-     * This method should be called only when this record is added to/removed from a client's collection.
-     * Therefore it is package-private so it may only be called from Client.
-     * @param client The client to set this record as belonging to.
-     */
-    public void setClient(Client client) {
-        this.client = client;
-    }
-
     public void setDiagnosisDate(LocalDate diagnosisDate) {
         this.diagnosisDate = diagnosisDate;
     }
 
+    public LocalDate getCuredDate() {
+        return curedDate;
+    }
+
     public void setCuredDate(LocalDate curedDate) {
         this.curedDate = curedDate;
+    }
+
+    public boolean isChronic() {
+        return isChronic;
     }
 
     public void setChronic(boolean chronic) {

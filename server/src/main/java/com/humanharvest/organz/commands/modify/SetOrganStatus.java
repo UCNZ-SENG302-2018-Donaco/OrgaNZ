@@ -1,5 +1,12 @@
 package com.humanharvest.organz.commands.modify;
 
+import java.io.PrintStream;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.actions.client.ModifyClientOrgansAction;
@@ -7,15 +14,9 @@ import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
+
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
-
-import java.io.PrintStream;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Command line to set the status of their organs in terms of what they would like to donate.
@@ -30,18 +31,6 @@ public class SetOrganStatus implements Runnable {
     private final ClientManager manager;
     private final ActionInvoker invoker;
     private final PrintStream outputStream;
-
-    public SetOrganStatus(PrintStream outputStream, ActionInvoker invoker) {
-        this.invoker = invoker;
-        this.outputStream = outputStream;
-        manager = State.getClientManager();
-    }
-
-    public SetOrganStatus(ClientManager manager, ActionInvoker invoker) {
-        this.manager = manager;
-        this.invoker = invoker;
-        outputStream = System.out;
-    }
 
     @Option(names = {"--id", "-u"}, description = "User ID", required = true)
     private int uid;
@@ -82,6 +71,17 @@ public class SetOrganStatus implements Runnable {
     @Option(names = {"--connectivetissue", "--connective-tissue"}, description = "Connective tissue status")
     private Boolean connectivetissue;
 
+    public SetOrganStatus(PrintStream outputStream, ActionInvoker invoker) {
+        this.invoker = invoker;
+        this.outputStream = outputStream;
+        manager = State.getClientManager();
+    }
+
+    public SetOrganStatus(ClientManager manager, ActionInvoker invoker) {
+        this.manager = manager;
+        this.invoker = invoker;
+        outputStream = System.out;
+    }
 
     @Override
     public void run() {

@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.actions.ActionInvoker;
@@ -14,6 +16,7 @@ import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.pico_type_converters.PicoCountryConverter;
 import com.humanharvest.organz.utilities.validators.RegionValidator;
+
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
@@ -23,21 +26,11 @@ import picocli.CommandLine.Option;
 @Command(name = "modifyclinician", description = "Modify the attribute of an existing clinician", sortOptions = false)
 public class ModifyClinician implements Runnable {
 
+    private static final Logger LOGGER = Logger.getLogger(ModifyClinician.class.getName());
+
     private final ClinicianManager manager;
     private final ActionInvoker invoker;
     private final PrintStream outputStream;
-
-    public ModifyClinician(PrintStream outputStream, ActionInvoker invoker) {
-        this.invoker = invoker;
-        this.outputStream = outputStream;
-        manager = State.getClinicianManager();
-    }
-
-    public ModifyClinician(ClinicianManager manager, ActionInvoker invoker) {
-        this.manager = manager;
-        this.invoker = invoker;
-        outputStream = System.out;
-    }
 
     @Option(names = {"-s", "--staffId"}, description = "Staff id", required = true)
     private int id; // staffId of the clinician
@@ -62,6 +55,18 @@ public class ModifyClinician implements Runnable {
 
     @Option(names = {"-p", "--password"}, description = "Clinician Password.")
     private String password;
+
+    public ModifyClinician(PrintStream outputStream, ActionInvoker invoker) {
+        this.invoker = invoker;
+        this.outputStream = outputStream;
+        manager = State.getClinicianManager();
+    }
+
+    public ModifyClinician(ClinicianManager manager, ActionInvoker invoker) {
+        this.manager = manager;
+        this.invoker = invoker;
+        outputStream = System.out;
+    }
 
     @Override
     public void run() {
@@ -95,7 +100,7 @@ public class ModifyClinician implements Runnable {
             try {
                 action.addChange(entry.getKey(), entry.getValue()[0], entry.getValue()[1]);
             } catch (NoSuchMethodException | NoSuchFieldException e) {
-                e.printStackTrace(outputStream);
+                LOGGER.log(Level.WARNING, e.getMessage(), e);
             }
         }
 

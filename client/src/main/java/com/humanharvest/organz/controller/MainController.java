@@ -1,8 +1,9 @@
 package com.humanharvest.organz.controller;
 
-import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.view.Page;
-import com.humanharvest.organz.utilities.view.WindowContext;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -12,9 +13,10 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.humanharvest.organz.MultitouchHandler;
+import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.view.Page;
+import com.humanharvest.organz.utilities.view.WindowContext;
 
 /**
  * Main controller class for the application window.
@@ -25,10 +27,11 @@ public class MainController {
 
     private Stage stage;
     private Page currentPage;
+    private Pane pane;
     private WindowContext windowContext;
-    private String windowTitle;
+    private String title;
     private SidebarController sidebarController;
-    private MenuBarController MenuBarController;
+    private MenuBarController menuBarController;
     private SubController subController;
 
     /**
@@ -37,8 +40,17 @@ public class MainController {
     @FXML
     private StackPane pageHolder;
 
+    @FXML
+    public void initialize() {
+        pageHolder.getStyleClass().add("window");
+    }
+
     public Stage getStage() {
-        return this.stage;
+        return stage;
+    }
+
+    public void setStage(Stage stage) {
+        this.stage = stage;
     }
 
     public Page getCurrentPage() {
@@ -49,12 +61,21 @@ public class MainController {
         return windowContext;
     }
 
-    public void setStage(Stage stage) {
-        this.stage = stage;
+    public void setWindowContext(WindowContext context) {
+        windowContext = context;
+    }
+
+    public Pane getPane() {
+        return pane;
+    }
+
+    public void setPane(Pane pane) {
+        this.pane = pane;
     }
 
     /**
      * Replaces the page displayed in the page holder with a new page.
+     *
      * @param page the new current Page.
      * @param node the page node to be swapped in.
      */
@@ -63,12 +84,8 @@ public class MainController {
         pageHolder.getChildren().setAll(node);
     }
 
-    public void setWindowContext(WindowContext context) {
-        this.windowContext = context;
-    }
-
     void resetWindowContext() {
-        this.windowContext = WindowContext.defaultContext();
+        windowContext = WindowContext.defaultContext();
     }
 
     /**
@@ -77,11 +94,15 @@ public class MainController {
     @FXML
     void closeWindow() {
         stage.close();
+        if (State.getUiType() == State.UiType.TOUCH) {
+            MultitouchHandler.removePane(pane);
+        }
     }
 
     /**
      * Method that can be called from other controllers to load the sidebar into that page.
      * Will set the sidebar as the child of the pane given.
+     *
      * @param sidebarPane The container pane for the sidebar, given by the importer.
      */
     public void loadSidebar(Pane sidebarPane) {
@@ -99,14 +120,15 @@ public class MainController {
     /**
      * Method that can be called from other controllers to load the sidebar into that page.
      * Will set the sidebar as the child of the pane given.
+     *
      * @param menuBarPane The container pane for the menu bar, given by the importer.
      */
     public void loadMenuBar(Pane menuBarPane) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(Page.MENU_BAR.getPath()));
             HBox menuBar = loader.load();
-            MenuBarController = loader.getController();
-            MenuBarController.setup(this);
+            menuBarController = loader.getController();
+            menuBarController.setup(this);
             menuBarPane.getChildren().setAll(menuBar);
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Couldn't load sidebar from fxml file.", e);
@@ -130,21 +152,24 @@ public class MainController {
      * Refreshes only the navigation bar
      */
     public void refreshNavigation() {
-        if (MenuBarController != null) {
-            MenuBarController.refresh();
+        if (menuBarController != null) {
+            menuBarController.refresh();
         } else if (sidebarController != null) {
             sidebarController.refresh();
         }
     }
 
-    public String getTitle() {return windowTitle;}
+    public String getTitle() {
+        return title;
+    }
 
     /**
      * Sets the title of the window to the given text.
+     *
      * @param title The new title of the window.
      */
     public void setTitle(String title) {
-        windowTitle = title;
+        this.title = title;
         updateTitle();
     }
 
@@ -153,9 +178,9 @@ public class MainController {
      */
     private void updateTitle() {
         if (State.isUnsavedChanges()) {
-            stage.setTitle("*" + windowTitle);
+            stage.setTitle("*" + title);
         } else {
-            stage.setTitle(windowTitle);
+            stage.setTitle(title);
         }
     }
 }

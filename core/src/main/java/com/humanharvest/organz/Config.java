@@ -20,7 +20,7 @@ public class Config {
 
     @ElementCollection(targetClass = Country.class)
     @Enumerated(EnumType.STRING)
-    Set<Country> countries;
+    private Set<Country> countries;
 
     public Config() {
         this.countries = EnumSet.noneOf(Country.class);

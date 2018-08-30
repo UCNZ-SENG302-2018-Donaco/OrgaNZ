@@ -5,14 +5,19 @@ import java.time.format.DateTimeParseException;
 
 import com.humanharvest.organz.IllnessRecord;
 
-public class IllnessRecordValidator {
+/**
+ * A static IllnessRecord validator that checks integrity
+ * Class is abstract as it only contains static methods and should not be instantiated
+ */
+public abstract class IllnessRecordValidator {
 
     /**
      * Validates a {@link IllnessRecord} and returns a string explaining the errors within it.
+     *
      * @param record The record to validate.
      * @return A string containing the errors within the record if it is invalid, else null if it is valid.
      */
-    public String validate(IllnessRecord record) {
+    public static String validate(IllnessRecord record) {
         StringBuilder errors = new StringBuilder();
 
         if (!illnessNameValid(record)) {
@@ -34,17 +39,17 @@ public class IllnessRecordValidator {
 
     // FIELD VALIDATORS
 
-    private boolean illnessNameValid(IllnessRecord record) {
+    private static boolean illnessNameValid(IllnessRecord record) {
         return record.getIllnessName() != null &&
                 !"".equals(record.getIllnessName());
     }
 
-    private boolean diagnosisDateValid(IllnessRecord record) {
+    private static boolean diagnosisDateValid(IllnessRecord record) {
         return dateIsValid(record.getDiagnosisDate()) &&
                 !record.getDiagnosisDate().isAfter(LocalDate.now());
     }
 
-    private boolean curedDateValid(IllnessRecord record) {
+    private static boolean curedDateValid(IllnessRecord record) {
         if (record.getCuredDate() != null) {
             return dateIsValid(record.getCuredDate()) &&
                     !record.getCuredDate().isBefore(record.getDiagnosisDate());
@@ -54,7 +59,7 @@ public class IllnessRecordValidator {
 
     // HELPERS
 
-    private boolean dateIsValid(LocalDate date) {
+    private static boolean dateIsValid(LocalDate date) {
         // Catch any invalid dates (eg date >31), or dates with null months, etc
         try {
             LocalDate.parse(date.toString());

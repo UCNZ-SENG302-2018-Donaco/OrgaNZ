@@ -3,6 +3,7 @@ package com.humanharvest.organz.actions;
 import static org.junit.Assert.assertEquals;
 
 import com.humanharvest.organz.BaseTest;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -65,8 +66,7 @@ public class ModifyObjectByFieldActionTest extends BaseTest {
     public void ModifyPrimitiveIntSetIntegerValidTest() throws Exception {
         SettableItem testItem = new SettableItem();
         testItem.setAnInt(1);
-        ModifyObjectByFieldAction action = new ModifyObjectByFieldAction(testItem, "anInt", testItem.getAnInt(),
-                new Integer(2));
+        ModifyObjectByFieldAction action = new ModifyObjectByFieldAction(testItem, "anInt", testItem.getAnInt(), 2);
         invoker.execute(action);
         assertEquals(2, testItem.getAnInt());
     }

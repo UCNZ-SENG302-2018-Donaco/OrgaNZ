@@ -1,7 +1,5 @@
 package com.humanharvest.organz.controller.administrator;
 
-import java.util.Optional;
-
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -86,6 +84,7 @@ public class StaffListController extends SubController {
 
     /**
      * Gets the clinician that has been clicked on.
+     *
      * @return The clinician object of the clinician who has been clicked on
      */
     private Clinician getClinicianClickedOn() {
@@ -105,13 +104,16 @@ public class StaffListController extends SubController {
      * Loads the selected user's profile page in the current window.
      */
     private void loadUser(Integer staffId) {
-        Optional<Clinician> clinician = clinicianManager.getClinicianByStaffId(staffId);
-        State.setViewedClinician(clinician.get());
+        Clinician clinician = clinicianManager
+                .getClinicianByStaffId(staffId)
+                .orElseThrow(IllegalStateException::new);
+        State.setViewedClinician(clinician);
         PageNavigator.loadPage(Page.VIEW_CLINICIAN, mainController);
     }
 
     /**
      * Deletes the staff member clinician represented by "id".
+     *
      * @param id the staff member to delete
      */
     private void delete(int id) {
@@ -119,7 +121,7 @@ public class StaffListController extends SubController {
 
         if (id == 0) {
             PageNavigator.showAlert(Alert.AlertType.ERROR, "Cannot Delete the Default Clinician",
-                    "The default clinician cannot be deleted from the system.");
+                    "The default clinician cannot be deleted from the system.", mainController.getStage());
             return;
 
         } else {

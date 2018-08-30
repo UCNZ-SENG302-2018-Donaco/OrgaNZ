@@ -8,6 +8,7 @@ import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.state.ClinicianManager;
 import com.humanharvest.organz.state.ClinicianManagerMemory;
 import com.humanharvest.organz.utilities.enums.Region;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -43,7 +44,8 @@ public class CreateClinicianActionTest extends BaseTest {
     public void CheckClinicianMultipleAddsOneUndoTest() {
         CreateClinicianAction action = new CreateClinicianAction(baseClinician, manager);
         invoker.execute(action);
-        Clinician second = new Clinician("First2", null, "Last2", "Address", Region.UNSPECIFIED.name(), null, 2, "pass");
+        Clinician second = new Clinician("First2", null, "Last2", "Address", Region.UNSPECIFIED.name(), null, 2,
+                "pass");
         CreateClinicianAction secondAction = new CreateClinicianAction(second, manager);
         invoker.execute(secondAction);
         invoker.undo();
@@ -55,7 +57,8 @@ public class CreateClinicianActionTest extends BaseTest {
     public void CheckClinicianMultipleAddsOneUndoRedoTest() {
         CreateClinicianAction action = new CreateClinicianAction(baseClinician, manager);
         invoker.execute(action);
-        Clinician second = new Clinician("First2", null, "Last2", "Address", Region.UNSPECIFIED.name(), null, 2, "pass");
+        Clinician second = new Clinician("First2", null, "Last2", "Address", Region.UNSPECIFIED.name(), null, 2,
+                "pass");
         CreateClinicianAction secondAction = new CreateClinicianAction(second, manager);
         invoker.execute(secondAction);
         invoker.undo();

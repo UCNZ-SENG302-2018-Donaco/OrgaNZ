@@ -13,6 +13,7 @@ public class AddProcedureRecordAction extends ClientAction {
 
     /**
      * Creates a new action to add an procedure record.
+     *
      * @param client The client whose medical history to add to.
      * @param record The procedure record to add.
      * @param manager The ClientManager to apply the changes to

@@ -12,7 +12,6 @@ import javafx.beans.value.ObservableValueBase;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Alert.AlertType;
@@ -32,6 +31,8 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
+import org.controlsfx.control.CheckComboBox;
+import org.controlsfx.control.RangeSlider;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.controller.MainController;
@@ -51,8 +52,6 @@ import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.utilities.view.WindowContext;
 import com.humanharvest.organz.views.client.ClientSortPolicy;
 import com.humanharvest.organz.views.client.PaginatedClientList;
-import org.controlsfx.control.CheckComboBox;
-import org.controlsfx.control.RangeSlider;
 
 public class SearchClientsController extends SubController {
 
@@ -112,6 +111,12 @@ public class SearchClientsController extends SubController {
 
     private ObservableList<Client> observableClientList = FXCollections.observableArrayList();
 
+    private static <T extends Enum<T>> EnumSet<T> filterToSet(CheckComboBox<T> filter, Class<T> enumType) {
+        EnumSet<T> enumSet = EnumSet.noneOf(enumType);
+        enumSet.addAll(filter.getCheckModel().getCheckedItems());
+        return enumSet;
+    }
+
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
@@ -124,7 +129,7 @@ public class SearchClientsController extends SubController {
 
         setupTable();
 
-        tableView.setOnSort((o) -> updateClientList());
+        tableView.setOnSort(o -> updateClientList());
 
         // Match values in text boxes beside age slider to the values on the slider
         ageMinField.setOnAction(event -> {
@@ -141,8 +146,8 @@ public class SearchClientsController extends SubController {
             int newMax;
             try {
                 newMax = Integer.min(Integer.parseInt(ageMaxField.getText()), AGE_UPPER_BOUND);
-            } catch (NumberFormatException exc) {
-                newMax = 0;
+            } catch (NumberFormatException ignored) {
+                newMax = AGE_UPPER_BOUND;
             }
             ageSlider.setHighValue(newMax);
             ageMaxField.setText("" + newMax);
@@ -186,42 +191,24 @@ public class SearchClientsController extends SubController {
         organsRequestingFilter.getCheckModel().getCheckedItems().addListener(
                 (ListChangeListener<Organ>) change -> updateClientList());
 
-        searchBox.textProperty().addListener(((o) -> updateClientList()));
+        searchBox.textProperty().addListener(o -> updateClientList());
 
         //On pagination update call createPage
         pagination.setPageFactory(this::createPage);
 
-        //Make the nameCol comparator always return zero as the list is already ordered by the server using custom sort
-        nameCol.setComparator((c1, c2) -> 0);
+        //Make the comparators always return zero as the list is already ordered by the server using custom sort
+        for (TableColumn<?, ?> column : tableView.getColumns()) {
+            column.setComparator((c1, c2) -> 0);
+        }
 
         //Bind the tableView to the observable list
-        //We must make an intermediate SortedList to prevent the table sort policy applying
-        SortedList<Client> sortedList = new SortedList<>(observableClientList);
-        //Bind the sortedList to the tableView to allow sorting
-        sortedList.comparatorProperty().bind(tableView.comparatorProperty());
-        tableView.setItems(sortedList);
+        tableView.setItems(observableClientList);
 
         if (State.getSession().getLoggedInUserType() == UserType.ADMINISTRATOR) {
 
             tableView.setRowFactory(tableView -> {
                 //Enable the tooltip to show organ donation status
-                TableRow<Client> row = new TableRow<Client>() {
-                    private Tooltip tooltip = new Tooltip();
-
-                    @Override
-                    public void updateItem(Client client, boolean empty) {
-                        super.updateItem(client, empty);
-                        if (client == null) {
-                            setTooltip(null);
-                        } else {
-                            tooltip.setText(String.format("%s with blood type %s. Donating: %s",
-                                    client.getFullName(),
-                                    client.getBloodType(),
-                                    client.getOrganStatusString("donations")));
-                            setTooltip(tooltip);
-                        }
-                    }
-                };
+                TableRow<Client> row = new ClientTableRow();
 
                 //Enable right click to delete
                 MenuItem removeItem = new MenuItem("Delete");
@@ -245,18 +232,19 @@ public class SearchClientsController extends SubController {
         try {
             State.getClientManager().removeClient(client);
         } catch (NotFoundException e) {
-            LOGGER.log(Level.WARNING, "Client not found");
+            LOGGER.log(Level.WARNING, "Client not found", e);
             PageNavigator.showAlert(AlertType.WARNING, "Client not found", "The client could not be found on the "
-                    + "server, it may have been deleted");
+                    + "server, it may have been deleted", mainController.getStage());
         } catch (ServerRestException e) {
             LOGGER.log(Level.WARNING, e.getMessage(), e);
             PageNavigator.showAlert(AlertType.WARNING, "Server error", "Could not apply changes on the server, "
-                    + "please try again later");
+                    + "please try again later", mainController.getStage());
         } catch (IfMatchFailedException e) {
-            LOGGER.log(Level.INFO, "If-Match did not match");
+            LOGGER.log(Level.INFO, "If-Match did not match", e);
             PageNavigator.showAlert(AlertType.WARNING, "Outdated Data",
                     "The client has been modified since you retrieved the data.\nIf you would still like to "
-                            + "apply these changes please submit again, otherwise refresh the page to update the data.");
+                            + "apply these changes please submit again, otherwise refresh the page to update the data.",
+                    mainController.getStage());
         }
     }
 
@@ -311,7 +299,7 @@ public class SearchClientsController extends SubController {
             protected void updateItem(Boolean item, boolean empty) {
                 super.updateItem(item, empty);
                 setText(empty ? null :
-                        item ? "\u2713" : "");
+                        (item ? "✓" : ""));
             }
         });
         receiverCol.setCellFactory(tc -> new TableCell<Client, Boolean>() {
@@ -319,7 +307,7 @@ public class SearchClientsController extends SubController {
             protected void updateItem(Boolean item, boolean empty) {
                 super.updateItem(item, empty);
                 setText(empty ? null :
-                        item ? "\u2713" : "");
+                        (item ? "✓" : ""));
             }
         });
 
@@ -394,12 +382,6 @@ public class SearchClientsController extends SubController {
         updateClientList();
     }
 
-    private <T extends Enum<T>> EnumSet<T> filterToSet(CheckComboBox<T> filter, Class<T> enumType) {
-        EnumSet<T> enumSet = EnumSet.noneOf(enumType);
-        enumSet.addAll(filter.getCheckModel().getCheckedItems());
-        return enumSet;
-    }
-
     private void updateClientList() {
         ClientSortPolicy sortPolicy = getSortPolicy();
         PaginatedClientList newClients = State.getClientManager().getClients(
@@ -428,6 +410,7 @@ public class SearchClientsController extends SubController {
 
     /**
      * Used to detect the current sort policy of the table and convert it to a value that the server will understand
+     *
      * @return A ClientSortPolicy that maps to one of the SortOptions and a boolean if the sort should be reversed
      */
     private ClientSortPolicy getSortPolicy() {
@@ -452,6 +435,7 @@ public class SearchClientsController extends SubController {
 
     /**
      * Upon pagination, update the table to show the correct items
+     *
      * @param pageIndex The page we're now on (starts at 0)
      * @return An empty pane as pagination requires a non null return. Not used.
      */
@@ -462,6 +446,7 @@ public class SearchClientsController extends SubController {
 
     /**
      * Set the text that advises the currently viewed and pending amount of results
+     *
      * @param totalCount The total amount of current results matching filter options
      */
     private void setupDisplayingXToYOfZText(int totalCount) {
@@ -475,6 +460,34 @@ public class SearchClientsController extends SubController {
         } else {
             displayingXToYOfZText.setText(String.format("Displaying %d-%d of %d", fromIndex + 1, toIndex,
                     totalCount));
+        }
+    }
+
+    private static class ClientTableRow extends TableRow<Client> {
+
+        private final Tooltip tooltip = new Tooltip();
+
+        public ClientTableRow() {
+            // This enables the context menu skin to work with multitouch
+            contextMenuProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue != null) {
+                    newValue.setImpl_showRelativeToWindow(false);
+                }
+            });
+        }
+
+        @Override
+        public void updateItem(Client item, boolean empty) {
+            super.updateItem(item, empty);
+            if (item == null) {
+                setTooltip(null);
+            } else {
+                tooltip.setText(String.format("%s with blood type %s. Donating: %s",
+                        item.getFullName(),
+                        item.getBloodType(),
+                        item.getOrganStatusString("donations")));
+                setTooltip(tooltip);
+            }
         }
     }
 }

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.humanharvest.organz.state.ClientManager;
@@ -12,6 +13,7 @@ import com.humanharvest.organz.utilities.serialisation.CSVReadClientStrategy;
 import com.humanharvest.organz.utilities.serialisation.ClientImporter;
 import com.humanharvest.organz.utilities.serialisation.JSONReadClientStrategy;
 import com.humanharvest.organz.utilities.serialisation.ReadClientStrategy;
+
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
@@ -43,6 +45,22 @@ public class Load implements Runnable {
         outputStream = System.out;
     }
 
+    /**
+     * Returns the file extension of the given file name string (in lowercase). The file extension is defined as the
+     * characters after the last "." in the file name.
+     *
+     * @param fileName The file name string.
+     * @return The file extension of the given file name.
+     */
+    private static String getFileExtension(String fileName) {
+        int lastIndex = fileName.lastIndexOf('.');
+        if (lastIndex >= 0) {
+            return fileName.substring(lastIndex + 1).toLowerCase();
+        } else {
+            return "";
+        }
+    }
+
     @Override
     public void run() {
         if (format == null) {
@@ -72,34 +90,21 @@ public class Load implements Runnable {
             }
 
             String message = String.format("Loaded clients from file '%s'."
-                            + "\n%d were valid, "
-                            + "\n%d were invalid."
-                            + "\n\n%s",
+                            + "%n%d were valid, "
+                            + "%n%d were invalid."
+                            + "%n%n%s",
                     file.getName(), importer.getValidCount(), importer.getInvalidCount(), errorSummary);
 
             outputStream.println(message);
             //TODO: State.getSession().addToSessionHistory(new HistoryItem("LOAD", message));
 
-        } catch (FileNotFoundException exc) {
+        } catch (FileNotFoundException e) {
+            LOGGER.log(Level.INFO, e.getMessage(), e);
             outputStream.println(String.format("Could not find file: '%s'.", file.getAbsolutePath()));
-        } catch (IOException exc) {
-            outputStream.println(String.format("An IO error occurred when loading from file: '%s'\n%s",
-                    file.getName(), exc.getMessage()));
-        }
-    }
-
-    /**
-     * Returns the file extension of the given file name string (in lowercase). The file extension is defined as the
-     * characters after the last "." in the file name.
-     * @param fileName The file name string.
-     * @return The file extension of the given file name.
-     */
-    private static String getFileExtension(String fileName) {
-        int lastIndex = fileName.lastIndexOf('.');
-        if (lastIndex >= 0) {
-            return fileName.substring(lastIndex + 1).toLowerCase();
-        } else {
-            return "";
+        } catch (IOException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
+            outputStream.println(String.format("An IO error occurred when loading from file: '%s'%n%s",
+                    file.getName(), e.getMessage()));
         }
     }
 }

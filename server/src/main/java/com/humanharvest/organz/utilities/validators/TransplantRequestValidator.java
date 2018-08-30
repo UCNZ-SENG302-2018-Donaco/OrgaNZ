@@ -9,18 +9,23 @@ import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 
-public class TransplantRequestValidator {
+/**
+ * A static TransplantRequest validator that checks integrity
+ * Class is abstract as it only contains static methods and should not be instantiated
+ */
+public abstract class TransplantRequestValidator {
 
     /**
      * Validates a {@link TransplantRequest} and returns a string explaining the errors within it.
+     *
      * @param request The request to validate.
      * @return A string containing the errors within the request if it is invalid, else null if it is valid.
      */
-    public String validate(TransplantRequest request) {
+    public static String validate(TransplantRequest request) {
         StringBuilder errors = new StringBuilder();
 
         if (!requestedOrganValid(request)) {
-            errors.append(String.format("Requested organ must be one of these recognised organs: %s\n",
+            errors.append(String.format("Requested organ must be one of these recognised organs: %s%n",
                     Arrays.stream(Organ.values())
                             .map(Organ::toString)
                             .collect(Collectors.joining(", "))
@@ -33,7 +38,7 @@ public class TransplantRequestValidator {
                     + "point after the request date.\n");
         }
         if (!statusValid(request)) {
-            errors.append(String.format("Request status must be one of these values: %s\n",
+            errors.append(String.format("Request status must be one of these values: %s%n",
                     Arrays.stream(TransplantRequestStatus.values())
                             .map(TransplantRequestStatus::toString)
                             .collect(Collectors.joining(", "))
@@ -49,16 +54,16 @@ public class TransplantRequestValidator {
 
     // FIELD VALIDATORS
 
-    private boolean requestedOrganValid(TransplantRequest request) {
+    private static boolean requestedOrganValid(TransplantRequest request) {
         return request.getRequestedOrgan() != null;
     }
 
-    private boolean requestDateValid(TransplantRequest request) {
+    private static boolean requestDateValid(TransplantRequest request) {
         return datetimeIsValid(request.getRequestDate()) &&
                 !request.getRequestDate().isAfter(LocalDateTime.now().plusMinutes(1));
     }
 
-    private boolean resolvedDateValid(TransplantRequest request) {
+    private static boolean resolvedDateValid(TransplantRequest request) {
         if (request.getResolvedDate() != null) {
             return datetimeIsValid(request.getResolvedDate()) &&
                     !request.getResolvedDate().isBefore(request.getRequestDate());
@@ -66,13 +71,13 @@ public class TransplantRequestValidator {
         return true;
     }
 
-    private boolean statusValid(TransplantRequest request) {
+    private static boolean statusValid(TransplantRequest request) {
         return request.getStatus() != null;
     }
 
     // HELPERS
 
-    private boolean datetimeIsValid(LocalDateTime datetime) {
+    private static boolean datetimeIsValid(LocalDateTime datetime) {
         try {
             LocalDateTime.parse(datetime.toString());
             return true;

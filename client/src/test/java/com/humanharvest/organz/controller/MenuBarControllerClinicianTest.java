@@ -13,16 +13,19 @@ import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
+
 import org.junit.Test;
 
-public class MenuBarControllerClinicianTest extends  ControllerTest {
+public class MenuBarControllerClinicianTest extends ControllerTest {
 
     private Clinician testClinician = new Clinician("Mr", null, "Tester",
             "9 Fake St", Region.AUCKLAND.toString(), Country.NZ, 3, "k");
     private Client testClient = new Client("John", "Adams", "Smith", LocalDate.of(1989, 10, 10), 1);
 
     @Override
-    protected Page getPage() { return Page.MENU_BAR;  }
+    protected Page getPage() {
+        return Page.MENU_BAR;
+    }
 
     @Override
     protected void initState() {
@@ -89,7 +92,7 @@ public class MenuBarControllerClinicianTest extends  ControllerTest {
         clickOn("#filePrimaryItem");
         clickOn("#logOutItem");
         assertEquals(Page.LANDING, mainController.getCurrentPage());
-}
+    }
 
     @Test
     public void testClinicianDetails() {
@@ -99,7 +102,6 @@ public class MenuBarControllerClinicianTest extends  ControllerTest {
         verifyThat("#viewClinicianItem", isVisible());
         assertEquals(Page.VIEW_CLINICIAN, mainController.getCurrentPage());
     }
-
 
     @Test
     public void testTransplantRequest() {

@@ -1,16 +1,16 @@
 package com.humanharvest.organz.state;
 
-import com.humanharvest.organz.actions.ActionInvoker;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import com.humanharvest.organz.actions.ActionInvoker;
 
 /**
  * A static class to store the current state of the system.
  */
 public final class State {
 
-
+    private static final Map<String, ActionInvoker> actionInvokers = new HashMap<>();
 
     public enum DataStorageType {
         MEMORY, PUREDB
@@ -23,7 +23,6 @@ public final class State {
     private static AdministratorManager administratorManager;
     private static AuthenticationManager authenticationManager;
     private static ConfigManager configManager;
-    private static final Map<String, ActionInvoker> actionInvokers = new HashMap<>();
     private static String imageDirectory = System.getProperty("user.home") + "/.organz/images/";
 
     private State() {
@@ -69,16 +68,16 @@ public final class State {
         return authenticationManager;
     }
 
+    public static void setAuthenticationManager(AuthenticationManager authenticationManager) {
+        State.authenticationManager = authenticationManager;
+    }
+
     public static ConfigManager getConfigManager() {
         return configManager;
     }
 
     public static void setConfigManager(ConfigManager configManager) {
         State.configManager = configManager;
-    }
-
-    public static void setAuthenticationManager(AuthenticationManager authenticationManager) {
-        State.authenticationManager = authenticationManager;
     }
 
     public static String getImageDirectory() {

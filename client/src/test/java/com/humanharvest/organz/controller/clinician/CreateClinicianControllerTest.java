@@ -7,10 +7,11 @@ import com.humanharvest.organz.controller.ControllerTest;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
-import org.junit.Ignore;
+
 import org.junit.Test;
 
 public class CreateClinicianControllerTest extends ControllerTest {
+
     private Administrator testAdmin = new Administrator("username", "password");
 
     @Override

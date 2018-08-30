@@ -25,6 +25,7 @@ public class ResolveTransplantRequestAction extends ClientAction {
 
     /**
      * Creates a new resolve transplant request action for the given request and given new status/reason.
+     *
      * @param request The transplant request to resolve.
      * @param status The new status to give the request. Must be one of the valid {@link
      * ResolveTransplantRequestAction#RESOLVED_STATUSES}.
@@ -50,6 +51,7 @@ public class ResolveTransplantRequestAction extends ClientAction {
 
     /**
      * Apply all changes to the transplantRequest.
+     *
      * @throws IllegalStateException If no changes were made.
      */
     @Override

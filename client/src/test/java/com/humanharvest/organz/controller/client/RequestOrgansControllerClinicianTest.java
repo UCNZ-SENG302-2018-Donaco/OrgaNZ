@@ -31,17 +31,18 @@ import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
 import com.humanharvest.organz.views.client.CreateTransplantRequestView;
 import com.humanharvest.organz.views.client.ResolveTransplantRequestObject;
+
 import org.junit.Before;
 import org.junit.Test;
 
 public class RequestOrgansControllerClinicianTest extends ControllerTest {
 
-    private List<TransplantRequest> sampleRequests = new ArrayList<>();
     private final Clinician testClinician = new Clinician("Mr", null, "Tester", "9 Fake St", Region.AUCKLAND.toString(),
             Country.NZ,
             1000,
             "qwerty");
     private final Client testClient = new Client(1);
+    private List<TransplantRequest> sampleRequests = new ArrayList<>();
 
     @Override
     protected Page getPage() {
@@ -244,7 +245,6 @@ public class RequestOrgansControllerClinicianTest extends ControllerTest {
         } else {
             fail("Request not found");
         }
-
 
     }
 

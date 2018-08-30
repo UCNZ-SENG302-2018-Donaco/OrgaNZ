@@ -18,6 +18,7 @@ import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.ClientManagerMemory;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
+
 import org.hamcrest.MatcherAssert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,10 +27,10 @@ import picocli.CommandLine;
 
 public class PrintAllOrganTest extends BaseTest {
 
-    private ClientManager spyClientManager;
-    private PrintAllOrgan spyPrintAllOrgan;
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
+    private ClientManager spyClientManager;
+    private PrintAllOrgan spyPrintAllOrgan;
 
     @BeforeEach
     public void init() {
@@ -80,7 +81,8 @@ public class PrintAllOrganTest extends BaseTest {
 
         Assertions.assertTrue(
                 outContent.toString().contains("User: 1. Name: First mid Last. Donation status: Kidney, Liver") ||
-                outContent.toString().contains("User: 1. Name: First mid Last. Donation status: Liver, Kidney"));
+                        outContent.toString()
+                                .contains("User: 1. Name: First mid Last. Donation status: Liver, Kidney"));
     }
 
     @Test
@@ -125,7 +127,8 @@ public class PrintAllOrganTest extends BaseTest {
 
         Assertions.assertTrue(
                 outContent.toString().contains("User: 1. Name: First mid Last. Donation status: Kidney, Liver") ||
-                        outContent.toString().contains("User: 1. Name: First mid Last. Donation status: Liver, Kidney"));
+                        outContent.toString()
+                                .contains("User: 1. Name: First mid Last. Donation status: Liver, Kidney"));
         MatcherAssert.assertThat(outContent.toString(),
                 containsString("User: 2. Name: FirstTwo LastTwo. Donation status: Connective tissue"));
         MatcherAssert.assertThat(outContent.toString(),

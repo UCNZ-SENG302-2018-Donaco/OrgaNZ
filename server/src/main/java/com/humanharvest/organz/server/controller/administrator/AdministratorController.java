@@ -1,6 +1,8 @@
 package com.humanharvest.organz.server.controller.administrator;
 
-import com.fasterxml.jackson.annotation.JsonView;
+import java.util.List;
+import java.util.Optional;
+
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.actions.ActionInvoker;
@@ -20,20 +22,28 @@ import com.humanharvest.organz.views.administrator.CommandView;
 import com.humanharvest.organz.views.administrator.CreateAdministratorView;
 import com.humanharvest.organz.views.administrator.ModifyAdministratorObject;
 import com.humanharvest.organz.views.client.Views;
+
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Optional;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class AdministratorController {
 
     /**
      * Returns all administrators or some optional subset by filtering
+     *
      * @return A list of Administrator overviews
      * @throws AuthenticationException throws when a non-administrator attempts access.
      */
@@ -55,6 +65,7 @@ public class AdministratorController {
 
     /**
      * Returns all administrators or some optional subset by filtering
+     *
      * @return A list of Administrator overviews
      * @throws AuthenticationException throws when a non-administrator attempts access.
      */
@@ -89,6 +100,7 @@ public class AdministratorController {
 
     /**
      * Returns an administrator from the given username
+     *
      * @return An administrator detail view
      * @throws AuthenticationException throws when a non-administrator attempts access.
      */
@@ -114,6 +126,7 @@ public class AdministratorController {
 
     /**
      * The PATCH endpoint for updating a single administrator
+     *
      * @param username The administrator username to update
      * @param modifyAdministratorObject The POJO object of the modifications
      * @param etag The corresponding If-Match header to check for concurrent update handling
@@ -137,7 +150,8 @@ public class AdministratorController {
         // duplicate code in tons of places but need to work it out
 
         //Fetch the administrator given by username
-        Optional<Administrator> optionalAdministrator = State.getAdministratorManager().getAdministratorByUsername(username);
+        Optional<Administrator> optionalAdministrator =
+                State.getAdministratorManager().getAdministratorByUsername(username);
         if (!optionalAdministrator.isPresent()) {
             //Return 404 if that administrator does not exist
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -183,6 +197,7 @@ public class AdministratorController {
 
     /**
      * The DELETE endpoint for removing a single administrator
+     *
      * @param username The administrator username to delete
      * @param etag The corresponding If-Match header to check for concurrent update handling
      * @return Returns an empty body with a simple response code
@@ -202,7 +217,8 @@ public class AdministratorController {
         AdministratorManager administratorManager = State.getAdministratorManager();
 
         //Fetch the administrator given by username
-        Optional<Administrator> optionalAdministrator = State.getAdministratorManager().getAdministratorByUsername(username);
+        Optional<Administrator> optionalAdministrator =
+                State.getAdministratorManager().getAdministratorByUsername(username);
         if (!optionalAdministrator.isPresent()) {
             //Return 404 if that administrator does not exist
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -234,7 +250,7 @@ public class AdministratorController {
      * Allows admin commands to be run via the server
      *
      * @param commandText The text object to execute
-     * @param authToken   The authentication token of a valid administrator
+     * @param authToken The authentication token of a valid administrator
      * @return The result string of a command execution
      */
     @PostMapping("/commands")
@@ -255,6 +271,7 @@ public class AdministratorController {
 
     /**
      * Returns some history for all actions
+     *
      * @param authToken id token
      * @return The list of HistoryItems
      */

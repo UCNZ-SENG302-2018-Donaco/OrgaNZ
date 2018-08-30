@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.IllnessRecord;
@@ -19,14 +21,16 @@ import com.humanharvest.organz.utilities.validators.ClientValidator;
  */
 public class ClientImporter {
 
+    private static final Logger LOGGER = Logger.getLogger(ClientImporter.class.getName());
+
     private final ReadClientStrategy readStrategy;
-    private final ClientValidator validator = new ClientValidator();
+
+    private final StringBuilder errorSummary = new StringBuilder();
+    private final List<Client> validClients = new ArrayList<>();
 
     private boolean imported;
     private long validCount;
     private long invalidCount;
-    private final StringBuilder errorSummary = new StringBuilder();
-    private final List<Client> validClients = new ArrayList<>();
 
     public ClientImporter(File file, ReadClientStrategy readStrategy) throws IOException {
         this.readStrategy = readStrategy;
@@ -34,8 +38,31 @@ public class ClientImporter {
     }
 
     /**
+     * Sets the given client as "owner" on all records belonging to that client, such as {@link TransplantRequest}s and
+     * {@link MedicationRecord}s. This is necessary because the relationships are referenced from both sides, but are
+     * only serialized in terms of clients "owning" records (to avoid infinite recursion in serialized form).
+     *
+     * @param client The client to set as "owner" for all their records.
+     */
+    private static void setOwnerOnRelatedRecords(Client client) {
+        for (TransplantRequest request : client.getTransplantRequests()) {
+            request.setClient(client);
+        }
+        for (IllnessRecord record : client.getIllnesses()) {
+            record.setClient(client);
+        }
+        for (ProcedureRecord record : client.getProcedures()) {
+            record.setClient(client);
+        }
+        for (MedicationRecord record : client.getMedications()) {
+            record.setClient(client);
+        }
+    }
+
+    /**
      * Imports all valid clients from the file using the given {@link ReadClientStrategy}. These valid clients can
      * then be retrieved using {@link #getValidClients()}.
+     *
      * @throws IOException If a critical error occurrs which ends reading of the file (invalid syntax or input stream
      * broken)
      */
@@ -55,7 +82,7 @@ public class ClientImporter {
                         finished = true;
                     } else {
                         // Check that retrieved client was valid
-                        String errors = validator.validate(client);
+                        String errors = ClientValidator.validate(client);
                         if (errors != null) {
                             throw new InvalidObjectException(errors);
                         }
@@ -66,11 +93,12 @@ public class ClientImporter {
                         validClients.add(client);
                     }
 
-                } catch (InvalidObjectException exc) {
+                } catch (InvalidObjectException e) {
                     // The client that was read was invalid
+                    LOGGER.log(Level.WARNING, e.getMessage(), e);
                     invalidCount++;
-                    errorSummary.append(String.format("Record #%d was invalid because: \n%s\n",
-                            validCount + invalidCount, exc.getMessage()));
+                    errorSummary.append(String.format("Record #%d was invalid because: %n%s%n",
+                            validCount + invalidCount, e.getMessage()));
                 }
             }
         } finally {
@@ -80,29 +108,9 @@ public class ClientImporter {
     }
 
     /**
-     * Sets the given client as "owner" on all records belonging to that client, such as {@link TransplantRequest}s and
-     * {@link MedicationRecord}s. This is necessary because the relationships are referenced from both sides, but are
-     * only serialized in terms of clients "owning" records (to avoid infinite recursion in serialized form).
-     * @param client The client to set as "owner" for all their records.
-     */
-    private static void setOwnerOnRelatedRecords(Client client) {
-        for (TransplantRequest request : client.getTransplantRequests()) {
-            request.setClient(client);
-        }
-        for (IllnessRecord record : client.getIllnesses()) {
-            record.setClient(client);
-        }
-        for (ProcedureRecord record : client.getProcedures()) {
-            record.setClient(client);
-        }
-        for (MedicationRecord record : client.getMedications()) {
-            record.setClient(client);
-        }
-    }
-
-    /**
      * Returns the number of records in this file that were parsed correctly. Should only be used after calling
      * {@link #importAll()}, otherwise will simply return 0 (as no records have been read yet).
+     *
      * @return The number of valid records in the file.
      */
     public long getValidCount() {
@@ -112,6 +120,7 @@ public class ClientImporter {
     /**
      * Returns the number of records in this file that were parsed incorrectly. Should only be used after calling
      * {@link #importAll()}, otherwise will simply return 0 (as no records have been read yet).
+     *
      * @return The number of invalid records in the file.
      */
     public long getInvalidCount() {
@@ -121,6 +130,7 @@ public class ClientImporter {
     /**
      * Returns the clients from this file that were parsed correctly. Should only be used after calling
      * {@link #importAll()}, otherwise will simply return an empty list (as no records have been read yet).
+     *
      * @return The list of valid clients from the file.
      */
     public List<Client> getValidClients() {
@@ -129,6 +139,7 @@ public class ClientImporter {
 
     /**
      * Returns a summary of all the errors that were found when importing clients from the file.
+     *
      * @return A string containing a summary of all the errors found when parsing the file. May be empty if there
      * were no errors, or if {@link #importAll()} has not yet been called.
      */

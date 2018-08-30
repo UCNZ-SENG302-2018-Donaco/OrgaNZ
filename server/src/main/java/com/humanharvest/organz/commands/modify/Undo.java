@@ -3,6 +3,7 @@ package com.humanharvest.organz.commands.modify;
 import java.io.PrintStream;
 
 import com.humanharvest.organz.actions.ActionInvoker;
+
 import picocli.CommandLine.Command;
 
 @Command(name = "undo", description = "Undo a change.")
@@ -21,6 +22,7 @@ public class Undo implements Runnable {
         this.outputStream = outputStream;
     }
 
+    @Override
     public void run() {
         outputStream.println(invoker.undo());
     }

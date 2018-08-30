@@ -1,13 +1,15 @@
 package com.humanharvest.organz.actions.administrator;
 
+import java.lang.reflect.Field;
+import java.util.stream.Collectors;
+
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.state.AdministratorManager;
+import com.humanharvest.organz.utilities.type_converters.StringFormatter;
 import com.humanharvest.organz.views.administrator.ModifyAdministratorObject;
-import org.springframework.beans.BeanUtils;
 
-import java.lang.reflect.Field;
-import java.util.stream.Collectors;
+import org.springframework.beans.BeanUtils;
 
 public class ModifyAdministratorByObjectAction extends Action {
 
@@ -38,12 +40,11 @@ public class ModifyAdministratorByObjectAction extends Action {
         manager.applyChangesTo(administrator);
     }
 
-
     @Override
     public String getExecuteText() {
         String changesText = newDetails.getModifiedFields().stream()
                 .map(Field::getName)
-                .map(this::unCamelCase)
+                .map(StringFormatter::unCamelCase)
                 .collect(Collectors.joining("\n"));
 
         return String.format("Updated details for admin %s. \n"
@@ -55,7 +56,7 @@ public class ModifyAdministratorByObjectAction extends Action {
     public String getUnexecuteText() {
         String changesText = oldDetails.getModifiedFields().stream()
                 .map(Field::getName)
-                .map(this::unCamelCase)
+                .map(StringFormatter::unCamelCase)
                 .collect(Collectors.joining("\n"));
 
         return String.format("Reversed update for admin %s. \n"
@@ -63,10 +64,6 @@ public class ModifyAdministratorByObjectAction extends Action {
                 administrator.getUsername(), changesText);
     }
 
-    private String unCamelCase(String inCamelCase) {
-        String unCamelCased = inCamelCase.replaceAll("([a-z])([A-Z]+)", "$1 $2");
-        return unCamelCased.substring(0, 1).toUpperCase() + unCamelCased.substring(1);
-    }
     @Override
     public Object getModifiedObject() {
         return administrator;

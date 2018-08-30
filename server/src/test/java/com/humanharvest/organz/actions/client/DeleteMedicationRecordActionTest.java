@@ -10,6 +10,7 @@ import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.ClientManagerMemory;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -26,6 +27,7 @@ public class DeleteMedicationRecordActionTest extends BaseTest {
         manager = new ClientManagerMemory();
         baseClient = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
         record = new MedicationRecord("Generic Name", LocalDate.of(2018, 4, 9), null);
+        record.setId(1);
         baseClient.addMedicationRecord(record);
     }
 
@@ -44,6 +46,8 @@ public class DeleteMedicationRecordActionTest extends BaseTest {
     public void DeleteSingleMedicationPastTest() {
         MedicationRecord newRecord = new MedicationRecord("Generic Name", LocalDate.of(2018, 4, 9), LocalDate.of(2018,
                 4, 10));
+        newRecord.setId(2);
+
         baseClient.addMedicationRecord(newRecord);
 
         DeleteMedicationRecordAction action = new DeleteMedicationRecordAction(baseClient, newRecord, manager);
@@ -55,7 +59,6 @@ public class DeleteMedicationRecordActionTest extends BaseTest {
         assertEquals(0, baseClient.getPastMedications().size());
     }
 
-
     @Test
     public void DeleteSingleMedicationCurrentUndoTest() {
         DeleteMedicationRecordAction action = new DeleteMedicationRecordAction(baseClient, record, manager);
@@ -65,7 +68,6 @@ public class DeleteMedicationRecordActionTest extends BaseTest {
 
         assertEquals(1, baseClient.getCurrentMedications().size());
     }
-
 
     @Test
     public void DeleteSingleMedicationCurrentUndoRedoTest() {

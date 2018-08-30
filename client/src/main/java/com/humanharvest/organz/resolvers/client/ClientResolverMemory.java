@@ -1,17 +1,36 @@
 package com.humanharvest.organz.resolvers.client;
 
-import com.humanharvest.organz.*;
+import java.time.LocalDate;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import com.humanharvest.organz.Client;
+import com.humanharvest.organz.DonatedOrgan;
+import com.humanharvest.organz.HistoryItem;
+import com.humanharvest.organz.IllnessRecord;
+import com.humanharvest.organz.MedicationRecord;
+import com.humanharvest.organz.ProcedureRecord;
+import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
-import com.humanharvest.organz.views.client.*;
-import org.springframework.beans.BeanUtils;
+import com.humanharvest.organz.views.client.CreateClientView;
+import com.humanharvest.organz.views.client.CreateIllnessView;
+import com.humanharvest.organz.views.client.CreateMedicationRecordView;
+import com.humanharvest.organz.views.client.CreateProcedureView;
+import com.humanharvest.organz.views.client.CreateTransplantRequestView;
+import com.humanharvest.organz.views.client.ModifyClientObject;
+import com.humanharvest.organz.views.client.ModifyIllnessObject;
+import com.humanharvest.organz.views.client.ModifyProcedureObject;
+import com.humanharvest.organz.views.client.ResolveTransplantRequestObject;
 
-import java.time.LocalDate;
-import java.util.*;
-import java.util.Map.Entry;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.springframework.beans.BeanUtils;
 
 public class ClientResolverMemory implements ClientResolver {
 
@@ -80,7 +99,8 @@ public class ClientResolverMemory implements ClientResolver {
 
     @Override
     public List<TransplantRequest> createTransplantRequest(Client client, CreateTransplantRequestView request) {
-        TransplantRequest transplantRequest = new TransplantRequest(client, request.getRequestedOrgan());
+        TransplantRequest transplantRequest = new TransplantRequest(client, request.getRequestedOrgan(),
+                request.getRequestDate());
         client.addTransplantRequest(transplantRequest);
         State.getClientManager().applyChangesTo(client);
         return client.getTransplantRequests();

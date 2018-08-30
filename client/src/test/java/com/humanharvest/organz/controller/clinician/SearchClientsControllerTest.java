@@ -28,6 +28,7 @@ import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
+
 import org.junit.Ignore;
 import org.junit.Test;
 import org.testfx.matcher.control.TextMatchers;
@@ -54,9 +55,9 @@ public class SearchClientsControllerTest extends ControllerTest {
 
     private final Client[] testClients = {testClient1, testClient2, testClient3, testClient4};
 
-    private final TransplantRequest getRequestLiver1  = new TransplantRequest(testClient1, Organ.LIVER);
-    private final TransplantRequest getRequestKidney1  = new TransplantRequest(testClient1, Organ.KIDNEY);
-    private final TransplantRequest getRequestKidney2  = new TransplantRequest(testClient1, Organ.KIDNEY);
+    private final TransplantRequest getRequestLiver1 = new TransplantRequest(testClient1, Organ.LIVER);
+    private final TransplantRequest getRequestKidney1 = new TransplantRequest(testClient1, Organ.KIDNEY);
+    private final TransplantRequest getRequestKidney2 = new TransplantRequest(testClient1, Organ.KIDNEY);
     private final TransplantRequest getRequestKidney4 = new TransplantRequest(testClient1, Organ.KIDNEY);
 
     @Override
@@ -218,7 +219,6 @@ public class SearchClientsControllerTest extends ControllerTest {
         assertNotNull(lookup(testClient4.getFullName()).query());
     }
 
-
     @Test // There shouldn't be any of the test data in the results
     public void genderFilterOther() {
         expandFilterPane();
@@ -238,8 +238,8 @@ public class SearchClientsControllerTest extends ControllerTest {
     public void regionFilterOneRegion() {
         expandFilterPane();
         clickOn("#regionFilter");
-        clickOn( (Node) lookup(".check-box").nth(0).query());
-        verifyThat("#tableView",containsRowAtIndex(0,
+        clickOn((Node) lookup(".check-box").nth(0).query());
+        verifyThat("#tableView", containsRowAtIndex(0,
                 testClient3.getUid(),
                 testClient3,
                 testClient3.getAge(),
@@ -247,7 +247,7 @@ public class SearchClientsControllerTest extends ControllerTest {
                 testClient3.getRegion(),
                 testClient3.isDonor(),
                 testClient3.isReceiver()));
-        verifyThat("#tableView",hasNumRows(1));
+        verifyThat("#tableView", hasNumRows(1));
     }
 
     /**
@@ -257,9 +257,9 @@ public class SearchClientsControllerTest extends ControllerTest {
     public void regionFilterTwoRegions() {
         expandFilterPane();
         clickOn("#regionFilter");
-        clickOn( (Node) lookup(".check-box").nth(0).query());
-        clickOn( (Node) lookup(".check-box").nth(1).query());
-        verifyThat("#tableView",containsRowAtIndex(0,
+        clickOn((Node) lookup(".check-box").nth(0).query());
+        clickOn((Node) lookup(".check-box").nth(1).query());
+        verifyThat("#tableView", containsRowAtIndex(0,
                 testClient2.getUid(),
                 testClient2,
                 testClient2.getAge(),
@@ -267,7 +267,7 @@ public class SearchClientsControllerTest extends ControllerTest {
                 testClient2.getRegion(),
                 testClient2.isDonor(),
                 testClient2.isReceiver()));
-        verifyThat("#tableView",containsRowAtIndex(1,
+        verifyThat("#tableView", containsRowAtIndex(1,
                 testClient3.getUid(),
                 testClient3,
                 testClient3.getAge(),
@@ -275,7 +275,7 @@ public class SearchClientsControllerTest extends ControllerTest {
                 testClient3.getRegion(),
                 testClient3.isDonor(),
                 testClient3.isReceiver()));
-        verifyThat("#tableView",hasNumRows(2));
+        verifyThat("#tableView", hasNumRows(2));
     }
 
     /**
@@ -285,10 +285,10 @@ public class SearchClientsControllerTest extends ControllerTest {
     public void GenderAndRegionFilterTest() {
         expandFilterPane();
         clickOn("#regionFilter");
-        clickOn( (Node) lookup(".check-box").nth(0).query()); //Northland
+        clickOn((Node) lookup(".check-box").nth(0).query()); //Northland
         clickOn("#birthGenderFilter");
-        clickOn( (Node) lookup(".check-box").nth(1).query());
-        verifyThat("#tableView",containsRowAtIndex(0,
+        clickOn((Node) lookup(".check-box").nth(1).query());
+        verifyThat("#tableView", containsRowAtIndex(0,
                 testClient3.getUid(),
                 testClient3,
                 testClient3.getAge(),
@@ -296,7 +296,7 @@ public class SearchClientsControllerTest extends ControllerTest {
                 testClient3.getRegion(),
                 testClient3.isDonor(),
                 testClient3.isReceiver()));
-        verifyThat("#tableView",hasNumRows(1));
+        verifyThat("#tableView", hasNumRows(1));
     }
 
     /**
@@ -306,11 +306,11 @@ public class SearchClientsControllerTest extends ControllerTest {
     public void GenderAgeAndRegionFilterTest() {
         expandFilterPane();
         clickOn("#regionFilter");
-        clickOn( (Node) lookup(".check-box").nth(1).query()); //Auckland
+        clickOn((Node) lookup(".check-box").nth(1).query()); //Auckland
         clickOn("#birthGenderFilter");
-        clickOn( (Node) lookup(".check-box").nth(1).query()); //Female
+        clickOn((Node) lookup(".check-box").nth(1).query()); //Female
         doubleClickOn("#ageMaxField").type(KeyCode.BACK_SPACE).write("12").type(KeyCode.ENTER);
-        verifyThat("#tableView",containsRowAtIndex(0,
+        verifyThat("#tableView", containsRowAtIndex(0,
                 testClient2.getUid(),
                 testClient2,
                 testClient2.getAge(),
@@ -318,7 +318,7 @@ public class SearchClientsControllerTest extends ControllerTest {
                 testClient2.getRegion(),
                 testClient2.isDonor(),
                 testClient2.isReceiver()));
-        verifyThat("#tableView",hasNumRows(1));
+        verifyThat("#tableView", hasNumRows(1));
 
     }
 
@@ -329,8 +329,8 @@ public class SearchClientsControllerTest extends ControllerTest {
     public void MaleGenderFilterTest() {
         expandFilterPane();
         clickOn("#birthGenderFilter");
-        clickOn( (Node) lookup(".check-box").nth(0).query());
-        verifyThat("#tableView",containsRowAtIndex(0,
+        clickOn((Node) lookup(".check-box").nth(0).query());
+        verifyThat("#tableView", containsRowAtIndex(0,
                 testClient1.getUid(),
                 testClient1,
                 testClient1.getAge(),
@@ -338,8 +338,9 @@ public class SearchClientsControllerTest extends ControllerTest {
                 testClient1.getRegion(),
                 testClient1.isDonor(),
                 testClient1.isReceiver()));
-        verifyThat("#tableView",hasNumRows(1));
+        verifyThat("#tableView", hasNumRows(1));
     }
+
     /**
      * Tests for the filtering of a female.
      */
@@ -347,8 +348,8 @@ public class SearchClientsControllerTest extends ControllerTest {
     public void FemaleGenderFilterTest() {
         expandFilterPane();
         clickOn("#birthGenderFilter");
-        clickOn( (Node) lookup(".check-box").nth(1).query());
-        verifyThat("#tableView",containsRowAtIndex(0,
+        clickOn((Node) lookup(".check-box").nth(1).query());
+        verifyThat("#tableView", containsRowAtIndex(0,
                 testClient2.getUid(),
                 testClient2,
                 testClient2.getAge(),
@@ -356,7 +357,7 @@ public class SearchClientsControllerTest extends ControllerTest {
                 testClient2.getRegion(),
                 testClient2.isDonor(),
                 testClient2.isReceiver()));
-        verifyThat("#tableView",containsRowAtIndex(1,
+        verifyThat("#tableView", containsRowAtIndex(1,
                 testClient3.getUid(),
                 testClient3,
                 testClient3.getAge(),
@@ -364,7 +365,7 @@ public class SearchClientsControllerTest extends ControllerTest {
                 testClient3.getRegion(),
                 testClient3.isDonor(),
                 testClient3.isReceiver()));
-        verifyThat("#tableView",containsRowAtIndex(2,
+        verifyThat("#tableView", containsRowAtIndex(2,
                 testClient4.getUid(),
                 testClient4,
                 testClient4.getAge(),
@@ -372,7 +373,7 @@ public class SearchClientsControllerTest extends ControllerTest {
                 testClient4.getRegion(),
                 testClient4.isDonor(),
                 testClient4.isReceiver()));
-        verifyThat("#tableView",hasNumRows(3));
+        verifyThat("#tableView", hasNumRows(3));
     }
 
     /**
@@ -382,9 +383,9 @@ public class SearchClientsControllerTest extends ControllerTest {
     public void MaleAndFemaleGenderFilterTest() {
         expandFilterPane();
         clickOn("#birthGenderFilter");
-        clickOn( (Node) lookup(".check-box").nth(0).query());
-        clickOn( (Node) lookup(".check-box").nth(1).query());
-        verifyThat("#tableView",hasNumRows(4));
+        clickOn((Node) lookup(".check-box").nth(0).query());
+        clickOn((Node) lookup(".check-box").nth(1).query());
+        verifyThat("#tableView", hasNumRows(4));
     }
 
     /**
@@ -396,8 +397,8 @@ public class SearchClientsControllerTest extends ControllerTest {
         clickOn("#birthGenderFilter");
         testClient1.setGender(Gender.OTHER);
         testClient2.setGender(Gender.OTHER);
-        clickOn( (Node) lookup(".check-box").nth(2).query());
-        verifyThat("#tableView",hasNumRows(2));
+        clickOn((Node) lookup(".check-box").nth(2).query());
+        verifyThat("#tableView", hasNumRows(2));
     }
 
     /**
@@ -409,8 +410,8 @@ public class SearchClientsControllerTest extends ControllerTest {
         clickOn("#birthGenderFilter");
         testClient1.setGender(Gender.UNSPECIFIED);
         testClient2.setGender(Gender.UNSPECIFIED);
-        clickOn( (Node) lookup(".check-box").nth(3).query());
-        verifyThat("#tableView",hasNumRows(2));
+        clickOn((Node) lookup(".check-box").nth(3).query());
+        verifyThat("#tableView", hasNumRows(2));
     }
 
     /**
@@ -462,7 +463,7 @@ public class SearchClientsControllerTest extends ControllerTest {
     public void filterRequestOrgansAndGender() {
         expandFilterPane();
         clickOn("#birthGenderFilter");
-        clickOn( (Node) lookup(".check-box").nth(0).query());
+        clickOn((Node) lookup(".check-box").nth(0).query());
         clickOn("#organsRequestingFilter");
         clickOn("#organsRequestingFilter");
         clickOn("#organsRequestingFilter");
@@ -580,7 +581,7 @@ public class SearchClientsControllerTest extends ControllerTest {
         testClient1.addTransplantRequest(transplantRequest);
 
         TableView<Client> tableView = lookup("#tableView").query();
-        boolean isReceiver = (Boolean)tableView.getColumns().get(6).getCellObservableValue(testClient1).getValue();
+        boolean isReceiver = (Boolean) tableView.getColumns().get(6).getCellObservableValue(testClient1).getValue();
         assertTrue(isReceiver);
     }
 
@@ -589,15 +590,15 @@ public class SearchClientsControllerTest extends ControllerTest {
         testClient2.setOrganDonationStatus(Organ.PANCREAS, true);
 
         TableView<Client> tableView = lookup("#tableView").query();
-        boolean isDonor = (Boolean)tableView.getColumns().get(5).getCellObservableValue(testClient3).getValue();
+        boolean isDonor = (Boolean) tableView.getColumns().get(5).getCellObservableValue(testClient3).getValue();
         assertTrue(isDonor);
     }
 
     @Test
     public void clientNotDonorOrReceiverTest() {
         TableView<Client> tableView = lookup("#tableView").query();
-        boolean isDonor = (Boolean)tableView.getColumns().get(5).getCellObservableValue(testClient1).getValue();
-        boolean isReceiver = (Boolean)tableView.getColumns().get(6).getCellObservableValue(testClient1).getValue();
+        boolean isDonor = (Boolean) tableView.getColumns().get(5).getCellObservableValue(testClient1).getValue();
+        boolean isReceiver = (Boolean) tableView.getColumns().get(6).getCellObservableValue(testClient1).getValue();
 
         assertFalse(isDonor);
         assertTrue(isReceiver);
@@ -678,6 +679,6 @@ public class SearchClientsControllerTest extends ControllerTest {
         TableView<Client> tableView = lookup("#tableView").query();
         Client result = tableView.getItems().get(0);
 
-        assertEquals(Region.CANTERBURY, result.getRegion());
+        assertEquals(Region.CANTERBURY.toString(), result.getRegion());
     }
 }

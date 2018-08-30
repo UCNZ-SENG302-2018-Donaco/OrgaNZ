@@ -10,6 +10,7 @@ import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.ClientManagerMemory;
 import com.humanharvest.organz.utilities.enums.Gender;
+
 import org.junit.Before;
 import org.junit.Test;
 

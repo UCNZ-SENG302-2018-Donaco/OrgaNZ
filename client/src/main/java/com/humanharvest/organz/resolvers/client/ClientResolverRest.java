@@ -26,6 +26,7 @@ import com.humanharvest.organz.views.client.ModifyClientObject;
 import com.humanharvest.organz.views.client.ModifyIllnessObject;
 import com.humanharvest.organz.views.client.ModifyProcedureObject;
 import com.humanharvest.organz.views.client.ResolveTransplantRequestObject;
+
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -34,347 +35,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 public class ClientResolverRest implements ClientResolver {
-
-    //------------GETs----------------
-
-    @Override
-    public Map<Organ, Boolean> getOrganDonationStatus(Client client) {
-        HttpHeaders httpHeaders = createHeaders(false);
-        ResponseEntity<Map<Organ, Boolean>> responseEntity = sendQuery(httpHeaders,
-                State.BASE_URI + "clients/{id}/donationStatus",
-                HttpMethod.GET,
-                new ParameterizedTypeReference<Map<Organ, Boolean>>() {
-                }, client.getUid());
-
-        client.setOrganDonationStatus(responseEntity.getBody());
-        return responseEntity.getBody();
-    }
-
-    @Override
-    public List<TransplantRequest> getTransplantRequests(Client client) {
-        HttpHeaders httpHeaders = createHeaders(false);
-        ResponseEntity<List<TransplantRequest>> responseEntity = sendQuery(httpHeaders,
-                State.BASE_URI + "clients/{id}/transplantRequests",
-                HttpMethod.GET,
-                new ParameterizedTypeReference<List<TransplantRequest>>() {
-                }, client.getUid());
-
-        client.setTransplantRequests(responseEntity.getBody());
-        return responseEntity.getBody();
-    }
-
-    @Override
-    public List<MedicationRecord> getMedicationRecords(Client client) {
-        HttpHeaders httpHeaders = createHeaders(false);
-        ResponseEntity<List<MedicationRecord>> responseEntity = sendQuery(httpHeaders,
-                State.BASE_URI + "clients/{id}/medications",
-                HttpMethod.GET,
-                new ParameterizedTypeReference<List<MedicationRecord>>() {
-                }, client.getUid());
-
-        client.setMedicationHistory(responseEntity.getBody());
-        return responseEntity.getBody();
-    }
-
-    @Override
-    public List<ProcedureRecord> getProcedureRecords(Client client) {
-        HttpHeaders httpHeaders = createHeaders(false);
-        httpHeaders.setETag(State.getClientEtag());
-
-        ResponseEntity<List<ProcedureRecord>> responseEntity = sendQuery(httpHeaders,
-                State.BASE_URI + "clients/{id}/procedures",
-                HttpMethod.GET,
-                new ParameterizedTypeReference<List<ProcedureRecord>>() {
-                }, client.getUid());
-        return responseEntity.getBody();
-    }
-
-    @Override
-    public List<IllnessRecord> getIllnessRecords(Client client) {
-        HttpHeaders httpHeaders = createHeaders(false);
-        httpHeaders.setETag(State.getClientEtag());
-
-        ResponseEntity<List<IllnessRecord>> responseEntity = sendQuery(httpHeaders,
-                State.BASE_URI + "clients/{id}/illnesses",
-                HttpMethod.GET,
-                new ParameterizedTypeReference<List<IllnessRecord>>() {
-                }, client.getUid());
-        return responseEntity.getBody();
-    }
-
-    @Override
-    public Collection<DonatedOrgan> getDonatedOrgans(Client client) {
-        HttpHeaders httpHeaders = createHeaders(false);
-        httpHeaders.setETag(State.getClientEtag());
-
-        ResponseEntity<Collection<DonatedOrganView>> responseEntity = sendQuery(httpHeaders,
-                State.BASE_URI + "clients/{id}/donatedOrgans", HttpMethod.GET,
-                new ParameterizedTypeReference<Collection<DonatedOrganView>>() {}, client.getUid());
-
-        return responseEntity.getBody().stream().map(DonatedOrganView::getDonatedOrgan).collect(Collectors.toList());
-    }
-
-    @Override
-    public List<HistoryItem> getHistory(Client client) {
-        HttpHeaders httpHeaders = createHeaders(false);
-        httpHeaders.setETag(State.getClientEtag());
-
-        ResponseEntity<List<HistoryItem>> responseEntity = sendQuery(httpHeaders,
-                State.BASE_URI + "clients/{id}/history",
-                HttpMethod.GET,
-                new ParameterizedTypeReference<List<HistoryItem>>() {
-                }, client.getUid());
-        return responseEntity.getBody();
-    }
-
-    //------------POSTs----------------
-
-    @Override
-    public Client createClient(CreateClientView createClientView) {
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
-        httpHeaders.set("X-Auth-Token", State.getToken());
-        HttpEntity entity = new HttpEntity<>(createClientView, httpHeaders);
-
-        ResponseEntity<Client> responseEntity = State.getRestTemplate()
-                .postForEntity(State.BASE_URI + "clients", entity, Client.class);
-
-        State.setClientEtag(responseEntity.getHeaders().getETag());
-        return responseEntity.getBody();
-    }
-
-    @Override
-    public List<TransplantRequest> createTransplantRequest(Client client, CreateTransplantRequestView request) {
-        HttpHeaders httpHeaders = createHeaders(true);
-        ResponseEntity<List<TransplantRequest>> responseEntity = sendQuery(httpHeaders,
-                State.BASE_URI + "clients/{id}/transplantRequests",
-                HttpMethod.POST,
-                request,
-                new ParameterizedTypeReference<List<TransplantRequest>>() {
-                }, client.getUid());
-        return responseEntity.getBody();
-    }
-
-    @Override
-    public List<IllnessRecord> addIllnessRecord(Client client, CreateIllnessView createIllnessView) {
-        HttpHeaders httpHeaders = createHeaders(true);
-        ResponseEntity<List<IllnessRecord>> responseEntity = sendQuery(httpHeaders,
-                State.BASE_URI + "clients/{id}/illnesses",
-                HttpMethod.POST,
-                createIllnessView,
-                new ParameterizedTypeReference<List<IllnessRecord>>() {
-                }, client.getUid());
-
-        client.setIllnessHistory(responseEntity.getBody());
-        return responseEntity.getBody();
-    }
-
-    @Override
-    public List<MedicationRecord> addMedicationRecord(Client client, CreateMedicationRecordView medicationRecordView) {
-        HttpHeaders httpHeaders = createHeaders(true);
-        ResponseEntity<List<MedicationRecord>> responseEntity = sendQuery(httpHeaders,
-                State.BASE_URI + "clients/{id}/medications",
-                HttpMethod.POST,
-                medicationRecordView,
-                new ParameterizedTypeReference<List<MedicationRecord>>() {
-                }, client.getUid());
-
-        client.setMedicationHistory(responseEntity.getBody());
-        return responseEntity.getBody();
-    }
-
-    @Override
-    public List<ProcedureRecord> addProcedureRecord(Client client, CreateProcedureView procedureView) {
-        HttpHeaders httpHeaders = createHeaders(true);
-        ResponseEntity<List<ProcedureRecord>> responseEntity = sendQuery(httpHeaders,
-                State.BASE_URI + "clients/{id}/procedures",
-                HttpMethod.POST,
-                procedureView,
-                new ParameterizedTypeReference<List<ProcedureRecord>>() {
-                }, client.getUid());
-
-        return responseEntity.getBody();
-    }
-
-    @Override
-    public DonatedOrgan manuallyOverrideOrgan(DonatedOrgan donatedOrgan, String overrideReason) {
-        HttpHeaders httpHeaders = createHeaders(true);
-        ResponseEntity<DonatedOrgan> responseEntity = sendQuery(httpHeaders,
-                State.BASE_URI + "clients/{uid}/donatedOrgans/{id}/override",
-                HttpMethod.POST,
-                new SingleStringView(overrideReason),
-                DonatedOrgan.class,
-                donatedOrgan.getDonor().getUid(),
-                donatedOrgan.getId());
-        return responseEntity.getBody();
-    }
-
-    //------------PATCHs----------------
-
-    @Override
-    public Map<Organ, Boolean> modifyOrganDonation(Client client, Map<Organ, Boolean> changes) {
-
-        ParameterizedTypeReference<Map<Organ, Boolean>> mapRef =
-                new ParameterizedTypeReference<Map<Organ, Boolean>>() {
-                };
-
-        HttpHeaders httpHeaders = createHeaders(true);
-        ResponseEntity<Map<Organ, Boolean>> responseEntity = sendQuery(httpHeaders,
-                State.BASE_URI + "clients/{uid}/donationStatus",
-                HttpMethod.PATCH,
-                changes,
-                mapRef,
-                client.getUid());
-
-        return responseEntity.getBody();
-    }
-
-    @Override
-    public TransplantRequest resolveTransplantRequest(Client client, TransplantRequest request,
-            ResolveTransplantRequestObject resolveTransplantRequestObject) {
-        HttpHeaders httpHeaders = createHeaders(true);
-        long id = request.getId();
-        ResponseEntity<TransplantRequest> responseEntity = sendQuery(httpHeaders,
-                State.BASE_URI + "clients/{id}/transplantRequests/{requestIndex}",
-                HttpMethod.PATCH,
-                resolveTransplantRequestObject,
-                TransplantRequest.class,
-                client.getUid(),
-                id);
-
-        return responseEntity.getBody();
-    }
-
-    @Override
-    public Client modifyClientDetails(Client client, ModifyClientObject modifyClientObject) {
-        HttpHeaders httpHeaders = createHeaders(true);
-        ResponseEntity<Client> responseEntity = sendQuery(httpHeaders,
-                State.BASE_URI + "clients/{id}",
-                HttpMethod.PATCH,
-                modifyClientObject,
-                Client.class,
-                client.getUid());
-
-        return responseEntity.getBody();
-    }
-
-    @Override
-    public MedicationRecord modifyMedicationRecord(Client client, MedicationRecord record, LocalDate stopDate) {
-
-        String modification;
-        if (stopDate == null) {
-            modification = "start";
-        } else {
-            modification = "stop";
-        }
-
-        HttpHeaders httpHeaders = createHeaders(true);
-        ResponseEntity<MedicationRecord> responseEntity = sendQuery(httpHeaders,
-                State.BASE_URI + "clients/{id}/medications/{medicationId}/" + modification,
-                HttpMethod.POST,
-                MedicationRecord.class,
-                client.getUid(),
-                record.getId());
-
-        return responseEntity.getBody();
-    }
-
-    @Override
-    public IllnessRecord modifyIllnessRecord(Client client, IllnessRecord toModify,
-            ModifyIllnessObject modifyIllnessObject) {
-        HttpHeaders httpHeaders = createHeaders(true);
-        ResponseEntity<IllnessRecord> responseEntity = sendQuery(httpHeaders,
-                State.BASE_URI + "clients/{id}/illnesses/{illnessId}",
-                HttpMethod.PATCH,
-                modifyIllnessObject,
-                IllnessRecord.class,
-                client.getUid(),
-                toModify.getId());
-
-        return responseEntity.getBody();
-    }
-
-    @Override
-    public ProcedureRecord modifyProcedureRecord(Client client, ProcedureRecord toModify, ModifyProcedureObject
-            modifyProcedureObject) {
-        HttpHeaders httpHeaders = createHeaders(true);
-        ResponseEntity<ProcedureRecord> responseEntity = sendQuery(httpHeaders,
-                State.BASE_URI + "clients/{id}/procedures/{procedureId}",
-                HttpMethod.PATCH,
-                modifyProcedureObject,
-                ProcedureRecord.class,
-                client.getUid(),
-                toModify.getId());
-
-        return responseEntity.getBody();
-    }
-
-    @Override
-    public DonatedOrgan editManualOverrideForOrgan(DonatedOrgan donatedOrgan, String newOverrideReason) {
-        HttpHeaders httpHeaders = createHeaders(true);
-        ResponseEntity<DonatedOrgan> responseEntity = sendQuery(httpHeaders,
-                State.BASE_URI + "clients/{uid}/donatedOrgans/{id}/override",
-                HttpMethod.PATCH,
-                new SingleStringView(newOverrideReason),
-                DonatedOrgan.class,
-                donatedOrgan.getDonor().getUid(),
-                donatedOrgan.getId());
-        return responseEntity.getBody();
-    }
-
-    //------------DELETEs----------------
-
-    @Override
-    public void deleteIllnessRecord(Client client, IllnessRecord record) {
-
-        HttpHeaders httpHeaders = createHeaders(true);
-        sendQuery(httpHeaders,
-                State.BASE_URI + "clients/{id}/illnesses/{illnessId}",
-                HttpMethod.DELETE,
-                IllnessRecord.class,
-                client.getUid(),
-                record.getId());
-
-        client.deleteIllnessRecord(record);
-    }
-
-    @Override
-    public void deleteProcedureRecord(Client client, ProcedureRecord record) {
-        HttpHeaders httpHeaders = createHeaders(true);
-        sendQuery(httpHeaders,
-                State.BASE_URI + "clients/{id}/procedures/{procedureId}",
-                HttpMethod.DELETE,
-                ProcedureRecord.class,
-                client.getUid(),
-                record.getId());
-
-        client.deleteProcedureRecord(record);
-    }
-
-    @Override
-    public void deleteMedicationRecord(Client client, MedicationRecord record) {
-        HttpHeaders httpHeaders = createHeaders(true);
-        sendQuery(httpHeaders,
-                State.BASE_URI + "clients/{id}/medications/{procedureId}",
-                HttpMethod.DELETE,
-                MedicationRecord.class,
-                client.getUid(),
-                record.getId());
-
-        client.deleteMedicationRecord(record);
-    }
-
-    @Override
-    public DonatedOrgan cancelManualOverrideForOrgan(DonatedOrgan donatedOrgan) {
-        HttpHeaders httpHeaders = createHeaders(true);
-        ResponseEntity<DonatedOrgan> responseEntity = sendQuery(httpHeaders,
-                State.BASE_URI + "clients/{uid}/donatedOrgans/{id}/override",
-                HttpMethod.DELETE,
-                DonatedOrgan.class,
-                donatedOrgan.getDonor().getUid(),
-                donatedOrgan.getId());
-        return responseEntity.getBody();
-    }
 
     //------------Templates----------------
 
@@ -389,7 +49,8 @@ public class ClientResolverRest implements ClientResolver {
     }
 
     private static <T> ResponseEntity<T> sendQuery(HttpHeaders httpHeaders, String url, HttpMethod method,
-            ParameterizedTypeReference<T> typeReference, Object... uriVariables) {
+            ParameterizedTypeReference<T> typeReference,
+            Object... uriVariables) {
 
         HttpEntity<?> entity = new HttpEntity<>(null, httpHeaders);
 
@@ -417,7 +78,8 @@ public class ClientResolverRest implements ClientResolver {
     }
 
     private static <T, Y> ResponseEntity<T> sendQuery(HttpHeaders httpHeaders, String url, HttpMethod method,
-            Y value, ParameterizedTypeReference<T> typeReference, Object... uriVariables) {
+            Y value, ParameterizedTypeReference<T> typeReference,
+            Object... uriVariables) {
 
         HttpEntity<Y> entity = new HttpEntity<>(value, httpHeaders);
 
@@ -442,5 +104,347 @@ public class ClientResolverRest implements ClientResolver {
             State.setClientEtag(responseEntity.getHeaders().getETag());
         }
         return responseEntity;
+    }
+
+    //------------GETs----------------
+
+    @Override
+    public Map<Organ, Boolean> getOrganDonationStatus(Client client) {
+        HttpHeaders httpHeaders = createHeaders(false);
+        ResponseEntity<Map<Organ, Boolean>> responseEntity = sendQuery(httpHeaders,
+                State.getBaseUri() + "clients/{id}/donationStatus",
+                HttpMethod.GET,
+                new ParameterizedTypeReference<Map<Organ, Boolean>>() {
+                }, client.getUid());
+
+        client.setOrganDonationStatus(responseEntity.getBody());
+        return responseEntity.getBody();
+    }
+
+    @Override
+    public List<TransplantRequest> getTransplantRequests(Client client) {
+        HttpHeaders httpHeaders = createHeaders(false);
+        ResponseEntity<List<TransplantRequest>> responseEntity = sendQuery(httpHeaders,
+                State.getBaseUri() + "clients/{id}/transplantRequests",
+                HttpMethod.GET,
+                new ParameterizedTypeReference<List<TransplantRequest>>() {
+                }, client.getUid());
+
+        client.setTransplantRequests(responseEntity.getBody());
+        return responseEntity.getBody();
+    }
+
+    @Override
+    public List<MedicationRecord> getMedicationRecords(Client client) {
+        HttpHeaders httpHeaders = createHeaders(false);
+        ResponseEntity<List<MedicationRecord>> responseEntity = sendQuery(httpHeaders,
+                State.getBaseUri() + "clients/{id}/medications",
+                HttpMethod.GET,
+                new ParameterizedTypeReference<List<MedicationRecord>>() {
+                }, client.getUid());
+
+        client.setMedicationHistory(responseEntity.getBody());
+        return responseEntity.getBody();
+    }
+
+    @Override
+    public List<ProcedureRecord> getProcedureRecords(Client client) {
+        HttpHeaders httpHeaders = createHeaders(false);
+        httpHeaders.setETag(State.getClientEtag());
+
+        ResponseEntity<List<ProcedureRecord>> responseEntity = sendQuery(httpHeaders,
+                State.getBaseUri() + "clients/{id}/procedures",
+                HttpMethod.GET,
+                new ParameterizedTypeReference<List<ProcedureRecord>>() {
+                }, client.getUid());
+        return responseEntity.getBody();
+    }
+
+    @Override
+    public List<IllnessRecord> getIllnessRecords(Client client) {
+        HttpHeaders httpHeaders = createHeaders(false);
+        httpHeaders.setETag(State.getClientEtag());
+
+        ResponseEntity<List<IllnessRecord>> responseEntity = sendQuery(httpHeaders,
+                State.getBaseUri() + "clients/{id}/illnesses",
+                HttpMethod.GET,
+                new ParameterizedTypeReference<List<IllnessRecord>>() {
+                }, client.getUid());
+        return responseEntity.getBody();
+    }
+
+    @Override
+    public Collection<DonatedOrgan> getDonatedOrgans(Client client) {
+        HttpHeaders httpHeaders = createHeaders(false);
+        httpHeaders.setETag(State.getClientEtag());
+
+        ResponseEntity<Collection<DonatedOrganView>> responseEntity = sendQuery(httpHeaders,
+                State.getBaseUri() + "clients/{id}/donatedOrgans", HttpMethod.GET,
+                new ParameterizedTypeReference<Collection<DonatedOrganView>>() {
+                }, client.getUid());
+
+        return responseEntity.getBody().stream().map(DonatedOrganView::getDonatedOrgan).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<HistoryItem> getHistory(Client client) {
+        HttpHeaders httpHeaders = createHeaders(false);
+        httpHeaders.setETag(State.getClientEtag());
+
+        ResponseEntity<List<HistoryItem>> responseEntity = sendQuery(httpHeaders,
+                State.getBaseUri() + "clients/{id}/history",
+                HttpMethod.GET,
+                new ParameterizedTypeReference<List<HistoryItem>>() {
+                }, client.getUid());
+        return responseEntity.getBody();
+    }
+
+    //------------POSTs----------------
+
+    @Override
+    public Client createClient(CreateClientView createClientView) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
+        httpHeaders.set("X-Auth-Token", State.getToken());
+        HttpEntity entity = new HttpEntity<>(createClientView, httpHeaders);
+
+        ResponseEntity<Client> responseEntity = State.getRestTemplate()
+                .postForEntity(State.getBaseUri() + "clients", entity, Client.class);
+
+        State.setClientEtag(responseEntity.getHeaders().getETag());
+        return responseEntity.getBody();
+    }
+
+    @Override
+    public List<TransplantRequest> createTransplantRequest(Client client, CreateTransplantRequestView request) {
+        HttpHeaders httpHeaders = createHeaders(true);
+        ResponseEntity<List<TransplantRequest>> responseEntity = sendQuery(httpHeaders,
+                State.getBaseUri() + "clients/{id}/transplantRequests",
+                HttpMethod.POST,
+                request,
+                new ParameterizedTypeReference<List<TransplantRequest>>() {
+                }, client.getUid());
+        return responseEntity.getBody();
+    }
+
+    @Override
+    public List<IllnessRecord> addIllnessRecord(Client client, CreateIllnessView createIllnessView) {
+        HttpHeaders httpHeaders = createHeaders(true);
+        ResponseEntity<List<IllnessRecord>> responseEntity = sendQuery(httpHeaders,
+                State.getBaseUri() + "clients/{id}/illnesses",
+                HttpMethod.POST,
+                createIllnessView,
+                new ParameterizedTypeReference<List<IllnessRecord>>() {
+                }, client.getUid());
+
+        client.setIllnessHistory(responseEntity.getBody());
+        return responseEntity.getBody();
+    }
+
+    @Override
+    public List<MedicationRecord> addMedicationRecord(Client client, CreateMedicationRecordView medicationRecordView) {
+        HttpHeaders httpHeaders = createHeaders(true);
+        ResponseEntity<List<MedicationRecord>> responseEntity = sendQuery(httpHeaders,
+                State.getBaseUri() + "clients/{id}/medications",
+                HttpMethod.POST,
+                medicationRecordView,
+                new ParameterizedTypeReference<List<MedicationRecord>>() {
+                }, client.getUid());
+
+        client.setMedicationHistory(responseEntity.getBody());
+        return responseEntity.getBody();
+    }
+
+    @Override
+    public List<ProcedureRecord> addProcedureRecord(Client client, CreateProcedureView procedureView) {
+        HttpHeaders httpHeaders = createHeaders(true);
+        ResponseEntity<List<ProcedureRecord>> responseEntity = sendQuery(httpHeaders,
+                State.getBaseUri() + "clients/{id}/procedures",
+                HttpMethod.POST,
+                procedureView,
+                new ParameterizedTypeReference<List<ProcedureRecord>>() {
+                }, client.getUid());
+
+        return responseEntity.getBody();
+    }
+
+    @Override
+    public DonatedOrgan manuallyOverrideOrgan(DonatedOrgan donatedOrgan, String overrideReason) {
+        HttpHeaders httpHeaders = createHeaders(true);
+        ResponseEntity<DonatedOrgan> responseEntity = sendQuery(httpHeaders,
+                State.getBaseUri() + "clients/{uid}/donatedOrgans/{id}/override",
+                HttpMethod.POST,
+                new SingleStringView(overrideReason),
+                DonatedOrgan.class,
+                donatedOrgan.getDonor().getUid(),
+                donatedOrgan.getId());
+        return responseEntity.getBody();
+    }
+
+    //------------PATCHs----------------
+
+    @Override
+    public Map<Organ, Boolean> modifyOrganDonation(Client client, Map<Organ, Boolean> changes) {
+
+        ParameterizedTypeReference<Map<Organ, Boolean>> mapRef =
+                new ParameterizedTypeReference<Map<Organ, Boolean>>() {
+                };
+
+        HttpHeaders httpHeaders = createHeaders(true);
+        ResponseEntity<Map<Organ, Boolean>> responseEntity = sendQuery(httpHeaders,
+                State.getBaseUri() + "clients/{uid}/donationStatus",
+                HttpMethod.PATCH,
+                changes,
+                mapRef,
+                client.getUid());
+
+        return responseEntity.getBody();
+    }
+
+    @Override
+    public TransplantRequest resolveTransplantRequest(Client client, TransplantRequest request,
+            ResolveTransplantRequestObject resolveTransplantRequestObject) {
+        HttpHeaders httpHeaders = createHeaders(true);
+        long id = request.getId();
+        ResponseEntity<TransplantRequest> responseEntity = sendQuery(httpHeaders,
+                State.getBaseUri() + "clients/{id}/transplantRequests/{requestIndex}",
+                HttpMethod.PATCH,
+                resolveTransplantRequestObject,
+                TransplantRequest.class,
+                client.getUid(),
+                id);
+
+        return responseEntity.getBody();
+    }
+
+    @Override
+    public Client modifyClientDetails(Client client, ModifyClientObject modifyClientObject) {
+        HttpHeaders httpHeaders = createHeaders(true);
+        ResponseEntity<Client> responseEntity = sendQuery(httpHeaders,
+                State.getBaseUri() + "clients/{id}",
+                HttpMethod.PATCH,
+                modifyClientObject,
+                Client.class,
+                client.getUid());
+
+        return responseEntity.getBody();
+    }
+
+    @Override
+    public MedicationRecord modifyMedicationRecord(Client client, MedicationRecord record, LocalDate stopDate) {
+
+        String modification;
+        if (stopDate == null) {
+            modification = "start";
+        } else {
+            modification = "stop";
+        }
+
+        HttpHeaders httpHeaders = createHeaders(true);
+        ResponseEntity<MedicationRecord> responseEntity = sendQuery(httpHeaders,
+                State.getBaseUri() + "clients/{id}/medications/{medicationId}/" + modification,
+                HttpMethod.POST,
+                MedicationRecord.class,
+                client.getUid(),
+                record.getId());
+
+        return responseEntity.getBody();
+    }
+
+    @Override
+    public IllnessRecord modifyIllnessRecord(Client client, IllnessRecord toModify,
+            ModifyIllnessObject modifyIllnessObject) {
+        HttpHeaders httpHeaders = createHeaders(true);
+        ResponseEntity<IllnessRecord> responseEntity = sendQuery(httpHeaders,
+                State.getBaseUri() + "clients/{id}/illnesses/{illnessId}",
+                HttpMethod.PATCH,
+                modifyIllnessObject,
+                IllnessRecord.class,
+                client.getUid(),
+                toModify.getId());
+
+        return responseEntity.getBody();
+    }
+
+    @Override
+    public ProcedureRecord modifyProcedureRecord(Client client, ProcedureRecord toModify, ModifyProcedureObject
+            modifyProcedureObject) {
+        HttpHeaders httpHeaders = createHeaders(true);
+        ResponseEntity<ProcedureRecord> responseEntity = sendQuery(httpHeaders,
+                State.getBaseUri() + "clients/{id}/procedures/{procedureId}",
+                HttpMethod.PATCH,
+                modifyProcedureObject,
+                ProcedureRecord.class,
+                client.getUid(),
+                toModify.getId());
+
+        return responseEntity.getBody();
+    }
+
+    @Override
+    public DonatedOrgan editManualOverrideForOrgan(DonatedOrgan donatedOrgan, String newOverrideReason) {
+        HttpHeaders httpHeaders = createHeaders(true);
+        ResponseEntity<DonatedOrgan> responseEntity = sendQuery(httpHeaders,
+                State.getBaseUri() + "clients/{uid}/donatedOrgans/{id}/override",
+                HttpMethod.PATCH,
+                new SingleStringView(newOverrideReason),
+                DonatedOrgan.class,
+                donatedOrgan.getDonor().getUid(),
+                donatedOrgan.getId());
+        return responseEntity.getBody();
+    }
+
+    //------------DELETEs----------------
+
+    @Override
+    public void deleteIllnessRecord(Client client, IllnessRecord record) {
+
+        HttpHeaders httpHeaders = createHeaders(true);
+        sendQuery(httpHeaders,
+                State.getBaseUri() + "clients/{id}/illnesses/{illnessId}",
+                HttpMethod.DELETE,
+                IllnessRecord.class,
+                client.getUid(),
+                record.getId());
+
+        client.deleteIllnessRecord(record);
+    }
+
+    @Override
+    public void deleteProcedureRecord(Client client, ProcedureRecord record) {
+        HttpHeaders httpHeaders = createHeaders(true);
+        sendQuery(httpHeaders,
+                State.getBaseUri() + "clients/{id}/procedures/{procedureId}",
+                HttpMethod.DELETE,
+                ProcedureRecord.class,
+                client.getUid(),
+                record.getId());
+
+        client.deleteProcedureRecord(record);
+    }
+
+    @Override
+    public void deleteMedicationRecord(Client client, MedicationRecord record) {
+        HttpHeaders httpHeaders = createHeaders(true);
+        sendQuery(httpHeaders,
+                State.getBaseUri() + "clients/{id}/medications/{procedureId}",
+                HttpMethod.DELETE,
+                MedicationRecord.class,
+                client.getUid(),
+                record.getId());
+
+        client.deleteMedicationRecord(record);
+    }
+
+    @Override
+    public DonatedOrgan cancelManualOverrideForOrgan(DonatedOrgan donatedOrgan) {
+        HttpHeaders httpHeaders = createHeaders(true);
+        ResponseEntity<DonatedOrgan> responseEntity = sendQuery(httpHeaders,
+                State.getBaseUri() + "clients/{uid}/donatedOrgans/{id}/override",
+                HttpMethod.DELETE,
+                DonatedOrgan.class,
+                donatedOrgan.getDonor().getUid(),
+                donatedOrgan.getId());
+        return responseEntity.getBody();
     }
 }

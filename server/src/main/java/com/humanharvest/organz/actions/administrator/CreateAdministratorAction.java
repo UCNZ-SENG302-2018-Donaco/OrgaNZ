@@ -12,6 +12,7 @@ public class CreateAdministratorAction extends AdministratorAction {
 
     /**
      * Create a new Action
+     *
      * @param administrator The administrator to be created
      * @param manager The AdministratorManager to apply changes to
      */

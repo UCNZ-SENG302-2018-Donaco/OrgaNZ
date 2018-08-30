@@ -14,78 +14,101 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-
-<VBox prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.clinician.ViewClinicianController">
-  <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
-  <HBox fx:id="menuBarPane" maxHeight="20.0" minHeight="-Infinity" />
+<VBox xmlns:fx="http://javafx.com/fxml/1" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.121"
+  fx:controller="com.humanharvest.organz.controller.clinician.ViewClinicianController">
+  <SplitPane VBox.vgrow="ALWAYS" dividerPositions="0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="200.0">
+    <HBox maxHeight="20.0" minHeight="-Infinity" fx:id="menuBarPane"/>
     <SplitPane VBox.vgrow="ALWAYS">
       <VBox prefHeight="600.0" prefWidth="800.0">
         <BorderPane VBox.vgrow="ALWAYS">
           <center>
-            <VBox prefHeight="403.0" prefWidth="798.0" BorderPane.alignment="CENTER">
+            <VBox BorderPane.alignment="CENTER" prefHeight="403.0" prefWidth="798.0">
               <BorderPane.margin>
-                <Insets bottom="40.0" left="100.0" right="100.0" />
+                <Insets bottom="40.0" left="100.0" right="100.0"/>
               </BorderPane.margin>
-              <GridPane fx:id="inputsPane" hgap="30.0" prefHeight="302.0" prefWidth="758.0" VBox.vgrow="ALWAYS">
+              <GridPane VBox.vgrow="ALWAYS" hgap="30.0" prefHeight="302.0" prefWidth="758.0"
+                fx:id="inputsPane">
                 <columnConstraints>
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="126.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="99.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="149.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308"
+                    minWidth="10.0" prefWidth="100.0"/>
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308"
+                    minWidth="10.0" prefWidth="126.0"/>
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308"
+                    minWidth="10.0" prefWidth="99.0"/>
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308"
+                    minWidth="10.0" prefWidth="149.0"/>
                 </columnConstraints>
                 <rowConstraints>
-                  <RowConstraints minHeight="-Infinity" prefHeight="45.0" />
-                  <RowConstraints minHeight="-Infinity" prefHeight="45.0" />
-                  <RowConstraints minHeight="-Infinity" prefHeight="45.0" />
-                  <RowConstraints minHeight="-Infinity" prefHeight="45.0" />
-                           <RowConstraints minHeight="-Infinity" prefHeight="45.0" />
-                           <RowConstraints minHeight="-Infinity" prefHeight="45.0" />
+                  <RowConstraints minHeight="-Infinity" prefHeight="45.0"/>
+                  <RowConstraints minHeight="-Infinity" prefHeight="45.0"/>
+                  <RowConstraints minHeight="-Infinity" prefHeight="45.0"/>
+                  <RowConstraints minHeight="-Infinity" prefHeight="45.0"/>
+                  <RowConstraints minHeight="-Infinity" prefHeight="45.0"/>
+                  <RowConstraints minHeight="-Infinity" prefHeight="45.0"/>
                 </rowConstraints>
                 <children>
-                  <TextField fx:id="fname" layoutX="122.0" layoutY="80.0" prefHeight="30.0" GridPane.columnIndex="1" />
-                  <TextField fx:id="mname" layoutX="122.0" layoutY="191.0" prefHeight="30.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <TextField fx:id="lname" layoutX="122.0" layoutY="136.0" prefHeight="30.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                  <TextField fx:id="workAddress" prefHeight="30.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                  <ChoiceBox fx:id="regionCB" maxWidth="1.7976931348623157E308" prefHeight="30.0" GridPane.columnIndex="3" GridPane.rowIndex="2" />
-                  <Label layoutX="41.0" text="Profile created on:" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-                  <Label fx:id="fnameLabel" layoutY="85.0" text="First name:" />
-                  <Label fx:id="mnameLabel" layoutY="196.0" text="Middle name:" GridPane.rowIndex="1" />
-                  <Label fx:id="lnameLabel" layoutY="141.0" text="Last name:" GridPane.rowIndex="2" />
-                  <Label fx:id="workAddressLabel" layoutX="1.0" layoutY="250.0" text="Work address:" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                  <Label layoutX="446.0" text="Last modified:" GridPane.columnIndex="2" GridPane.rowIndex="5" />
-                  <Label fx:id="regionLabel" layoutX="423.0" layoutY="196.0" text="Region:" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                  <Label fx:id="passwordLabel" layoutX="419.0" layoutY="250.0" text="Password:" GridPane.columnIndex="2" />
-                  <Label fx:id="creationDate" layoutX="146.0" text="DATE" wrapText="true" GridPane.columnIndex="3" GridPane.rowIndex="4">
-                              <font>
-                                 <Font name="System Italic" size="13.0" />
-                              </font></Label>
-                  <Label fx:id="lastModified" layoutX="539.0" text="DATE" wrapText="true" GridPane.columnIndex="3" GridPane.rowIndex="5">
-                              <font>
-                                 <Font name="System Italic" size="13.0" />
-                              </font></Label>
-                  <PasswordField fx:id="password" prefHeight="30.0" GridPane.columnIndex="3" />
-                  <Label text="Country" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-                  <ChoiceBox fx:id="country" onAction="#checkCountry" prefWidth="150.0" GridPane.columnIndex="3" GridPane.rowIndex="3" />
-                  <TextField fx:id="regionTF" GridPane.columnIndex="3" GridPane.rowIndex="2" />
-                           <Label text="Staff ID" GridPane.rowIndex="3" />
-                           <Label fx:id="staffIdLabel" text="STAFF ID" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                  <TextField GridPane.columnIndex="1" layoutX="122.0" layoutY="80.0" prefHeight="30.0"
+                    fx:id="fname"/>
+                  <TextField GridPane.columnIndex="1" GridPane.rowIndex="1" layoutX="122.0" layoutY="191.0"
+                    prefHeight="30.0" fx:id="mname"/>
+                  <TextField GridPane.columnIndex="1" GridPane.rowIndex="2" layoutX="122.0" layoutY="136.0"
+                    prefHeight="30.0" fx:id="lname"/>
+                  <TextField GridPane.columnIndex="3" GridPane.rowIndex="1" prefHeight="30.0"
+                    fx:id="workAddress"/>
+                  <ChoiceBox GridPane.columnIndex="3" GridPane.rowIndex="2" maxWidth="1.7976931348623157E308"
+                    prefHeight="30.0" fx:id="regionCB"/>
+                  <Label GridPane.columnIndex="2" GridPane.rowIndex="4" layoutX="41.0"
+                    text="Profile created on:"/>
+                  <Label layoutY="85.0" text="First name:" fx:id="fnameLabel"/>
+                  <Label GridPane.rowIndex="1" layoutY="196.0" text="Middle name:"
+                    fx:id="mnameLabel"/>
+                  <Label GridPane.rowIndex="2" layoutY="141.0" text="Last name:" fx:id="lnameLabel"/>
+                  <Label GridPane.columnIndex="2" GridPane.rowIndex="1" layoutX="1.0" layoutY="250.0"
+                    text="Work address:" fx:id="workAddressLabel"/>
+                  <Label GridPane.columnIndex="2" GridPane.rowIndex="5" layoutX="446.0"
+                    text="Last modified:"/>
+                  <Label GridPane.columnIndex="2" GridPane.rowIndex="2" layoutX="423.0" layoutY="196.0"
+                    text="Region:" fx:id="regionLabel"/>
+                  <Label GridPane.columnIndex="2" layoutX="419.0" layoutY="250.0" text="Password:"
+                    fx:id="passwordLabel"/>
+                  <Label GridPane.columnIndex="3" GridPane.rowIndex="4" layoutX="146.0" text="DATE"
+                    wrapText="true" fx:id="creationDate">
+                    <font>
+                      <Font name="System Italic" size="13.0"/>
+                    </font>
+                  </Label>
+                  <Label GridPane.columnIndex="3" GridPane.rowIndex="5" layoutX="539.0" text="DATE"
+                    wrapText="true" fx:id="lastModified">
+                    <font>
+                      <Font name="System Italic" size="13.0"/>
+                    </font>
+                  </Label>
+                  <PasswordField GridPane.columnIndex="3" prefHeight="30.0" fx:id="password"/>
+                  <Label GridPane.columnIndex="2" GridPane.rowIndex="3" text="Country"/>
+                  <ChoiceBox GridPane.columnIndex="3" GridPane.rowIndex="3" onAction="#checkCountry"
+                    prefWidth="150.0"
+                    fx:id="country"/>
+                  <TextField GridPane.columnIndex="3" GridPane.rowIndex="2" fx:id="regionTF"/>
+                  <Label GridPane.rowIndex="3" text="Staff ID"/>
+                  <Label GridPane.columnIndex="1" GridPane.rowIndex="3" text="STAFF ID"
+                    fx:id="staffIdLabel"/>
                 </children>
                 <VBox.margin>
-                  <Insets />
+                  <Insets/>
                 </VBox.margin>
-                        <padding>
-                           <Insets bottom="30.0" left="30.0" right="30.0" top="40.0" />
-                        </padding>
+                <padding>
+                  <Insets bottom="30.0" left="30.0" right="30.0" top="40.0"/>
+                </padding>
               </GridPane>
             </VBox>
           </center>
           <top>
-            <Label fx:id="title" text="Clinician profile" BorderPane.alignment="CENTER">
+            <Label BorderPane.alignment="CENTER" text="Clinician profile" fx:id="title">
               <font>
-                <Font size="24.0" />
+                <Font size="24.0"/>
               </font>
               <BorderPane.margin>
-                <Insets top="50.0" />
+                <Insets top="50.0"/>
               </BorderPane.margin>
             </Label>
           </top>
@@ -93,21 +116,23 @@
       </VBox>
     </SplitPane>
   </SplitPane>
-   <HBox alignment="CENTER_RIGHT" prefHeight="50.0" prefWidth="200.0">
-      <children>
-         <Button fx:id="cancelButton" cancelButton="true" mnemonicParsing="false" onAction="#cancel" prefHeight="30.0" prefWidth="100.0" text="Cancel">
-            <HBox.margin>
-               <Insets />
-            </HBox.margin>
-         </Button>
-         <Button fx:id="applyButton" mnemonicParsing="false" onAction="#apply" prefHeight="30.0" prefWidth="100.0" text="Apply">
-            <HBox.margin>
-               <Insets left="20.0" right="20.0" />
-            </HBox.margin>
-         </Button>
-      </children>
-      <opaqueInsets>
-         <Insets />
-      </opaqueInsets>
-   </HBox>
+  <HBox alignment="CENTER_RIGHT" prefHeight="50.0" prefWidth="200.0">
+    <children>
+      <Button cancelButton="true" mnemonicParsing="false" onAction="#cancel" prefHeight="30.0"
+        prefWidth="100.0" text="Cancel" fx:id="cancelButton">
+        <HBox.margin>
+          <Insets/>
+        </HBox.margin>
+      </Button>
+      <Button mnemonicParsing="false" onAction="#apply" prefHeight="30.0" prefWidth="100.0" text="Apply"
+        fx:id="applyButton">
+        <HBox.margin>
+          <Insets left="20.0" right="20.0"/>
+        </HBox.margin>
+      </Button>
+    </children>
+    <opaqueInsets>
+      <Insets/>
+    </opaqueInsets>
+  </HBox>
 </VBox>

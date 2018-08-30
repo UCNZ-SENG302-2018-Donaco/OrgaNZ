@@ -1,6 +1,8 @@
 package com.humanharvest.organz.server.controller.clinician;
 
-import com.fasterxml.jackson.annotation.JsonView;
+import java.util.List;
+import java.util.Optional;
+
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.actions.ActionInvoker;
@@ -13,20 +15,27 @@ import com.humanharvest.organz.utilities.validators.clinician.CreateClinicianVal
 import com.humanharvest.organz.utilities.validators.clinician.ModifyClinicianValidator;
 import com.humanharvest.organz.views.client.Views;
 import com.humanharvest.organz.views.clinician.ModifyClinicianObject;
+
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Optional;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class ClinicianController {
 
     /**
      * The GET /clinicians endpoint which returns all clinicians in the system.
+     *
      * @return all clinicians
      */
     @GetMapping("/clinicians")
@@ -39,6 +48,7 @@ public class ClinicianController {
 
     /**
      * The POST /clinicians endpoint which creates a clinician from the request body parameters.
+     *
      * @param clinician details of the clinician being posted
      * @return a detailed view of the newly created clinician
      * @throws GlobalControllerExceptionHandler.InvalidRequestException When invalid parameters are given
@@ -70,6 +80,7 @@ public class ClinicianController {
 
     /**
      * The GET /clinicians/{staffId} endpoint which returns the specified clinicians details
+     *
      * @param staffId the id of the clinician
      * @return the details of the specified clinician
      */
@@ -91,6 +102,7 @@ public class ClinicianController {
 
     /**
      * Edits the details of the specified clinician. Note that the staffId cannot be changed.
+     *
      * @param staffId identifier of the clinician
      * @param editedClinician the body containing all updated information
      * @return response status
@@ -131,6 +143,7 @@ public class ClinicianController {
 
     /**
      * Deletes the specified clinician
+     *
      * @param staffId identifier of the clinician
      * @param authToken id token
      */
@@ -159,6 +172,7 @@ public class ClinicianController {
 
     /**
      * Returns the specified clinicians history
+     *
      * @param staffId identifier of the clinician
      * @param authToken id token
      * @return The list of HistoryItems

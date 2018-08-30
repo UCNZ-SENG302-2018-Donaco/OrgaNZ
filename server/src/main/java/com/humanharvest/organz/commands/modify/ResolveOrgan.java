@@ -15,6 +15,7 @@ import com.humanharvest.organz.utilities.enums.ResolveReason;
 import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 import com.humanharvest.organz.utilities.pico_type_converters.PicoOrganConverter;
 import com.humanharvest.organz.utilities.pico_type_converters.PicoResolveReasonConverter;
+
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
@@ -28,18 +29,6 @@ public class ResolveOrgan implements Runnable {
     private final ClientManager manager;
     private final ActionInvoker invoker;
     private final PrintStream outputStream;
-
-    public ResolveOrgan(PrintStream outputStream, ActionInvoker invoker) {
-        this.invoker = invoker;
-        this.outputStream = outputStream;
-        manager = State.getClientManager();
-    }
-
-    public ResolveOrgan(ClientManager manager, ActionInvoker invoker) {
-        this.manager = manager;
-        this.invoker = invoker;
-        outputStream = System.out;
-    }
 
     @Option(names = {"-u", "--uid"}, description = "User ID of user organ being requested", required = true)
     private int uid;
@@ -55,9 +44,22 @@ public class ResolveOrgan implements Runnable {
     @Option(names = {"-m", "-message"}, description = "Message for why the request was resolved")
     private String message;
 
+    public ResolveOrgan(PrintStream outputStream, ActionInvoker invoker) {
+        this.invoker = invoker;
+        this.outputStream = outputStream;
+        manager = State.getClientManager();
+    }
+
+    public ResolveOrgan(ClientManager manager, ActionInvoker invoker) {
+        this.manager = manager;
+        this.invoker = invoker;
+        outputStream = System.out;
+    }
+
     /**
      * Runs the resolve organ command
      */
+    @Override
     public void run() {
         //resolveorgan -u 1 -o liver -r "input error"
         Optional<Client> client = manager.getClientByID(uid);
@@ -85,6 +87,7 @@ public class ResolveOrgan implements Runnable {
 
     /**
      * Helper function to resolve a request and excecute the action if a valid custom reason has been given.
+     *
      * @param selectedTransplantRequest the transplant request potentially being resolved.
      */
     private void resolveRequest(TransplantRequest selectedTransplantRequest) {

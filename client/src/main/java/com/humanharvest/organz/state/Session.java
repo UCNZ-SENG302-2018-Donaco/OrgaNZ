@@ -41,7 +41,9 @@ public class Session {
     }
 
     public Client getLoggedInClient() {
-        return State.getClientManager().getClientByID(loggedInClient.getUid()).get();
+        return State.getClientManager()
+                .getClientByID(loggedInClient.getUid())
+                .orElseThrow(IllegalStateException::new);
     }
 
     public Clinician getLoggedInClinician() {

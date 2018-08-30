@@ -14,17 +14,18 @@ import com.humanharvest.organz.state.ClinicianManager;
 import com.humanharvest.organz.state.ClinicianManagerMemory;
 import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Region;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import picocli.CommandLine;
 
 public class ModifyClinicianTest extends BaseTest {
 
+    private static final int staffId = 1;
+    private static final int testStaffId = 2;
     private ClinicianManager spyClinicianManager;
     private ModifyClinician spyModifyClinician;
     private Clinician testClinician;
-    private static final int staffId = 1;
-    private static final int testStaffId = 2;
 
     @BeforeEach
     public void init() {

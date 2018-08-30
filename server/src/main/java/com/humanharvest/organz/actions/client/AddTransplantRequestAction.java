@@ -13,6 +13,7 @@ public class AddTransplantRequestAction extends ClientAction {
 
     /**
      * Creates a new action to add the given transplant request to the given client.
+     *
      * @param client The client to add the request for.
      * @param request The request to add.
      * @param manager The ClientManager to apply the changes to

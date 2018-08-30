@@ -7,6 +7,7 @@ import com.humanharvest.organz.BaseTest;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.state.AdministratorManager;
 import com.humanharvest.organz.state.AdministratorManagerMemory;
+
 import org.junit.Before;
 import org.junit.Test;
 

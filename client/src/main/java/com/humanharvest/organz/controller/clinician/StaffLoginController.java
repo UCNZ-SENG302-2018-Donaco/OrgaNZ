@@ -1,5 +1,7 @@
 package com.humanharvest.organz.controller.clinician;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import javafx.fxml.FXML;
@@ -24,7 +26,9 @@ import com.humanharvest.organz.utilities.view.PageNavigator;
  * system, e.g. the default clinician.
  */
 public class StaffLoginController extends SubController {
+
     private static final Pattern IS_NUMBER = Pattern.compile("[0-9]+");
+    private static final Logger LOGGER = Logger.getLogger(StaffLoginController.class.getName());
 
     @FXML
     private TextField staffId;
@@ -33,6 +37,7 @@ public class StaffLoginController extends SubController {
 
     /**
      * Override so we can set the page title.
+     *
      * @param mainController The MainController
      */
     @Override
@@ -51,6 +56,7 @@ public class StaffLoginController extends SubController {
 
     /**
      * Checks that the staff ID is an integer and is positive.
+     *
      * @return true if the staffID is a positive integer. False otherwise.
      */
     private boolean isValidStaffIdInput() {
@@ -61,9 +67,9 @@ public class StaffLoginController extends SubController {
     /**
      * Alert to display that an invalid StaffId has been entered.
      */
-    private static void invalidStaffIdAlert() {
+    private void invalidStaffIdAlert() {
         PageNavigator.showAlert(AlertType.ERROR, "Invalid Staff ID",
-                "Staff ID is invalid");
+                "Staff ID is invalid", mainController.getStage());
     }
 
     /**
@@ -77,7 +83,9 @@ public class StaffLoginController extends SubController {
         try {
             clinician = State.getAuthenticationManager().loginClinician(id, password.getText());
         } catch (AuthenticationException e) {
-            PageNavigator.showAlert(AlertType.ERROR, "Invalid login", e.getLocalizedMessage());
+            LOGGER.log(Level.INFO, e.getMessage(), e);
+            PageNavigator.showAlert(AlertType.ERROR, "Invalid login", e.getLocalizedMessage(),
+                    mainController.getStage());
             return;
         }
 
@@ -97,7 +105,9 @@ public class StaffLoginController extends SubController {
         try {
             administrator = State.getAuthenticationManager().loginAdministrator(staffId.getText(), password.getText());
         } catch (AuthenticationException e) {
-            PageNavigator.showAlert(AlertType.ERROR, "Invalid login", e.getLocalizedMessage());
+            LOGGER.log(Level.INFO, e.getMessage(), e);
+            PageNavigator.showAlert(AlertType.ERROR, "Invalid login", e.getLocalizedMessage(),
+                    mainController.getStage());
             return;
         }
 
@@ -113,7 +123,7 @@ public class StaffLoginController extends SubController {
      */
     @FXML
     private void signIn() {
-        if(isValidStaffIdInput()) {
+        if (isValidStaffIdInput()) {
             if (IS_NUMBER.matcher(staffId.getText()).matches()) {
                 signInClinician();
             } else {

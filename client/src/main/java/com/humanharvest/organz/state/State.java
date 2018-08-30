@@ -2,12 +2,11 @@ package com.humanharvest.organz.state;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import javafx.stage.Stage;
+
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.Clinician;
@@ -31,6 +30,10 @@ import com.humanharvest.organz.resolvers.clinician.ClinicianResolver;
 import com.humanharvest.organz.resolvers.clinician.ClinicianResolverRest;
 import com.humanharvest.organz.utilities.RestErrorHandler;
 import com.humanharvest.organz.utilities.enums.Country;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -45,7 +48,11 @@ public final class State {
         MEMORY, REST
     }
 
-    public static String BASE_URI = "http://localhost:8080/";
+    public enum UiType {
+        STANDARD, TOUCH
+    }
+
+    private static String baseUri = "http://csse-s302g7.canterbury.ac.nz:8080/";
 
     private static DataStorageType currentStorageType = DataStorageType.MEMORY;
 
@@ -72,7 +79,9 @@ public final class State {
     private static String recentEtag = "";
     private static String token = "";
     private static Clinician viewedClinician;
-    private static EnumSet<Country> allowedCountries;
+    private static Set<Country> allowedCountries;
+    private static UiType uiType = UiType.STANDARD;
+    private static Stage primaryStage;
 
     private State() {
     }
@@ -123,8 +132,12 @@ public final class State {
         }
     }
 
+    public static String getBaseUri() {
+        return baseUri;
+    }
+
     public static void setBaseUri(String uri) {
-        BASE_URI = uri;
+        baseUri = uri;
     }
 
     public static void login(Client client) {
@@ -139,19 +152,19 @@ public final class State {
         session = new Session(administrator);
     }
 
-    public static void setUnsavedChanges(boolean changes) {
-        unsavedChanges = changes;
-    }
-
     public static boolean isUnsavedChanges() {
         return unsavedChanges;
     }
 
-    public static EnumSet<Country> getAllowedCountries() {
+    public static void setUnsavedChanges(boolean changes) {
+        unsavedChanges = changes;
+    }
+
+    public static Set<Country> getAllowedCountries() {
         return allowedCountries;
     }
 
-    public static void setAllowedCountries(EnumSet<Country> countries) {
+    public static void setAllowedCountries(Set<Country> countries) {
         allowedCountries = countries;
     }
 
@@ -160,12 +173,12 @@ public final class State {
         session = null;
     }
 
-    public static void setToken(String t) {
-        token = t;
-    }
-
     public static String getToken() {
         return token;
+    }
+
+    public static void setToken(String t) {
+        token = t;
     }
 
     public static void reset() {
@@ -215,6 +228,14 @@ public final class State {
         clientEtag = etag;
     }
 
+    public static Stage getPrimaryStage() {
+        return primaryStage;
+    }
+
+    public static void setPrimaryStage(Stage primaryStage) {
+        State.primaryStage = primaryStage;
+    }
+
     public static String getClinicianEtag() {
         return clinicianEtag;
     }
@@ -241,7 +262,7 @@ public final class State {
         return restTemplate;
     }
 
-    public static void setRestTemplate(RestTemplate template ) {
+    public static void setRestTemplate(RestTemplate template) {
         restTemplate = template;
     }
 
@@ -303,5 +324,13 @@ public final class State {
 
     public static void setViewedClinician(Clinician viewedClinician) {
         State.viewedClinician = viewedClinician;
+    }
+
+    public static UiType getUiType() {
+        return uiType;
+    }
+
+    public static void setUiType(UiType type) {
+        uiType = type;
     }
 }

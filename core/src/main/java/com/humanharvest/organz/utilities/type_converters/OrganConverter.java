@@ -1,5 +1,8 @@
 package com.humanharvest.organz.utilities.type_converters;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.humanharvest.organz.utilities.enums.Organ;
 
 /**
@@ -7,8 +10,11 @@ import com.humanharvest.organz.utilities.enums.Organ;
  */
 public class OrganConverter implements TypeConverter<Organ> {
 
+    private static final Logger LOGGER = Logger.getLogger(OrganConverter.class.getName());
+
     /**
      * Convert a string to an Organ, matches case insensitive
+     *
      * @param value String input from user via PicoCLI
      * @return Organ object
      * @throws TypeConversionException Throws exception if invalid organ
@@ -18,6 +24,7 @@ public class OrganConverter implements TypeConverter<Organ> {
         try {
             return Organ.fromString(value.toString());
         } catch (IllegalArgumentException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
             throw new TypeConversionException(e.getMessage());
         }
     }

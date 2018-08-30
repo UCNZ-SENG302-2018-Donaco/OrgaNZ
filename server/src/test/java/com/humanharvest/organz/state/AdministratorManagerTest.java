@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.BaseTest;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -20,7 +21,6 @@ public class AdministratorManagerTest extends BaseTest {
     private Administrator administrator = new Administrator(username1, "letmein");
     private Administrator administrator2 = new Administrator(username2, "password123");
 
-
     @Before
     public void init() {
         manager = new AdministratorManagerMemory();
@@ -31,7 +31,6 @@ public class AdministratorManagerTest extends BaseTest {
         manager.addAdministrator(administrator);
         assertTrue(manager.getAdministrators().contains(administrator));
     }
-
 
     @Test
     public void getAdministratorsTest() {
@@ -70,7 +69,6 @@ public class AdministratorManagerTest extends BaseTest {
         assertEquals("somethingsecure",
                 manager.getAdministratorByUsername("bob").orElseThrow(RuntimeException::new).getPassword());
     }
-
 
     @Test
     public void collisionExistsNoCollisionTest() {

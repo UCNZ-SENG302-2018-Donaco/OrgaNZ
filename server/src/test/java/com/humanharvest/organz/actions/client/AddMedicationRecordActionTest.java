@@ -10,6 +10,7 @@ import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.ClientManagerMemory;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -50,7 +51,6 @@ public class AddMedicationRecordActionTest extends BaseTest {
         assertEquals(record, testClient.getPastMedications().get(0));
     }
 
-
     @Test
     public void AddMultipleMedicationTest() {
         MedicationRecord record = new MedicationRecord("Generic Name", LocalDate.of(2018, 4, 9), null);
@@ -69,7 +69,6 @@ public class AddMedicationRecordActionTest extends BaseTest {
         assertEquals(3, testClient.getCurrentMedications().size());
         assertEquals(record, testClient.getCurrentMedications().get(0));
     }
-
 
     @Test
     public void AddMultipleMedicationUndoOneTest() {

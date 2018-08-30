@@ -10,12 +10,13 @@ import javafx.scene.control.Control;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-
-import com.humanharvest.organz.utilities.validators.Validator;
 import org.controlsfx.control.PopOver;
 import org.controlsfx.control.PopOver.ArrowLocation;
 
+import com.humanharvest.organz.utilities.validators.Validator;
+
 public class UIValidation {
+
     private final Collection<Watched> components = new ArrayList<>();
     private final Collection<Control> disables = new ArrayList<>();
 
@@ -74,6 +75,7 @@ public class UIValidation {
     }
 
     private abstract static class Watched {
+
         private final Validator validator;
         private final Control control;
 
@@ -86,12 +88,12 @@ public class UIValidation {
                     ObservableList<String> styleClasses = control.getStyleClass();
                     if (newValue) {
                         if (styleClasses.contains("invalid")) {
-                            PopOver popOver = (PopOver)control.getUserData();
+                            PopOver popOver = (PopOver) control.getUserData();
                             popOver.show(control);
                         }
                     } else if (!control.isHover()) {
                         if (styleClasses.contains("invalid")) {
-                            PopOver popOver = (PopOver)control.getUserData();
+                            PopOver popOver = (PopOver) control.getUserData();
                             popOver.hide();
                         }
                     }
@@ -103,12 +105,12 @@ public class UIValidation {
                     ObservableList<String> styleClasses = control.getStyleClass();
                     if (newValue) {
                         if (styleClasses.contains("invalid")) {
-                            PopOver popOver = (PopOver)control.getUserData();
+                            PopOver popOver = (PopOver) control.getUserData();
                             popOver.show(control);
                         }
                     } else if (!control.isFocused()) {
                         if (styleClasses.contains("invalid")) {
-                            PopOver popOver = (PopOver)control.getUserData();
+                            PopOver popOver = (PopOver) control.getUserData();
                             popOver.hide();
                         }
                     }
@@ -123,7 +125,7 @@ public class UIValidation {
             if (!styleClasses.contains("invalid")) {
                 styleClasses.add("invalid");
 
-                PopOver popOver = (PopOver)control.getUserData();
+                PopOver popOver = (PopOver) control.getUserData();
                 if (popOver == null) {
                     Label label = new Label(validator.getErrorMessage());
                     popOver = new PopOver(label);
@@ -141,7 +143,7 @@ public class UIValidation {
             if (styleClasses.contains("invalid")) {
                 styleClasses.remove("invalid");
 
-                PopOver popOver = (PopOver)control.getUserData();
+                PopOver popOver = (PopOver) control.getUserData();
                 popOver.hide();
             }
         }
@@ -182,6 +184,7 @@ public class UIValidation {
     }
 
     private class ValidationListener implements InvalidationListener {
+
         private final Watched watched;
 
         ValidationListener(Watched watched) {

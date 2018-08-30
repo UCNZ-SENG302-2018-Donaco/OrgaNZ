@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.api.client.http.GenericUrl;
@@ -21,6 +23,7 @@ import com.google.api.client.json.JsonObjectParser;
 public class MedActiveIngredientsHandler extends WebAPIHandler {
 
     private static final String ACTIVE_INGREDIENTS_ENDPOINT = "http://mapi-us.iterar.co/api/%s/substances.json";
+    private static final Logger LOGGER = Logger.getLogger(MedActiveIngredientsHandler.class.getName());
 
     private HttpRequestFactory requestFactory;
 
@@ -46,6 +49,7 @@ public class MedActiveIngredientsHandler extends WebAPIHandler {
         );
     }
 
+    @Override
     public List<String> getData(Object... arguments) throws IOException {
         String medicationName;
         if (arguments.length == 1 && arguments[0] instanceof String) {
@@ -58,7 +62,8 @@ public class MedActiveIngredientsHandler extends WebAPIHandler {
 
     public List<String> getActiveIngredients(String medicationName) throws IOException {
         Optional<List<String>> cachedResponse = getCachedData(
-                new TypeReference<List<String>>() {}
+                new TypeReference<List<String>>() {
+                }
                 , medicationName);
         if (cachedResponse.isPresent()) {
             return cachedResponse.get();
@@ -70,7 +75,8 @@ public class MedActiveIngredientsHandler extends WebAPIHandler {
             HttpRequest request = requestFactory.buildGetRequest(url);
             HttpResponse response = request.execute();
             activeIngredients = addCachedData(Arrays.asList(response.parseAs(String[].class)), medicationName);
-        } catch (HttpResponseException exc) {
+        } catch (HttpResponseException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
             // Any non 2xx response (e.g. 404)
             activeIngredients = Collections.emptyList();
         }

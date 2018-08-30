@@ -12,22 +12,25 @@ import javafx.scene.control.TableView;
 
 /**
  * An editable table cell that holds a date picker. Changing the date picker triggers an edit commit on the cell.
+ *
  * @param <T> The type of data record each row in the table represents.
  */
 public class DatePickerCell<T> extends TableCell<T, LocalDate> {
+
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     private final DatePicker datePicker;
 
     /**
      * Creates a new date picker cell for the given column. Binds editable/disabled properties to those of the table.
+     *
      * @param column The {@link LocalDate} column to create a date picker cell for.
      */
     public DatePickerCell(TableColumn<T, LocalDate> column) {
         datePicker = new DatePicker();
         datePicker.editableProperty().bind(column.editableProperty());
         datePicker.disableProperty().bind(column.editableProperty().not());
-        datePicker.focusedProperty().addListener(((observable, oldValue, newValue) -> {
+        datePicker.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if (!oldValue && newValue) {
                 final TableView<T> tableView = getTableView();
                 tableView.getSelectionModel().select(getTableRow().getIndex());
@@ -37,7 +40,7 @@ public class DatePickerCell<T> extends TableCell<T, LocalDate> {
                     cancelEdit();
                 }
             }
-        }));
+        });
         datePicker.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (isEditing()) {
                 commitEdit(newValue);
@@ -48,6 +51,7 @@ public class DatePickerCell<T> extends TableCell<T, LocalDate> {
 
     /**
      * Triggered whenever the {@link LocalDate} value of the cell is updated; it sets that new value in the date picker.
+     *
      * @param item The new date.
      * @param empty Whether the cell is now empty or not.
      */

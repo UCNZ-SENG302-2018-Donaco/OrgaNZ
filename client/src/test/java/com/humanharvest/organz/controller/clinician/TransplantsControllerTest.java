@@ -1,32 +1,25 @@
 package com.humanharvest.organz.controller.clinician;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.testfx.api.FxAssert.verifyThat;
 import static org.testfx.matcher.base.NodeMatchers.isVisible;
 import static org.testfx.matcher.control.TableViewMatchers.hasNumRows;
 import static org.testfx.matcher.control.TextMatchers.hasText;
 
-import java.time.Duration;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javafx.scene.Node;
-import javafx.scene.control.SplitPane;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.TitledPane;
 import javafx.scene.input.MouseButton;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import org.controlsfx.control.CheckComboBox;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.Clinician;
@@ -38,6 +31,8 @@ import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
 import com.humanharvest.organz.views.client.CreateTransplantRequestView;
+
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.testfx.api.FxRobot;
@@ -63,7 +58,6 @@ public class TransplantsControllerTest extends ControllerTest {
 
     private Client client3 = new Client("Client", "Number", "Three", LocalDate.now(), 3);
     private TransplantRequest request3 = new TransplantRequest(client3, Organ.LIVER);
-
 
     private Client[] clients = {client1, client2, client3};
     private TransplantRequest[] requests1 = {request1a, request1b, request1c};
@@ -172,21 +166,17 @@ public class TransplantsControllerTest extends ControllerTest {
         return stringBuilder.toString();
     }
 
-    /**
-     * Get the top modal window.
-     * @return the top modal window
-     */
-    private Stage getTopModalStage() {
-        // Get a list of windows but ordered from top[0] to bottom[n] ones.
-        List<Window> allWindows = new ArrayList<>(new FxRobot().robotContext().getWindowFinder().listWindows());
-        Collections.reverse(allWindows);
-
-        // Return the first found modal window.
-        return (Stage) allWindows
-                .stream()
-                .filter(window -> window instanceof Stage)
-                .findFirst()
-                .orElse(null);
+    @Before
+    public void startup() {
+        //Make sure the filters are open
+        TitledPane q = lookup("Filter").query();
+        if (!q.isExpanded()) {
+            clickOn("Filter");
+        }
+        CheckComboBox regionChecks = lookup("#regionChoice").query();
+        regionChecks.getCheckModel().clearChecks();
+        CheckComboBox organChecks = lookup("#organChoice").query();
+        organChecks.getCheckModel().clearChecks();
     }
 
     // Tests
@@ -229,92 +219,32 @@ public class TransplantsControllerTest extends ControllerTest {
         press(MouseButton.PRIMARY);
         release(MouseButton.PRIMARY);
 
-        // Get the top pane
-        final Stage topModalStage = getTopModalStage();
-        assertNotNull(topModalStage);
-        final AnchorPane pane = (AnchorPane) topModalStage.getScene().getRoot();
+        // Get a list of windows but ordered from top[0] to bottom[n] ones.
+        List<Window> allWindows = new ArrayList<>(new FxRobot().robotContext().getWindowFinder().listWindows());
+        Collections.reverse(allWindows);
 
-        // Check each subnode is there
-        VBox mainVbox = (VBox) pane.getChildren().get(0); // Main pane
-        assertNotNull(mainVbox);
+        // Get all the windows that are stages
+        List<Window> stages = allWindows
+                .stream()
+                .filter(window -> window instanceof Stage)
+                .collect(Collectors.toList());
 
-        StackPane stackPane = (StackPane) mainVbox.getChildren().get(0); // page holder
-        assertNotNull(stackPane);
-        assertEquals("pageHolder", stackPane.getId());
+        assertEquals(2, stages.size());
 
-        VBox clientVbox = (VBox) stackPane.getChildren().get(0); // Main VBox in client viewer
-        assertNotNull(clientVbox);
+        WaitForAsyncUtils.asyncFx(((Stage) stages.get(0))::close);
+    }
 
-        SplitPane splitPane = (SplitPane) clientVbox.getChildren().get(0); // Main SplitPane
-        assertNotNull(splitPane);
+    @Test
+    public void testOneWindowIsOpen() {
+        List<Window> allWindows = new ArrayList<>(new FxRobot().robotContext().getWindowFinder().listWindows());
+        Collections.reverse(allWindows);
 
-        SplitPane splitPane2 = (SplitPane) splitPane.getItems().get(1); // Secondary SplitPane
-        assertNotNull(splitPane2);
+        List<Window> stages = allWindows
+                .stream()
+                .filter(window -> window instanceof Stage)
+                .collect(Collectors.toList());
 
-        VBox vbox2 = (VBox) splitPane2.getItems().get(1); // Vbox containing a borderpane
-        assertNotNull(vbox2);
-
-        BorderPane borderPane = (BorderPane) vbox2.getChildren().get(0); //Borderpane containing header and data
-        assertNotNull(borderPane);
-
-        VBox vbox3 = (VBox) borderPane.getCenter(); // Vbox containing two gridpanes
-        assertNotNull(vbox3);
-
-        GridPane gridPaneId = (GridPane) vbox3.getChildren().get(0); //Gridpane containing ID fields
-        assertNotNull(gridPaneId);
-        assertEquals("imagePane", gridPaneId.getId());
-
-        GridPane gridPaneFields = (GridPane) vbox3.getChildren().get(1); //Gridpane containing all fields
-        assertNotNull(gridPaneFields);
-        assertEquals("inputsPane", gridPaneFields.getId());
-
-        // Check all nodes we need to look in are visible
-        verifyThat("#fname", isVisible());
-        verifyThat("#mname", isVisible());
-        verifyThat("#lname", isVisible());
-
-        // Create a list of all nodes to search in to find user's details
-        ArrayList<Node> nodes = new ArrayList<>();
-        nodes.addAll(gridPaneFields.getChildren());
-        nodes.addAll(gridPaneId.getChildren());
-
-        // Iterate through nodes in both grid panes, check if they are one that we want, and if so, check they are
-        // as expected.
-        String expectedString = "";
-        boolean gotAField;
-        int totalChecks = 0;
-        for (Node node : nodes) {
-            if (node.getId() != null) {
-                switch (node.getId()) {
-                    case "id":
-                        expectedString = Integer.toString(client1.getUid());
-                        gotAField = true;
-                        break;
-                    case "fname":
-                        expectedString = client1.getFirstName();
-                        gotAField = true;
-                        break;
-                    case "mname":
-                        expectedString = client1.getMiddleName();
-                        gotAField = true;
-                        break;
-                    case "lname":
-                        expectedString = client1.getLastName();
-                        gotAField = true;
-                        break;
-                    default:
-                        gotAField = false;
-                }
-                if (gotAField) {
-                    TextField textField = (TextField) node;
-                    assertEquals(expectedString, textField.getText());
-                    totalChecks++;
-                }
-            }
-        }
-        assertEquals(3, totalChecks); // it should have checked 4 fields
-
-        WaitForAsyncUtils.asyncFx(topModalStage::close);
+        assertEquals(1, stages.size());
     }
 
     @Test
@@ -353,73 +283,6 @@ public class TransplantsControllerTest extends ControllerTest {
         verifyThat("#displayingXToYOfZText", hasText("Displaying 121 of 121"));
     }
 
-    @Ignore
-    @Test
-    public void testReorderByName() {
-        clickOn("#clientCol");
-
-        // Sort requests by client name
-        requests.sort(Comparator.comparing(req -> req.getClient().getFullName().toLowerCase()));
-
-        // Check all 30 requests are correct
-        for (int i = 0; i < 30; i++) {
-            TransplantRequest request = requests.get(i);
-            assertTableContainsRequestAtIndex(
-                    lookup("#tableView").queryTableView(),
-                    request,
-                    i
-            );
-        }
-    }
-
-    @Ignore
-    @Test
-    public void testReorderByOrgan() {
-        clickOn("#organCol");
-
-        // Sort requests by organ
-        requests.sort(Comparator.comparing(req -> req.getRequestedOrgan().toString()));
-
-        // Check all 30 requests are correct
-        for (int i = 0; i < 30; i++) {
-            TransplantRequest request = requests.get(i);
-            assertTableContainsRequestAtIndex(
-                    lookup("#tableView").queryTableView(),
-                    request,
-                    i
-            );
-        }
-    }
-
-    @Test
-    public void testReorderByRegion() {
-        clickOn("#regionCol");
-
-        // Sort requests by client name
-        requests.sort((req1, req2) -> {
-            if (req1.getClient().getRegion() == null) {
-                if (req2.getClient().getRegion() == null) {
-                    return 0;
-                } else {
-                    return -1;
-                }
-            } else if (req2.getClient().getRegion() == null) {
-                return 1;
-            }
-            return req1.getClient().getRegion().toString().compareTo(req2.getClient().getRegion().toString());
-        });
-
-        // Check all 30 requests are correct
-        for (int i = 0; i < 30; i++) {
-            TransplantRequest request = requests.get(i);
-            assertTableContainsRequestAtIndex(
-                    lookup("#tableView").queryTableView(),
-                    request,
-                    i
-            );
-        }
-    }
-
     @Test
     public void testReorderByDate() {
         clickOn("#dateCol");
@@ -446,7 +309,6 @@ public class TransplantsControllerTest extends ControllerTest {
      */
     @Test
     public void noFilter() {
-        clickOn("#filterButton");
         verifyThat("#tableView", hasNumRows(30));  // 30 rows is max that can be displayed on one page
     }
 
@@ -457,7 +319,6 @@ public class TransplantsControllerTest extends ControllerTest {
     public void testFilterOneOrgan() {
         clickOn("#organChoice");
         clickOn((Node) lookup(".check-box").nth(3).query());
-        clickOn("#filterButton");
         assertTableContainsRequestAtIndex(
                 lookup("#tableView").queryTableView(),
                 request2b,
@@ -475,7 +336,6 @@ public class TransplantsControllerTest extends ControllerTest {
         clickOn((Node) lookup(".check-box").nth(3).query());
         clickOn((Node) lookup(".check-box").nth(4).query());
         clickOn((Node) lookup(".check-box").nth(5).query());
-        clickOn("#filterButton");
         assertTableContainsRequestAtIndex(
                 lookup("#tableView").queryTableView(),
                 request2b,
@@ -491,7 +351,6 @@ public class TransplantsControllerTest extends ControllerTest {
     public void testFilterOneRegion() {
         clickOn("#regionChoice");
         clickOn((Node) lookup(".check-box").nth(1).query());
-        clickOn("#filterButton");
         assertTableContainsRequestAtIndex(
                 lookup("#tableView").queryTableView(),
                 request2b,
@@ -509,7 +368,6 @@ public class TransplantsControllerTest extends ControllerTest {
         clickOn((Node) lookup(".check-box").nth(1).query());
         clickOn((Node) lookup(".check-box").nth(2).query());
         clickOn((Node) lookup(".check-box").nth(3).query());
-        clickOn("#filterButton");
         assertTableContainsRequestAtIndex(
                 lookup("#tableView").queryTableView(),
                 request2b,
@@ -527,7 +385,6 @@ public class TransplantsControllerTest extends ControllerTest {
         clickOn((Node) lookup(".check-box").nth(1).query());
         clickOn("#organChoice");
         clickOn((Node) lookup(".check-box").nth(3).query());
-        clickOn("#filterButton");
         assertTableContainsRequestAtIndex(
                 lookup("#tableView").queryTableView(),
                 request2b,
@@ -547,7 +404,6 @@ public class TransplantsControllerTest extends ControllerTest {
         clickOn((Node) lookup(".check-box").nth(3).query());
         clickOn((Node) lookup(".check-box").nth(4).query());
         clickOn((Node) lookup(".check-box").nth(5).query());
-        clickOn("#filterButton");
         assertTableContainsRequestAtIndex(
                 lookup("#tableView").queryTableView(),
                 request2b,
@@ -567,7 +423,6 @@ public class TransplantsControllerTest extends ControllerTest {
         clickOn((Node) lookup(".check-box").nth(3).query());
         clickOn("#organChoice");
         clickOn((Node) lookup(".check-box").nth(3).query());
-        clickOn("#filterButton");
         assertTableContainsRequestAtIndex(
                 lookup("#tableView").queryTableView(),
                 request2b,
@@ -589,7 +444,6 @@ public class TransplantsControllerTest extends ControllerTest {
         clickOn((Node) lookup(".check-box").nth(3).query());
         clickOn((Node) lookup(".check-box").nth(4).query());
         clickOn((Node) lookup(".check-box").nth(5).query());
-        clickOn("#filterButton");
         assertTableContainsRequestAtIndex(
                 lookup("#tableView").queryTableView(),
                 request2b,
@@ -605,7 +459,6 @@ public class TransplantsControllerTest extends ControllerTest {
     public void testFilterOrganAndCheckExistingFeaturesWork() {
         clickOn("#organChoice");
         clickOn((Node) lookup(".check-box").nth(3).query());
-        clickOn("#filterButton");
         assertTableContainsRequestAtIndex(
                 lookup("#tableView").queryTableView(),
                 request2b,
@@ -621,7 +474,6 @@ public class TransplantsControllerTest extends ControllerTest {
     public void testFilterRegionAndCheckExistingFeaturesWork() {
         clickOn("#regionChoice");
         clickOn((Node) lookup(".check-box").nth(1).query());
-        clickOn("#filterButton");
         assertTableContainsRequestAtIndex(
                 lookup("#tableView").queryTableView(),
                 request2b,
@@ -637,10 +489,8 @@ public class TransplantsControllerTest extends ControllerTest {
     public void testFilterBothRegionAndOrganAndCheckExistingFeaturesWork() {
         clickOn("#regionChoice");
         clickOn((Node) lookup(".check-box").nth(1).query());
-        clickOn("#filterButton");
         clickOn("#organChoice");
         clickOn((Node) lookup(".check-box").nth(3).query());
-        clickOn("#filterButton");
         assertTableContainsRequestAtIndex(
                 lookup("#tableView").queryTableView(),
                 request2b,
@@ -651,18 +501,18 @@ public class TransplantsControllerTest extends ControllerTest {
 
     /**
      * Verifies that the given {@link TableView} contains the given {@link TransplantRequest} at the given rowIndex.
+     * Uses asserts that will error if it is not a match
+     *
      * @param table The table to check within.
      * @param request The request to check for.
      * @param rowIndex The rowIndex to search at.
-     * @return Whether the given rowIndex in the table holds a request with the same details as the given request.
      */
     private void assertTableContainsRequestAtIndex(TableView<TransplantRequest> table, TransplantRequest request,
             int rowIndex) {
         TransplantRequest requestAtIndex = table.getItems().get(rowIndex);
 
-        assertEquals(requestAtIndex.getClient().getFullName(), request.getClient().getFullName());
-        assertEquals(requestAtIndex.getRequestedOrgan(), request.getRequestedOrgan());
-        assertEquals(requestAtIndex.getClient().getRegion(), request.getClient().getRegion());
-        assertTrue(Duration.between(requestAtIndex.getRequestDate(), request.getRequestDate()).abs().getSeconds() <= 1);
+        assertEquals(request.getClient(), requestAtIndex.getClient());
+        assertEquals(request.getRequestedOrgan(), requestAtIndex.getRequestedOrgan());
+        assertEquals(request.getRequestDate(), requestAtIndex.getRequestDate());
     }
 }

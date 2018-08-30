@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Region;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -29,7 +30,8 @@ public class StateTest extends BaseTest {
 
     @Test
     public void LoginClinicianValidTest() {
-        Clinician clinician = new Clinician("First", null, "Last", "Address", Region.UNSPECIFIED.toString(), null, 1, "pass");
+        Clinician clinician = new Clinician("First", null, "Last", "Address", Region.UNSPECIFIED.toString(), null, 1,
+                "pass");
 
         State.login(clinician);
 

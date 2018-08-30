@@ -9,8 +9,9 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.humanharvest.organz.Client;
+
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -27,7 +28,7 @@ public class JSONFileWriterTest {
     public TemporaryFolder tempFolder = new TemporaryFolder();
 
     private static List<Client> readClientsFromFile(File file) throws IOException {
-        return JSONMapper.Mapper.readValue(file, new TypeReference<List<Client>>(){
+        return JSONMapper.Mapper.readValue(file, new TypeReference<List<Client>>() {
         });
     }
 

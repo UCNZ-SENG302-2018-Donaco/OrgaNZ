@@ -255,17 +255,46 @@ public enum Country {
     ZW("Zimbabwe", -19.015658999, 29.1528020000001),
     AX("Åland", 60.1978055, 20.164778);
 
+    private static String mismatchText;
+
     private final String text;
     private final double latitude;
     private final double longitude;
-
-    private static String mismatchText;
 
     Country(String text, double latitude, double longitude) {
         this.text = text;
         this.latitude = latitude;
         this.longitude = longitude;
 
+    }
+
+    /**
+     * Returns Country enum from input matched to either the name or code of a country
+     *
+     * @param text name or code of country to return
+     * @return country that matches the text given
+     */
+    public static Country fromString(String text) {
+        for (Country c : Country.values()) {
+            if (c.toString().equalsIgnoreCase(text) || c.name().equalsIgnoreCase(text)) {
+                return c;
+            }
+        }
+
+        //No match
+        //We use a static text builder so this text is dynamically built based on the ENUM options, but only needs to
+        // be built once per runtime
+        if (mismatchText != null) {
+            throw new IllegalArgumentException(mismatchText);
+        } else {
+            StringBuilder mismatchTextBuilder = new StringBuilder("Unsupported country, please use one of the "
+                    + "following:");
+            for (Country c : Country.values()) {
+                mismatchTextBuilder.append('\n').append(c.text);
+            }
+            mismatchText = mismatchTextBuilder.toString();
+            throw new IllegalArgumentException(mismatchText);
+        }
     }
 
     public String toString() {
@@ -278,32 +307,6 @@ public enum Country {
 
     public double getLongitude() {
         return longitude;
-    }
-
-    /**
-     * Returns Country enum from input matched to either the name or code of a country
-     * @param text name or code of country to return
-     * @return country that matches the text given
-     */
-    public static Country fromString(String text) {
-        for (Country c : Country.values()) {
-            if (c.toString().equalsIgnoreCase(text) || c.name().equalsIgnoreCase(text)) {
-                return c;
-            }
-        }
-
-        //No match
-        if (mismatchText != null) {
-            throw new IllegalArgumentException(mismatchText);
-        } else {
-            StringBuilder mismatchTextBuilder = new StringBuilder("Unsupported country, please use one of the "
-                    + "following:");
-            for (Country c : Country.values()) {
-                mismatchTextBuilder.append('\n').append(c.text);
-            }
-            mismatchText = mismatchTextBuilder.toString();
-            throw new IllegalArgumentException(mismatchText);
-        }
     }
 
 }

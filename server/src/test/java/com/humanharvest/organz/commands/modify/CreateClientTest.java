@@ -6,6 +6,7 @@ import com.humanharvest.organz.BaseTest;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.ClientManagerMemory;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import picocli.CommandLine;
@@ -43,7 +44,6 @@ public class CreateClientTest extends BaseTest {
 
         verify(spyClientManager, times(0)).addClient(any());
     }
-
 
     @Test
     public void createclient_invalidFieldCountLow() {

@@ -3,6 +3,7 @@ package com.humanharvest.organz.actions.client;
 import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.views.client.ModifyIllnessObject;
+
 import org.springframework.beans.BeanUtils;
 
 public class ModifyIllnessRecordByObjectAction extends ClientAction {

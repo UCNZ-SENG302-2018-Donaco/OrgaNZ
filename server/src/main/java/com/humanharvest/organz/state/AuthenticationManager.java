@@ -9,6 +9,7 @@ import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
@@ -20,12 +21,13 @@ public class AuthenticationManager {
     /**
      * Gets the secret used to sign tokens.
      */
-    private String getSecret() {
+    private static String getSecret() {
         return "secret";
     }
 
     /**
      * Given an authentication token, check if it is a valid administrator
+     *
      * @param authenticationToken The authentication token to check
      * @throws AuthenticationException Thrown if the authentication is invalid for any reason
      */
@@ -39,6 +41,7 @@ public class AuthenticationManager {
 
     /**
      * Given an authentication token, check if it is a valid administrator or clinician
+     *
      * @param authenticationToken The authentication token to check
      * @throws AuthenticationException Thrown if the authentication is invalid for any reason
      */
@@ -55,6 +58,7 @@ public class AuthenticationManager {
     /**
      * Given an authentication token and client, check if the token matches any administrator, any clinician, or the
      * given client
+     *
      * @param authenticationToken The authentication token to check
      * @throws AuthenticationException Thrown if the authentication is invalid for any reason
      */
@@ -74,6 +78,7 @@ public class AuthenticationManager {
     /**
      * Given an authentication token and clinician, check if the token matches any administrator or the
      * given clinician
+     *
      * @param authenticationToken The authentication token to check
      * @throws AuthenticationException Thrown if the authentication is invalid for any reason
      */

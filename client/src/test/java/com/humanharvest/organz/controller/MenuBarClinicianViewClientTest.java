@@ -11,6 +11,7 @@ import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
+
 import org.junit.Test;
 
 public class MenuBarClinicianViewClientTest extends ControllerTest {
@@ -20,7 +21,9 @@ public class MenuBarClinicianViewClientTest extends ControllerTest {
     private Client testClient1 = new Client("tom", "Delta", "1", LocalDate.now().minusYears(32), 1); // 100 years old
 
     @Override
-    protected Page getPage() { return Page.MENU_BAR;  }
+    protected Page getPage() {
+        return Page.MENU_BAR;
+    }
 
     @Override
     protected void initState() {

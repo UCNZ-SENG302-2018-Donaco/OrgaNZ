@@ -1,16 +1,15 @@
 package com.humanharvest.organz.utilities.algorithms;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Region;
-
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 public class MatchOrganToRecipients {
 
@@ -67,9 +66,108 @@ public class MatchOrganToRecipients {
 
     }
 
-    public static List<Client> getListOfPotentialRecipients(DonatedOrgan donatedOrgan, Collection<TransplantRequest>
-            transplantRequests) {
-        List<TransplantRequest> potentialTransplantRequests = new ArrayList<>();
+    /**
+     * Compares which region is closest (r1 or r2) to the target region.
+     *
+     * @param r1 the first region
+     * @param r2 the second region
+     * @param targetRegion the target region
+     * @param inNewZealand true if the target region is in New Zealand
+     * @return a positive number if r2 is closest, a negative number if r1 is closest,
+     * or 0 if we don't know (aka they aren't in New Zealand)
+     */
+    private static int compareRegionCloseness(String r1, String r2, String targetRegion, boolean inNewZealand) {
+        // Check if the one of the recipients is in the same region that the donor died
+        if (r1.equals(targetRegion)) {
+            return -1;
+        } else if (r2.equals(targetRegion)) {
+            return 1;
+        } else { // Neither is in the same region, so calculate closest region
+            if (inNewZealand) {
+                double distanceToRegion1 = distanceBetween(
+                        Region.fromString(r1), Region.fromString(targetRegion));
+                double distanceToRegion2 = distanceBetween(
+                        Region.fromString(r2), Region.fromString(targetRegion));
+                return Double.compare(distanceToRegion1, distanceToRegion2);
+            } else { // don't know where non-NZ regions are
+                return 0;
+            }
+        }
+    }
+
+    /**
+     * Compares which country is closest (c1 or c2) to the target region.
+     *
+     * @param c1 the first country
+     * @param c2 the second region
+     * @param targetCountry the target country
+     * @return a positive number if c2 is closest, or a negative number if c1 is closest
+     */
+    private static int compareCountryCloseness(Country c1, Country c2, Country targetCountry) {
+        // Check if the one of the recipients is in the same country that the donor died
+        if (c1.equals(targetCountry)) {
+            return -1;
+        } else if (c2.equals(targetCountry)) {
+            return 1;
+        } else { // Neither is in the same country, so calculate closest country
+            double distanceToCountry1 = distanceBetween(c1, targetCountry);
+            double distanceToCountry2 = distanceBetween(c2, targetCountry);
+            return Double.compare(distanceToCountry1, distanceToCountry2);
+        }
+    }
+
+    private static int compareLocationCloseness(Client c1, Client c2, Client targetClient) {
+
+        Country deathCountry = targetClient.getCountryOfDeath();
+
+        // Check for null countries
+        if (c1.getCountry() == null) {
+            if (c2.getCountry() == null) {
+                return 0; // neither has a country
+            } else {
+                return 1; // only c2 has a country
+            }
+        } else if (c2.getCountry() == null) {
+            return -1; // only c1 has a country
+        }
+
+        // If they are in different countries, check which one is closest
+        if (!c1.getCountry().equals(c2.getCountry())) {
+            return compareCountryCloseness(c1.getCountry(), c2.getCountry(), deathCountry);
+        }
+
+        // If they are in the same country, but the donated organ is in a different country
+        if (!c1.getCountry().equals(deathCountry)) {
+            return 0;
+        }
+
+        String deathRegion = targetClient.getRegionOfDeath();
+
+        // Check for null regions
+        if (c1.getRegion() == null) {
+            if (c2.getRegion() == null) {
+                return 0; // neither has a region
+            } else {
+                return 1; // only c2 has a region
+            }
+        } else if (c2.getRegion() == null) {
+            return -1; // only c1 has a region
+        }
+
+        // If they are in different regions, check which one is closest
+        // Note that for non-NZ regions, it just checks if one is the same as where the person died
+        if (!c1.getRegion().equals(c2.getRegion())) {
+            boolean inNewZealand = deathCountry == Country.NZ;
+            return compareRegionCloseness(c1.getRegion(), c2.getRegion(), deathRegion, inNewZealand);
+        }
+
+        // They are in the same region - we don't store cities, so there are no more comparisons that are doable
+        return 0;
+    }
+
+    public static List<Client> getListOfPotentialRecipients(DonatedOrgan donatedOrgan,
+            Iterable<TransplantRequest> transplantRequests) {
+
         List<Client> potentialMatches = new ArrayList<>();
 
         // If the organ trying to be matched has expired, then return an empty list
@@ -78,6 +176,7 @@ public class MatchOrganToRecipients {
         }
 
         // Create a list of eligible transplant requests
+        List<TransplantRequest> potentialTransplantRequests = new ArrayList<>();
         for (TransplantRequest transplantRequest : transplantRequests) {
             Client donor = donatedOrgan.getDonor();
             Client recipient = transplantRequest.getClient();
@@ -101,75 +200,8 @@ public class MatchOrganToRecipients {
             } else { // same(ish) time, so compare using location
                 Client c1 = t1.getClient();
                 Client c2 = t2.getClient();
-
-                Country deathCountry = donatedOrgan.getDonor().getCountryOfDeath();
-
-                // Check for null countries
-                if (c1.getCountry() == null) {
-                    if (c2.getCountry() == null) {
-                        return 0; // neither has a country
-                    } else {
-                        return 1; // only c2 has a country
-                    }
-                } else if (c2.getCountry() == null) {
-                    return -1; // only c1 has a country
-                }
-
-                // If they are in different countries, check which one is closest
-                if (!c1.getCountry().equals(c2.getCountry())) {
-                    // Check if the one of the recipients is in the same country that the donor died
-                    if (c1.getCountry().equals(deathCountry)) {
-                        return -1;
-                    } else if (c2.getCountry().equals(deathCountry)) {
-                        return 1;
-                    } else { // Neither is in the same country, so calculate closest country
-                        double distanceToCountry1 = distanceBetween(c1.getCountry(), deathCountry);
-                        double distanceToCountry2 = distanceBetween(c2.getCountry(), deathCountry);
-                        return Double.compare(distanceToCountry1, distanceToCountry2);
-                    }
-                }
-
-                // If they are in the same country, but the donated organ is in a different country
-                if (!c1.getCountry().equals(deathCountry)) {
-                    return 0;
-                }
-
-                String deathRegion = donatedOrgan.getDonor().getRegionOfDeath();
-
-                // Check for null regions
-                if (c1.getRegion() == null) {
-                    if (c2.getRegion() == null) {
-                        return 0; // neither has a region
-                    } else {
-                        return 1; // only c2 has a region
-                    }
-                } else if (c2.getRegion() == null) {
-                    return -1; // only c1 has a region
-                }
-
-                // If they are in different regions, check which one is closest
-                // Note that for non-NZ regions, it just checks if one is the same as where the person died
-                if (!c1.getRegion().equals(c2.getRegion())) {
-                    // Check if the one of the recipients is in the same region that the donor died
-                    if (c1.getRegion().equals(deathRegion)) {
-                        return -1;
-                    } else if (c2.getRegion().equals(deathRegion)) {
-                        return 1;
-                    } else { // Neither is in the same region, so calculate closest region
-                        if (deathCountry.equals(Country.NZ)) {
-                            double distanceToRegion1 = distanceBetween(
-                                    Region.fromString(c1.getRegion()), Region.fromString(deathRegion));
-                            double distanceToRegion2 = distanceBetween(
-                                    Region.fromString(c2.getRegion()), Region.fromString(deathRegion));
-                            return Double.compare(distanceToRegion1, distanceToRegion2);
-                        } else { // don't know where non-NZ regions are
-                            return 0;
-                        }
-                    }
-                }
-
-                // They are in the same region - we don't store cities, so there are no more comparisons that are doable
-                return 0;
+                Client donor = donatedOrgan.getDonor();
+                return compareLocationCloseness(c1, c2, donor);
             }
         });
 

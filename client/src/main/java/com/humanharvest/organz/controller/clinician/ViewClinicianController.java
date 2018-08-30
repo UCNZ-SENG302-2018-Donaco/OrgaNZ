@@ -19,6 +19,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import org.controlsfx.control.Notifications;
 
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.HistoryItem;
@@ -33,7 +34,6 @@ import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.views.clinician.ModifyClinicianObject;
-import org.controlsfx.control.Notifications;
 
 /**
  * Presents an interface displaying all information of the currently logged in Clinician. Clinicians are able to edit
@@ -42,7 +42,6 @@ import org.controlsfx.control.Notifications;
 public class ViewClinicianController extends ViewBaseController {
 
     private static final Logger LOGGER = Logger.getLogger(ViewClinicianController.class.getName());
-
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
             .withZone(ZoneId.systemDefault());
 
@@ -107,7 +106,6 @@ public class ViewClinicianController extends ViewBaseController {
         }
     }
 
-
     /**
      * Initialize the page.
      */
@@ -137,13 +135,12 @@ public class ViewClinicianController extends ViewBaseController {
         updateCountries();
     }
 
-
     /**
      * Checks the clinicians country, changes region input to a choicebox of NZ regions if the country is New Zealand,
      * and changes to a textfield input for any other country
      */
     private void checkClinicianCountry() {
-        if (viewedClinician.getCountry() == Country.NZ ) {
+        if (viewedClinician.getCountry() == Country.NZ) {
             regionCB.setVisible(true);
             regionTF.setVisible(false);
         } else {
@@ -168,7 +165,6 @@ public class ViewClinicianController extends ViewBaseController {
         }
     }
 
-
     /**
      * Loads the clinician identified by the staff ID in loadStaffIdTextField.
      */
@@ -180,18 +176,18 @@ public class ViewClinicianController extends ViewBaseController {
         } catch (NumberFormatException e) {
             LOGGER.log(Level.WARNING, "Invalid staff ID", e);
             PageNavigator.showAlert(Alert.AlertType.ERROR, "Invalid Staff ID",
-                    "The Staff ID must be an integer.");
+                    "The Staff ID must be an integer.", mainController.getStage());
             return;
         }
-        try {
-            Optional<Clinician> newClin = State.getClinicianManager().getClinicianByStaffId(idValue);
-            viewedClinician = newClin.get();
-        } catch (NotFoundException ex) {
+
+        Optional<Clinician> newClinician = State.getClinicianManager().getClinicianByStaffId(idValue);
+        if (newClinician.isPresent()) {
+            viewedClinician = newClinician.get();
+            getViewedClinicianData();
+        } else {
             PageNavigator.showAlert(Alert.AlertType.ERROR, "Invalid Staff ID",
-                    "This staff ID does not exist in the system.");
-            return;
+                    "This staff ID does not exist in the system.", mainController.getStage());
         }
-        getViewedClinicianData();
     }
 
     /**
@@ -217,7 +213,6 @@ public class ViewClinicianController extends ViewBaseController {
             regionTF.setText(viewedClinician.getRegion());
         }
         checkClinicianCountry();
-
 
         creationDate.setText(formatter.format(viewedClinician.getCreatedOn()));
         if (viewedClinician.getModifiedOn() == null) {
@@ -252,6 +247,7 @@ public class ViewClinicianController extends ViewBaseController {
     /**
      * Checks that all mandatory fields have valid arguments inside. Otherwise display red text on the invalidly entered
      * labels.
+     *
      * @return true if all mandatory fields have valid input.
      */
     private boolean checkMandatoryFields() {
@@ -274,6 +270,7 @@ public class ViewClinicianController extends ViewBaseController {
     /**
      * Checks if the password has been updated. If the PasswordField is left blank, the old password remains current.
      * Otherwise the current password is updated to the newly entered value in the field.
+     *
      * @return the users password.
      */
     private String checkPassword() {
@@ -295,6 +292,7 @@ public class ViewClinicianController extends ViewBaseController {
 
     /**
      * Records the changes updated as a ModifyClinicianAction to trace the change in record.
+     *
      * @return If there were any changes made
      */
     private boolean updateChanges() {
@@ -306,7 +304,6 @@ public class ViewClinicianController extends ViewBaseController {
         addChangeIfDifferent(modifyClinicianObject, viewedClinician, "workAddress", workAddress.getText());
         addChangeIfDifferent(modifyClinicianObject, viewedClinician, "password", updatedPassword);
         addChangeIfDifferent(modifyClinicianObject, viewedClinician, "country", country.getValue());
-
 
         if (country.getValue() != null && country.getValue() == Country.NZ) {
             addChangeIfDifferent(modifyClinicianObject, viewedClinician, "region", regionCB.getValue().toString());
@@ -331,20 +328,21 @@ public class ViewClinicianController extends ViewBaseController {
             return true;
 
         } catch (NotFoundException e) {
-            LOGGER.log(Level.WARNING, "Client not found");
+            LOGGER.log(Level.WARNING, "Client not found", e);
             PageNavigator.showAlert(AlertType.WARNING, "Clinician not found", "The clinician could not be found on "
-                    + "the server, it may have been deleted");
+                    + "the server, it may have been deleted", mainController.getStage());
             return false;
         } catch (ServerRestException e) {
             LOGGER.log(Level.WARNING, e.getMessage(), e);
             PageNavigator.showAlert(AlertType.WARNING, "Server error", "Could not apply changes on the server, "
-                    + "please try again later");
+                    + "please try again later", mainController.getStage());
             return false;
         } catch (IfMatchFailedException e) {
-            LOGGER.log(Level.INFO, "If-Match did not match");
+            LOGGER.log(Level.INFO, "If-Match did not match", e);
             PageNavigator.showAlert(AlertType.WARNING, "Outdated Data",
                     "The clinician has been modified since you retrieved the data.\nIf you would still like to "
-                            + "apply these changes please submit again, otherwise refresh the page to update the data.");
+                            + "apply these changes please submit again, otherwise refresh the page to update the data.",
+                    mainController.getStage());
             return false;
         }
     }

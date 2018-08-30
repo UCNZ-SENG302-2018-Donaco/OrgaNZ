@@ -19,6 +19,7 @@ import com.humanharvest.organz.state.AuthenticationManager;
 import com.humanharvest.organz.state.AuthenticationManagerFake;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,10 +38,10 @@ public class ClientProceduresControllerTest {
 
     private static final String VALID_AUTH = "valid auth";
     private static final String INVALID_AUTH = "invalid auth";
-
+    @Autowired
+    WebApplicationContext webApplicationContext;
     private MockMvc mockMvc;
     private Client testClient;
-
     private LocalDate localDate;
     private final ProcedureRecord procedureRecord1 = new ProcedureRecord(
             "Liver transplant",
@@ -51,11 +52,8 @@ public class ClientProceduresControllerTest {
             "Patient needs a hip-bone reconstruction",
             localDate);
 
-    @Autowired
-    WebApplicationContext webApplicationContext;
-
     @Before
-    public void init(){
+    public void init() {
         State.reset();
         State.setAuthenticationManager(new AuthenticationManagerFake());
         mockMvc = webAppContextSetup(webApplicationContext).build();
@@ -102,7 +100,7 @@ public class ClientProceduresControllerTest {
                 "\"summary\": \"Heart Transplant\", \n" +
                 "\"description\": \"To fix my achy-breaky heart.\", \n" +
                 "\"date\": \"2017-06-01\", \n" +
-                "\"affectedOrgans\": [\"HEART\"] \n"+
+                "\"affectedOrgans\": [\"HEART\"] \n" +
                 " }";
         mockMvc.perform(post("/clients/1/procedures")
                 .header("If-Match", testClient.getETag())
@@ -118,12 +116,12 @@ public class ClientProceduresControllerTest {
     }
 
     @Test
-    public void createInvalidProcedureIncorrectDateFormat() throws Exception{
+    public void createInvalidProcedureIncorrectDateFormat() throws Exception {
         String invalidDateProcedureJson = "{ \n" +
                 "\"summary\": \"Heart Transplant\", \n" +
                 "\"description\": \"To fix my achy-breaky heart.\", \n" +
                 "\"date\": \"2017-060-01\", \n" +
-                "\"affectedOrgans\": [\"HEART\"] \n"+
+                "\"affectedOrgans\": [\"HEART\"] \n" +
                 " }";
         mockMvc.perform(post("/clients/1/procedures")
                 .header("If-Match", testClient.getETag())
@@ -134,12 +132,12 @@ public class ClientProceduresControllerTest {
     }
 
     @Test
-    public void createInvalidProcedureInvalidAuth() throws Exception{
+    public void createInvalidProcedureInvalidAuth() throws Exception {
         String validProcedureJson = "{ \n" +
                 "\"summary\": \"Heart Transplant\", \n" +
                 "\"description\": \"To fix my achy-breaky heart.\", \n" +
                 "\"date\": \"2017-06-01\", \n" +
-                "\"affectedOrgans\": [\"HEART\"] \n"+
+                "\"affectedOrgans\": [\"HEART\"] \n" +
                 " }";
         mockMvc.perform(post("/clients/1/procedures")
                 .header("If-Match", testClient.getETag())
@@ -150,12 +148,12 @@ public class ClientProceduresControllerTest {
     }
 
     @Test
-    public void createInvalidProcedureSummary() throws Exception{
+    public void createInvalidProcedureSummary() throws Exception {
         String validProcedureJson = "{ \n" +
                 "\"summary\": e, \n" +
                 "\"description\": \"To fix my achy-breaky heart.\", \n" +
                 "\"date\": \"2017-06-01\", \n" +
-                "\"affectedOrgans\": [\"HEART\"] \n"+
+                "\"affectedOrgans\": [\"HEART\"] \n" +
                 " }";
         mockMvc.perform(post("/clients/1/procedures")
                 .header("If-Match", testClient.getETag())
@@ -166,12 +164,12 @@ public class ClientProceduresControllerTest {
     }
 
     @Test
-    public void createInvalidProcedureDescription() throws Exception{
+    public void createInvalidProcedureDescription() throws Exception {
         String validProcedureJson = "{ \n" +
                 "\"summary\": \"summary\", \n" +
                 "\"description\": e, \n" +
                 "\"date\": \"2017-06-01\", \n" +
-                "\"affectedOrgans\": [\"HEART\"] \n"+
+                "\"affectedOrgans\": [\"HEART\"] \n" +
                 " }";
         mockMvc.perform(post("/clients/1/procedures")
                 .header("If-Match", testClient.getETag())
@@ -190,7 +188,7 @@ public class ClientProceduresControllerTest {
                 "\"summary\": \"Heart Transplant\", \n" +
                 "\"description\": \"New Description\", \n" +
                 "\"date\": \"2017-06-01\", \n" +
-                "\"affectedOrgans\": [\"HEART\"] \n"+
+                "\"affectedOrgans\": [\"HEART\"] \n" +
                 " }";
 
         mockMvc.perform(patch("/clients/" + testClient.getUid() + "/procedures/2")
@@ -208,7 +206,7 @@ public class ClientProceduresControllerTest {
                 "\"summary\": \"Heart Transplant\", \n" +
                 "\"description\": \"New Description\", \n" +
                 "\"date\": \"2017-06-01-9\", \n" +
-                "\"affectedOrgans\": [\"HEART\"] \n"+
+                "\"affectedOrgans\": [\"HEART\"] \n" +
                 " }";
 
         mockMvc.perform(patch("/clients/" + testClient.getUid() + "/procedures/2")

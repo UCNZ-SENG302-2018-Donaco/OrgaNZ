@@ -3,6 +3,7 @@ package com.humanharvest.organz.commands.modify;
 import java.io.PrintStream;
 
 import com.humanharvest.organz.actions.ActionInvoker;
+
 import picocli.CommandLine.Command;
 
 @Command(name = "redo", description = "Redo an undone change.")
@@ -21,6 +22,7 @@ public class Redo implements Runnable {
         this.invoker = invoker;
     }
 
+    @Override
     public void run() {
         outputStream.println(invoker.redo());
     }

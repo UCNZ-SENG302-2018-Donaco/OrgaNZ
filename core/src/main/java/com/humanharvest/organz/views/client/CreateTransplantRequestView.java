@@ -12,7 +12,7 @@ public class CreateTransplantRequestView {
     public CreateTransplantRequestView() {
     }
 
-    public CreateTransplantRequestView( Organ requestedOrgan, LocalDateTime requestDate) {
+    public CreateTransplantRequestView(Organ requestedOrgan, LocalDateTime requestDate) {
         this.requestedOrgan = requestedOrgan;
         this.requestDate = requestDate;
     }

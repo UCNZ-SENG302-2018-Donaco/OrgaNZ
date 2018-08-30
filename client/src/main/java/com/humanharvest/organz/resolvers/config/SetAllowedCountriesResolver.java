@@ -1,20 +1,20 @@
 package com.humanharvest.organz.resolvers.config;
 
-import java.util.EnumSet;
+import java.util.Set;
 
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Country;
+
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 
 public class SetAllowedCountriesResolver {
 
-    private EnumSet<Country> countries;
+    private Set<Country> countries;
 
-    public SetAllowedCountriesResolver(EnumSet<Country> countries) {
+    public SetAllowedCountriesResolver(Set<Country> countries) {
         this.countries = countries;
     }
 
@@ -22,11 +22,11 @@ public class SetAllowedCountriesResolver {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.set("X-Auth-Token", State.getToken());
 
+        HttpEntity<Set<Country>> entity = new HttpEntity<>(countries, httpHeaders);
 
-        HttpEntity<EnumSet<Country>> entity = new HttpEntity<>(countries, httpHeaders);
-
-        ResponseEntity responseEntity = State.getRestTemplate()
-                .exchange(State.BASE_URI + "/config/countries", HttpMethod.POST, entity,
-                        new ParameterizedTypeReference<EnumSet<Country>>(){});
+        State.getRestTemplate()
+                .exchange(State.getBaseUri() + "/config/countries", HttpMethod.POST, entity,
+                        new ParameterizedTypeReference<Set<Country>>() {
+                        });
     }
 }

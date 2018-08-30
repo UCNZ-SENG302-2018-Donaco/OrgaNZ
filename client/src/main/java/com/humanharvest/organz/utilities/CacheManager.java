@@ -16,6 +16,12 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.humanharvest.organz.utilities.exceptions.BadDrugNameException;
+import com.humanharvest.organz.utilities.exceptions.BadGatewayException;
+import com.humanharvest.organz.utilities.web.DrugInteractionsHandler;
+import com.humanharvest.organz.utilities.web.MedActiveIngredientsHandler;
+import com.humanharvest.organz.utilities.web.WebAPIHandler;
+
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
@@ -29,16 +35,12 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.api.client.http.HttpTransport;
-import com.humanharvest.organz.utilities.exceptions.BadDrugNameException;
-import com.humanharvest.organz.utilities.exceptions.BadGatewayException;
-import com.humanharvest.organz.utilities.web.DrugInteractionsHandler;
-import com.humanharvest.organz.utilities.web.MedActiveIngredientsHandler;
-import com.humanharvest.organz.utilities.web.WebAPIHandler;
 
 /**
  * Stores and retrieves arbitrary values from a persistent location.
  */
 public abstract class CacheManager {
+
     /**
      * The instance of the cache.
      */
@@ -62,6 +64,7 @@ public abstract class CacheManager {
 
     /**
      * Adds data to a cache, given a category, key, value and optional expiry date.
+     *
      * @param categoryName The category of the cached value.
      * @param arguments The key used to store/retrieve the cached value.
      * @param value The cached value.
@@ -87,12 +90,13 @@ public abstract class CacheManager {
         Key key = new Key(arguments);
         Value realValue =
                 new Value(JSONConverter.getObjectMapper().convertValue(value, JsonNode.class),
-                expires);
+                        expires);
         category.setData(key, realValue);
     }
 
     /**
      * Gets data from a cache, given a category and key.
+     *
      * @param categoryName The category of the cached value.
      * @param type The type of the cached value, must be deserialisable using GSON.
      * @param arguments The key used to store/retrieve the cached value.
@@ -172,7 +176,6 @@ public abstract class CacheManager {
                             handler.getData(rawKey);
                         } catch (BadDrugNameException | BadGatewayException | IOException e) {
                             LOGGER.log(Level.WARNING, "Couldn't refresh " + rawKey[0] + " in cache.", e);
-                            //Todo: should the old data be kept if new data can't be retrieved? it currently is not.
                         }
                     }
                 }
@@ -183,6 +186,7 @@ public abstract class CacheManager {
     @JsonSerialize(using = CategorySerialiser.class)
     @JsonDeserialize(using = CategoryDeserialiser.class)
     protected static final class Category {
+
         private final Map<Key, Value> values;
 
         public Category() {
@@ -232,6 +236,7 @@ public abstract class CacheManager {
     }
 
     private static final class CategorySerialiser extends JsonSerializer<Category> {
+
         @Override
         public void serialize(Category value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
             gen.writeStartArray();
@@ -250,6 +255,7 @@ public abstract class CacheManager {
     }
 
     private static final class CategoryDeserialiser extends StdDeserializer<Category> {
+
         protected CategoryDeserialiser() {
             super(Category.class);
         }
@@ -310,6 +316,7 @@ public abstract class CacheManager {
     }
 
     private static final class Value {
+
         private final JsonNode value;
         private final Optional<Instant> expires;
 
@@ -379,9 +386,10 @@ public abstract class CacheManager {
 
             try {
                 categories = JSONConverter.getObjectMapper().readValue(cacheFile,
-                        new TypeReference<Map<String, Category>>(){
+                        new TypeReference<Map<String, Category>>() {
                         });
             } catch (FileNotFoundException e) {
+                LOGGER.log(Level.INFO, e.getMessage(), e);
                 categories = new HashMap<>();
             } catch (IOException e) {
                 LOGGER.log(Level.SEVERE, "Unable to load cache data", e);

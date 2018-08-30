@@ -14,124 +14,133 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
-<VBox prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.client.ClientMedicalHistoryController">
-    <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
-    <HBox fx:id="menuBarPane" maxHeight="-Infinity" minHeight="-Infinity" />
-        <SplitPane dividerPositions="0.5" VBox.vgrow="ALWAYS">
-            <HBox fx:id="sidebarPane" maxWidth="-Infinity" />
-            <BorderPane>
-                <top>
-                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="View/edit medical history" textAlignment="CENTER" BorderPane.alignment="CENTER">
-                        <font>
-                            <Font size="24.0" />
-                        </font>
-                        <BorderPane.margin>
-                            <Insets top="50.0" />
-                        </BorderPane.margin>
-                    </Text>
-                </top>
-                <center>
-                </center>
-                <center>
-                    <VBox BorderPane.alignment="CENTER">
-                        <HBox fx:id="newIllnessPane" alignment="CENTER_LEFT" spacing="10.0">
-                            <VBox.margin>
-                                <Insets left="10.0" right="10.0" top="20.0" />
-                            </VBox.margin>
-                            <Label maxWidth="1.7976931348623157E308" text="Illness:">
-                                <font>
-                                    <Font size="14.0" />
-                                </font>
-                                <HBox.margin>
-                                    <Insets />
-                                </HBox.margin>
-                            </Label>
-                            <TextField fx:id="illnessNameField" onAction="#addIllness" HBox.hgrow="ALWAYS" />
-                            <Label maxWidth="1.7976931348623157E308" text="Diagnosis Date:">
-                                <font>
-                                    <Font size="14.0" />
-                                </font>
-                            </Label>
-                            <DatePicker fx:id="dateDiagnosedPicker" prefHeight="25.0" prefWidth="163.0" HBox.hgrow="ALWAYS">
-                                <HBox.margin>
-                                    <Insets />
-                                </HBox.margin>
-                            </DatePicker>
-                            <CheckBox fx:id="chronicBox" mnemonicParsing="false" text="Chronic">
-                                <HBox.margin>
-                                    <Insets />
-                                </HBox.margin>
-                            </CheckBox>
-                            <Button alignment="TOP_LEFT" mnemonicParsing="false" onAction="#addIllness" text="Add Illness" />
-                        </HBox>
-                        <Text fx:id="errorMessage" fill="RED" strokeType="OUTSIDE" strokeWidth="0.0">
-                            <VBox.margin>
-                                <Insets left="10.0" top="5.0" />
-                            </VBox.margin>
-                        </Text>
-                        <HBox VBox.vgrow="ALWAYS">
-                            <VBox.margin>
-                                <Insets bottom="20.0" left="10.0" right="10.0" top="10.0" />
-                            </VBox.margin>
-                            <VBox HBox.hgrow="ALWAYS">
-                                <Label text="Past Illnesses">
-                                    <font>
-                                        <Font name="System Bold" size="12.0" />
-                                    </font>
-                                    <VBox.margin>
-                                        <Insets bottom="10.0" />
-                                    </VBox.margin>
-                                </Label>
-                                <TableView fx:id="pastIllnessView" VBox.vgrow="ALWAYS">
-                                    <columns>
-                                        <TableColumn fx:id="illnessPastCol" prefWidth="75.0" text="Illness" />
-                                        <TableColumn fx:id="diagnosisDatePastCol" prefWidth="75.0" text="Diagnosis Date" />
-                                        <TableColumn fx:id="curedDatePastCol" prefWidth="75.0" text="Cured Date" />
-                                    </columns>
-                                    <columnResizePolicy>
-                                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-                                    </columnResizePolicy>
-                                </TableView>
-                            </VBox>
-                            <VBox spacing="5.0">
-                                <HBox.margin>
-                                    <Insets left="10.0" right="10.0" top="27.0" />
-                                </HBox.margin>
-                            </VBox>
-                            <VBox HBox.hgrow="ALWAYS">
-                                <Label text="Current Illnesses">
-                                    <font>
-                                        <Font name="System Bold" size="12.0" />
-                                    </font>
-                                    <VBox.margin>
-                                        <Insets bottom="10.0" />
-                                    </VBox.margin>
-                                </Label>
-                                <TableView fx:id="currentIllnessView" VBox.vgrow="ALWAYS">
-                                    <columns>
-                                        <TableColumn fx:id="illnessCurrCol" prefWidth="75.0" text="Illness" />
-                                        <TableColumn fx:id="diagnosisDateCurrCol" prefWidth="75.0" text="Diagnosis Date" />
-                                        <TableColumn fx:id="chronicCurrCol" prefWidth="75.0" text="Chronic" />
-                                    </columns>
-                                    <columnResizePolicy>
-                                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-                                    </columnResizePolicy>
-                                </TableView>
-                            </VBox>
-                        </HBox>
-                    </VBox>
-                </center>
-                <bottom>
-                    <HBox fx:id="illnessButtonsPane" alignment="TOP_CENTER" spacing="10.0" BorderPane.alignment="CENTER">
-                        <BorderPane.margin>
-                            <Insets bottom="20.0" left="10.0" right="10.0" />
-                        </BorderPane.margin>
-                        <Button fx:id="toggleCuredButton" mnemonicParsing="false" onAction="#toggleCured" text="Mark as Cured" textAlignment="CENTER" />
-                        <Button fx:id="toggleChronicButton" alignment="TOP_LEFT" mnemonicParsing="false" onAction="#toggleChronic" text="Mark as Chronic" />
-                        <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteIllness" text="Delete" />
-                    </HBox>
-                </bottom>
-            </BorderPane>
-        </SplitPane>
+<VBox xmlns:fx="http://javafx.com/fxml/1" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.121"
+  fx:controller="com.humanharvest.organz.controller.client.ClientMedicalHistoryController">
+  <SplitPane VBox.vgrow="ALWAYS" dividerPositions="0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="200.0">
+    <HBox maxHeight="-Infinity" minHeight="-Infinity" fx:id="menuBarPane"/>
+    <SplitPane VBox.vgrow="ALWAYS" dividerPositions="0.5">
+      <HBox maxWidth="-Infinity" fx:id="sidebarPane"/>
+      <BorderPane>
+        <top>
+          <Text BorderPane.alignment="CENTER" strokeType="OUTSIDE" strokeWidth="0.0" text="View/edit medical history"
+            textAlignment="CENTER">
+            <font>
+              <Font size="24.0"/>
+            </font>
+            <BorderPane.margin>
+              <Insets top="50.0"/>
+            </BorderPane.margin>
+          </Text>
+        </top>
+        <center>
+        </center>
+        <center>
+          <VBox BorderPane.alignment="CENTER">
+            <HBox alignment="CENTER_LEFT" spacing="10.0" fx:id="newIllnessPane">
+              <VBox.margin>
+                <Insets left="10.0" right="10.0" top="20.0"/>
+              </VBox.margin>
+              <Label maxWidth="1.7976931348623157E308" text="Illness:">
+                <font>
+                  <Font size="14.0"/>
+                </font>
+                <HBox.margin>
+                  <Insets/>
+                </HBox.margin>
+              </Label>
+              <TextField HBox.hgrow="ALWAYS" onAction="#addIllness" fx:id="illnessNameField"/>
+              <Label maxWidth="1.7976931348623157E308" text="Diagnosis Date:">
+                <font>
+                  <Font size="14.0"/>
+                </font>
+              </Label>
+              <DatePicker HBox.hgrow="ALWAYS" prefHeight="25.0" prefWidth="163.0"
+                fx:id="dateDiagnosedPicker">
+                <HBox.margin>
+                  <Insets/>
+                </HBox.margin>
+              </DatePicker>
+              <CheckBox mnemonicParsing="false" text="Chronic" fx:id="chronicBox">
+                <HBox.margin>
+                  <Insets/>
+                </HBox.margin>
+              </CheckBox>
+              <Button alignment="TOP_LEFT" mnemonicParsing="false" onAction="#addIllness"
+                text="Add Illness"/>
+            </HBox>
+            <Text fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" fx:id="errorMessage">
+              <VBox.margin>
+                <Insets left="10.0" top="5.0"/>
+              </VBox.margin>
+            </Text>
+            <HBox VBox.vgrow="ALWAYS">
+              <VBox.margin>
+                <Insets bottom="20.0" left="10.0" right="10.0" top="10.0"/>
+              </VBox.margin>
+              <VBox HBox.hgrow="ALWAYS">
+                <Label text="Past Illnesses">
+                  <font>
+                    <Font name="System Bold" size="12.0"/>
+                  </font>
+                  <VBox.margin>
+                    <Insets bottom="10.0"/>
+                  </VBox.margin>
+                </Label>
+                <TableView VBox.vgrow="ALWAYS" fx:id="pastIllnessView">
+                  <columns>
+                    <TableColumn prefWidth="75.0" text="Illness" fx:id="illnessPastCol"/>
+                    <TableColumn prefWidth="75.0" text="Diagnosis Date"
+                      fx:id="diagnosisDatePastCol"/>
+                    <TableColumn prefWidth="75.0" text="Cured Date" fx:id="curedDatePastCol"/>
+                  </columns>
+                  <columnResizePolicy>
+                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                  </columnResizePolicy>
+                </TableView>
+              </VBox>
+              <VBox spacing="5.0">
+                <HBox.margin>
+                  <Insets left="10.0" right="10.0" top="27.0"/>
+                </HBox.margin>
+              </VBox>
+              <VBox HBox.hgrow="ALWAYS">
+                <Label text="Current Illnesses">
+                  <font>
+                    <Font name="System Bold" size="12.0"/>
+                  </font>
+                  <VBox.margin>
+                    <Insets bottom="10.0"/>
+                  </VBox.margin>
+                </Label>
+                <TableView VBox.vgrow="ALWAYS" fx:id="currentIllnessView">
+                  <columns>
+                    <TableColumn prefWidth="75.0" text="Illness" fx:id="illnessCurrCol"/>
+                    <TableColumn prefWidth="75.0" text="Diagnosis Date"
+                      fx:id="diagnosisDateCurrCol"/>
+                    <TableColumn prefWidth="75.0" text="Chronic" fx:id="chronicCurrCol"/>
+                  </columns>
+                  <columnResizePolicy>
+                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                  </columnResizePolicy>
+                </TableView>
+              </VBox>
+            </HBox>
+          </VBox>
+        </center>
+        <bottom>
+          <HBox BorderPane.alignment="CENTER" alignment="TOP_CENTER" spacing="10.0"
+            fx:id="illnessButtonsPane">
+            <BorderPane.margin>
+              <Insets bottom="20.0" left="10.0" right="10.0"/>
+            </BorderPane.margin>
+            <Button mnemonicParsing="false" onAction="#toggleCured" text="Mark as Cured"
+              textAlignment="CENTER" fx:id="toggleCuredButton"/>
+            <Button alignment="TOP_LEFT" mnemonicParsing="false" onAction="#toggleChronic"
+              text="Mark as Chronic" fx:id="toggleChronicButton"/>
+            <Button mnemonicParsing="false" onAction="#deleteIllness" text="Delete" fx:id="deleteButton"/>
+          </HBox>
+        </bottom>
+      </BorderPane>
     </SplitPane>
+  </SplitPane>
 </VBox>

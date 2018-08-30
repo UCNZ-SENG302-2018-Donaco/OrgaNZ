@@ -84,8 +84,16 @@ public class ViewProceduresController extends SubController {
     private TableView<ProcedureRecord> selectedTableView = null;
 
     /**
+     * Gets the current session from the global state.
+     */
+    public ViewProceduresController() {
+        session = State.getSession();
+    }
+
+    /**
      * Sets the table's sort policy - default ordering is by date DESC, but if a column is selected for sorting then
      * that takes precedence.
+     *
      * @param table The table to set the sort policy for.
      * @return True.
      */
@@ -106,6 +114,7 @@ public class ViewProceduresController extends SubController {
 
     /**
      * Handles the edit event when a procedure summary cell is edited.
+     *
      * @param event The cell edit event.
      */
     private void editSummaryCell(CellEditEvent<ProcedureRecord, String> event) {
@@ -113,7 +122,7 @@ public class ViewProceduresController extends SubController {
         if (summary == null || "".equals(summary)) {
             PageNavigator.showAlert(AlertType.ERROR,
                     "Invalid summary",
-                    "New procedure summary must not be blank.");
+                    "New procedure summary must not be blank.", mainController.getStage());
         } else {
             ModifyProcedureObject modification = new ModifyProcedureObject();
             modification.setSummary(event.getNewValue());
@@ -126,6 +135,7 @@ public class ViewProceduresController extends SubController {
 
     /**
      * Handles the edit event when a procedure description cell is edited.
+     *
      * @param event The cell edit event.
      */
     private void editDescriptionCell(CellEditEvent<ProcedureRecord, String> event) {
@@ -138,6 +148,7 @@ public class ViewProceduresController extends SubController {
 
     /**
      * Handles the edit event when a procedure date cell is edited.
+     *
      * @param event The cell edit event.
      */
     private void editDateCell(CellEditEvent<ProcedureRecord, LocalDate> event) {
@@ -145,11 +156,11 @@ public class ViewProceduresController extends SubController {
         if (newDate == null) {
             PageNavigator.showAlert(AlertType.ERROR,
                     "Invalid date",
-                    "New procedure date must not be blank.");
+                    "New procedure date must not be blank.", mainController.getStage());
         } else if (newDate.isBefore(client.getDateOfBirth())) {
             PageNavigator.showAlert(AlertType.ERROR,
                     "Invalid date",
-                    "New procedure date must be after the client's date of birth.");
+                    "New procedure date must be after the client's date of birth.", mainController.getStage());
         } else {
             ModifyProcedureObject modification = new ModifyProcedureObject();
             modification.setDate(event.getNewValue());
@@ -161,6 +172,7 @@ public class ViewProceduresController extends SubController {
 
     /**
      * Handles the edit event when an affected organs cell is edited.
+     *
      * @param event The cell edit event.
      */
     private void editAffectedOrgansCell(CellEditEvent<ProcedureRecord, Set<Organ>> event) {
@@ -176,27 +188,21 @@ public class ViewProceduresController extends SubController {
             State.getClientResolver().modifyProcedureRecord(client, procedureRecord, modification);
             PageNavigator.refreshAllWindows();
         } catch (ServerRestException e) {
-            LOGGER.severe(e.getMessage());
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
             PageNavigator.showAlert(AlertType.ERROR,
                     "Server Error",
-                    "An error occurred when trying to send data to the server.\nPlease try again later.");
+                    "An error occurred when trying to send data to the server.\nPlease try again later.",
+                    mainController.getStage());
         } catch (BadRequestException e) {
-            LOGGER.info("No changes were made to the procedure.");
+            LOGGER.log(Level.INFO, "No changes were made to the procedure.", e);
         } catch (IfMatchFailedException e) {
-            LOGGER.log(Level.INFO, "If-Match did not match");
+            LOGGER.log(Level.INFO, "If-Match did not match", e);
             Notifications.create()
                     .title("Outdated Data")
                     .text("The client has been modified since you retrieved the data. If you would still like to "
                             + "apply these changes please submit again, otherwise refresh the page to update the data.")
                     .showWarning();
         }
-    }
-
-    /**
-     * Gets the current session from the global state.
-     */
-    public ViewProceduresController() {
-        session = State.getSession();
     }
 
     /**
@@ -237,16 +243,16 @@ public class ViewProceduresController extends SubController {
 
         // Add listeners to clear the other table when anything is selected in each table (and enable/disable buttons).
         pendingProcedureView.getSelectionModel().selectedItemProperty().addListener(
-                (observable) -> enableAppropriateButtons());
+                observable -> enableAppropriateButtons());
         pastProcedureView.getSelectionModel().selectedItemProperty().addListener(
-                (observable) -> enableAppropriateButtons());
+                observable -> enableAppropriateButtons());
         pendingProcedureView.setOnMouseClicked(
-                (observable) -> {
+                observable -> {
                     selectedTableView = pendingProcedureView;
                     pastProcedureView.getSelectionModel().clearSelection();
                 });
         pastProcedureView.setOnMouseClicked(
-                (observable) -> {
+                observable -> {
                     selectedTableView = pastProcedureView;
                     pendingProcedureView.getSelectionModel().clearSelection();
                 });
@@ -265,6 +271,7 @@ public class ViewProceduresController extends SubController {
      * - Checks if the session login type is a client or a clinician, and sets the viewed client appropriately.
      * - Checks if the logged in user is a client, and if so, makes the page non-editable.
      * - Refreshes the procedure tables to set initial state based on the viewed client.
+     *
      * @param mainController The MainController for the window this page is loaded on.
      */
     @Override
@@ -302,12 +309,14 @@ public class ViewProceduresController extends SubController {
         try {
             client.setProcedures(State.getClientResolver().getProcedureRecords(client));
         } catch (NotFoundException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
             Notifications.create()
                     .title("Client not found")
                     .text("The client could not be found on the server, it may have been deleted")
                     .showWarning();
             return;
         } catch (ServerRestException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
             Notifications.create()
                     .title("Server error")
                     .text("Could not apply changes on the server, please try again later")
@@ -362,6 +371,7 @@ public class ViewProceduresController extends SubController {
 
     /**
      * Gets the currently selected record in the currently selected table.
+     *
      * @return The selected procedure record.
      */
     private ProcedureRecord getSelectedRecord() {
@@ -381,11 +391,12 @@ public class ViewProceduresController extends SubController {
         if (record != null) {
             try {
                 State.getClientResolver().deleteProcedureRecord(client, record);
-            } catch (ServerRestException exc) {
-                LOGGER.severe(exc.getMessage());
+            } catch (ServerRestException e) {
+                LOGGER.log(Level.SEVERE, e.getMessage(), e);
                 PageNavigator.showAlert(AlertType.ERROR,
                         "Server Error",
-                        "An error occurred when trying to send data to the server.\nPlease try again later.");
+                        "An error occurred when trying to send data to the server.\nPlease try again later.",
+                        mainController.getStage());
                 return;
             }
 
@@ -420,11 +431,12 @@ public class ViewProceduresController extends SubController {
                 errorMessage.setText(null);
                 PageNavigator.refreshAllWindows();
 
-            } catch (ServerRestException exc) {
-                LOGGER.severe(exc.getMessage());
+            } catch (ServerRestException e) {
+                LOGGER.log(Level.SEVERE, e.getMessage(), e);
                 PageNavigator.showAlert(AlertType.ERROR,
                         "Server Error",
-                        "An error occurred when trying to send data to the server.\nPlease try again later.");
+                        "An error occurred when trying to send data to the server.\nPlease try again later.",
+                        mainController.getStage());
             }
         }
     }

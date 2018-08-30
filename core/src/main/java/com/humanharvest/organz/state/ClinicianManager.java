@@ -12,35 +12,40 @@ import com.humanharvest.organz.Clinician;
  */
 
 public interface ClinicianManager {
+
     /**
      * Add a clinician
+     *
      * @param clinician Clinician to be added
      */
     void addClinician(Clinician clinician);
 
-    void setClinicians(Collection<Clinician> clinicians);
-
-
     /**
      * Get the list of clinicians
+     *
      * @return ArrayList of current clinicians
      */
     List<Clinician> getClinicians();
 
+    void setClinicians(Collection<Clinician> clinicians);
+
     /**
      * Remove a client object
+     *
      * @param clinician Clinician to be removed
      */
     void removeClinician(Clinician clinician);
 
     /**
      * Update an existing clinician
+     *
      * @param editedClinician the new details for the clinician
      */
     void applyChangesTo(Clinician editedClinician);
 
     /**
      * Checks if a user already exists with that staff id
+     *
      * @param staffId The id of the clinician
      * @return Boolean
      */
@@ -48,6 +53,7 @@ public interface ClinicianManager {
 
     /**
      * Return a clinician matching that UID
+     *
      * @param staffId To be matched
      * @return Clinician object or empty if none exists
      */
@@ -55,6 +61,7 @@ public interface ClinicianManager {
 
     /**
      * Return the default clinician
+     *
      * @return the default clinician
      */
     Clinician getDefaultClinician();

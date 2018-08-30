@@ -18,6 +18,7 @@ import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.server.Application;
 import com.humanharvest.organz.state.AuthenticationManagerFake;
 import com.humanharvest.organz.state.State;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,14 +34,13 @@ import org.springframework.web.context.WebApplicationContext;
 @SpringBootTest(classes = Application.class)
 @WebAppConfiguration
 public class ClientMedicationsControllerTest {
-    private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON
-            .getSubtype(), Charset.forName("utf8"));
-
-    private MockMvc mockMvc;
-    private Client testClient;
 
     @Autowired
     WebApplicationContext webApplicationContext;
+    private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON
+            .getSubtype(), Charset.forName("utf8"));
+    private MockMvc mockMvc;
+    private Client testClient;
 
     @Before
     public void init() {
@@ -78,18 +78,19 @@ public class ClientMedicationsControllerTest {
     //----------------------POST Create MedicationRecord------------------
 
     /**
-    public void createMedication() throws Exception {
-        String json = "{ \"name\": \"testmed\" }";
-
-        mockMvc.perform(post("/clients/1/medications")
-                .contentType(contentType)
-                .content(json)
-                .header("If-Match", testClient.getETag()))
-                .andExpect(status().isCreated())
-                .andExpect(content().contentType(contentType))
-                .andExpect(jsonPath("$[2].medicationName", is("testmed")))
-                .andExpect(jsonPath("$[2].stopped", is(((String) null))));
-    } **/
+     * public void createMedication() throws Exception {
+     * String json = "{ \"name\": \"testmed\" }";
+     * <p>
+     * mockMvc.perform(post("/clients/1/medications")
+     * .contentType(contentType)
+     * .content(json)
+     * .header("If-Match", testClient.getETag()))
+     * .andExpect(status().isCreated())
+     * .andExpect(content().contentType(contentType))
+     * .andExpect(jsonPath("$[2].medicationName", is("testmed")))
+     * .andExpect(jsonPath("$[2].stopped", is(((String) null))));
+     * }
+     **/
 
     @Test
     public void createMedicationMissingEtag() throws Exception {
@@ -111,19 +112,18 @@ public class ClientMedicationsControllerTest {
     }
 
     /**
-
-    public void testCreateMedicationInvalid() throws Exception {
-        String json = "{ \"invalid\": \"testmed\" }";
-
-        mockMvc.perform(post("/clients/1/medications")
-                .contentType(contentType)
-                .content(json)
-                .header("If-Match", testClient.getETag()))
-                .andExpect(status().isBadRequest());
-    } **/
+     * public void testCreateMedicationInvalid() throws Exception {
+     * String json = "{ \"invalid\": \"testmed\" }";
+     * <p>
+     * mockMvc.perform(post("/clients/1/medications")
+     * .contentType(contentType)
+     * .content(json)
+     * .header("If-Match", testClient.getETag()))
+     * .andExpect(status().isBadRequest());
+     * }
+     **/
 
     //------------------------DELETE-----------------------
-
     @Test
     public void testDeleteMedication() throws Exception {
         mockMvc.perform(delete("/clients/1/medications/2")

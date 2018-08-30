@@ -21,6 +21,7 @@ import javafx.stage.Window;
 import com.humanharvest.organz.GUICategory;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.view.Page;
+
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.experimental.categories.Category;
@@ -46,6 +47,33 @@ public abstract class ControllerTest extends ApplicationTest {
             System.setProperty("prism.text", "t2k");
             System.setProperty("java.awt.headless", "true");
         }
+    }
+
+    /**
+     * Get the top modal window.
+     *
+     * @return the top modal window
+     */
+    private static Stage getTopModalStage() {
+        // Get a list of windows but ordered from top[0] to bottom[n] ones.
+        List<Window> allWindows = new ArrayList<>(new FxRobot().robotContext().getWindowFinder().listWindows());
+        Collections.reverse(allWindows);
+
+        // Return the first found modal window.
+        return (Stage) allWindows
+                .stream()
+                .filter(window -> window instanceof Stage)
+                .findFirst()
+                .orElse(null);
+    }
+
+    protected static <T, Y> Y setPrivateField(Class<T> clazz, String fieldName, Y newValue)
+            throws NoSuchFieldException, IllegalAccessException {
+        Field field = clazz.getDeclaredField(fieldName);
+        field.setAccessible(true);
+        Y result = (Y) field.get(null);
+        field.set(null, newValue);
+        return result;
     }
 
     @Override
@@ -76,23 +104,6 @@ public abstract class ControllerTest extends ApplicationTest {
         mainController.setSubController(pageController);
     }
 
-    /**
-     * Get the top modal window.
-     * @return the top modal window
-     */
-    private static Stage getTopModalStage() {
-        // Get a list of windows but ordered from top[0] to bottom[n] ones.
-        List<Window> allWindows = new ArrayList<>(new FxRobot().robotContext().getWindowFinder().listWindows());
-        Collections.reverse(allWindows);
-
-        // Return the first found modal window.
-        return (Stage) allWindows
-                .stream()
-                .filter(window -> window instanceof Stage)
-                .findFirst()
-                .orElse(null);
-    }
-
     @After
     public void killAllWindows() {
         Stage stage = getTopModalStage();
@@ -108,13 +119,4 @@ public abstract class ControllerTest extends ApplicationTest {
     protected abstract Page getPage();
 
     protected abstract void initState();
-
-    protected static <T, Y> Y setPrivateField(Class<T> clazz, String fieldName, Y newValue)
-            throws NoSuchFieldException, IllegalAccessException {
-        Field field = clazz.getDeclaredField(fieldName);
-        field.setAccessible(true);
-        Y result = (Y)field.get(null);
-        field.set(null, newValue);
-        return result;
-    }
 }

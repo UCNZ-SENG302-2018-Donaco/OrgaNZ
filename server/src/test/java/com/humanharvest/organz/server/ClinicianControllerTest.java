@@ -12,6 +12,7 @@ import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.state.AuthenticationManagerFake;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Region;
+
 import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,18 +30,17 @@ import org.springframework.web.context.WebApplicationContext;
 @WebAppConfiguration
 public class ClinicianControllerTest {
 
-    private MockMvc mockMvc;
-    private Clinician testClinician;
-
     @Autowired
     WebApplicationContext webApplicationContext;
+    private MockMvc mockMvc;
+    private Clinician testClinician;
 
     @Before
     public void init() {
         State.reset();
         State.setAuthenticationManager(new AuthenticationManagerFake());
         this.mockMvc = webAppContextSetup(webApplicationContext).build();
-        testClinician = new Clinician("Shawn", "", "Michaels", "1", Region.UNSPECIFIED.toString(), null,1, "hi");
+        testClinician = new Clinician("Shawn", "", "Michaels", "1", Region.UNSPECIFIED.toString(), null, 1, "hi");
         State.setAuthenticationManager(new AuthenticationManagerFake());
 
     }
@@ -62,6 +62,7 @@ public class ClinicianControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)));
     }
+
     @Test
     public void getDefaultDetails() throws Exception {
         mockMvc.perform(get("/clinicians/0"))
@@ -95,7 +96,6 @@ public class ClinicianControllerTest {
     public void getSpecificAuth() throws Exception {
         //TODO auth for 401's and 403's
     }
-
 
     //------------POST---------------
 
@@ -183,7 +183,6 @@ public class ClinicianControllerTest {
                 .content(json))
                 .andExpect(status().isNotFound());
     }
-
 
     //------------DELETE---------------
     @Test

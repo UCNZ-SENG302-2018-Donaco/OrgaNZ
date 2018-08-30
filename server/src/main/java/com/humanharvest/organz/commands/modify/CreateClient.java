@@ -10,6 +10,7 @@ import com.humanharvest.organz.actions.client.CreateClientAction;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.pico_type_converters.PicoLocalDateConverter;
+
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
@@ -23,18 +24,6 @@ public class CreateClient implements Runnable {
     private final ClientManager manager;
     private final ActionInvoker invoker;
     private final PrintStream outputStream;
-
-    public CreateClient(PrintStream outputStream, ActionInvoker invoker) {
-        this.outputStream = outputStream;
-        this.invoker = invoker;
-        manager = State.getClientManager();
-    }
-
-    public CreateClient(ClientManager manager, ActionInvoker invoker) {
-        this.manager = manager;
-        this.invoker = invoker;
-        outputStream = System.out;
-    }
 
     @Option(names = {"-f", "--firstname"}, description = "First name.", required = true)
     private String firstName;
@@ -52,6 +41,19 @@ public class CreateClient implements Runnable {
     @Option(names = "--force", description = "Force even if a duplicate client is found")
     private boolean force;
 
+    public CreateClient(PrintStream outputStream, ActionInvoker invoker) {
+        this.outputStream = outputStream;
+        this.invoker = invoker;
+        manager = State.getClientManager();
+    }
+
+    public CreateClient(ClientManager manager, ActionInvoker invoker) {
+        this.manager = manager;
+        this.invoker = invoker;
+        outputStream = System.out;
+    }
+
+    @Override
     public void run() {
 
         if (!force && manager.doesClientExist(firstName, lastName, dateOfBirth)) {

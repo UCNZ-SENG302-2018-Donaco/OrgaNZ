@@ -10,11 +10,13 @@ import com.humanharvest.organz.Client;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.ClientManagerMemory;
+
 import org.junit.Before;
 import org.junit.Test;
 import picocli.CommandLine;
 
 public class RequestOrganTest extends BaseTest {
+
     private ClientManager spyClientManager;
     private RequestOrgan spyRequestOrgan;
     private Client testClient;

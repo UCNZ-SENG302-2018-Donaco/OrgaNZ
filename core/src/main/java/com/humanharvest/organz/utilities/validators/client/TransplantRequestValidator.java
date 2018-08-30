@@ -6,7 +6,7 @@ import java.time.format.DateTimeParseException;
 import com.humanharvest.organz.TransplantRequest;
 
 public class TransplantRequestValidator {
-    
+
     public static void validateTransplantRequest(TransplantRequest request) {
         int clientId = request.getClient().getUid();
 

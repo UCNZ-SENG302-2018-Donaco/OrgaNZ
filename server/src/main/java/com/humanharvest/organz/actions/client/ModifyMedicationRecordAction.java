@@ -20,6 +20,7 @@ public class ModifyMedicationRecordAction extends ClientAction {
     /**
      * Creates a new action to modify a medication record. Will initialise the new started/stopped dates to be the
      * same as the current ones.
+     *
      * @param record The medication record to modify.
      */
     public ModifyMedicationRecordAction(MedicationRecord record, ClientManager manager) {
@@ -33,6 +34,7 @@ public class ModifyMedicationRecordAction extends ClientAction {
 
     /**
      * Make the action change the medication record's started date to the one given.
+     *
      * @param newStarted The new started date.
      */
     public void changeStarted(LocalDate newStarted) {
@@ -41,6 +43,7 @@ public class ModifyMedicationRecordAction extends ClientAction {
 
     /**
      * Make the action change the medication record's stopped date to the one given.
+     *
      * @param newStopped The new started date.
      */
     public void changeStopped(LocalDate newStopped) {
@@ -49,6 +52,7 @@ public class ModifyMedicationRecordAction extends ClientAction {
 
     /**
      * Apply all changes to the medication record.
+     *
      * @throws IllegalStateException If no changes were made.
      */
     @Override
@@ -84,10 +88,10 @@ public class ModifyMedicationRecordAction extends ClientAction {
         builder.append(String.format("Changed medication record for '%s':", record.getMedicationName()));
 
         if (!Objects.equals(newStarted, oldStarted)) {
-            builder.append(String.format("\nStarted date changed from %s to %s", oldStarted, newStarted));
+            builder.append(String.format("%nStarted date changed from %s to %s", oldStarted, newStarted));
         }
         if (!Objects.equals(newStopped, oldStopped)) {
-            builder.append(String.format("\nStopped date changed from %s to %s", oldStarted, newStarted));
+            builder.append(String.format("%nStopped date changed from %s to %s", oldStarted, newStarted));
         }
 
         return builder.toString();
@@ -100,10 +104,10 @@ public class ModifyMedicationRecordAction extends ClientAction {
                 record.getMedicationName()));
 
         if (!Objects.equals(newStarted, oldStarted)) {
-            builder.append(String.format("\nStarted date changed from %s to %s", oldStarted, newStarted));
+            builder.append(String.format("%nStarted date changed from %s to %s", oldStarted, newStarted));
         }
         if (!Objects.equals(newStopped, oldStopped)) {
-            builder.append(String.format("\nStopped date changed from %s to %s", oldStopped, newStopped));
+            builder.append(String.format("%nStopped date changed from %s to %s", oldStopped, newStopped));
         }
 
         return builder.toString();

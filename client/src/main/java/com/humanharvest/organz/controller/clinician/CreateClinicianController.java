@@ -55,6 +55,7 @@ public class CreateClinicianController extends SubController {
 
     /**
      * Override so we can set the page title.
+     *
      * @param mainController The MainController
      */
     @Override
@@ -67,6 +68,7 @@ public class CreateClinicianController extends SubController {
     /**
      * Checks that all mandatory fields have had valid input correctly input. Invalid input results in the text beside
      * the instigating field turning red.
+     *
      * @return if all mandatory fields have valid input. False otherwise
      */
     private boolean checkMandatoryFields() {
@@ -93,7 +95,8 @@ public class CreateClinicianController extends SubController {
 
             } else if (clinicianManager
                     .doesStaffIdExist(Integer.parseInt(staffId.getText()))) { // If the staffId is in use
-                PageNavigator.showAlert(AlertType.ERROR, "Staff Id in Use", "This staff Id is already in use.");
+                PageNavigator.showAlert(AlertType.ERROR, "Staff Id in Use", "This staff Id is already in use.",
+                        mainController.getStage());
                 staffIdLabel.setTextFill(Color.RED);
                 update = false;
 
@@ -114,7 +117,6 @@ public class CreateClinicianController extends SubController {
         }
         return update;
     }
-
 
     /**
      * Creates a Clinician if all of the fields have valid input.
@@ -151,7 +153,6 @@ public class CreateClinicianController extends SubController {
             }
         }
     }
-
 
     /**
      * Takes the user back to the landing page.

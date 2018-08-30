@@ -10,6 +10,7 @@ public class CreateClinicianAction extends ClinicianAction {
 
     /**
      * Create a new Action
+     *
      * @param clinician The Clinician to be created
      * @param manager The ClinicianManager to apply changes to
      */

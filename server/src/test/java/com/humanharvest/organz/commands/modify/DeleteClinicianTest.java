@@ -12,6 +12,7 @@ import com.humanharvest.organz.state.ClinicianManager;
 import com.humanharvest.organz.state.ClinicianManagerMemory;
 import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Region;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;

@@ -1,5 +1,7 @@
 package com.humanharvest.organz.server.controller.client;
 
+import static com.humanharvest.organz.utilities.validators.ClientValidator.checkClientETag;
+
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -11,6 +13,7 @@ import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
 import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,15 +34,13 @@ public class ClientDonationStatusController {
             @PathVariable int id,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken) {
         Optional<Client> optionalClient = State.getClientManager().getClientByID(id);
-        
-        
-        
+
         if (optionalClient.isPresent()) {
             Client client = optionalClient.get();
 
             //Auth check
             State.getAuthenticationManager().verifyClientAccess(authToken, client);
-            
+
             //Add the ETag to the headers
             HttpHeaders headers = new HttpHeaders();
             headers.add("ETag", client.getETag());
@@ -79,14 +80,8 @@ public class ClientDonationStatusController {
         //Auth check
         State.getAuthenticationManager().verifyClientAccess(authToken, client);
 
-        //Check the ETag. These are handled in the exceptions class.
-        if (ETag == null) {
-            throw new IfMatchRequiredException();
-        }
-        if (!client.getETag().equals(ETag)) {
-            throw new
-                    IfMatchFailedException();
-        }
+        //Check ETag
+        checkClientETag(client, ETag);
 
         //Create the action
         ModifyClientOrgansAction action = new ModifyClientOrgansAction(client, State.getClientManager());

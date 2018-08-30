@@ -18,6 +18,7 @@ import com.humanharvest.organz.state.AuthenticationManager;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,15 +36,13 @@ import org.springframework.web.context.WebApplicationContext;
 @WebAppConfiguration
 public class ConfigControllerTest {
 
+    @Autowired
+    WebApplicationContext webApplicationContext;
     private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON
             .getSubtype(), Charset.forName("utf8"));
-
     private MockMvc mockMvc;
     private String VALID_AUTH = "valid auth";
     private String INVALID_AUTH = "invalid auth";
-
-    @Autowired
-    WebApplicationContext webApplicationContext;
 
     @Before
     public void init() {

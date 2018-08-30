@@ -10,19 +10,21 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.views.client.Views;
+
+import com.fasterxml.jackson.annotation.JsonView;
 
 @Entity
 @Table
 public class Administrator implements ConcurrencyControlledEntity {
+
+    @JsonView(Views.Overview.class)
+    private final Instant createdTimestamp;
+
     @Id
     @JsonView(Views.Overview.class)
     private String username;
     private String password;
-
-    @JsonView(Views.Overview.class)
-    private final Instant createdTimestamp;
     @JsonView(Views.Overview.class)
     private Instant modifiedTimestamp;
 
@@ -37,6 +39,7 @@ public class Administrator implements ConcurrencyControlledEntity {
 
     /**
      * Create a new Administrator object
+     *
      * @param username The unique username. Should be checked using the AdministratorManager to ensure uniqueness
      * @param password The administrators password for logins. Stored in plaintext
      */
@@ -66,6 +69,7 @@ public class Administrator implements ConcurrencyControlledEntity {
 
     /**
      * Returns true if the given password matches the stored password.
+     *
      * @param testPassword The given password to check.
      * @return If the two passwords are equal.
      */
@@ -77,6 +81,7 @@ public class Administrator implements ConcurrencyControlledEntity {
         return modifiedTimestamp;
     }
 
+    @Override
     public String getETag() {
         if (modifiedTimestamp == null) {
             return String.format("\"%d\"", createdTimestamp.hashCode());
@@ -103,6 +108,7 @@ public class Administrator implements ConcurrencyControlledEntity {
 
     /**
      * Administrator objects are identified by their administratorId
+     *
      * @param obj The object to compare
      * @return If the Administrator is a match
      */
@@ -114,7 +120,7 @@ public class Administrator implements ConcurrencyControlledEntity {
         if (!(obj instanceof Administrator)) {
             return false;
         }
-        Administrator administrator = (Administrator)obj;
+        Administrator administrator = (Administrator) obj;
         return administrator.username.equals(username);
     }
 

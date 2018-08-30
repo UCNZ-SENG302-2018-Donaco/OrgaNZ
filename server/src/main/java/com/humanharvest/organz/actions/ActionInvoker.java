@@ -1,8 +1,10 @@
 package com.humanharvest.organz.actions;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
+import java.util.EmptyStackException;
 import java.util.List;
-import java.util.Stack;
 
 import com.humanharvest.organz.utilities.ActionOccurredListener;
 
@@ -14,12 +16,13 @@ import com.humanharvest.organz.utilities.ActionOccurredListener;
  */
 public class ActionInvoker {
 
-    private Stack<Action> undoStack = new Stack<>();
-    private Stack<Action> redoStack = new Stack<>();
+    private Deque<Action> undoStack = new ArrayDeque<>();
+    private Deque<Action> redoStack = new ArrayDeque<>();
     private List<ActionOccurredListener> listeners = new ArrayList<>();
 
     /**
      * Undo the last action
+     *
      * @return Returns a string description of the action. Used for notifications, or null if there was no actions to
      * undo
      */
@@ -29,7 +32,7 @@ public class ActionInvoker {
             action.unExecute();
             redoStack.push(action);
 
-            listeners.forEach((listener -> listener.onActionUndone(action)));
+            listeners.forEach(listener -> listener.onActionUndone(action));
 
             return action.getUnexecuteText();
         }
@@ -38,6 +41,7 @@ public class ActionInvoker {
 
     /**
      * Redo the last action
+     *
      * @return Returns a string description of the action. Used for notifications, or null if there was no actions to
      * redo
      */
@@ -47,7 +51,7 @@ public class ActionInvoker {
             action.execute();
             undoStack.push(action);
 
-            listeners.forEach((listener -> listener.onActionRedone(action)));
+            listeners.forEach(listener -> listener.onActionRedone(action));
 
             return action.getExecuteText();
         }
@@ -56,6 +60,7 @@ public class ActionInvoker {
 
     /**
      * Pass an action object to be executed. Adds the action to the undo list.
+     *
      * @param action An object implementing the Action interface
      * @return Returns a string description of the action. Used for notifications.
      */
@@ -71,6 +76,7 @@ public class ActionInvoker {
 
     /**
      * Checks if there are any actions in the undo stack
+     *
      * @return Are there any actions do be undone
      */
     public boolean canUndo() {
@@ -79,6 +85,7 @@ public class ActionInvoker {
 
     /**
      * Checks if there are any actions in the redo stack
+     *
      * @return Are there any actions do be redone
      */
     public boolean canRedo() {
@@ -87,23 +94,31 @@ public class ActionInvoker {
 
     /**
      * Returns the next Action to be undone
+     *
      * @return The next Action that will be undone
      */
     public Action nextUndo() {
+        if (!canUndo()) {
+            throw new EmptyStackException();
+        }
         return undoStack.peek();
     }
 
     /**
      * Returns the next Action to be redone
+     *
      * @return The next Action that will be redone
      */
     public Action nextRedo() {
+        if (!canRedo()) {
+            throw new EmptyStackException();
+        }
         return redoStack.peek();
     }
 
-
     /**
      * Register a listener to be notified on any Action event
+     *
      * @param listener The listener to register
      */
     public void registerActionOccuredListener(ActionOccurredListener listener) {
@@ -112,6 +127,7 @@ public class ActionInvoker {
 
     /**
      * Unregister an action listener
+     *
      * @param listener The listener to unregister
      */
     public void unregisterActionOccuredListener(ActionOccurredListener listener) {

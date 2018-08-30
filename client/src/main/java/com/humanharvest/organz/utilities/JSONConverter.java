@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.humanharvest.organz.HistoryItem;
+
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -17,7 +19,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
-import com.humanharvest.organz.HistoryItem;
 
 /**
  * Uses jackson to convert Java objects into JSON files and from JSON files
@@ -43,6 +44,7 @@ public final class JSONConverter {
     /**
      * If the given file does not exist, creates an empty JSON array in that file.
      * If the given file does exist, does nothing.
+     *
      * @param file The file to check/create.
      * @throws IOException If an error occurs while creating the file.
      */
@@ -56,7 +58,7 @@ public final class JSONConverter {
             }
         } catch (IOException e) {
             throw new IOException(
-                    String.format("An error occurred when creating this file: %s\n%s",
+                    String.format("An error occurred when creating this file: %s%n%s",
                             file.getName(), e.getMessage()),
                     e);
         }
@@ -65,6 +67,7 @@ public final class JSONConverter {
     /**
      * Read's the action_history.json file into an ArrayList, appends the historyItem to the list and
      * calls the writeHistoryToJSON to save the update.
+     *
      * @param historyItem The HistoryItem to add to the JSON history file.
      * @param filename The file location to be saved to
      */
@@ -72,8 +75,8 @@ public final class JSONConverter {
         File historyFile = new File(filename);
         try {
             createEmptyJSONFileIfNotExists(historyFile);
-        } catch (IOException exc) {
-            System.err.println(exc.getMessage());
+        } catch (IOException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
         }
 
         try {
@@ -90,6 +93,7 @@ public final class JSONConverter {
     /**
      * Helper function for updateActionHistoryFromJSON; writes the historyHistoryItemList to a
      * JSON file.
+     *
      * @param filename The file to save the history to
      * @param historyItemList An ArrayList of all history the system has recorded.
      */

@@ -1,6 +1,21 @@
 package com.humanharvest.organz.server.controller.client;
 
-import com.fasterxml.jackson.annotation.JsonView;
+import static com.humanharvest.organz.utilities.validators.ClientValidator.checkClientETag;
+
+import java.awt.image.ImagingOpException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.actions.ActionInvoker;
@@ -27,18 +42,22 @@ import com.humanharvest.organz.views.client.CreateClientView;
 import com.humanharvest.organz.views.client.ModifyClientObject;
 import com.humanharvest.organz.views.client.PaginatedClientList;
 import com.humanharvest.organz.views.client.Views;
+
+import com.fasterxml.jackson.annotation.JsonView;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.awt.image.ImagingOpException;
-import java.io.*;
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class ClientController {
@@ -47,6 +66,7 @@ public class ClientController {
 
     /**
      * Returns all clients or some optional subset by filtering
+     *
      * @return A list of Client overviews
      * @throws AuthenticationException Thrown if the token supplied is invalid, or does not match a clinician or admin
      */
@@ -98,6 +118,7 @@ public class ClientController {
 
     /**
      * The POST endpoint for creating a new client
+     *
      * @param createClientView The POJO representation of the create client view
      * @return Returns a Client overview. Also contains an ETag header for updates
      * @throws InvalidRequestException Generic 400 exception if fields are malformed or inconsistent
@@ -133,6 +154,7 @@ public class ClientController {
 
     /**
      * The single client GET endpoint
+     *
      * @param uid The client UID to return
      * @return Returns a Client details object. Also contains an ETag header for updates
      */
@@ -158,6 +180,7 @@ public class ClientController {
 
     /**
      * The PATCH endpoint for updating a single client
+     *
      * @param uid The client UID to update
      * @param modifyClientObject The POJO object of the modifications
      * @param etag The corresponding If-Match header to check for concurrent update handling
@@ -191,6 +214,9 @@ public class ClientController {
         //Check authentication
         State.getAuthenticationManager().verifyClientAccess(authToken, client);
 
+        //Check ETag
+        checkClientETag(client, etag);
+
         //Validate the request, if there are any errors an exception will be thrown.
         if (!ModifyClientValidator.isValid(client, modifyClientObject)) {
             throw new InvalidRequestException();
@@ -200,14 +226,6 @@ public class ClientController {
         // will not become inconsistent
         if (!ClientBornAndDiedDatesValidator.isValid(modifyClientObject, client)) {
             throw new InvalidRequestException();
-        }
-
-        //Check the ETag. These are handled in the exceptions class.
-        if (etag == null) {
-            throw new IfMatchRequiredException();
-        }
-        if (!Objects.equals(client.getETag(), etag)) {
-            throw new IfMatchFailedException();
         }
 
         //Create the old details to allow undoable action
@@ -261,6 +279,7 @@ public class ClientController {
 
     /**
      * The DELETE endpoint for removing a single client
+     *
      * @param uid The client UID to delete
      * @param etag The corresponding If-Match header to check for concurrent update handling
      * @return Returns an empty body with a simple response code
@@ -286,13 +305,8 @@ public class ClientController {
 
         State.getAuthenticationManager().verifyClientAccess(authToken, client);
 
-        //Check the ETag. These are handled in the exceptions class.
-        if (etag == null) {
-            throw new IfMatchRequiredException();
-        }
-        if (!Objects.equals(client.getETag(), etag)) {
-            throw new IfMatchFailedException();
-        }
+        //Check ETag
+        checkClientETag(client, etag);
 
         DeleteClientAction action = new DeleteClientAction(client, State.getClientManager());
         State.getActionInvoker(authToken).execute(action);
@@ -303,6 +317,7 @@ public class ClientController {
 
     /**
      * Returns the specified clients history
+     *
      * @param uid identifier of the client
      * @param authToken id token
      * @return The list of HistoryItems
@@ -388,13 +403,8 @@ public class ClientController {
         // Verify they are authenticated to access this client
         State.getAuthenticationManager().verifyClientAccess(authToken, client);
 
-        // Check the etag
-        if (etag == null) {
-            throw new IfMatchRequiredException();
-        }
-        if (!Objects.equals(client.getETag(), etag)) {
-            throw new IfMatchFailedException();
-        }
+        //Check ETag
+        checkClientETag(client, etag);
 
         AddImageAction action = new AddImageAction(client, image, State.getImageDirectory());
 
@@ -430,19 +440,15 @@ public class ClientController {
         // Verify they are authenticated to access this client
         State.getAuthenticationManager().verifyClientAccess(authToken, client);
 
-        // Check the etag
-        if (etag == null) {
-            throw new IfMatchRequiredException();
-        }
-        if (!Objects.equals(client.getETag(), etag)) {
-            throw new IfMatchFailedException();
-        }
+        //Check ETag
+        checkClientETag(client, etag);
 
         try {
             DeleteImageAction action = new DeleteImageAction(client, State.getImageDirectory());
             State.getActionInvoker(authToken).execute(action);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (FileNotFoundException e) {
+            LOGGER.log(Level.INFO, e.getMessage(), e);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
         } catch (IOException e) {

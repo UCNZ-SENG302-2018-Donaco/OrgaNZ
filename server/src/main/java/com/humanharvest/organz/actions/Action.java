@@ -7,6 +7,7 @@ import com.humanharvest.organz.HistoryItem;
  * all objects necessary for its execution. Actions should always be executed by an {@link ActionInvoker}.
  */
 public abstract class Action {
+
     private HistoryItem executeHistoryItem;
 
     /**
@@ -21,24 +22,28 @@ public abstract class Action {
 
     /**
      * Returns a message describing the change(s) that this action makes.
+     *
      * @return A descriptive message describing the effects of executing this action.
      */
     public abstract String getExecuteText();
 
     /**
      * Returns a message describing the change(s) that reversing this action makes.
+     *
      * @return A descriptive message describing the effects of undoing this action.
      */
     public abstract String getUnexecuteText();
 
     /**
      * Returns the object that is being modified, used for concurrency control
+     *
      * @return The object being modified
      */
     public abstract Object getModifiedObject();
 
     /**
      * Returns the lazily-initialised {@link HistoryItem} corresponding to this action being executed.
+     *
      * @return The {@link HistoryItem} corresponding to this action's execution.
      */
     public HistoryItem getExecuteHistoryItem() {

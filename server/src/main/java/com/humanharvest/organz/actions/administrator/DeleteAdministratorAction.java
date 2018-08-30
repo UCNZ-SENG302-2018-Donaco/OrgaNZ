@@ -12,6 +12,7 @@ public class DeleteAdministratorAction extends AdministratorAction {
 
     /**
      * Create a new Action
+     *
      * @param administrator The Administrator to be removed
      * @param manager The AdministratorManager to apply changes to
      */

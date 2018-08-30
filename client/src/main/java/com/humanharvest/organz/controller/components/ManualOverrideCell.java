@@ -1,7 +1,6 @@
 package com.humanharvest.organz.controller.components;
 
 import javafx.beans.binding.NumberBinding;
-import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Control;
 import javafx.scene.control.TableCell;
@@ -15,11 +14,6 @@ import javafx.scene.text.Text;
 import com.humanharvest.organz.DonatedOrgan;
 
 public class ManualOverrideCell extends TableCell<DonatedOrgan, DonatedOrgan> {
-
-    @FunctionalInterface
-    public interface DonatedOrganEventHandler {
-        void handle(DonatedOrgan donatedOrgan);
-    }
 
     private DonatedOrganEventHandler onOverridePressed;
     private DonatedOrganEventHandler onEditPressed;
@@ -90,5 +84,11 @@ public class ManualOverrideCell extends TableCell<DonatedOrgan, DonatedOrgan> {
             }
             setGraphic(interior);
         }
+    }
+
+    @FunctionalInterface
+    public interface DonatedOrganEventHandler {
+
+        void handle(DonatedOrgan donatedOrgan);
     }
 }

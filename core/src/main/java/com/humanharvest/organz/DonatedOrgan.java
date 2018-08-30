@@ -1,15 +1,23 @@
 package com.humanharvest.organz;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.views.client.Views;
+
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonView;
-import com.humanharvest.organz.utilities.enums.Organ;
-import com.humanharvest.organz.views.client.Views;
-
-import javax.persistence.*;
-import java.time.Duration;
-import java.time.LocalDateTime;
 
 @JsonAutoDetect(fieldVisibility = Visibility.ANY,
         getterVisibility = Visibility.NONE,
@@ -94,14 +102,14 @@ public class DonatedOrgan {
     }
 
     /**
-     * @return if the organ hasn't expired: the duration. else: Duration.ZERO
+     * @return the duration; except if the organ has expired or is overridden, then it returns Duration.ZERO
      */
     public Duration getDurationUntilExpiry() {
         if (organType.getMaxExpiration() == null) {
             return null;
         }
         Duration timeToExpiry = organType.getMaxExpiration().minus(getTimeSinceDonation());
-        return timeToExpiry.isNegative() ? Duration.ZERO : timeToExpiry;
+        return timeToExpiry.isNegative() || getOverrideReason() != null ? Duration.ZERO : timeToExpiry;
     }
 
     /**
@@ -116,7 +124,7 @@ public class DonatedOrgan {
         } else if (timeToExpiry.isZero()) { // expired
             return 1;
         } else {
-            return 1 - ((double) timeToExpiry.getSeconds() / expiration.getSeconds());
+            return 1 - (double) timeToExpiry.getSeconds() / expiration.getSeconds();
         }
     }
 
@@ -125,10 +133,16 @@ public class DonatedOrgan {
      * near the end)
      */
     public double getFullMarker() {
-        return (double) getOrganType().getMinExpiration().getSeconds() / getOrganType().getMaxExpiration().getSeconds();
+        Duration min = getOrganType().getMinExpiration();
+        Duration max = getOrganType().getMaxExpiration();
+        if (min == null || max == null) {
+            return 1;
+        } else {
+            return (double) min.getSeconds() / max.getSeconds();
+        }
     }
 
-    public Long getId(){
+    public Long getId() {
         return id;
     }
 
