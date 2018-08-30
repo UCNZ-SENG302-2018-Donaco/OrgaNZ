@@ -2,9 +2,6 @@ package com.humanharvest.organz;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 import com.humanharvest.organz.utilities.exceptions.DateOutOfBoundsException;
@@ -13,7 +10,6 @@ public class TransplantRecord extends ProcedureRecord {
 
     private DonatedOrgan organ;
     private TransplantRequest request;
-    private List<IllnessRecord> relatedIllnesses;
     private boolean completed;
 
     public TransplantRecord() {
@@ -24,7 +20,6 @@ public class TransplantRecord extends ProcedureRecord {
         this.request = request;
         setDate(scheduledDate);
         setClient(request.getClient());
-        relatedIllnesses = new ArrayList<>();
     }
 
     public DonatedOrgan getOrgan() {
@@ -37,14 +32,6 @@ public class TransplantRecord extends ProcedureRecord {
 
     public Client getReceiver() {
         return getClient();
-    }
-
-    public void addRelatedIllness(IllnessRecord illnessRecord) {
-        relatedIllnesses.add(illnessRecord);
-    }
-
-    public List<IllnessRecord> getRelatedIllnesses() {
-        return Collections.unmodifiableList(relatedIllnesses);
     }
 
     public void setCompleted(boolean completed) throws DateOutOfBoundsException {
