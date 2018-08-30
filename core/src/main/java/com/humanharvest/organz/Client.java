@@ -83,11 +83,12 @@ public class Client implements ConcurrencyControlledEntity {
     @JsonView(Views.Details.class)
     @Column(columnDefinition = "text")
     private String currentAddress;
-//    @ManyToOne
-//    @JoinColumn(name = "hospital_id")
-//    @JsonBackReference
-//    @JsonView(Views.Details.class)
-//    private Hospital hospital;
+
+    @ManyToOne
+    @JoinColumn(name = "hospital_id")
+    @JsonBackReference
+    @JsonView(Views.Details.class)
+    private Hospital hospital;
 
     @JsonView(Views.Overview.class)
     private String region = "Unspecified";
@@ -1191,8 +1192,18 @@ public class Client implements ConcurrencyControlledEntity {
         return country;
     }
 
+
     public void setCountry(Country country) {
         this.country = country;
+        updateModifiedTimestamp();
+    }
+
+    public Hospital getHospital() {
+        return hospital;
+    }
+
+    public void setHospital(Hospital hospital) {
+        this.hospital = hospital;
         updateModifiedTimestamp();
     }
 }

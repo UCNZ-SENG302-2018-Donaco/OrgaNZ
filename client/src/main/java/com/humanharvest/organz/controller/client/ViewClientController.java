@@ -1,5 +1,6 @@
 package com.humanharvest.organz.controller.client;
 
+import com.humanharvest.organz.Hospital;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -94,6 +95,8 @@ public class ViewClientController extends ViewBaseController {
     @FXML
     private ChoiceBox<BloodType> btype;
     @FXML
+    private ChoiceBox<Hospital> hospital;
+    @FXML
     private ChoiceBox<Region> regionCB, deathRegionCB;
     @FXML
     private ChoiceBox<Country> country, deathCountry;
@@ -164,6 +167,7 @@ public class ViewClientController extends ViewBaseController {
         gender.setItems(FXCollections.observableArrayList(Gender.values()));
         genderIdentity.setItems(FXCollections.observableArrayList(Gender.values()));
         btype.setItems(FXCollections.observableArrayList(BloodType.values()));
+        hospital.setItems(FXCollections.observableArrayList(Hospital.getDefaultHospitals()));
         regionCB.setItems(FXCollections.observableArrayList(Region.values()));
         deathRegionCB.setItems(FXCollections.observableArrayList(Region.values()));
         setEnabledCountries();
@@ -275,6 +279,8 @@ public class ViewClientController extends ViewBaseController {
         pname.setText(viewedClient.getPreferredName());
         dob.setValue(viewedClient.getDateOfBirth());
         gender.setValue(viewedClient.getGender());
+
+        hospital.setValue(viewedClient.getHospital());
         genderIdentity.setValue(viewedClient.getGenderIdentity());
         height.setText(String.valueOf(viewedClient.getHeight()));
         weight.setText(String.valueOf(viewedClient.getWeight()));
@@ -557,10 +563,13 @@ public class ViewClientController extends ViewBaseController {
      * Once that occurs, updateDeathFields calls applyChanges, or that is called directly if the client is not dead.
      */
     private void updateChanges() {
+
         ModifyClientObject modifyClientObject = new ModifyClientObject();
+        System.out.println(modifyClientObject.getHospital());
 
         // Add the basic changes to the ModifyClientObject
         addChangesIfDifferent(modifyClientObject);
+        System.out.println(viewedClient.getHospital());
 
         // If we are marking a client as dead, we need to alert them that this will also resolve the transplant requests
         // Calling either method will flow through the chain.
@@ -596,6 +605,7 @@ public class ViewClientController extends ViewBaseController {
         addChangeIfDifferent(modifyClientObject, viewedClient, "bloodType", btype.getValue());
         addChangeIfDifferent(modifyClientObject, viewedClient, "currentAddress", address.getText());
         addChangeIfDifferent(modifyClientObject, viewedClient, "country", country.getValue());
+        addChangeIfDifferent(modifyClientObject,viewedClient,"hospital",hospital.getValue());
 
         // Register region change
         if (country.getValue() == Country.NZ) {
