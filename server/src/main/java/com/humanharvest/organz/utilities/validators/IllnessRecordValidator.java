@@ -41,7 +41,7 @@ public abstract class IllnessRecordValidator {
 
     private static boolean illnessNameValid(IllnessRecord record) {
         return record.getIllnessName() != null &&
-                !record.getIllnessName().equals("");
+                !"".equals(record.getIllnessName());
     }
 
     private static boolean diagnosisDateValid(IllnessRecord record) {

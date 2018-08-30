@@ -80,7 +80,7 @@ public class CreateAdministratorController extends SubController {
         boolean valid = true;
 
         // Username
-        if (usernameTextField.getText().equals("")) {
+        if ("".equals(usernameTextField.getText())) {
             usernameLabel.setTextFill(Color.RED);
             valid = false;
         } else {
@@ -106,7 +106,7 @@ public class CreateAdministratorController extends SubController {
         }
 
         // Password
-        if (passwordField.getText().equals("")) {
+        if ("".equals(passwordField.getText())) {
             passwordLabel.setTextFill(Color.RED);
             valid = false;
         } else {

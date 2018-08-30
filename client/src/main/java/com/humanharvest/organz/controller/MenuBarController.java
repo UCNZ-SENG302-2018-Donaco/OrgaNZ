@@ -40,31 +40,6 @@ import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.views.ActionResponseView;
 
-import javafx.application.Platform;
-import javafx.concurrent.Task;
-import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonBar.ButtonData;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.SeparatorMenuItem;
-import javafx.stage.FileChooser;
-import javafx.stage.Stage;
-import org.controlsfx.control.Notifications;
-
-import com.humanharvest.organz.AppUI;
-import com.humanharvest.organz.state.Session;
-import com.humanharvest.organz.state.Session.UserType;
-import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.CacheManager;
-import com.humanharvest.organz.utilities.exceptions.BadRequestException;
-import com.humanharvest.organz.utilities.view.Page;
-import com.humanharvest.organz.utilities.view.PageNavigator;
-import com.humanharvest.organz.views.ActionResponseView;
-
 /**
  * Controller for the sidebar pane imported into every page in the main part of the GUI.
  */
@@ -160,9 +135,9 @@ public class MenuBarController extends SubController {
 
         // Menus/Menu items to hide from clinicians
         Menu[] menusHideFromClinicians = {medicationsPrimaryItem, staffPrimaryItem};
-        MenuItem[] menuItemsHideFromClinicians = {viewClientItem, donateOrganItem, requestOrganItem, viewMedicationsItem,
-                medicalHistoryItem, proceduresItem, saveClientsItem, saveCliniciansItem, loadItem, settingsItem,
-                staffListItem, createAdministratorItem, createClinicianItem, cliItem};
+        MenuItem[] menuItemsHideFromClinicians = {viewClientItem, donateOrganItem, requestOrganItem,
+                viewMedicationsItem, medicalHistoryItem, proceduresItem, saveClientsItem, saveCliniciansItem,
+                loadItem, settingsItem, staffListItem, createAdministratorItem, createClinicianItem, cliItem};
 
         // Menus/Menu items to hide from clinicians (or admins) viewing a client
         Menu[] menusHideFromClinViewClients = {staffPrimaryItem, profilePrimaryItem};

@@ -238,7 +238,7 @@ public class ClientTransplantRequestsController {
         // If anything has illegally changed, it will return a 400.
         if (resolveRequestObject.getResolvedDate() == null ||
                 resolveRequestObject.getResolvedReason() == null ||
-                resolveRequestObject.getResolvedReason().equals("") ||
+                "".equals(resolveRequestObject.getResolvedReason()) ||
                 resolveRequestObject.getResolvedDate().isBefore(originalTransplantRequest.getRequestDate())) {
             // illegal changes
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

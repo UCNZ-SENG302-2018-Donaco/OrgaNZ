@@ -104,7 +104,7 @@ public class Client implements ConcurrencyControlledEntity {
     @JsonView(Views.Overview.class)
     private LocalDate dateOfBirth;
 
-    @JsonView(Views.Details.class)
+    @JsonView(Views.Overview.class)
     private LocalDate dateOfDeath;
     @JsonView(Views.Details.class)
     private LocalTime timeOfDeath;
@@ -707,13 +707,11 @@ public class Client implements ConcurrencyControlledEntity {
         if (dateOfBirth == null) {
             return -1;
         }
-        int age;
         if (dateOfDeath == null) {
-            age = Period.between(dateOfBirth, LocalDate.now()).getYears();
+            return Period.between(dateOfBirth, LocalDate.now()).getYears();
         } else {
-            age = Period.between(dateOfBirth, dateOfDeath).getYears();
+            return Period.between(dateOfBirth, dateOfDeath).getYears();
         }
-        return age;
     }
 
     /**

@@ -119,7 +119,7 @@ public class ViewProceduresController extends SubController {
      */
     private void editSummaryCell(CellEditEvent<ProcedureRecord, String> event) {
         String summary = event.getNewValue();
-        if (summary == null || summary.equals("")) {
+        if (summary == null || "".equals(summary)) {
             PageNavigator.showAlert(AlertType.ERROR,
                     "Invalid summary",
                     "New procedure summary must not be blank.", mainController.getStage());
@@ -412,7 +412,7 @@ public class ViewProceduresController extends SubController {
         String summary = summaryField.getText();
         LocalDate date = dateField.getValue();
 
-        if (summary == null || summary.equals("")) {
+        if (summary == null || "".equals(summary)) {
             errorMessage.setText("Procedure summary must not be blank.");
         } else if (date == null || date.isBefore(client.getDateOfBirth())) {
             errorMessage.setText("Procedure date cannot be before client was born.");

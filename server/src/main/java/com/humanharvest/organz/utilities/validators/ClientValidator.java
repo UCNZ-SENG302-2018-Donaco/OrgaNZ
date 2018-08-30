@@ -115,11 +115,11 @@ public abstract class ClientValidator {
     }
 
     private static boolean firstNameValid(Client client) {
-        return client.getFirstName() != null && !client.getFirstName().equals("");
+        return client.getFirstName() != null && !"".equals(client.getFirstName());
     }
 
     private static boolean lastNameValid(Client client) {
-        return client.getLastName() != null && !client.getLastName().equals("");
+        return client.getLastName() != null && !"".equals(client.getLastName());
     }
 
     private static boolean dateOfBirthValid(Client client) {
