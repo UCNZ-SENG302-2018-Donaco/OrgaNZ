@@ -42,6 +42,11 @@ public class SQL implements Runnable {
         this.outputStream = outputStream;
     }
 
+    public SQL(DBManager dbManager, PrintStream outputStream) {
+        this.dbManager = dbManager;
+        this.outputStream = outputStream;
+    }
+
     public SQL() {
         outputStream = System.out;
     }
@@ -71,7 +76,7 @@ public class SQL implements Runnable {
             }
         } catch (SQLException e) {
             LOGGER.log(Level.INFO, e.getMessage(), e);
-            outputStream.print("An error occurred with your query."
+            outputStream.print("An error occurred with your query. "
                     + "If you were using double quotes, please ensure they were escaped with a backslash and "
                     + "enclosed in a quoted string. The command as it was sent "
                     + "to the database was: " + sql);
@@ -83,11 +88,14 @@ public class SQL implements Runnable {
         if (allParams == null) {
             outputStream.print("No SQL input, please enter a valid SQL command");
             return;
-        } else if (State.getCurrentStorageType() == DataStorageType.MEMORY) {
-            outputStream.print("Currently not connected to the database, cannot execute SQL");
-            return;
-        } else if (dbManager == null) {
-            dbManager = DBManager.getInstance();
+        }
+        if (dbManager == null) {
+            if (State.getCurrentStorageType() != DataStorageType.PUREDB) {
+                outputStream.print("Currently not connected to the database, cannot execute SQL");
+                return;
+            } else {
+                dbManager = DBManager.getInstance();
+            }
         }
 
         String sql = String.join(" ", allParams);
