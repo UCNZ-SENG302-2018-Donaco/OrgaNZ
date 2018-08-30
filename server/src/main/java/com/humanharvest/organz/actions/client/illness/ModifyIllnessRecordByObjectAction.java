@@ -1,6 +1,7 @@
-package com.humanharvest.organz.actions.client;
+package com.humanharvest.organz.actions.client.illness;
 
 import com.humanharvest.organz.IllnessRecord;
+import com.humanharvest.organz.actions.client.ClientAction;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.views.client.ModifyIllnessObject;
 

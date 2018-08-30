@@ -7,7 +7,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 
 import com.humanharvest.organz.Client;
-import com.humanharvest.organz.actions.client.ModifyClientOrgansAction;
+import com.humanharvest.organz.actions.client.organ.ModifyClientOrgansAction;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;

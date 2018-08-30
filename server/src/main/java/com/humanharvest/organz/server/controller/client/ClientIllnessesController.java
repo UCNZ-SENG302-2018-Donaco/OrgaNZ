@@ -7,9 +7,9 @@ import java.util.Optional;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.IllnessRecord;
-import com.humanharvest.organz.actions.client.AddIllnessRecordAction;
-import com.humanharvest.organz.actions.client.DeleteIllnessRecordAction;
-import com.humanharvest.organz.actions.client.ModifyIllnessRecordByObjectAction;
+import com.humanharvest.organz.actions.client.illness.AddIllnessRecordAction;
+import com.humanharvest.organz.actions.client.illness.DeleteIllnessRecordAction;
+import com.humanharvest.organz.actions.client.illness.ModifyIllnessRecordByObjectAction;
 import com.humanharvest.organz.server.exceptions.GlobalControllerExceptionHandler.InvalidRequestException;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;

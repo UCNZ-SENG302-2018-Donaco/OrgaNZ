@@ -1,9 +1,10 @@
-package com.humanharvest.organz.actions.client;
+package com.humanharvest.organz.actions.client.medication;
 
 import java.time.LocalDate;
 import java.util.Objects;
 
 import com.humanharvest.organz.MedicationRecord;
+import com.humanharvest.organz.actions.client.ClientAction;
 import com.humanharvest.organz.state.ClientManager;
 
 /**
