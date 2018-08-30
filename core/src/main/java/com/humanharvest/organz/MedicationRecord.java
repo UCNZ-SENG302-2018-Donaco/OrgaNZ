@@ -19,7 +19,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 @Entity
 @Table
 @Access(AccessType.FIELD)
-public class MedicationRecord implements Comparable<MedicationRecord> {
+public class MedicationRecord {
 
     private static DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
@@ -100,10 +100,5 @@ public class MedicationRecord implements Comparable<MedicationRecord> {
             return String.format("%s (started using: %s, stopped using: %s)", medicationName,
                     started.format(dateFormat), stopped.format(dateFormat));
         }
-    }
-
-    @Override
-    public int compareTo(MedicationRecord other) {
-        return this.getMedicationName().compareTo(other.medicationName);
     }
 }

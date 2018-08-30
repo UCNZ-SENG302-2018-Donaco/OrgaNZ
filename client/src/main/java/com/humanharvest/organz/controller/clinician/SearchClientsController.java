@@ -12,7 +12,6 @@ import javafx.beans.value.ObservableValueBase;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Alert.AlertType;
@@ -197,15 +196,13 @@ public class SearchClientsController extends SubController {
         //On pagination update call createPage
         pagination.setPageFactory(this::createPage);
 
-        //Make the nameCol comparator always return zero as the list is already ordered by the server using custom sort
-        nameCol.setComparator((c1, c2) -> 0);
+        //Make the comparators always return zero as the list is already ordered by the server using custom sort
+        for (TableColumn<?, ?> column : tableView.getColumns()) {
+            column.setComparator((c1, c2) -> 0);
+        }
 
         //Bind the tableView to the observable list
-        //We must make an intermediate SortedList to prevent the table sort policy applying
-        SortedList<Client> sortedList = new SortedList<>(observableClientList);
-        //Bind the sortedList to the tableView to allow sorting
-        sortedList.comparatorProperty().bind(tableView.comparatorProperty());
-        tableView.setItems(sortedList);
+        tableView.setItems(observableClientList);
 
         if (State.getSession().getLoggedInUserType() == UserType.ADMINISTRATOR) {
 

@@ -1,6 +1,6 @@
 package com.humanharvest.organz.actions.client;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -18,7 +18,7 @@ public class ModifyClientOrgansAction extends ClientAction {
 
     private static final Logger LOGGER = Logger.getLogger(ModifyClientOrgansAction.class.getName());
 
-    private Map<Organ, Boolean> changes = new HashMap<>();
+    private Map<Organ, Boolean> changes = new EnumMap<>(Organ.class);
 
     /**
      * Create a new Action
@@ -46,7 +46,7 @@ public class ModifyClientOrgansAction extends ClientAction {
      * @throws OrganAlreadyRegisteredException Thrown if the organ is already set to that value
      */
     public void addChange(Organ organ, Boolean newValue) throws OrganAlreadyRegisteredException {
-        if (client.getOrganDonationStatus().get(organ) == newValue) {
+        if (client.getOrganDonationStatus().get(organ).equals(newValue)) {
             throw new OrganAlreadyRegisteredException("That organ is already set to that value");
         }
         changes.put(organ, newValue);
