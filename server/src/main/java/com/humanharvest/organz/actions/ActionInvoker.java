@@ -3,6 +3,7 @@ package com.humanharvest.organz.actions;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
+import java.util.EmptyStackException;
 import java.util.List;
 
 import com.humanharvest.organz.utilities.ActionOccurredListener;
@@ -97,6 +98,9 @@ public class ActionInvoker {
      * @return The next Action that will be undone
      */
     public Action nextUndo() {
+        if (!canUndo()) {
+            throw new EmptyStackException();
+        }
         return undoStack.peek();
     }
 
@@ -106,6 +110,9 @@ public class ActionInvoker {
      * @return The next Action that will be redone
      */
     public Action nextRedo() {
+        if (!canRedo()) {
+            throw new EmptyStackException();
+        }
         return redoStack.peek();
     }
 
