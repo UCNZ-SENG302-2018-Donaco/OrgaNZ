@@ -24,7 +24,7 @@ public class ModifyIllnessRecordByObjectAction extends ClientAction {
     }
 
     @Override
-    public void execute() {
+    protected void execute() {
         super.execute();
         IllnessRecord record = new IllnessRecord(newIllnessDetails.getIllnessName(),
                 newIllnessDetails.getDiagnosisDate(), newIllnessDetails.getCuredDate(), newIllnessDetails.isChronic());

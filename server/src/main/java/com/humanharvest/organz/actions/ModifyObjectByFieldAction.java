@@ -111,11 +111,17 @@ public class ModifyObjectByFieldAction extends Action {
         }
     }
 
+    /**
+     * Must be public to allow access by children
+     */
     @Override
     public void execute() {
         runChange(newValue);
     }
 
+    /**
+     * Must be public to allow access by children
+     */
     @Override
     public void unExecute() {
         runChange(oldValue);

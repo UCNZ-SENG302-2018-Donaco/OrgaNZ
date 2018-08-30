@@ -16,14 +16,14 @@ public class CancelManualOverrideAction extends ClientAction {
     }
 
     @Override
-    public void execute() {
+    protected void execute() {
         super.execute();
         donatedOrgan.cancelManualOverride();
         manager.applyChangesTo(client);
     }
 
     @Override
-    public void unExecute() {
+    protected void unExecute() {
         super.unExecute();
         donatedOrgan.manuallyOverride(overrideReason);
         manager.applyChangesTo(client);

@@ -18,14 +18,14 @@ public class EditManualOverrideAction extends ClientAction {
     }
 
     @Override
-    public void execute() {
+    protected void execute() {
         super.execute();
         donatedOrgan.manuallyOverride(newOverrideReason);
         manager.applyChangesTo(client);
     }
 
     @Override
-    public void unExecute() {
+    protected void unExecute() {
         super.unExecute();
         donatedOrgan.manuallyOverride(oldOverrideReason);
         manager.applyChangesTo(client);
