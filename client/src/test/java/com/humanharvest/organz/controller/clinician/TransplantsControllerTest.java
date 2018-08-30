@@ -83,17 +83,17 @@ public class TransplantsControllerTest extends ControllerTest {
 
         for (TransplantRequest request : requests1) {
             State.getClientResolver().createTransplantRequest(client1, new CreateTransplantRequestView(request
-                    .getRequestedOrgan(), request.getRequestDate()));
+                    .getRequestedOrgan(), request.getRequestDateTime()));
             //client1.addTransplantRequest(request);
             requests.add(request);
         }
         for (TransplantRequest request : requests2) {
             State.getClientResolver().createTransplantRequest(client2, new CreateTransplantRequestView(request
-                    .getRequestedOrgan(), request.getRequestDate()));
+                    .getRequestedOrgan(), request.getRequestDateTime()));
             requests.add(request);
         }
         State.getClientResolver().createTransplantRequest(client3, new CreateTransplantRequestView(request3
-                .getRequestedOrgan(), request3.getRequestDate()));
+                .getRequestedOrgan(), request3.getRequestDateTime()));
         requests.add(request3);
 
         client1.setRegion(Region.CANTERBURY.toString());
@@ -105,7 +105,7 @@ public class TransplantsControllerTest extends ControllerTest {
             TransplantRequest request = new TransplantRequest(client, Organ.MIDDLE_EAR);
             State.getClientManager().addClient(client);
             State.getClientResolver().createTransplantRequest(client, new CreateTransplantRequestView(request
-                    .getRequestedOrgan(), request.getRequestDate()));
+                    .getRequestedOrgan(), request.getRequestDateTime()));
             client.setRegion(Region.NELSON.toString());
             State.getClientManager().applyChangesTo(client);
             requests.add(request);
@@ -288,7 +288,7 @@ public class TransplantsControllerTest extends ControllerTest {
         clickOn("#dateCol");
 
         // Sort requests by client name
-        requests.sort(Comparator.comparing(TransplantRequest::getRequestDate));
+        requests.sort(Comparator.comparing(TransplantRequest::getRequestDateTime));
 
         // Check all 30 requests are correct
         for (int i = 0; i < 30; i++) {
@@ -513,6 +513,6 @@ public class TransplantsControllerTest extends ControllerTest {
 
         assertEquals(request.getClient(), requestAtIndex.getClient());
         assertEquals(request.getRequestedOrgan(), requestAtIndex.getRequestedOrgan());
-        assertEquals(request.getRequestDate(), requestAtIndex.getRequestDate());
+        assertEquals(request.getRequestDateTime(), requestAtIndex.getRequestDateTime());
     }
 }
