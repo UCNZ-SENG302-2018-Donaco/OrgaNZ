@@ -2,7 +2,6 @@ package com.humanharvest.organz;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Objects;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Entity;
@@ -20,7 +19,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 @Entity
 @Table
 @Access(AccessType.FIELD)
-public class MedicationRecord implements Comparable<MedicationRecord> {
+public class MedicationRecord {
 
     private static DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
@@ -101,49 +100,5 @@ public class MedicationRecord implements Comparable<MedicationRecord> {
             return String.format("%s (started using: %s, stopped using: %s)", medicationName,
                     started.format(dateFormat), stopped.format(dateFormat));
         }
-    }
-
-    /**
-     * Medication Records are first ordered by their name. If the names are the same, they will be ordered by their ID
-     *
-     * @param other The other MedicationRecord to compare
-     * @return Which record is higher in the sort
-     */
-    @Override
-    public int compareTo(MedicationRecord other) {
-        int comparison = this.medicationName.compareTo(other.medicationName);
-        if (comparison == 0) {
-            return this.id.compareTo(other.id);
-        } else {
-            return comparison;
-        }
-    }
-
-    /**
-     * Medication records are considered equal if their name and ID are the same
-     *
-     * @param o The other object to compare to
-     * @return If the other object is a match
-     */
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof MedicationRecord)) {
-            return false;
-        }
-        MedicationRecord other = (MedicationRecord) o;
-        return this.medicationName.equals(other.medicationName) && id.equals(other.id);
-    }
-
-    /**
-     * Implement the hashCode function on name and ID to reflect equals
-     *
-     * @return A hash value generated
-     */
-    @Override
-    public int hashCode() {
-        return Objects.hash(medicationName, id);
     }
 }
