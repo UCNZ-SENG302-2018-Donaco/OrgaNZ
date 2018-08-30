@@ -11,7 +11,17 @@ import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Region;
 
-public class MatchOrganToRecipients {
+/**
+ * Provides static helper methods to match organs to recipients
+ */
+public abstract class MatchOrganToRecipients {
+
+    /**
+     * Private constructor to prevent instantiation of utility class
+     */
+    private MatchOrganToRecipients() {
+        throw new IllegalStateException("Utility class");
+    }
 
     private static boolean agesMatch(int donorAge, int recipientAge) {
         // If one is under 12, they must both be under 12

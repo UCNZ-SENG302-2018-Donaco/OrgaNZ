@@ -12,6 +12,13 @@ import com.humanharvest.organz.ProcedureRecord;
 public abstract class ProcedureRecordValidator {
 
     /**
+     * Private constructor to prevent instantiation of utility class
+     */
+    private ProcedureRecordValidator() {
+        throw new IllegalStateException("Utility class");
+    }
+
+    /**
      * Validates a {@link ProcedureRecord} and returns a string explaining the errors within it.
      *
      * @param record The record to validate.

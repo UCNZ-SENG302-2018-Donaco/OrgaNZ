@@ -6,8 +6,25 @@ import java.util.List;
 import com.humanharvest.organz.utilities.validators.NotEmptyStringValidator;
 import com.humanharvest.organz.views.clinician.ModifyClinicianObject;
 
-public class ModifyClinicianValidator {
+/**
+ * Class to ensure that a modified clinician is valid
+ * Class is abstract as it only contains static methods and should not be instantiated
+ */
+public abstract class ModifyClinicianValidator {
 
+    /**
+     * Private constructor to prevent instantiation of utility class
+     */
+    private ModifyClinicianValidator() {
+        throw new IllegalStateException("Utility class");
+    }
+
+    /**
+     * Checks a ModifyClinicianObject and ensures that all required strings are valid
+     *
+     * @param clinician The ModifyClinicianObject to check
+     * @return True if all validity checks pass
+     */
     public static boolean isValid(ModifyClinicianObject clinician) {
 
         List<String> unmodifiedFields = Arrays.asList(clinician.getUnmodifiedFields());

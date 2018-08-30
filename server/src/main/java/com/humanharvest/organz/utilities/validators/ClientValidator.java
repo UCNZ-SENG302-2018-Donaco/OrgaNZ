@@ -18,6 +18,13 @@ import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
  */
 public abstract class ClientValidator {
 
+    /**
+     * Private constructor to prevent instantiation of utility class
+     */
+    private ClientValidator() {
+        throw new IllegalStateException("Utility class");
+    }
+
     private static final double DELTA = 1e-6;
 
     /**

@@ -12,6 +12,13 @@ import com.humanharvest.organz.IllnessRecord;
 public abstract class IllnessRecordValidator {
 
     /**
+     * Private constructor to prevent instantiation of utility class
+     */
+    private IllnessRecordValidator() {
+        throw new IllegalStateException("Utility class");
+    }
+
+    /**
      * Validates a {@link IllnessRecord} and returns a string explaining the errors within it.
      *
      * @param record The record to validate.

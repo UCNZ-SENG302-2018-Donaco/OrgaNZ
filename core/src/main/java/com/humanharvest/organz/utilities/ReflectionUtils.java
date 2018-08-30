@@ -5,9 +5,13 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Objects;
 
-public final class ReflectionUtils {
+public abstract class ReflectionUtils {
 
+    /**
+     * Private constructor to prevent instantiation of utility class
+     */
     private ReflectionUtils() {
+        throw new IllegalStateException("Utility class");
     }
 
     public static <T> T getField(Object o, String fieldName)
