@@ -3,12 +3,15 @@ package com.humanharvest.organz.controller;
 import java.util.EnumSet;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.ListView;
 import javafx.scene.layout.HBox;
 import org.controlsfx.control.CheckComboBox;
 import org.controlsfx.control.Notifications;
 
+import com.humanharvest.organz.Hospital;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Country;
+import com.humanharvest.organz.utilities.enums.Organ;
 
 public class ConfigController extends SubController {
 
@@ -17,6 +20,15 @@ public class ConfigController extends SubController {
 
     @FXML
     HBox menuBarPane;
+
+    @FXML
+    ListView<Country> allowedCountries;
+
+    @FXML
+    ListView<Hospital> hospitalSelector;
+
+    @FXML
+    ListView<Organ> organSelector;
 
     public ConfigController() {
     }
