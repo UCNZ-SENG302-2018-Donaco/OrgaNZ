@@ -31,7 +31,7 @@ import com.humanharvest.organz.utilities.view.PageNavigator;
 public class CreateClinicianController extends SubController {
 
     @FXML
-    private TextField id, fname, lname, mname, staffId, workAddress;
+    private TextField fname, lname, mname, staffId, workAddress;
     @FXML
     private PasswordField password;
     @FXML
