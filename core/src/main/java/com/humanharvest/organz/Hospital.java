@@ -16,6 +16,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.humanharvest.organz.utilities.algorithms.DistanceCalculation;
 import com.humanharvest.organz.utilities.enums.Organ;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -185,5 +186,15 @@ public class Hospital {
 
     public boolean removeTransplantProgramFor(Organ organ) {
         return transplantPrograms.remove(organ);
+    }
+
+    /**
+     * Calculates and returns the Haversine distance between the current and the given hospitals in km
+     * @param hospital hospital to find the distance to from the current one
+     * @return distance in km between the two hospitals
+     */
+    public double calculateDistanceTo(Hospital hospital) {
+        return DistanceCalculation.distanceBetweenInKm(this.latitude, this.longitude, hospital.getLatitude(),
+                hospital.getLongitude());
     }
 }

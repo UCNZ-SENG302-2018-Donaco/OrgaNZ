@@ -23,36 +23,8 @@ public class MatchOrganToRecipients {
         return Math.abs(donorAge - recipientAge) <= 15;
     }
 
-    private static double degreesToRadians(double degrees) {
-        return degrees * Math.PI / 180;
-    }
-
-    /**
-     * Calculates distance between two points on earth.
-     * Note that there is no unit - standardising it to a unit is unnecessary, as this is just used for comparisons.
-     * (To get km, multiply by 6371; to get miles, multiply by 3959)
-     * Adapted from https://stackoverflow.com/a/365853/8355496
-     *
-     * @param lat1 Point 1's latitude
-     * @param lon1 Point 1's longitude
-     * @param lat2 Point 2's latitude
-     * @param lon2 Point 2's longitude
-     * @return the distance between the points
-     */
-    private static double distanceBetween(double lat1, double lon1, double lat2, double lon2) {
-        double dLat = degreesToRadians(lat2 - lat1);
-        double dLon = degreesToRadians(lon2 - lon1);
-
-        lat1 = degreesToRadians(lat1);
-        lat2 = degreesToRadians(lat2);
-
-        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
-        return 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    }
-
     private static double distanceBetween(Country country1, Country country2) {
-        return distanceBetween(country1.getLatitude(), country1.getLongitude(),
+        return DistanceCalculation.distanceBetween(country1.getLatitude(), country1.getLongitude(),
                 country2.getLatitude(), country2.getLongitude());
     }
 
@@ -61,7 +33,7 @@ public class MatchOrganToRecipients {
             // For at least one region, we don't know where it is
             return Double.MAX_VALUE;
         }
-        return distanceBetween(region1.getLatitude(), region1.getLongitude(),
+        return DistanceCalculation.distanceBetween(region1.getLatitude(), region1.getLongitude(),
                 region2.getLatitude(), region2.getLongitude());
 
     }
