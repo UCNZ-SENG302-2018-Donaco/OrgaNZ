@@ -53,7 +53,3 @@ For more information on the design decisions that were made, please refer to the
 
 To see an example of a JSON file that loads in the user data, please direct your attention to
 `doc/examples/savefile.JSON`.
-
-
-<iframe src="http://csse-s302g7.canterbury.ac.nz/api/project_badges/measure?project=com.humanharvest.organz%3Aorganz&metric=alert_status"></iframe>
-
