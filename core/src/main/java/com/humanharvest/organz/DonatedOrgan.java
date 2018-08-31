@@ -90,6 +90,9 @@ public class DonatedOrgan {
         this.dateTimeOfDonation = dateTimeOfDonation;
     }
 
+    /**
+     * @return the {@link Duration} between the datetime of donation and the current datetime
+     */
     private Duration getTimeSinceDonation() {
         return Duration.between(dateTimeOfDonation, LocalDateTime.now());
     }
@@ -150,11 +153,21 @@ public class DonatedOrgan {
         return overrideReason;
     }
 
+    /**
+     * Sets the override reason for this donated organ and tells the donor that one of its organs overridden status
+     * has changed.
+     *
+     * @param overrideReason the reason for overriding the organ,
+     */
     public void manuallyOverride(String overrideReason) {
         this.overrideReason = overrideReason;
         donor.updateHasOverriddenOrgans();
     }
 
+    /**
+     * Removes the override reason for this donated organ and tells the donor that one of its organs is no
+     * longer overridden.
+     */
     public void cancelManualOverride() {
         this.overrideReason = null;
         donor.updateHasOverriddenOrgans();
