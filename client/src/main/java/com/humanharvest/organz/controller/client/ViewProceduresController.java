@@ -41,7 +41,6 @@ import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.PageNavigator;
-import com.humanharvest.organz.views.client.CreateProcedureView;
 import com.humanharvest.organz.views.client.ModifyProcedureObject;
 
 /**
@@ -423,7 +422,7 @@ public class ViewProceduresController extends SubController {
             }
 
             try {
-                State.getClientResolver().addProcedureRecord(client, new CreateProcedureView(record));
+                State.getClientResolver().addProcedureRecord(client, record);
 
                 summaryField.setText(null);
                 descriptionField.setText(null);

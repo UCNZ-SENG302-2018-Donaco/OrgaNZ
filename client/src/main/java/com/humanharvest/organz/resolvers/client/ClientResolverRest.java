@@ -19,8 +19,6 @@ import com.humanharvest.organz.views.SingleStringView;
 import com.humanharvest.organz.views.client.CreateClientView;
 import com.humanharvest.organz.views.client.CreateIllnessView;
 import com.humanharvest.organz.views.client.CreateMedicationRecordView;
-import com.humanharvest.organz.views.client.CreateProcedureView;
-import com.humanharvest.organz.views.client.CreateTransplantRequestView;
 import com.humanharvest.organz.views.client.DonatedOrganView;
 import com.humanharvest.organz.views.client.ModifyClientObject;
 import com.humanharvest.organz.views.client.ModifyIllnessObject;
@@ -216,12 +214,12 @@ public class ClientResolverRest implements ClientResolver {
     }
 
     @Override
-    public List<TransplantRequest> createTransplantRequest(Client client, CreateTransplantRequestView request) {
+    public List<TransplantRequest> createTransplantRequest(Client client, TransplantRequest transplantRequest) {
         HttpHeaders httpHeaders = createHeaders(true);
         ResponseEntity<List<TransplantRequest>> responseEntity = sendQuery(httpHeaders,
                 State.getBaseUri() + "clients/{id}/transplantRequests",
                 HttpMethod.POST,
-                request,
+                transplantRequest,
                 new ParameterizedTypeReference<List<TransplantRequest>>() {
                 }, client.getUid());
         return responseEntity.getBody();
@@ -256,12 +254,12 @@ public class ClientResolverRest implements ClientResolver {
     }
 
     @Override
-    public List<ProcedureRecord> addProcedureRecord(Client client, CreateProcedureView procedureView) {
+    public List<ProcedureRecord> addProcedureRecord(Client client, ProcedureRecord procedureRecord) {
         HttpHeaders httpHeaders = createHeaders(true);
         ResponseEntity<List<ProcedureRecord>> responseEntity = sendQuery(httpHeaders,
                 State.getBaseUri() + "clients/{id}/procedures",
                 HttpMethod.POST,
-                procedureView,
+                procedureRecord,
                 new ParameterizedTypeReference<List<ProcedureRecord>>() {
                 }, client.getUid());
 

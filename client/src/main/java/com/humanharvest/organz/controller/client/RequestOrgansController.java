@@ -41,7 +41,6 @@ import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.utilities.view.WindowContext;
-import com.humanharvest.organz.views.client.CreateTransplantRequestView;
 import com.humanharvest.organz.views.client.ResolveTransplantRequestObject;
 
 /**
@@ -301,8 +300,7 @@ public class RequestOrgansController extends SubController {
                     "Client is marked as dead, so can't request an organ transplant.", mainController.getStage());
         } else { // Bluesky scenario
             // Create a request
-            CreateTransplantRequestView newRequest =
-                    new CreateTransplantRequestView(selectedOrgan, LocalDateTime.now());
+            TransplantRequest newRequest = new TransplantRequest(client, selectedOrgan, LocalDateTime.now());
 
             // Resolve the request
             try {

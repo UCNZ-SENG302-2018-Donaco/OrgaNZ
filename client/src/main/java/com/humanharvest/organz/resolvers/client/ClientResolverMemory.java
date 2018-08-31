@@ -23,8 +23,6 @@ import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredExcept
 import com.humanharvest.organz.views.client.CreateClientView;
 import com.humanharvest.organz.views.client.CreateIllnessView;
 import com.humanharvest.organz.views.client.CreateMedicationRecordView;
-import com.humanharvest.organz.views.client.CreateProcedureView;
-import com.humanharvest.organz.views.client.CreateTransplantRequestView;
 import com.humanharvest.organz.views.client.ModifyClientObject;
 import com.humanharvest.organz.views.client.ModifyIllnessObject;
 import com.humanharvest.organz.views.client.ModifyProcedureObject;
@@ -98,9 +96,7 @@ public class ClientResolverMemory implements ClientResolver {
     }
 
     @Override
-    public List<TransplantRequest> createTransplantRequest(Client client, CreateTransplantRequestView request) {
-        TransplantRequest transplantRequest = new TransplantRequest(client, request.getRequestedOrgan(),
-                request.getRequestDateTime());
+    public List<TransplantRequest> createTransplantRequest(Client client, TransplantRequest transplantRequest) {
         client.addTransplantRequest(transplantRequest);
         State.getClientManager().applyChangesTo(client);
         return client.getTransplantRequests();
@@ -126,11 +122,7 @@ public class ClientResolverMemory implements ClientResolver {
     }
 
     @Override
-    public List<ProcedureRecord> addProcedureRecord(Client client, CreateProcedureView procedureView) {
-        ProcedureRecord procedureRecord = new ProcedureRecord(
-                procedureView.getSummary(),
-                procedureView.getDescription(),
-                procedureView.getDate());
+    public List<ProcedureRecord> addProcedureRecord(Client client, ProcedureRecord procedureRecord) {
         client.addProcedureRecord(procedureRecord);
         State.getClientManager().applyChangesTo(client);
         return client.getProcedures();
