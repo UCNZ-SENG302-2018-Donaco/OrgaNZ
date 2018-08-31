@@ -348,35 +348,47 @@ public class SearchClientsController extends SubController {
         });
     }
 
+    /**
+     * Makes an HBox managed and visible.
+     *
+     * @param hBox the HBox to enable.
+     */
+    private void enableHBox(HBox hBox) {
+        hBox.setManaged(false);
+        hBox.setVisible(false);
+    }
+
+    /**
+     * Makes an HBox not managed and invisible.
+     *
+     * @param hBox the HBox to disable.
+     */
+    private void disableHBox(HBox hBox) {
+        hBox.setManaged(false);
+        hBox.setVisible(false);
+    }
+
     private void changeClientType(ClientType newClientType) {
         switch (newClientType) {
             case ONLY_DONOR:
                 organsRequestingFilter.getCheckModel().clearChecks();
-                donatingFilterBox.setManaged(true);
-                donatingFilterBox.setVisible(true);
-                requestingFilterBox.setManaged(false);
-                requestingFilterBox.setVisible(false);
+                enableHBox(donatingFilterBox);
+                disableHBox(requestingFilterBox);
                 break;
             case ONLY_RECEIVER:
                 organsDonatingFilter.getCheckModel().clearChecks();
-                requestingFilterBox.setManaged(true);
-                requestingFilterBox.setVisible(true);
-                donatingFilterBox.setManaged(false);
-                donatingFilterBox.setVisible(false);
+                disableHBox(donatingFilterBox);
+                enableHBox(requestingFilterBox);
                 break;
             case NEITHER:
                 organsRequestingFilter.getCheckModel().clearChecks();
                 organsDonatingFilter.getCheckModel().clearChecks();
-                requestingFilterBox.setManaged(false);
-                requestingFilterBox.setVisible(false);
-                donatingFilterBox.setManaged(false);
-                donatingFilterBox.setVisible(false);
+                disableHBox(donatingFilterBox);
+                disableHBox(requestingFilterBox);
                 break;
-            default:
-                requestingFilterBox.setManaged(true);
-                requestingFilterBox.setVisible(true);
-                donatingFilterBox.setManaged(true);
-                donatingFilterBox.setVisible(true);
+            default: // both
+                enableHBox(donatingFilterBox);
+                enableHBox(requestingFilterBox);
                 break;
         }
         updateClientList();
