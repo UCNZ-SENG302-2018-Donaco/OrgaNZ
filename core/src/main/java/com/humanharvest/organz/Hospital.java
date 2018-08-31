@@ -179,4 +179,23 @@ public class Hospital {
     public boolean removeOrgan(Organ organ) {
         return organs.remove(organ);
     }
+
+    /**
+     * Calculates and returns the halversine distance between the current and the given hospitals inkm
+     * @param hospital to find the distance to from the current one
+     * @return distance in km between the two hospitals
+     */
+    public double calculateDistanceTo(Hospital hospital) {
+        int EARTH_RADIUS = 6371;  // radius of the earth in km
+
+        double lonDist = Math.toRadians(this.longitude - hospital.getLongitude());
+        double latDist = Math.toRadians(this.latitude - hospital.getLatitude());
+
+        double a = Math.sin(latDist / 2) * Math.sin(latDist / 2) +
+                Math.sin(lonDist / 2) * Math.sin(lonDist / 2) * Math.cos(Math.toDegrees(this.latitude)) * Math.cos
+                        (Math.toDegrees(hospital.getLatitude()));
+        double distance = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        return distance * EARTH_RADIUS;
+    }
 }
