@@ -184,6 +184,11 @@ public class ViewProceduresController extends SubController {
         PageNavigator.refreshAllWindows();
     }
 
+    /**
+     * Sends modifications to server, and alerts the user if there is an error.
+     * @param procedureRecord the procedure record to modify
+     * @param modification the modification(s) to make
+     */
     private void sendModification(ProcedureRecord procedureRecord, ModifyProcedureObject modification) {
         try {
             State.getClientResolver().modifyProcedureRecord(client, procedureRecord, modification);
@@ -279,6 +284,8 @@ public class ViewProceduresController extends SubController {
     public void setup(MainController mainController) {
         super.setup(mainController);
 
+        // Setup the client, load the appropriate nav device (sidebar or menubar), and disallows clients from editing
+        // fields they're not allowed to.
         if (session.getLoggedInUserType() == UserType.CLIENT) {
             client = session.getLoggedInClient();
             mainController.loadSidebar(sidebarPane);
