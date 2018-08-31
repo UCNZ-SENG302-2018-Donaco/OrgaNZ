@@ -182,7 +182,7 @@ public class Hospital {
     }
 
     /**
-     * Calculates and returns the halversine distance between the current and the given hospitals in km
+     * Calculates and returns the Haversine distance between the current and the given hospitals in km
      * @param hospital hospital to find the distance to from the current one
      * @return distance in km between the two hospitals
      */
