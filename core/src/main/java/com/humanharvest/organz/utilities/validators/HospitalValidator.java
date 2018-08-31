@@ -16,7 +16,7 @@ public abstract class HospitalValidator {
         return hospital.getName() != null
                 && validLatLong
                 && hospital.getAddress() != null
-                && hospital.getOrgans() != null;
+                && hospital.getTransplantPrograms() != null;
     }
 
     public static boolean areValid(Set<Hospital> hospitals) {
@@ -24,7 +24,7 @@ public abstract class HospitalValidator {
             System.out.println(hospital);
             System.out.println(hospital.getName());
             System.out.println(hospital.getAddress());
-            System.out.println(hospital.getOrgans());
+            System.out.println(hospital.getTransplantPrograms());
             if (!isValid(hospital)) {
                 System.out.println("that was invalid");
                 return false;

@@ -30,31 +30,31 @@ public class HospitalTest {
     }
 
     @Test
-    public void testAddOrgan() {
-        assertEquals(0, hospital.getOrgans().size());
-        assertTrue(hospital.addOrgan(organ));
-        assertEquals(1, hospital.getOrgans().size());
+    public void testaddTransplantProgramFor() {
+        assertEquals(0, hospital.getTransplantPrograms().size());
+        assertTrue(hospital.addTransplantProgramFor(organ));
+        assertEquals(1, hospital.getTransplantPrograms().size());
     }
 
     @Test
-    public void testRemoveOrgan() {
-        assertEquals(0, hospital.getOrgans().size());
-        assertTrue(hospital.addOrgan(organ));
-        assertEquals(1, hospital.getOrgans().size());
-        assertTrue(hospital.removeOrgan(organ));
-        assertEquals(0, hospital.getOrgans().size());
+    public void testremoveTransplantProgramFor() {
+        assertEquals(0, hospital.getTransplantPrograms().size());
+        assertTrue(hospital.addTransplantProgramFor(organ));
+        assertEquals(1, hospital.getTransplantPrograms().size());
+        assertTrue(hospital.removeTransplantProgramFor(organ));
+        assertEquals(0, hospital.getTransplantPrograms().size());
     }
 
     @Test
     public void testSetOrgans() {
-        assertEquals(0, hospital.getOrgans().size());
-        assertTrue(hospital.addOrgan(organ));
-        assertEquals(1, hospital.getOrgans().size());
-        hospital.setOrgans(organs);
+        assertEquals(0, hospital.getTransplantPrograms().size());
+        assertTrue(hospital.addTransplantProgramFor(organ));
+        assertEquals(1, hospital.getTransplantPrograms().size());
+        hospital.setTransplantPrograms(organs);
 
         // Check that heart and bone have been added, and liver is no longer there
-        assertEquals(2, hospital.getOrgans().size());
-        assertTrue(hospital.getOrgans().contains(organ1));
-        assertTrue(hospital.getOrgans().contains(organ2));
+        assertEquals(2, hospital.getTransplantPrograms().size());
+        assertTrue(hospital.getTransplantPrograms().contains(organ1));
+        assertTrue(hospital.getTransplantPrograms().contains(organ2));
     }
 }
