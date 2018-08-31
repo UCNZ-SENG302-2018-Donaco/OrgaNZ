@@ -15,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.humanharvest.organz.utilities.algorithms.DistanceCalculation;
 import com.humanharvest.organz.utilities.enums.Organ;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
@@ -186,16 +187,7 @@ public class Hospital {
      * @return distance in km between the two hospitals
      */
     public double calculateDistanceTo(Hospital hospital) {
-        int EARTH_RADIUS = 6371;  // radius of the earth in km
-
-        double lonDist = Math.toRadians(this.longitude - hospital.getLongitude());
-        double latDist = Math.toRadians(this.latitude - hospital.getLatitude());
-
-        double a = Math.sin(latDist / 2) * Math.sin(latDist / 2) +
-                Math.sin(lonDist / 2) * Math.sin(lonDist / 2) * Math.cos(Math.toDegrees(this.latitude)) * Math.cos
-                        (Math.toDegrees(hospital.getLatitude()));
-        double distance = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-        return distance * EARTH_RADIUS;
+        return DistanceCalculation.distanceBetweenInKm(this.latitude, this.longitude, hospital.getLatitude(),
+                hospital.getLongitude());
     }
 }
