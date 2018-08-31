@@ -33,7 +33,8 @@ organz.log.*
 *.png
 !*images/default.png
 
-# Allow all types of resources
+# Allow all types of resources and documentation
+!**/doc/**
 !**/src/**/resources/**
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
