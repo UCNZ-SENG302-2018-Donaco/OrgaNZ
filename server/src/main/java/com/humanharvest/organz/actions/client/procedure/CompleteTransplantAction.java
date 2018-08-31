@@ -14,7 +14,7 @@ import com.humanharvest.organz.utilities.exceptions.DateOutOfBoundsException;
  * A reversible action that will resolve a transplant record and correctly link the organ to the recipient, as well
  * as the transplant request.
  */
-public class MarkTransplantRecordAsCompleteAction extends ClientAction {
+public class CompleteTransplantAction extends ClientAction {
 
     private final TransplantRecord record;
 
@@ -25,7 +25,7 @@ public class MarkTransplantRecordAsCompleteAction extends ClientAction {
      * @param manager The ClientManager to use to apply changes
      * @throws DateOutOfBoundsException Thrown if the transplant record has it's date set to the future
      */
-    MarkTransplantRecordAsCompleteAction(TransplantRecord record, ClientManager manager)
+    CompleteTransplantAction(TransplantRecord record, ClientManager manager)
             throws DateOutOfBoundsException {
         super(record.getClient(), manager);
         if (record.getDate().isAfter(LocalDate.now())) {

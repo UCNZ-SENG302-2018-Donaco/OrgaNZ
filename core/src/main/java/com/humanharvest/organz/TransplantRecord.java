@@ -1,14 +1,35 @@
 package com.humanharvest.organz;
 
 import java.time.LocalDate;
+import javax.persistence.Access;
+import javax.persistence.AccessType;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+
+@Entity
+@Access(AccessType.FIELD)
+@DiscriminatorValue("transplant")
+@JsonAutoDetect(fieldVisibility = Visibility.ANY,
+        getterVisibility = Visibility.NONE,
+        setterVisibility = Visibility.NONE)
 public class TransplantRecord extends ProcedureRecord {
 
+    @OneToOne
+    @JoinColumn(name = "organ_id")
     private DonatedOrgan organ;
+
+    @OneToOne
+    @JoinColumn(name = "request_id")
     private TransplantRequest request;
+
     private boolean completed;
 
-    public TransplantRecord() {
+    protected TransplantRecord() {
     }
 
     public TransplantRecord(DonatedOrgan organ, TransplantRequest request, LocalDate scheduledDate) {

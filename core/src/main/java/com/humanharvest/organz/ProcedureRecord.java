@@ -7,6 +7,8 @@ import java.util.Set;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -20,10 +22,19 @@ import javax.persistence.Table;
 import com.humanharvest.organz.utilities.enums.Organ;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 @Entity
 @Table
 @Access(AccessType.FIELD)
+@DiscriminatorColumn(name = "recordType")
+@DiscriminatorValue("base")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = TransplantRecord.class),
+        @JsonSubTypes.Type(value = ProcedureRecord.class)
+})
 public class ProcedureRecord {
 
     @Id
