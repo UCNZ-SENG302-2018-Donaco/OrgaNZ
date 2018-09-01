@@ -1,5 +1,6 @@
 package com.humanharvest.organz;
 
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -25,6 +26,11 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 @Table
 @Access(AccessType.FIELD)
 public class Hospital {
+
+    /**
+     * The speed of the BK 117 helicopter in km/h, as used by NZ Emergency Services.
+     */
+    private static final double DEFAULT_HELICOPTER_SPEED = 250;
 
     @Id
     @GeneratedValue
@@ -53,7 +59,7 @@ public class Hospital {
         this.latitude = latitude;
         this.longitude = longitude;
         this.address = address;
-        this.transplantPrograms = new HashSet<>();
+        transplantPrograms = new HashSet<>();
     }
 
     public Hospital(String name, double latitude, double longitude, String address, Set<Organ> transplantPrograms) {
@@ -194,7 +200,28 @@ public class Hospital {
      * @return distance in km between the two hospitals
      */
     public double calculateDistanceTo(Hospital hospital) {
-        return DistanceCalculation.distanceBetweenInKm(this.latitude, this.longitude, hospital.getLatitude(),
-                hospital.getLongitude());
+        return DistanceCalculation.distanceBetweenInKm(latitude, longitude,
+                hospital.getLatitude(), hospital.getLongitude());
+    }
+
+    /**
+     * Returns the period of time it would take a helicopter at the given speed to the other hospital.
+     * Ignores spool up/down time and assumes a straight line with no wind.
+     * @param otherHospital The destination hospital.
+     * @param speedInKMH The speed in km/h.
+     */
+    public Duration calculateTimeTo(Hospital otherHospital, double speedInKMH) {
+        double distanceKM = calculateDistanceTo(otherHospital);
+        double hours = distanceKM / speedInKMH;
+        return Duration.ofSeconds((long) (hours * 60 * 60));
+    }
+
+    /**
+     * Returns the period of time it would take a helicopter at default speed to the other hospital.
+     * Ignores spool up/down time and assumes a straight line with no wind.
+     * @param otherHospital The destination hospital.
+     */
+    public Duration calculateTimeTo(Hospital otherHospital) {
+        return calculateTimeTo(otherHospital, DEFAULT_HELICOPTER_SPEED);
     }
 }
