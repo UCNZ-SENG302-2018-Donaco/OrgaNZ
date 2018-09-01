@@ -66,6 +66,8 @@ public interface ClientResolver {
 
     List<ProcedureRecord> addProcedureRecord(Client client, ProcedureRecord procedureRecord);
 
+    List<ProcedureRecord> scheduleTransplantProcedure(DonatedOrgan organ, TransplantRequest request, LocalDate date);
+
     DonatedOrgan manuallyOverrideOrgan(DonatedOrgan donatedOrgan, String overrideReason);
 
     //------------PATCHs----------------

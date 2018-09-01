@@ -37,6 +37,9 @@ public class TransplantRecord extends ProcedureRecord {
         this.request = request;
         setDate(scheduledDate);
         setClient(request.getClient());
+        setSummary(organ.getOrganType().toString() + " transplant");
+        setDescription(String.format("Transplant of %s from donor '%s' to recipient '%s'.",
+                organ.getOrganType().toString(), organ.getDonor().getFullName(), request.getClient().getFullName()));
     }
 
     public DonatedOrgan getOrgan() {

@@ -3,6 +3,7 @@ package com.humanharvest.organz.server.controller.client;
 import static com.humanharvest.organz.utilities.validators.ClientValidator.checkClientETag;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -225,7 +226,7 @@ public class ClientProceduresController {
             @PathVariable int uid,
             @RequestParam long organId,
             @RequestParam long requestId,
-            @RequestParam LocalDate date,
+            @RequestParam(name = "date") String dateString,
             @RequestHeader(value = "If-Match", required = false) String ETag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
             throws AuthenticationException, IfMatchFailedException, IfMatchRequiredException {
@@ -244,11 +245,14 @@ public class ClientProceduresController {
         checkClientETag(client, ETag);
 
         // Find the organ to be transplanted
-        DonatedOrgan organ = client.getDonatedOrganById(organId);
-        if (organ == null) {
+        Optional<DonatedOrgan> optionalOrgan = State.getClientManager().getAllOrgansToDonate().stream()
+                .filter(donatedOrgan -> donatedOrgan.getId().equals(organId))
+                .findFirst();
+        if (!optionalOrgan.isPresent()) {
             // No organ exists with that id, return 400
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+        DonatedOrgan organ = optionalOrgan.get();
 
         // Find the recipient's request for this organ
         Optional<TransplantRequest> optionalRequest = client.getTransplantRequestById(requestId);
@@ -257,6 +261,14 @@ public class ClientProceduresController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         TransplantRequest request = optionalRequest.get();
+
+        LocalDate date;
+        try {
+            date = LocalDate.parse(dateString);
+        } catch (DateTimeParseException exc) {
+            // Incorrect date format, return 400
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
 
         // Check that the organ hasn't been donated yet, and the request is still waiting
         if (!(organ.getReceiver() == null && request.getStatus() == TransplantRequestStatus.WAITING)) {

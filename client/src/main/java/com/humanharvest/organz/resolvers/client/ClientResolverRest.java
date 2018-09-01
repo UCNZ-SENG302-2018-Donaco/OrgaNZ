@@ -12,6 +12,7 @@ import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.ProcedureRecord;
+import com.humanharvest.organz.TransplantRecord;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
@@ -31,6 +32,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.util.UriComponentsBuilder;
 
 public class ClientResolverRest implements ClientResolver {
 
@@ -262,6 +264,29 @@ public class ClientResolverRest implements ClientResolver {
                 procedureRecord,
                 new ParameterizedTypeReference<List<ProcedureRecord>>() {
                 }, client.getUid());
+
+        return responseEntity.getBody();
+    }
+
+    @Override
+    public List<ProcedureRecord> scheduleTransplantProcedure(DonatedOrgan organ, TransplantRequest request,
+            LocalDate date) {
+        TransplantRecord transplant = new TransplantRecord(organ, request, date);
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(
+                State.getBaseUri() + "/clients/{uid}/transplants")
+                .queryParam("organId", organ.getId())
+                .queryParam("requestId", request.getId())
+                .queryParam("date", date.toString());
+
+        HttpHeaders httpHeaders = createHeaders(true);
+        ResponseEntity<List<ProcedureRecord>> responseEntity = sendQuery(httpHeaders,
+                builder.toUriString(),
+                HttpMethod.POST,
+                transplant,
+                new ParameterizedTypeReference<List<ProcedureRecord>>() {
+                },
+                request.getClient().getUid());
 
         return responseEntity.getBody();
     }

@@ -16,6 +16,7 @@ import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.ProcedureRecord;
+import com.humanharvest.organz.TransplantRecord;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
@@ -126,6 +127,13 @@ public class ClientResolverMemory implements ClientResolver {
         client.addProcedureRecord(procedureRecord);
         State.getClientManager().applyChangesTo(client);
         return client.getProcedures();
+    }
+
+    @Override
+    public List<ProcedureRecord> scheduleTransplantProcedure(DonatedOrgan organ, TransplantRequest request,
+            LocalDate date) {
+        TransplantRecord transplant = new TransplantRecord(organ, request, date);
+        return addProcedureRecord(request.getClient(), transplant);
     }
 
     @Override
