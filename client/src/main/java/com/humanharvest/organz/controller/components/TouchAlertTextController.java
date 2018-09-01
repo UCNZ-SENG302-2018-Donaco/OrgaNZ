@@ -10,7 +10,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-import com.humanharvest.organz.MultitouchHandler;
+import com.humanharvest.organz.touch.MultitouchHandler;
 
 public class TouchAlertTextController {
 
