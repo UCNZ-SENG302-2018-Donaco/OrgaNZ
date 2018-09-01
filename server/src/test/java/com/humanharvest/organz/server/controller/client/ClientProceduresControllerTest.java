@@ -97,6 +97,7 @@ public class ClientProceduresControllerTest {
     @Test
     public void createValidProcedure() throws Exception {
         String validProcedureJson = "{ \n" +
+                "\"type\": \"ProcedureRecord\", \n" +
                 "\"summary\": \"Heart Transplant\", \n" +
                 "\"description\": \"To fix my achy-breaky heart.\", \n" +
                 "\"date\": \"2017-06-01\", \n" +
@@ -118,6 +119,7 @@ public class ClientProceduresControllerTest {
     @Test
     public void createInvalidProcedureIncorrectDateFormat() throws Exception {
         String invalidDateProcedureJson = "{ \n" +
+                "\"type\": \"ProcedureRecord\", \n" +
                 "\"summary\": \"Heart Transplant\", \n" +
                 "\"description\": \"To fix my achy-breaky heart.\", \n" +
                 "\"date\": \"2017-060-01\", \n" +
@@ -134,6 +136,7 @@ public class ClientProceduresControllerTest {
     @Test
     public void createInvalidProcedureInvalidAuth() throws Exception {
         String validProcedureJson = "{ \n" +
+                "\"type\": \"ProcedureRecord\", \n" +
                 "\"summary\": \"Heart Transplant\", \n" +
                 "\"description\": \"To fix my achy-breaky heart.\", \n" +
                 "\"date\": \"2017-06-01\", \n" +
@@ -150,6 +153,7 @@ public class ClientProceduresControllerTest {
     @Test
     public void createInvalidProcedureSummary() throws Exception {
         String validProcedureJson = "{ \n" +
+                "\"type\": \"ProcedureRecord\", \n" +
                 "\"summary\": e, \n" +
                 "\"description\": \"To fix my achy-breaky heart.\", \n" +
                 "\"date\": \"2017-06-01\", \n" +
@@ -166,6 +170,7 @@ public class ClientProceduresControllerTest {
     @Test
     public void createInvalidProcedureDescription() throws Exception {
         String validProcedureJson = "{ \n" +
+                "\"type\": \"ProcedureRecord\", \n" +
                 "\"summary\": \"summary\", \n" +
                 "\"description\": e, \n" +
                 "\"date\": \"2017-06-01\", \n" +
@@ -184,6 +189,7 @@ public class ClientProceduresControllerTest {
     @Test
     public void invalidAuthPatch() throws Exception {
         String json = "{\n" +
+                "\"type\": \"ProcedureRecord\", \n" +
                 "\"id\": 2, \n" +
                 "\"summary\": \"Heart Transplant\", \n" +
                 "\"description\": \"New Description\", \n" +
@@ -202,6 +208,7 @@ public class ClientProceduresControllerTest {
     @Test
     public void invalidDatePatch() throws Exception {
         String json = "{\n" +
+                "\"type\": \"ProcedureRecord\", \n" +
                 "\"id\": 2, \n" +
                 "\"summary\": \"Heart Transplant\", \n" +
                 "\"description\": \"New Description\", \n" +
