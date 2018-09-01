@@ -61,7 +61,7 @@ public class TransplantRequest {
     public TransplantRequest(Client client, Organ requestedOrgan, LocalDateTime requestDateTime) {
         this.client = client;
         this.requestedOrgan = requestedOrgan;
-        this.requestDateTime = getRequestDateTime();
+        this.requestDateTime = requestDateTime;
     }
 
     public Long getId() {
