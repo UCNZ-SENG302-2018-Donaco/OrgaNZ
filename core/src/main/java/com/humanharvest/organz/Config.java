@@ -19,7 +19,7 @@ import com.humanharvest.organz.utilities.enums.Country;
 public class Config {
 
     @Id
-    private int id = 0;
+    private int id;
 
     @ElementCollection(targetClass = Country.class)
     @Enumerated(EnumType.STRING)
@@ -33,8 +33,8 @@ public class Config {
     private Set<Hospital> hospitals;
 
     public Config() {
-        this.countries = EnumSet.noneOf(Country.class);
-        this.hospitals = new HashSet<>();
+        countries = EnumSet.noneOf(Country.class);
+        hospitals = new HashSet<>();
     }
 
     public Set<Country> getCountries() {

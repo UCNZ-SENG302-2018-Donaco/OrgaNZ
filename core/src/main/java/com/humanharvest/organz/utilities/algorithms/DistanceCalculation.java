@@ -1,8 +1,11 @@
 package com.humanharvest.organz.utilities.algorithms;
 
-public class DistanceCalculation {
+public final class DistanceCalculation {
 
-    private static double EARTH_RADIUS_KM = 6371;
+    private static final double EARTH_RADIUS_KM = 6371;
+
+    private DistanceCalculation() {
+    }
 
     /**
      * Calculates distance between two points on earth.

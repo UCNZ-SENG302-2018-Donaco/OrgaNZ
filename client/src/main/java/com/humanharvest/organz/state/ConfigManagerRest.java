@@ -1,5 +1,6 @@
 package com.humanharvest.organz.state;
 
+import java.util.Optional;
 import java.util.Set;
 
 import com.humanharvest.organz.Hospital;
@@ -70,5 +71,15 @@ public class ConfigManagerRest implements ConfigManager {
                 .exchange(State.getBaseUri() + "/config/hospitals", HttpMethod.POST, entity,
                         new ParameterizedTypeReference<Set<Hospital>>() {
                         });
+    }
+
+    @Override
+    public Optional<Hospital> getHospitalById(long id) {
+        for (Hospital hospital : getHospitals()) {
+            if (hospital.getId().equals(id)) {
+                return Optional.of(hospital);
+            }
+        }
+        return Optional.empty();
     }
 }
