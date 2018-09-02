@@ -47,8 +47,10 @@ import org.springframework.web.bind.annotation.RestController;
  * Provides handlers for requests to these endpoints:
  * - GET /clients/{uid}/procedures
  * - POST /clients/{uid}/procedures
+ * - POST /clients/{uid}/transplants
  * - PATCH /clients/{uid}/procedures/{id}
  * - DELETE /clients/{uid}/procedures/{id}
+ * - POST /clients/{uid}/transplants/{id}/complete
  */
 @RestController
 public class ClientProceduresController {
@@ -317,8 +319,8 @@ public class ClientProceduresController {
 
         // Try to find a transplant record with matching id
         Optional<ProcedureRecord> optionalRecord = client.getProcedures().stream()
-                .filter(procedure -> procedure.getId() != null && procedure.getId() == id && procedure.getClass()
-                        .isInstance(TransplantRecord.class))
+                .filter(procedure -> procedure.getId() != null && procedure.getId() == id)
+                .filter(procedure -> procedure instanceof TransplantRecord)
                 .findFirst();
         if (!optionalRecord.isPresent()) {
             // No transplant exists with that id, return 404
@@ -326,7 +328,7 @@ public class ClientProceduresController {
         }
         TransplantRecord transplantRecord = (TransplantRecord) optionalRecord.get();
 
-        // Execute resolve transp;ant action
+        // Execute resolve transplant action
         try {
             CompleteTransplantAction action = new CompleteTransplantAction(transplantRecord, State.getClientManager());
 

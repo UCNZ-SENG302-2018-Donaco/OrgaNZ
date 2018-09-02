@@ -11,13 +11,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.ProcedureRecord;
+import com.humanharvest.organz.TransplantRecord;
+import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.server.Application;
 import com.humanharvest.organz.state.AuthenticationManager;
 import com.humanharvest.organz.state.AuthenticationManagerFake;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
 
 import org.junit.Before;
@@ -182,6 +187,75 @@ public class ClientProceduresControllerTest {
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(validProcedureJson))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void resolveTransplantInvalidAuth() throws Exception {
+        mockMvc.perform(post(
+                "/clients/" + testClient.getUid() + "/transplants/12/complete")
+                .header("If-Match", testClient.getETag())
+                .header("X-Auth-Token", INVALID_AUTH))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    public void resolveTransplantInvalidClient() throws Exception {
+        mockMvc.perform(post(
+                "/clients/12131/transplants/12/complete")
+                .header("If-Match", testClient.getETag())
+                .header("X-Auth-Token", VALID_AUTH))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void resolveTransplantOnProcedureRecord() throws Exception {
+        mockMvc.perform(post(
+                "/clients/" + testClient.getUid() + "/transplants/1/complete")
+                .header("If-Match", testClient.getETag())
+                .header("X-Auth-Token", VALID_AUTH))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void resolveFutureTransplant() throws Exception {
+        Client donor = new Client(1231);
+
+        TransplantRequest request = new TransplantRequest(testClient, Organ.LIVER);
+        testClient.addTransplantRequest(request);
+
+        DonatedOrgan donatedOrgan = new DonatedOrgan(Organ.LIVER, donor, LocalDateTime.now(), (long) 1232131);
+
+        TransplantRecord transplantRecord = new TransplantRecord(donatedOrgan, request, LocalDate.now().plusDays(1));
+        transplantRecord.setId(12);
+
+        testClient.addProcedureRecord(transplantRecord);
+
+        mockMvc.perform(post(
+                "/clients/" + testClient.getUid() + "/transplants/12/complete")
+                .header("If-Match", testClient.getETag())
+                .header("X-Auth-Token", VALID_AUTH))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void successfullyResolveTransplant() throws Exception {
+        Client donor = new Client(1231);
+
+        TransplantRequest request = new TransplantRequest(testClient, Organ.LIVER);
+        testClient.addTransplantRequest(request);
+
+        DonatedOrgan donatedOrgan = new DonatedOrgan(Organ.LIVER, donor, LocalDateTime.now(), (long) 1232131);
+
+        TransplantRecord transplantRecord = new TransplantRecord(donatedOrgan, request, LocalDate.now());
+        transplantRecord.setId(12);
+
+        testClient.addProcedureRecord(transplantRecord);
+
+        mockMvc.perform(post(
+                "/clients/" + testClient.getUid() + "/transplants/12/complete")
+                .header("If-Match", testClient.getETag())
+                .header("X-Auth-Token", VALID_AUTH))
+                .andExpect(status().isOk());
     }
 
     //------------PATCH---------------
