@@ -43,8 +43,8 @@ public class Hospital {
 
     // todo should these be @tagged?
     private String name;
-    private double latitude;
-    private double longitude;
+    private double latitude = Double.NaN;
+    private double longitude = Double.NaN;
     private String address;
 
     @ElementCollection(targetClass = Organ.class)
@@ -179,6 +179,10 @@ public class Hospital {
     }
 
     public Set<Organ> getTransplantPrograms() {
+        if (transplantPrograms == null) {
+            return null;
+        }
+
         return Collections.unmodifiableSet(transplantPrograms);
     }
 

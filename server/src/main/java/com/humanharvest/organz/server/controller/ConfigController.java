@@ -50,7 +50,7 @@ public class ConfigController {
     @PostMapping("/config/countries")
     public ResponseEntity postCountries(
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken,
-            @RequestBody EnumSet<Country> countries)
+            @RequestBody Set<Country> countries)
             throws GlobalControllerExceptionHandler.InvalidRequestException {
 
         State.getAuthenticationManager().verifyAdminAccess(authToken);
