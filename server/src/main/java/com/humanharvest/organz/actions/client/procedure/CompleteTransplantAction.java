@@ -25,7 +25,7 @@ public class CompleteTransplantAction extends ClientAction {
      * @param manager The ClientManager to use to apply changes
      * @throws DateOutOfBoundsException Thrown if the transplant record has it's date set to the future
      */
-    CompleteTransplantAction(TransplantRecord record, ClientManager manager)
+    public CompleteTransplantAction(TransplantRecord record, ClientManager manager)
             throws DateOutOfBoundsException {
         super(record.getClient(), manager);
         if (record.getDate().isAfter(LocalDate.now())) {

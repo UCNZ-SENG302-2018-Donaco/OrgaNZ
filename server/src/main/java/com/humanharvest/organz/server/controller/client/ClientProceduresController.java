@@ -12,9 +12,11 @@ import java.util.logging.Logger;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.ProcedureRecord;
+import com.humanharvest.organz.TransplantRecord;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.actions.client.procedure.AddProcedureRecordAction;
+import com.humanharvest.organz.actions.client.procedure.CompleteTransplantAction;
 import com.humanharvest.organz.actions.client.procedure.DeleteProcedureRecordAction;
 import com.humanharvest.organz.actions.client.procedure.ModifyProcedureRecordAction;
 import com.humanharvest.organz.actions.client.procedure.ScheduleTransplantAction;
@@ -289,5 +291,56 @@ public class ClientProceduresController {
 
         // Return response containing list of client's procedures
         return new ResponseEntity<>(client.getProcedures(), headers, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/clients/{uid}/transplants/{id}/complete")
+    public ResponseEntity<TransplantRecord> completeTransplantRecord(
+            @PathVariable int uid,
+            @PathVariable int id,
+            @RequestHeader(value = "If-Match", required = false) String ETag,
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
+            throws AuthenticationException, IfMatchFailedException, IfMatchRequiredException {
+
+        // Check request has authorization to resolve a transplant
+        State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
+
+        // Try to find a client with matching uid
+        Optional<Client> optionalClient = State.getClientManager().getClientByID(uid);
+        if (!optionalClient.isPresent()) {
+            // No client exists with that id, return 404
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        Client client = optionalClient.get();
+
+        //Check ETag
+        checkClientETag(client, ETag);
+
+        // Try to find a transplant record with matching id
+        Optional<ProcedureRecord> optionalRecord = client.getProcedures().stream()
+                .filter(procedure -> procedure.getId() != null && procedure.getId() == id && procedure.getClass()
+                        .isInstance(TransplantRecord.class))
+                .findFirst();
+        if (!optionalRecord.isPresent()) {
+            // No transplant exists with that id, return 404
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        TransplantRecord transplantRecord = (TransplantRecord) optionalRecord.get();
+
+        // Execute resolve transp;ant action
+        try {
+            CompleteTransplantAction action = new CompleteTransplantAction(transplantRecord, State.getClientManager());
+
+            State.getActionInvoker(authToken).execute(action);
+
+            // Add the new ETag to the headers
+            HttpHeaders headers = new HttpHeaders();
+            headers.setETag(client.getETag());
+
+            // Return OK response
+            return new ResponseEntity<>(transplantRecord, headers, HttpStatus.OK);
+
+        } catch (DateOutOfBoundsException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 }
