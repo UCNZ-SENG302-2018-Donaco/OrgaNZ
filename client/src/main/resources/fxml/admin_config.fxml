@@ -14,8 +14,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import org.controlsfx.control.CheckComboBox?>
+<?import org.controlsfx.control.CheckListView?>
 
-<VBox prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.ConfigController">
+<VBox prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.ConfigController">
   <children>
     <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
       <items>
@@ -74,11 +75,11 @@
                                                       <Font size="18.0" />
                                                    </font>
                                                 </Label>
-                                                <ListView fx:id="allowedCountries" prefHeight="251.0" prefWidth="272.0">
+                                                <CheckListView fx:id="allowedCountries">
                                                    <VBox.margin>
                                                       <Insets bottom="10.0" left="30.0" right="30.0" top="15.0" />
                                                    </VBox.margin>
-                                                </ListView>
+                                                </CheckListView>
                                              </children>
                                           </VBox>
                                           <Separator orientation="VERTICAL" prefHeight="269.0" prefWidth="0.0" />
@@ -91,16 +92,16 @@
                                                 </Label>
                                                 <HBox prefHeight="248.0" prefWidth="520.0">
                                                    <children>
-                                                      <ListView fx:id="hospitalSelector" prefHeight="200.0" prefWidth="200.0">
+                                                      <ListView fx:id="hospitalSelector">
                                                          <HBox.margin>
                                                             <Insets bottom="10.0" left="30.0" right="30.0" top="15.0" />
                                                          </HBox.margin>
                                                       </ListView>
-                                                      <ListView fx:id="organSelector" prefHeight="200.0" prefWidth="200.0">
+                                                      <CheckListView fx:id="organSelector">
                                                          <HBox.margin>
                                                             <Insets bottom="10.0" left="30.0" right="30.0" top="15.0" />
                                                          </HBox.margin>
-                                                      </ListView>
+                                                      </CheckListView>
                                                    </children>
                                                 </HBox>
                                              </children>

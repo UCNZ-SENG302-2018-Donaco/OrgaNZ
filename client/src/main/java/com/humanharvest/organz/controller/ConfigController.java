@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.HBox;
 import org.controlsfx.control.CheckComboBox;
+import org.controlsfx.control.CheckListView;
 import org.controlsfx.control.Notifications;
 
 import com.humanharvest.organz.Hospital;
@@ -22,13 +23,13 @@ public class ConfigController extends SubController {
     HBox menuBarPane;
 
     @FXML
-    ListView<Country> allowedCountries;
+    CheckListView<Country> allowedCountries;
 
     @FXML
     ListView<Hospital> hospitalSelector;
 
     @FXML
-    ListView<Organ> organSelector;
+    CheckListView<Organ> organSelector;
 
     public ConfigController() {
     }
@@ -36,6 +37,8 @@ public class ConfigController extends SubController {
     @FXML
     private void initialize() {
         countries.getItems().setAll(Country.values());
+        allowedCountries.getItems().setAll(Country.values());
+        hospitalSelector.getItems().setAll(State.getConfigManager().getHospitals());
     }
 
     @Override
@@ -51,6 +54,11 @@ public class ConfigController extends SubController {
      */
     @Override
     public void refresh() {
+        allowedCountries.getCheckModel().clearChecks();
+        for (Country country : State.getConfigManager().getAllowedCountries()) {
+            allowedCountries.getCheckModel().check(country);
+        }
+
         countries.getCheckModel().clearChecks();
         for (Country country : State.getConfigManager().getAllowedCountries()) {
             countries.getCheckModel().check(country);
