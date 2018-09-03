@@ -19,7 +19,7 @@ import javafx.scene.transform.Transform;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
-import com.humanharvest.organz.MultitouchHandler;
+import com.humanharvest.organz.touch.MultitouchHandler;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.controller.components.TouchAlertController;
@@ -120,7 +120,6 @@ public class PageNavigatorTouch implements IPageNavigator {
             });
 
             MultitouchHandler.addPane(mainPane);
-            MultitouchHandler.setupPaneListener(mainPane);
 
             return mainController;
         } catch (IOException e) {
@@ -152,7 +151,6 @@ public class PageNavigatorTouch implements IPageNavigator {
             controller.setup(alertType, title, bodyText, newStage, mainPane);
 
             MultitouchHandler.addPane(mainPane);
-            MultitouchHandler.setupPaneListener(mainPane);
 
             // Set the positioning based off the calling window if it is valid.
             getWindowTransform(window).ifPresent(transform -> {
@@ -181,7 +179,6 @@ public class PageNavigatorTouch implements IPageNavigator {
             controller.setup(title, bodyText, newStage, mainPane);
 
             MultitouchHandler.addPane(mainPane);
-            MultitouchHandler.setupPaneListener(mainPane);
 
             // Set the positioning based off the calling window if it is valid.
             getWindowTransform(window).ifPresent(transform -> {
