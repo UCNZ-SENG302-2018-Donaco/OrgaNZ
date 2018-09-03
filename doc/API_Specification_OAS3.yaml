@@ -1,6 +1,6 @@
-openapi: "3.0.3"
+openapi: "3.0.1"
 info:
-  version: 1.0.7
+  version: 1.0.8
   title: "Organz API"
   description: |
     An API used to access the Human Harvest Inc server.
@@ -1205,6 +1205,50 @@ paths:
         500:
           $ref: '#/components/responses/500InternalServerError'
 
+  '/clients/{uid}/transplants/{id}':
+    parameters:
+    - in: path
+      name: uid
+      description: Client User ID
+      required: true
+      schema:
+        type: integer
+        minimum: 0
+    - in: path
+      name: id
+      description: Transplant record ID
+      required: true
+      schema:
+        type: integer
+    post:
+      tags:
+        - Client Procedures
+      security:
+        - ClinicianAccess: []
+        - AdministratorAccess: []
+      summary: Resolve a transplant record
+      description: The transplant record date must not be in the future, if it is a 400 error will be thrown.
+      parameters:
+        - $ref: '#/components/parameters/ETag'
+
+      responses:
+        200:
+          description: Updated
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        404:
+          $ref: '#/components/responses/404NotFound'
+        412:
+          $ref: '#/components/responses/412PreconditionFailed'
+        428:
+          $ref: '#/components/responses/428PreconditionRequired'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
+
   '/clients/transplantRequests':
     get:
       tags:
@@ -2137,7 +2181,6 @@ components:
       schema:
         type: boolean
 
-
     ETag:
       name: ETag
       in: header
@@ -2145,6 +2188,14 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/ETag'
+
+    donatedOrgan:
+      name: donatedOrgan
+      in: header
+      description: The DonatedOrgan unique ID to get results for
+      required: true
+      schema:
+        type: number
 
   examples:
     clientDetailsExample:
@@ -2583,7 +2634,7 @@ components:
         curedDate:
           $ref: '#/components/schemas/date'
         isChronic:
-          type: boolea
+          type: boolean
 
     procedureRecord:
       type: object
