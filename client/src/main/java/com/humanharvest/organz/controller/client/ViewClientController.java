@@ -1,6 +1,5 @@
 package com.humanharvest.organz.controller.client;
 
-import com.humanharvest.organz.Hospital;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,7 +12,9 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.format.FormatStyle;
+import java.util.ArrayList;
 import java.util.Objects;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -41,6 +42,7 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import org.controlsfx.control.Notifications;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.Hospital;
 import com.humanharvest.organz.controller.AlertHelper;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.clinician.ViewBaseController;
@@ -167,7 +169,9 @@ public class ViewClientController extends ViewBaseController {
         gender.setItems(FXCollections.observableArrayList(Gender.values()));
         genderIdentity.setItems(FXCollections.observableArrayList(Gender.values()));
         btype.setItems(FXCollections.observableArrayList(BloodType.values()));
-        hospital.setItems(FXCollections.observableArrayList(Hospital.getDefaultHospitals()));
+        Set<Hospital> hospitalSet = State.getConfigManager().getHospitals();
+        ObservableList<Hospital> hospitals = FXCollections.observableArrayList(new ArrayList<>(hospitalSet));
+        hospital.setItems(hospitals);
         regionCB.setItems(FXCollections.observableArrayList(Region.values()));
         deathRegionCB.setItems(FXCollections.observableArrayList(Region.values()));
         setEnabledCountries();
@@ -605,7 +609,7 @@ public class ViewClientController extends ViewBaseController {
         addChangeIfDifferent(modifyClientObject, viewedClient, "bloodType", btype.getValue());
         addChangeIfDifferent(modifyClientObject, viewedClient, "currentAddress", address.getText());
         addChangeIfDifferent(modifyClientObject, viewedClient, "country", country.getValue());
-        addChangeIfDifferent(modifyClientObject,viewedClient,"hospital",hospital.getValue());
+        addChangeIfDifferent(modifyClientObject, viewedClient, "hospital", hospital.getValue());
 
         // Register region change
         if (country.getValue() == Country.NZ) {

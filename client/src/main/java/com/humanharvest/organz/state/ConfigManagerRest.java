@@ -49,6 +49,7 @@ public class ConfigManagerRest implements ConfigManager {
     @Override
     public Set<Hospital> getHospitals() {
         HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.set("X-Auth-Token", State.getToken());
         HttpEntity<Set<Hospital>> entity = new HttpEntity<>(null, httpHeaders);
 
         ResponseEntity<Set<Hospital>> responseEntity = State.getRestTemplate()
