@@ -15,7 +15,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TouchEvent;
 import javafx.scene.transform.Rotate;
 
-import com.humanharvest.organz.MultitouchHandler;
+import com.humanharvest.organz.touch.MultitouchHandler;
 
 import com.sun.javafx.scene.control.skin.ContextMenuContent;
 import com.sun.javafx.scene.control.skin.ContextMenuSkin;
@@ -88,7 +88,7 @@ public class MTContextMenuSkin extends ContextMenuSkin {
             MultitouchHandler
                     .getFocusAreaHandler(owner)
                     .ifPresent(focusAreaHandler -> {
-                        focusAreaHandler.addPopup(popupMenu, this::handleAutoHidingEvents);
+                        focusAreaHandler.addPopup(this::handleAutoHidingEvents);
                     });
             focusAreaNode.addEventFilter(TouchEvent.TOUCH_PRESSED, event -> {
                 handleAutoHidingEvents(Optional.ofNullable(event).map(Event::getTarget).orElse(null));

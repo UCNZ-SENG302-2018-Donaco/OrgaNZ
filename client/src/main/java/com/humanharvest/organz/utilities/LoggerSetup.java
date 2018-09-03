@@ -17,7 +17,7 @@ import java.util.logging.Logger;
  * The logger can be used in any class by calling the following line then using the logger by LOGGER.severity(text);
  * private static final Logger LOGGER = Logger.getLogger(CLASS_NAME.class.getName());
  */
-public class LoggerSetup {
+public final class LoggerSetup {
 
     private LoggerSetup() {
     }
@@ -89,16 +89,8 @@ public class LoggerSetup {
     public static void enableConsole(Level logLevel) {
         Logger logger = Logger.getLogger("");
         logger.setLevel(logLevel);
-
         ConsoleHandler handler = new ConsoleHandler();
-        Formatter formatter = new Formatter() {
-            @Override
-            public String format(LogRecord record) {
-                return String.format("%s%n", record.getMessage());
-            }
-        };
-        handler.setFormatter(formatter);
-
+        handler.setFormatter(createCustomFormatter());
         logger.addHandler(handler);
     }
 }

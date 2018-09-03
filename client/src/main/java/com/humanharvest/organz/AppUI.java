@@ -15,7 +15,9 @@ import javafx.stage.Stage;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.state.State.DataStorageType;
+import com.humanharvest.organz.touch.MultitouchHandler;
 import com.humanharvest.organz.utilities.LoggerSetup;
+import com.humanharvest.organz.utilities.ReflectionUtils;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.utilities.view.PageNavigatorStandard;
@@ -23,6 +25,7 @@ import com.humanharvest.organz.utilities.view.PageNavigatorTouch;
 import com.humanharvest.organz.utilities.view.WindowContext;
 
 import com.sun.javafx.css.StyleManager;
+import com.sun.prism.impl.PrismSettings;
 import org.tuiofx.TuioFX;
 import org.tuiofx.internal.base.TuioFXCanvas;
 
@@ -31,8 +34,15 @@ import org.tuiofx.internal.base.TuioFXCanvas;
  */
 public class AppUI extends Application {
 
-    public static void main(String[] args) {
+    static {
+        // Must be done here, since getting the property happends before the class is created
+        if (System.getProperty("prism.maxvram") == null) {
+            ReflectionUtils.setStaticField(PrismSettings.class, "maxVram", 2L * 1024 * 1024 * 1024); //2GB
+        }
         TuioFX.enableJavaFXTouchProperties();
+    }
+
+    public static void main(String[] args) {
         launch(args);
     }
 
@@ -69,6 +79,7 @@ public class AppUI extends Application {
     @Override
     public void start(Stage primaryStage) throws IOException {
         LoggerSetup.setup(Level.INFO);
+        LoggerSetup.enableConsole(Level.WARNING);
 
         processArguments();
 
@@ -89,21 +100,11 @@ public class AppUI extends Application {
         switch (State.getUiType()) {
             case STANDARD:
                 primaryStage.setScene(new Scene(loadStandardMainPane(primaryStage)));
-                AppUI.addCss(primaryStage.getScene());
+                addCss(primaryStage.getScene());
                 break;
 
             case TOUCH:
-                Pane root = new TuioFXCanvas();
-                Scene scene = new Scene(root);
-
-                loadBackPane(root);
-                MultitouchHandler.initialise(root);
-
-                loadTouchMainPane();
-
-                primaryStage.setScene(scene);
-
-                primaryStage.setFullScreen(true);
+                startTouch(primaryStage);
                 break;
 
             default:
@@ -114,6 +115,26 @@ public class AppUI extends Application {
 
         primaryStage.setMinHeight(639);
         primaryStage.setMinWidth(1016);
+    }
+
+    /**
+     * Initialises the touch components, namely the MultitouchHandler and various panes.
+     */
+    private static void startTouch(Stage primaryStage) throws IOException {
+        Pane root = new TuioFXCanvas();
+        Scene scene = new Scene(root);
+
+        loadBackPane(root);
+        MultitouchHandler.initialise(root);
+
+        loadTouchMainPane();
+
+        primaryStage.setScene(scene);
+
+        primaryStage.setFullScreen(true);
+        primaryStage.setOnCloseRequest(event -> {
+            MultitouchHandler.stageClosing();
+        });
     }
 
     /**
@@ -182,5 +203,4 @@ public class AppUI extends Application {
 
         return mainPane;
     }
-
 }
