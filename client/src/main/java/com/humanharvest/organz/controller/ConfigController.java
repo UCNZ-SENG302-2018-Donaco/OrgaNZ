@@ -3,12 +3,16 @@ package com.humanharvest.organz.controller;
 import java.util.EnumSet;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.ListView;
 import javafx.scene.layout.HBox;
 import org.controlsfx.control.CheckComboBox;
+import org.controlsfx.control.CheckListView;
 import org.controlsfx.control.Notifications;
 
+import com.humanharvest.organz.Hospital;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Country;
+import com.humanharvest.organz.utilities.enums.Organ;
 
 public class ConfigController extends SubController {
 
@@ -18,12 +22,23 @@ public class ConfigController extends SubController {
     @FXML
     HBox menuBarPane;
 
+    @FXML
+    CheckListView<Country> allowedCountries;
+
+    @FXML
+    ListView<Hospital> hospitalSelector;
+
+    @FXML
+    CheckListView<Organ> organSelector;
+
     public ConfigController() {
     }
 
     @FXML
     private void initialize() {
         countries.getItems().setAll(Country.values());
+        allowedCountries.getItems().setAll(Country.values());
+        hospitalSelector.getItems().setAll(State.getConfigManager().getHospitals());
     }
 
     @Override
@@ -39,6 +54,11 @@ public class ConfigController extends SubController {
      */
     @Override
     public void refresh() {
+        allowedCountries.getCheckModel().clearChecks();
+        for (Country country : State.getConfigManager().getAllowedCountries()) {
+            allowedCountries.getCheckModel().check(country);
+        }
+
         countries.getCheckModel().clearChecks();
         for (Country country : State.getConfigManager().getAllowedCountries()) {
             countries.getCheckModel().check(country);

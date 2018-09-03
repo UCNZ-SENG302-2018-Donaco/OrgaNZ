@@ -1,7 +1,8 @@
 package com.humanharvest.organz.state;
 
+import java.util.Collections;
 import java.util.EnumSet;
-import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -47,7 +48,7 @@ public class ConfigManagerDBPure implements ConfigManager {
         try {
             dbManager.saveEntity(config);
             configuration = config;
-        } catch (PersistenceException ignored) {
+        } catch (PersistenceException exc) {
             getConfig();
         }
     }
@@ -73,7 +74,8 @@ public class ConfigManagerDBPure implements ConfigManager {
         return config;
     }
 
-    private void updateConfig() {
+    @Override
+    public void applyChangesToConfig() {
         Transaction trns = null;
 
         try (org.hibernate.Session session = dbManager.getDBSession()) {
@@ -88,7 +90,6 @@ public class ConfigManagerDBPure implements ConfigManager {
                 trns.rollback();
             }
         }
-
     }
 
     @Override
@@ -106,25 +107,29 @@ public class ConfigManagerDBPure implements ConfigManager {
     @Override
     public void setAllowedCountries(Set<Country> countries) {
         configuration.setCountries(countries);
-        updateConfig();
+        applyChangesToConfig();
     }
 
     @Override
     public Set<Hospital> getHospitals() {
         Config config = getConfig();
         configuration = config;
-
-        HashSet<Hospital> hospitals = new HashSet<>();
-        if (config != null) {
-            hospitals = new HashSet<>(config.getHospitals());
-        }
-        return hospitals;
+        return Collections.unmodifiableSet(config.getHospitals());
     }
 
     @Override
     public void setHospitals(Set<Hospital> hospitals) {
         configuration.setHospitals(hospitals);
-        updateConfig();
+        applyChangesToConfig();
+    }
 
+    @Override
+    public Optional<Hospital> getHospitalById(long id) {
+        for (Hospital hospital : getHospitals()) {
+            if (hospital.getId().equals(id)) {
+                return Optional.of(hospital);
+            }
+        }
+        return Optional.empty();
     }
 }

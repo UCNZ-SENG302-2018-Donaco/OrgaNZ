@@ -1,5 +1,6 @@
 package com.humanharvest.organz.state;
 
+import java.util.Optional;
 import java.util.Set;
 
 import com.humanharvest.organz.Hospital;
@@ -48,6 +49,7 @@ public class ConfigManagerRest implements ConfigManager {
     @Override
     public Set<Hospital> getHospitals() {
         HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.set("X-Auth-Token", State.getToken());
         HttpEntity<Set<Hospital>> entity = new HttpEntity<>(null, httpHeaders);
 
         ResponseEntity<Set<Hospital>> responseEntity = State.getRestTemplate()
@@ -70,5 +72,15 @@ public class ConfigManagerRest implements ConfigManager {
                 .exchange(State.getBaseUri() + "/config/hospitals", HttpMethod.POST, entity,
                         new ParameterizedTypeReference<Set<Hospital>>() {
                         });
+    }
+
+    @Override
+    public Optional<Hospital> getHospitalById(long id) {
+        for (Hospital hospital : getHospitals()) {
+            if (hospital.getId().equals(id)) {
+                return Optional.of(hospital);
+            }
+        }
+        return Optional.empty();
     }
 }
