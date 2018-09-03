@@ -51,5 +51,8 @@ public class Config {
 
     public void setHospitals(Set<Hospital> hospitals) {
         this.hospitals = hospitals;
+        for (Hospital hospital : this.hospitals) {
+            hospital.setConfig(this);
+        }
     }
 }

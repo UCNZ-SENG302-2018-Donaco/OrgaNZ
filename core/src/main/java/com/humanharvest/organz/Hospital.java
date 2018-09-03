@@ -178,6 +178,10 @@ public class Hospital {
         return address;
     }
 
+    public void setConfig(Config config) {
+        this.config = config;
+    }
+
     public Set<Organ> getTransplantPrograms() {
         if (transplantPrograms == null) {
             return null;
