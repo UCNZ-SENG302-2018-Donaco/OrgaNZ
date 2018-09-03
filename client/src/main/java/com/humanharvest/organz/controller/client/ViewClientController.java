@@ -170,7 +170,7 @@ public class ViewClientController extends ViewBaseController {
         genderIdentity.setItems(FXCollections.observableArrayList(Gender.values()));
         btype.setItems(FXCollections.observableArrayList(BloodType.values()));
         Set<Hospital> hospitalSet = State.getConfigManager().getHospitals();
-        ObservableList<Hospital> hospitals = FXCollections.observableArrayList(new ArrayList<>(hospitalSet));
+        ObservableList<Hospital> hospitals =  FXCollections.observableArrayList(new ArrayList<>(hospitalSet));
         hospital.setItems(hospitals);
         regionCB.setItems(FXCollections.observableArrayList(Region.values()));
         deathRegionCB.setItems(FXCollections.observableArrayList(Region.values()));
