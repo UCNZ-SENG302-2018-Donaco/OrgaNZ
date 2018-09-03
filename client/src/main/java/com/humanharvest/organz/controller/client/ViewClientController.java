@@ -283,8 +283,7 @@ public class ViewClientController extends ViewBaseController {
         pname.setText(viewedClient.getPreferredName());
         dob.setValue(viewedClient.getDateOfBirth());
         gender.setValue(viewedClient.getGender());
-
-        hospital.setValue(viewedClient.getHospital());
+        hospital.setValue(State.getConfigManager().getHospitalById(viewedClient.getHospital()).get());
         genderIdentity.setValue(viewedClient.getGenderIdentity());
         height.setText(String.valueOf(viewedClient.getHeight()));
         weight.setText(String.valueOf(viewedClient.getWeight()));
@@ -569,11 +568,9 @@ public class ViewClientController extends ViewBaseController {
     private void updateChanges() {
 
         ModifyClientObject modifyClientObject = new ModifyClientObject();
-        System.out.println(modifyClientObject.getHospital());
 
         // Add the basic changes to the ModifyClientObject
         addChangesIfDifferent(modifyClientObject);
-        System.out.println(viewedClient.getHospital());
 
         // If we are marking a client as dead, we need to alert them that this will also resolve the transplant requests
         // Calling either method will flow through the chain.
@@ -610,6 +607,7 @@ public class ViewClientController extends ViewBaseController {
         addChangeIfDifferent(modifyClientObject, viewedClient, "currentAddress", address.getText());
         addChangeIfDifferent(modifyClientObject, viewedClient, "country", country.getValue());
         addChangeIfDifferent(modifyClientObject, viewedClient, "hospital", hospital.getValue());
+        System.out.println(hospital.getValue());
 
         // Register region change
         if (country.getValue() == Country.NZ) {

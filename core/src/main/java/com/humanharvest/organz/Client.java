@@ -88,7 +88,7 @@ public class Client implements ConcurrencyControlledEntity {
     @JoinColumn(name = "hospital_id")
     @JsonBackReference
     @JsonView(Views.Details.class)
-    private Hospital hospital;
+    private Long hospitalId;
 
     @JsonView(Views.Overview.class)
     private String region = "Unspecified";
@@ -1198,12 +1198,12 @@ public class Client implements ConcurrencyControlledEntity {
         updateModifiedTimestamp();
     }
 
-    public Hospital getHospital() {
-        return hospital;
+    public Long getHospital() {
+        return hospitalId;
     }
 
-    public void setHospital(Hospital hospital) {
-        this.hospital = hospital;
+    public void setHospital(Long hospitalId) {
+        this.hospitalId = hospitalId;
         updateModifiedTimestamp();
     }
 }
