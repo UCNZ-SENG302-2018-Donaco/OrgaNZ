@@ -29,7 +29,7 @@ import javafx.stage.Stage;
 import org.controlsfx.control.Notifications;
 
 import com.humanharvest.organz.AppUI;
-import com.humanharvest.organz.MultitouchHandler;
+import com.humanharvest.organz.touch.MultitouchHandler;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
