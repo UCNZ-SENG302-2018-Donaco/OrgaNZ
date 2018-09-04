@@ -13,8 +13,10 @@ import com.humanharvest.organz.Config;
 import com.humanharvest.organz.Hospital;
 import com.humanharvest.organz.database.DBManager;
 import com.humanharvest.organz.utilities.enums.Country;
+import com.humanharvest.organz.utilities.enums.Organ;
 
 import org.hibernate.Transaction;
+import picocli.CommandLine.DuplicateOptionAnnotationsException;
 
 public class ConfigManagerDBPure implements ConfigManager {
 
@@ -131,5 +133,15 @@ public class ConfigManagerDBPure implements ConfigManager {
             }
         }
         return Optional.empty();
+    }
+
+    @Override
+    public void setTransplantProgram(long id, Set<Organ> transplantProgram) {
+        Optional<Hospital> hospitalOptional = getHospitalById(id);
+        if (hospitalOptional.isPresent()) {
+            Hospital hospital = hospitalOptional.get();
+            hospital.setTransplantPrograms(transplantProgram);
+            applyChangesToConfig();
+        }
     }
 }

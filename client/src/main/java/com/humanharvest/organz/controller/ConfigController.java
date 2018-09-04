@@ -2,6 +2,8 @@ package com.humanharvest.organz.controller;
 
 import java.util.EnumSet;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.HBox;
@@ -13,6 +15,8 @@ import com.humanharvest.organz.Hospital;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Organ;
+
+import com.sun.org.apache.xpath.internal.operations.Or;
 
 public class ConfigController extends SubController {
 
@@ -36,6 +40,10 @@ public class ConfigController extends SubController {
 
     @FXML
     private void initialize() {
+
+        hospitalSelector.getSelectionModel().selectedItemProperty().addListener(
+                (observable, oldValue, newValue) -> newHospitalSelected());
+
         countries.getItems().setAll(Country.values());
         allowedCountries.getItems().setAll(Country.values());
         hospitalSelector.getItems().setAll(State.getConfigManager().getHospitals());
@@ -54,6 +62,15 @@ public class ConfigController extends SubController {
      */
     @Override
     public void refresh() {
+        Hospital selectedHospital = hospitalSelector.getSelectionModel().getSelectedItem();
+        if (selectedHospital != null) {
+            organSelector.getItems().clear();
+            organSelector.getItems().setAll(Organ.values());
+            for (Organ organ : selectedHospital.getTransplantPrograms()) {
+                organSelector.getCheckModel().check(organ);
+            }
+        }
+
         allowedCountries.getCheckModel().clearChecks();
         for (Country country : State.getConfigManager().getAllowedCountries()) {
             allowedCountries.getCheckModel().check(country);
@@ -66,15 +83,31 @@ public class ConfigController extends SubController {
     }
 
     /**
-     * Sets the countries selected as the allowed countries
+     * Sets the countries selected as the allowed countries, and updates hospital transplant programs
      */
     @FXML
     private void apply() {
+        // Update allowed countries
         EnumSet<Country> allowedCountries = EnumSet.noneOf(Country.class);
         allowedCountries.addAll(countries.getCheckModel().getCheckedItems());
 
         State.getConfigManager().setAllowedCountries(allowedCountries);
         Notifications.create().title("Updated Countries").text("Allowed countries have been updated").showInformation();
+
+        // Update hospital transplant programs
+        EnumSet<Organ> transplantProgram = EnumSet.noneOf(Organ.class);
+        transplantProgram.addAll(organSelector.getCheckModel().getCheckedItems());
+
+        Hospital selectedHospital = hospitalSelector.getSelectionModel().getSelectedItem();
+        if (selectedHospital != null) {
+            State.getConfigManager().setTransplantProgram(selectedHospital.getId(), transplantProgram);
+            Notifications.create().title("Updated transplant program").text("Transplant program has been updated for "
+                    + selectedHospital.getName());
+        }
+    }
+
+    private void newHospitalSelected() {
+        refresh();
     }
 
     /**

@@ -5,6 +5,7 @@ import java.util.Set;
 
 import com.humanharvest.organz.Hospital;
 import com.humanharvest.organz.utilities.enums.Country;
+import com.humanharvest.organz.utilities.enums.Organ;
 
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -82,5 +83,18 @@ public class ConfigManagerRest implements ConfigManager {
             }
         }
         return Optional.empty();
+    }
+
+    @Override
+    public void setTransplantProgram(long id, Set<Organ> transplantProgram) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.set("X-Auth-Token", State.getToken());
+
+        HttpEntity<Set<Organ>> entity = new HttpEntity<>(transplantProgram, httpHeaders);
+
+        State.getRestTemplate()
+                .exchange(State.getBaseUri() + "/config/hospitals/" + id + "/transplantPrograms",
+                        HttpMethod.POST, entity, new ParameterizedTypeReference<Set<Organ>>() {
+                        });
     }
 }

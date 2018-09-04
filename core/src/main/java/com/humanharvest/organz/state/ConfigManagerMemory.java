@@ -9,6 +9,7 @@ import java.util.Set;
 import com.humanharvest.organz.Config;
 import com.humanharvest.organz.Hospital;
 import com.humanharvest.organz.utilities.enums.Country;
+import com.humanharvest.organz.utilities.enums.Organ;
 
 public class ConfigManagerMemory implements ConfigManager {
 
@@ -47,5 +48,13 @@ public class ConfigManagerMemory implements ConfigManager {
             }
         }
         return Optional.empty();
+    }
+
+    @Override
+    public void setTransplantProgram(long id, Set<Organ> transplantProgram) {
+        Optional<Hospital> hospital = getHospitalById(id);
+        if (hospital.isPresent()) {
+            hospital.get().setTransplantPrograms(transplantProgram);
+        }
     }
 }
