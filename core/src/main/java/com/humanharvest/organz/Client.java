@@ -84,7 +84,6 @@ public class Client implements ConcurrencyControlledEntity {
     @Column(columnDefinition = "text")
     private String currentAddress;
 
-    @ManyToOne
     @JoinColumn(name = "hospital_id")
     @JsonBackReference
     @JsonView(Views.Details.class)

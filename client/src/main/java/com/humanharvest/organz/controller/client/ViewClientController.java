@@ -170,7 +170,7 @@ public class ViewClientController extends ViewBaseController {
         genderIdentity.setItems(FXCollections.observableArrayList(Gender.values()));
         btype.setItems(FXCollections.observableArrayList(BloodType.values()));
         Set<Hospital> hospitalSet = State.getConfigManager().getHospitals();
-        ObservableList<Hospital> hospitals =  FXCollections.observableArrayList(new ArrayList<>(hospitalSet));
+        ObservableList<Hospital> hospitals = FXCollections.observableArrayList(new ArrayList<>(hospitalSet));
         hospital.setItems(hospitals);
         regionCB.setItems(FXCollections.observableArrayList(Region.values()));
         deathRegionCB.setItems(FXCollections.observableArrayList(Region.values()));
@@ -283,7 +283,11 @@ public class ViewClientController extends ViewBaseController {
         pname.setText(viewedClient.getPreferredName());
         dob.setValue(viewedClient.getDateOfBirth());
         gender.setValue(viewedClient.getGender());
-        hospital.setValue(State.getConfigManager().getHospitalById(viewedClient.getHospital()).get());
+        if (viewedClient.getHospital() != null
+                && State.getConfigManager()
+                .getHospitalById(viewedClient.getHospital()).isPresent()) {
+            hospital.setValue(State.getConfigManager().getHospitalById(viewedClient.getHospital()).get());
+        }
         genderIdentity.setValue(viewedClient.getGenderIdentity());
         height.setText(String.valueOf(viewedClient.getHeight()));
         weight.setText(String.valueOf(viewedClient.getWeight()));

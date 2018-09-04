@@ -31,7 +31,8 @@ public class ActionsController {
         try {
             actionText = actionInvoker.nextUndo().getUnexecuteText();
         } catch (EmptyStackException e) {
-            LOGGER.log(Level.INFO, e.getMessage(), e);
+            ///LOGGER.log(Level.INFO, e.getMessage(), e);
+            System.out.println("test");
             actionText = "No more actions to undo";
         }
         boolean canUndo = actionInvoker.canUndo();
