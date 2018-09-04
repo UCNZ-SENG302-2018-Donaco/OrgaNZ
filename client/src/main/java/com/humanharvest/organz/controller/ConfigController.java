@@ -21,9 +21,6 @@ import com.sun.org.apache.xpath.internal.operations.Or;
 public class ConfigController extends SubController {
 
     @FXML
-    CheckComboBox<Country> countries;
-
-    @FXML
     HBox menuBarPane;
 
     @FXML
@@ -44,7 +41,6 @@ public class ConfigController extends SubController {
         hospitalSelector.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> newHospitalSelected());
 
-        countries.getItems().setAll(Country.values());
         allowedCountries.getItems().setAll(Country.values());
         hospitalSelector.getItems().setAll(State.getConfigManager().getHospitals());
     }
@@ -75,11 +71,6 @@ public class ConfigController extends SubController {
         for (Country country : State.getConfigManager().getAllowedCountries()) {
             allowedCountries.getCheckModel().check(country);
         }
-
-        countries.getCheckModel().clearChecks();
-        for (Country country : State.getConfigManager().getAllowedCountries()) {
-            countries.getCheckModel().check(country);
-        }
     }
 
     /**
@@ -88,10 +79,10 @@ public class ConfigController extends SubController {
     @FXML
     private void apply() {
         // Update allowed countries
-        EnumSet<Country> allowedCountries = EnumSet.noneOf(Country.class);
-        allowedCountries.addAll(countries.getCheckModel().getCheckedItems());
+        EnumSet<Country> allowedCountriesSet = EnumSet.noneOf(Country.class);
+        allowedCountriesSet.addAll(allowedCountries.getCheckModel().getCheckedItems());
 
-        State.getConfigManager().setAllowedCountries(allowedCountries);
+        State.getConfigManager().setAllowedCountries(allowedCountriesSet);
         Notifications.create().title("Updated Countries").text("Allowed countries have been updated").showInformation();
 
         // Update hospital transplant programs
