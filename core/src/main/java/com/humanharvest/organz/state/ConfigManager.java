@@ -19,8 +19,6 @@ public interface ConfigManager {
 
     Optional<Hospital> getHospitalById(long id);
 
-    void setTransplantProgram(long id, Set<Organ> transplantProgram);
-
     /**
      * Managers that need to synchronize the config with some external data store can use this method to do so.
      */

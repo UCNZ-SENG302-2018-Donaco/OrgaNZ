@@ -1,13 +1,11 @@
 package com.humanharvest.organz.controller;
 
 import java.util.EnumSet;
+import java.util.Optional;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.HBox;
-import org.controlsfx.control.CheckComboBox;
 import org.controlsfx.control.CheckListView;
 import org.controlsfx.control.Notifications;
 
@@ -15,8 +13,6 @@ import com.humanharvest.organz.Hospital;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Organ;
-
-import com.sun.org.apache.xpath.internal.operations.Or;
 
 public class ConfigController extends SubController {
 
@@ -40,6 +36,7 @@ public class ConfigController extends SubController {
 
         hospitalSelector.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> newHospitalSelected());
+        hospitalSelector.getSelectionModel().select(0);  // Select the first hospital by default
 
         allowedCountries.getItems().setAll(Country.values());
         hospitalSelector.getItems().setAll(State.getConfigManager().getHospitals());
@@ -60,13 +57,18 @@ public class ConfigController extends SubController {
     public void refresh() {
         Hospital selectedHospital = hospitalSelector.getSelectionModel().getSelectedItem();
         if (selectedHospital != null) {
-            organSelector.getItems().clear();
-            organSelector.getItems().setAll(Organ.values());
-            for (Organ organ : selectedHospital.getTransplantPrograms()) {
-                organSelector.getCheckModel().check(organ);
+            Optional<Hospital> hospital = State.getConfigManager().getHospitalById(selectedHospital.getId());
+            if (hospital.isPresent()) {
+                organSelector.getItems().clear();
+                organSelector.getItems().setAll(Organ.values());
+
+                for (Organ organ : hospital.get().getTransplantPrograms()) {
+                    organSelector.getCheckModel().check(organ);
+                }
             }
         }
 
+        System.out.println(State.getConfigManager().getAllowedCountries().size());
         allowedCountries.getCheckModel().clearChecks();
         for (Country country : State.getConfigManager().getAllowedCountries()) {
             allowedCountries.getCheckModel().check(country);
@@ -91,9 +93,9 @@ public class ConfigController extends SubController {
 
         Hospital selectedHospital = hospitalSelector.getSelectionModel().getSelectedItem();
         if (selectedHospital != null) {
-            State.getConfigManager().setTransplantProgram(selectedHospital.getId(), transplantProgram);
+            State.getConfigResolver().setTransplantProgramsForHospital(selectedHospital, transplantProgram);
             Notifications.create().title("Updated transplant program").text("Transplant program has been updated for "
-                    + selectedHospital.getName());
+                    + selectedHospital.getName()).showInformation();
         }
     }
 

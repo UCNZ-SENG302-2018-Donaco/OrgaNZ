@@ -49,12 +49,4 @@ public class ConfigManagerMemory implements ConfigManager {
         }
         return Optional.empty();
     }
-
-    @Override
-    public void setTransplantProgram(long id, Set<Organ> transplantProgram) {
-        Optional<Hospital> hospital = getHospitalById(id);
-        if (hospital.isPresent()) {
-            hospital.get().setTransplantPrograms(transplantProgram);
-        }
-    }
 }

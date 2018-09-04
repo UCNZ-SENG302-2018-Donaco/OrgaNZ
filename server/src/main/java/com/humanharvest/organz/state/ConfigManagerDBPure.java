@@ -134,14 +134,4 @@ public class ConfigManagerDBPure implements ConfigManager {
         }
         return Optional.empty();
     }
-
-    @Override
-    public void setTransplantProgram(long id, Set<Organ> transplantProgram) {
-        Optional<Hospital> hospitalOptional = getHospitalById(id);
-        if (hospitalOptional.isPresent()) {
-            Hospital hospital = hospitalOptional.get();
-            hospital.setTransplantPrograms(transplantProgram);
-            applyChangesToConfig();
-        }
-    }
 }

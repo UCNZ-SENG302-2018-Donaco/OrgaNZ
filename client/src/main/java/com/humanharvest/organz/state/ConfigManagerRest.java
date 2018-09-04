@@ -84,17 +84,4 @@ public class ConfigManagerRest implements ConfigManager {
         }
         return Optional.empty();
     }
-
-    @Override
-    public void setTransplantProgram(long id, Set<Organ> transplantProgram) {
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.set("X-Auth-Token", State.getToken());
-
-        HttpEntity<Set<Organ>> entity = new HttpEntity<>(transplantProgram, httpHeaders);
-
-        State.getRestTemplate()
-                .exchange(State.getBaseUri() + "/config/hospitals/" + id + "/transplantPrograms",
-                        HttpMethod.POST, entity, new ParameterizedTypeReference<Set<Organ>>() {
-                        });
-    }
 }
