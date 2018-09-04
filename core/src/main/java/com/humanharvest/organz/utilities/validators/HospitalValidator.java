@@ -8,11 +8,10 @@ public final class HospitalValidator {
     }
 
     public static boolean isValid(Hospital hospital) {
-        // latitude and longitude are valid if they're not (NaN, NaN).
-        boolean validLatLong = !Double.isNaN(hospital.getLatitude()) && !Double.isNaN(hospital.getLongitude());
-        return hospital.getName() != null
-                && validLatLong
-                && hospital.getAddress() != null
+        return !NotEmptyStringValidator.isInvalidString(hospital.getName())
+                && !Double.isNaN(hospital.getLatitude())
+                && !Double.isNaN(hospital.getLongitude())
+                && !NotEmptyStringValidator.isInvalidString(hospital.getAddress())
                 && hospital.getTransplantPrograms() != null;
     }
 
