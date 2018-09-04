@@ -1,6 +1,8 @@
 package com.humanharvest.organz.utilities.view;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -33,6 +35,7 @@ import com.humanharvest.organz.state.State;
 public class PageNavigatorTouch implements IPageNavigator {
 
     private static final Logger LOGGER = Logger.getLogger(PageNavigatorTouch.class.getName());
+    public static Collection<Stage> stageCollection = new HashSet<>();
 
     private static Optional<Transform> getWindowTransform(Window window) {
         if (window == null) {
@@ -120,6 +123,7 @@ public class PageNavigatorTouch implements IPageNavigator {
             });
 
             MultitouchHandler.addPane(mainPane);
+            stageCollection.add(newStage);
 
             return mainController;
         } catch (IOException e) {

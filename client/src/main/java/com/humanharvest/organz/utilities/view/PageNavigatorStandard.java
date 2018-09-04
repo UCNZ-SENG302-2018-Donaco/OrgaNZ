@@ -1,6 +1,8 @@
 package com.humanharvest.organz.utilities.view;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,6 +31,7 @@ import com.humanharvest.organz.state.State;
 public class PageNavigatorStandard implements IPageNavigator {
 
     private static final Logger LOGGER = Logger.getLogger(PageNavigatorStandard.class.getName());
+    public static Collection<Stage> stageCollection = new HashSet<>();
 
     /**
      * Loads the given page in the given MainController.
@@ -91,6 +94,7 @@ public class PageNavigatorStandard implements IPageNavigator {
             newStage.setMinHeight(height);
             newStage.setWidth(width);
             newStage.setHeight(height);
+            stageCollection.add(newStage);
 
             return mainController;
         } catch (IOException e) {
