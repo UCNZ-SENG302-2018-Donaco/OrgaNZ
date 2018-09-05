@@ -557,8 +557,9 @@ public class MenuBarController extends SubController {
     private void openOrganWeb() {
         // Clear all open windows
         mainController.removeAllPages();
+        System.out.println(windowContext.getViewClient().getCurrentlyDonatedOrgans());
 
-        SpiderWebController spiderWebController = new SpiderWebController();
+        SpiderWebController spiderWebController = new SpiderWebController(windowContext.getViewClient());
     }
 
     /**
