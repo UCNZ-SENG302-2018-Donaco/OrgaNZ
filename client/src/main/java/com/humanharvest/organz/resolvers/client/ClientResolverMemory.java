@@ -1,6 +1,7 @@
 package com.humanharvest.organz.resolvers.client;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
@@ -20,6 +21,7 @@ import com.humanharvest.organz.TransplantRecord;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
 import com.humanharvest.organz.views.client.CreateClientView;
 import com.humanharvest.organz.views.client.CreateIllnessView;
@@ -141,6 +143,19 @@ public class ClientResolverMemory implements ClientResolver {
         donatedOrgan.manuallyOverride(overrideReason);
         State.getClientManager().applyChangesTo(donatedOrgan.getDonor());
         return donatedOrgan;
+    }
+
+    @Override
+    public TransplantRecord completeTransplantRecord(TransplantRecord record) {
+        record.setCompleted(true);
+        record.getOrgan().setReceiver(record.getClient());
+        TransplantRequest request = record.getRequest();
+        request.setResolvedReason("The transplant has been completed");
+        request.setResolvedDateTime(record.getDate().atTime(LocalTime.now()));
+        request.setStatus(TransplantRequestStatus.COMPLETED);
+
+        State.getClientManager().applyChangesTo(record.getClient());
+        return record;
     }
 
     //------------PATCHs----------------

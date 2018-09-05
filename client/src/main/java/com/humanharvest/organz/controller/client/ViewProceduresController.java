@@ -28,6 +28,7 @@ import org.controlsfx.control.Notifications;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.ProcedureRecord;
+import com.humanharvest.organz.TransplantRecord;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.controller.components.DatePickerCell;
@@ -79,6 +80,8 @@ public class ViewProceduresController extends SubController {
     private TableColumn<ProcedureRecord, Set<Organ>> affectedPastCol, affectedPendCol;
     @FXML
     private Button deleteButton;
+    @FXML
+    private Button resolveTransplantButton;
 
     private TableView<ProcedureRecord> selectedTableView = null;
 
@@ -290,6 +293,8 @@ public class ViewProceduresController extends SubController {
             datePastCol.setEditable(false);
             affectedPendCol.setEditable(false);
             affectedPastCol.setEditable(false);
+            deleteButton.setDisable(true);
+            resolveTransplantButton.setDisable(true);
         } else if (windowContext.isClinViewClientWindow()) {
             client = windowContext.getViewClient();
             mainController.loadMenuBar(menuBarPane);
@@ -358,13 +363,34 @@ public class ViewProceduresController extends SubController {
      * Enables and disables all buttons relevant to the selected procedure record appropriately.
      */
     private void enableAppropriateButtons() {
-        if (windowContext.isClinViewClientWindow()) {
-            if (pastProcedureView.getSelectionModel().getSelectedItem() == null &&
-                    pendingProcedureView.getSelectionModel().getSelectedItem() == null) {
-                deleteButton.setDisable(true);
-            } else {
-                deleteButton.setDisable(false);
-            }
+        if (!windowContext.isClinViewClientWindow()) {
+            return;
+        }
+        if (pastProcedureView.getSelectionModel().getSelectedItem() == null &&
+                pendingProcedureView.getSelectionModel().getSelectedItem() == null) {
+            deleteButton.setDisable(true);
+            resolveTransplantButton.setDisable(true);
+        } else {
+            deleteButton.setDisable(false);
+            setResolveTransplantButton();
+        }
+    }
+
+    /**
+     * Enable or disable the resolve transplant button based on the currently selected item
+     * Will only be enabled if the currently selected item is:
+     * In the past
+     * A TransplantRecord
+     * Has not yet been completed
+     */
+    private void setResolveTransplantButton() {
+        ProcedureRecord record = pastProcedureView.getSelectionModel().getSelectedItem();
+        if (record instanceof TransplantRecord) {
+            TransplantRecord tRecord = (TransplantRecord) record;
+            // Disable the button if the record is completed, else enable it
+            resolveTransplantButton.setDisable(tRecord.isCompleted());
+        } else {
+            resolveTransplantButton.setDisable(true);
         }
     }
 
@@ -438,5 +464,12 @@ public class ViewProceduresController extends SubController {
                         mainController.getStage());
             }
         }
+    }
+
+    @FXML
+    private void resolveTransplant() {
+        TransplantRecord record = (TransplantRecord) pastProcedureView.getSelectionModel().getSelectedItem();
+        State.getClientResolver().completeTransplantRecord(record);
+        refresh();
     }
 }

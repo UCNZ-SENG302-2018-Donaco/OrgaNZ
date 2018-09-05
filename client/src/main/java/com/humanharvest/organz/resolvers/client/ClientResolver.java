@@ -11,6 +11,7 @@ import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.ProcedureRecord;
+import com.humanharvest.organz.TransplantRecord;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.views.client.CreateClientView;
@@ -69,6 +70,8 @@ public interface ClientResolver {
     List<ProcedureRecord> scheduleTransplantProcedure(DonatedOrgan organ, TransplantRequest request, LocalDate date);
 
     DonatedOrgan manuallyOverrideOrgan(DonatedOrgan donatedOrgan, String overrideReason);
+
+    TransplantRecord completeTransplantRecord(TransplantRecord record);
 
     //------------PATCHs----------------
 

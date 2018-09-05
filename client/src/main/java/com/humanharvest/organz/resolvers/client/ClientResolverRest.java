@@ -304,6 +304,18 @@ public class ClientResolverRest implements ClientResolver {
         return responseEntity.getBody();
     }
 
+    @Override
+    public TransplantRecord completeTransplantRecord(TransplantRecord record) {
+        HttpHeaders httpHeaders = createHeaders(true);
+        ResponseEntity<TransplantRecord> responseEntity = sendQuery(httpHeaders,
+                State.getBaseUri() + "clients/{uid}/transplants/{id}/complete",
+                HttpMethod.POST,
+                TransplantRecord.class,
+                record.getClient(),
+                record.getId());
+        return responseEntity.getBody();
+    }
+
     //------------PATCHs----------------
 
     @Override
