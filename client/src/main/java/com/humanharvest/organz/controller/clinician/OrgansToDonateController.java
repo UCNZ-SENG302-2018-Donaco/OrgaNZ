@@ -1,12 +1,14 @@
 package com.humanharvest.organz.controller.clinician;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,6 +25,7 @@ import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
@@ -44,6 +47,7 @@ import org.controlsfx.control.Notifications;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
+import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SidebarController;
 import com.humanharvest.organz.controller.SubController;
@@ -104,6 +108,9 @@ public class OrgansToDonateController extends SubController {
 
     @FXML
     private CheckComboBox<Organ> organFilter;
+
+    @FXML
+    private Button createTransplantProcedureButton;
 
     @FXML
     private Text displayingXToYOfZText;
@@ -171,6 +178,10 @@ public class OrgansToDonateController extends SubController {
         placeholder.setPadding(new Insets(0, 0, 0, 8));
         placeholder.setTextFill(Color.GREY);
         potentialRecipients.setPlaceholder(placeholder);
+
+        potentialRecipients.getSelectionModel().getSelectedItems().addListener(
+                (ListChangeListener<? super Client>) change -> updateCreateButton());
+        updateCreateButton();
 
         tableView.setOnSort(event -> updateOrgansToDonateList());
 
@@ -370,6 +381,39 @@ public class OrgansToDonateController extends SubController {
         }
 
         setupDisplayingXToYOfZText(newOrgansToDonate.getTotalResults());
+    }
+
+    private void updateCreateButton() {
+        List<Client> selectedClients = potentialRecipients.getSelectionModel().getSelectedItems();
+        if (selectedClients.size() != 1) {
+            createTransplantProcedureButton.setDisable(true);
+        } else {
+            createTransplantProcedureButton.setDisable(false);
+        }
+    }
+
+    @FXML
+    private void createTransplantProcedure() {
+        // First make the TransplantRequest
+        List<Client> selectedClients = potentialRecipients.getSelectionModel().getSelectedItems();
+        if (selectedClients.size() != 1) {
+            return;
+        }
+
+        DonatedOrgan organToDonate = tableView.getSelectionModel().getSelectedItem();
+
+        Client receiver = selectedClients.get(0);
+        List<TransplantRequest> requests = State.getClientResolver().getTransplantRequests(receiver);
+
+        Optional<TransplantRequest> optionalRequest = requests.stream()
+                .filter(r -> r.getRequestedOrgan() == organToDonate.getOrganType())
+                .findFirst();
+        if (!optionalRequest.isPresent()) {
+            return;
+        }
+        TransplantRequest request = optionalRequest.get();
+
+        State.getClientResolver().scheduleTransplantProcedure(organToDonate, request, LocalDate.now());
     }
 
     /**
