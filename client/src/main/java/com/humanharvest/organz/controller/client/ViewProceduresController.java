@@ -81,7 +81,7 @@ public class ViewProceduresController extends SubController {
     @FXML
     private Button deleteButton;
     @FXML
-    private Button resolveTransplantButton;
+    private Button completeTransplantButton;
 
     private TableView<ProcedureRecord> selectedTableView = null;
 
@@ -294,7 +294,7 @@ public class ViewProceduresController extends SubController {
             affectedPendCol.setEditable(false);
             affectedPastCol.setEditable(false);
             deleteButton.setDisable(true);
-            resolveTransplantButton.setDisable(true);
+            completeTransplantButton.setDisable(true);
         } else if (windowContext.isClinViewClientWindow()) {
             client = windowContext.getViewClient();
             mainController.loadMenuBar(menuBarPane);
@@ -369,7 +369,7 @@ public class ViewProceduresController extends SubController {
         if (pastProcedureView.getSelectionModel().getSelectedItem() == null &&
                 pendingProcedureView.getSelectionModel().getSelectedItem() == null) {
             deleteButton.setDisable(true);
-            resolveTransplantButton.setDisable(true);
+            completeTransplantButton.setDisable(true);
         } else {
             deleteButton.setDisable(false);
             setResolveTransplantButton();
@@ -388,9 +388,9 @@ public class ViewProceduresController extends SubController {
         if (record instanceof TransplantRecord) {
             TransplantRecord tRecord = (TransplantRecord) record;
             // Disable the button if the record is completed, else enable it
-            resolveTransplantButton.setDisable(tRecord.isCompleted());
+            completeTransplantButton.setDisable(tRecord.isCompleted());
         } else {
-            resolveTransplantButton.setDisable(true);
+            completeTransplantButton.setDisable(true);
         }
     }
 
@@ -467,7 +467,7 @@ public class ViewProceduresController extends SubController {
     }
 
     @FXML
-    private void resolveTransplant() {
+    private void completeTransplant() {
         TransplantRecord record = (TransplantRecord) pastProcedureView.getSelectionModel().getSelectedItem();
         State.getClientResolver().completeTransplantRecord(record);
         refresh();

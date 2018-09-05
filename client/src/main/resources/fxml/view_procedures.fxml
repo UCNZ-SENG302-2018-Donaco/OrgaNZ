@@ -127,7 +127,7 @@
                       <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
                     </columnResizePolicy>
                   </TableView>
-                  <Button GridPane.columnIndex="1" GridPane.halignment="RIGHT" mnemonicParsing="false" onAction="#resolveTransplant" text="Resolve Transplant" fx:id="resolveTransplantButton">
+                  <Button GridPane.columnIndex="1" GridPane.halignment="RIGHT" mnemonicParsing="false" onAction="#completeTransplant" text="Complete Transplant" fx:id="completeTransplantButton">
                     <GridPane.margin>
                       <Insets/>
                     </GridPane.margin>
