@@ -32,7 +32,8 @@ public enum Page {
     ADMIN_CONFIG("/fxml/admin_config.fxml"),
     SUBMIT_DEATH_DETAILS("/fxml/submit_death_details.fxml"),
     TOUCH_ALERT("/fxml/touch_alert.fxml"),
-    TOUCH_ALERT_TEXT("/fxml/touch_alert_text.fxml");
+    TOUCH_ALERT_TEXT("/fxml/touch_alert_text.fxml"),
+    ORGAN_CONTAINER("fxml/organ_container.fxml");
 
     private final String path;
 

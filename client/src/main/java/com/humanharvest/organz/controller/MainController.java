@@ -92,10 +92,16 @@ public class MainController {
         Collection<Pane> allPanes = MultitouchHandler.getPaneCollection();
 
         for (Pane p: allPanes) {
-            System.out.println(p);
             MultitouchHandler.removePane(p);
-
         }
+
+        Collection<Stage> allStages = PageNavigatorTouch.stageCollection;
+
+        for (Stage s: allStages) {
+            s.close();
+        }
+
+
     }
 
     void resetWindowContext() {
