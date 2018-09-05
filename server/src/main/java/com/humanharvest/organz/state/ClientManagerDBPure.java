@@ -528,31 +528,7 @@ public class ClientManagerDBPure implements ClientManager {
 
         // TODO implement using Hibernate queries instead of in-memory filtering/sorting
 
-        Comparator<DonatedOrgan> comparator;
-        if (sortOption == null) {
-            comparator = Comparator.comparing(DonatedOrgan::getDurationUntilExpiry,
-                    Comparator.nullsLast(Comparator.naturalOrder()));
-        } else {
-            switch (sortOption) {
-                case CLIENT:
-                    comparator = Comparator.comparing(organ -> organ.getDonor().getFullName());
-                    break;
-                case ORGAN_TYPE:
-                    comparator = Comparator.comparing(organ -> organ.getOrganType().toString());
-                    break;
-                case REGION_OF_DEATH:
-                    comparator = Comparator.comparing(organ -> organ.getDonor().getRegionOfDeath());
-                    break;
-                case TIME_OF_DEATH:
-                    comparator = Comparator.comparing(organ -> organ.getDonor().getDateOfDeath());
-                    break;
-                default:
-                case TIME_UNTIL_EXPIRY:
-                    comparator = Comparator.comparing(DonatedOrgan::getDurationUntilExpiry,
-                            Comparator.nullsLast(Comparator.naturalOrder()));
-                    break;
-            }
-        }
+        Comparator<DonatedOrgan> comparator = DonatedOrgan.getComparator(sortOption);
 
         if (reversed != null && reversed) {
             comparator = comparator.reversed();
