@@ -1,5 +1,6 @@
 package com.humanharvest.organz;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
@@ -92,6 +93,10 @@ public class TransplantRequest {
 
     public LocalDateTime getRequestDate() {
         return requestDate;
+    }
+
+    public Duration getTimeSinceRequest() {
+        return Duration.between(requestDate, LocalDateTime.now());
     }
 
     public LocalDateTime getResolvedDate() {

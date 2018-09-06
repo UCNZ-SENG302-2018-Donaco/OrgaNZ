@@ -1,5 +1,7 @@
 package com.humanharvest.organz.controller.components;
 
+import static com.humanharvest.organz.utilities.DurationFormatter.getFormattedDuration;
+
 import java.time.Duration;
 import java.time.LocalDateTime;
 
@@ -82,37 +84,6 @@ public class DurationUntilExpiryCell extends TableCell<DonatedOrgan, Duration> {
                         + "linear-gradient(to right, #%s 0%%, #%s %s%%, %s %s%%, %s %s%%, #%s %s%%, #%s 100%%);",
                 colour, colour, lowerPercent, middleColour, lowerPercent, middleColour, higherPercent,
                 greyColour, higherPercent, greyColour);
-    }
-
-    /**
-     * Returns the duration, formatted to display x hours, y minutes (or x hours, y seconds if there are less than 60
-     * seconds).
-     *
-     * @param duration the duration to format
-     * @return the formatted string
-     */
-    private static String getFormattedDuration(Duration duration) {
-        String formattedDuration;
-        long hours = duration.toHours();
-        if (hours == 1) {
-            formattedDuration = "1 hour ";
-        } else {
-            formattedDuration = hours + " hours ";
-        }
-        long minutes = duration.toMinutes() % 60;
-        if (minutes == 0) { // no minutes, just seconds (and perhaps hours)
-            long seconds = duration.getSeconds() % 3600;
-            if (seconds == 1) {
-                formattedDuration += "1 second";
-            } else {
-                formattedDuration += seconds + " seconds";
-            }
-        } else if (minutes == 1) {
-            formattedDuration += "1 minute";
-        } else {
-            formattedDuration += minutes + " minutes";
-        }
-        return formattedDuration;
     }
 
     private DonatedOrgan getDonatedOrganForRow() {
