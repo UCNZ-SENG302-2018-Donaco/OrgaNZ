@@ -1,4 +1,4 @@
-package com.humanharvest.organz.controller;
+package com.humanharvest.organz.controller.spiderweb;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -10,26 +10,29 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 import com.humanharvest.organz.DonatedOrgan;
+import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.controller.client.ViewClientController;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.view.Page;
-import com.humanharvest.organz.utilities.view.PageNavigator;
 
-public class OrganContainer {
+/**
+ * A controller to display the image of an organ depending on its organ type.
+ */
+public class OrganImageController extends SubController {
 
     @FXML
     private ImageView organImage;
     private static final Logger LOGGER = Logger.getLogger(ViewClientController.class.getName());
     private DonatedOrgan donatedOrgan;
 
-    public OrganContainer(DonatedOrgan donatedOrgan) {
-        this.donatedOrgan = donatedOrgan;
-        MainController newMain = PageNavigator.openNewWindow();
-        PageNavigator.loadPage(Page.ORGAN_CONTAINER, newMain);
-        System.out.println(donatedOrgan.getOrganType() + " has been loaded");
+    @FXML
+    private void initialize() {
+        donatedOrgan = State.getOrganToDisplay();
         loadImage();
     }
 
+    /**
+     * Loads the organs icon based on what type of organ it is.
+     */
     private void loadImage() {
         byte[] bytes;
         switch (donatedOrgan.getOrganType()) {

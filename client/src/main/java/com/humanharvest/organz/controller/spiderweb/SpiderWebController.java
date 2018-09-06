@@ -1,7 +1,7 @@
-package com.humanharvest.organz.controller;
+package com.humanharvest.organz.controller.spiderweb;
 
 import java.io.IOException;
-import java.util.logging.Logger;
+import java.util.Collection;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -10,13 +10,11 @@ import javafx.stage.Stage;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
-import com.humanharvest.organz.controller.client.ViewClientController;
+import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.touch.MultitouchHandler;
-import com.humanharvest.organz.utilities.enums.Organ;
-import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.Page;
-import com.humanharvest.organz.utilities.view.PageNavigatorStandard;
+import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.utilities.view.PageNavigatorTouch;
 
 import org.tuiofx.internal.base.TuioFXCanvas;
@@ -24,7 +22,7 @@ import org.tuiofx.internal.base.TuioFXCanvas;
 /**
  * The Spider web controller which handles everything to do with displaying panes in the spider web stage.
  */
-public class SpiderWebController extends SubController {
+public class SpiderWebController {
 
     private Client client;
 
@@ -67,11 +65,22 @@ public class SpiderWebController extends SubController {
         // Display donating client page here. Waiting on C4.
     }
 
+    /**
+     * Loads a window for each non expired organ.
+     */
     private void displayOrgans() {
-        // wrap organs in container to display on screen
+        Collection<DonatedOrgan> donatedOrgans = State.getClientResolver().getDonatedOrgans(client);
 
-        for (Organ organ: client.getCurrentlyDonatedOrgans()) {
-//            OrganContainer organContainer = new OrganContainer(organ);
+        for (DonatedOrgan organ: donatedOrgans) {
+
+            if (!organ.hasExpired()) {
+
+                State.setOrganToDisplay(organ);
+                MainController newMain = PageNavigator.openNewWindow();
+
+                PageNavigator.loadPage(Page.ORGAN_IMAGE, newMain);
+
+            }
         }
     }
 

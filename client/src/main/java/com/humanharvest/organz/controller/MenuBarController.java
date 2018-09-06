@@ -25,11 +25,10 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 import org.controlsfx.control.Notifications;
 
 import com.humanharvest.organz.AppUI;
-import com.humanharvest.organz.touch.MultitouchHandler;
+import com.humanharvest.organz.controller.spiderweb.SpiderWebController;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
@@ -557,8 +556,6 @@ public class MenuBarController extends SubController {
     private void openOrganWeb() {
         // Clear all open windows
         mainController.removeAllPages();
-        System.out.println(windowContext.getViewClient().getCurrentlyDonatedOrgans());
-
         SpiderWebController spiderWebController = new SpiderWebController(windowContext.getViewClient());
     }
 
