@@ -228,7 +228,6 @@ public class ClientController {
             throw new InvalidRequestException();
         }
 
-
         //Create the old details to allow undoable action
         ModifyClientObject oldClient = new ModifyClientObject();
         //Copy the values from the current client to our oldClient

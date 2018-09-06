@@ -283,10 +283,8 @@ public class ViewClientController extends ViewBaseController {
         pname.setText(viewedClient.getPreferredName());
         dob.setValue(viewedClient.getDateOfBirth());
         gender.setValue(viewedClient.getGender());
-        if (viewedClient.getHospital() != null
-                && State.getConfigManager()
-                .getHospitalById(viewedClient.getHospital()).isPresent()) {
-            hospital.setValue(State.getConfigManager().getHospitalById(viewedClient.getHospital()).get());
+        if (viewedClient.getHospital() != null) {
+            hospital.setValue(viewedClient.getHospital());
         }
         genderIdentity.setValue(viewedClient.getGenderIdentity());
         height.setText(String.valueOf(viewedClient.getHeight()));
@@ -611,7 +609,6 @@ public class ViewClientController extends ViewBaseController {
         addChangeIfDifferent(modifyClientObject, viewedClient, "currentAddress", address.getText());
         addChangeIfDifferent(modifyClientObject, viewedClient, "country", country.getValue());
         addChangeIfDifferent(modifyClientObject, viewedClient, "hospital", hospital.getValue());
-        System.out.println(hospital.getValue());
 
         // Register region change
         if (country.getValue() == Country.NZ) {
