@@ -2,12 +2,16 @@ package com.humanharvest.organz.controller;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
@@ -24,29 +28,27 @@ import com.humanharvest.organz.utilities.enums.Organ;
 public class ConfigController extends SubController {
 
     @FXML
-    HBox menuBarPane;
-
+    private HBox menuBarPane;
     @FXML
-    CheckListView<Country> allowedCountries;
-
+    private CheckListView<Country> allowedCountries;
     @FXML
-    ListView<Hospital> hospitalSelector;
-
+    private ListView<Hospital> hospitalSelector;
     @FXML
-    CheckListView<Organ> organSelector;
+    private CheckListView<Organ> organSelector;
+
+    private Map<Hospital, Set<Organ>> modifiedHospitalPrograms = new HashMap<>();
+    private ListChangeListener<? super Organ> programsChangeListener = change -> onTransplantProgramsChanged();
 
     public ConfigController() {
     }
 
     @FXML
     private void initialize() {
-
         // Hospital selector
-        hospitalSelector.getSelectionModel().selectedItemProperty().addListener(
-                (observable, oldValue, newValue) -> newHospitalSelected());
-        hospitalSelector.getSelectionModel().select(0);  // Select the first hospital by default
-
         hospitalSelector.getItems().setAll(State.getConfigManager().getHospitals());
+        hospitalSelector.getItems().sort(Comparator.comparing(Hospital::getName));
+        hospitalSelector.getSelectionModel().selectedItemProperty().addListener(observable -> newHospitalSelected());
+        hospitalSelector.getSelectionModel().select(0);  // Select the first hospital by default
 
         // Country selector
         Set<Country> selectedCountries = State.getConfigManager().getAllowedCountries();
@@ -54,7 +56,6 @@ public class ConfigController extends SubController {
         SortedList<Country> countryList = getCountryListSortedByIfInCollection(allCountries, selectedCountries);
 
         allowedCountries.getItems().setAll(countryList);
-
     }
 
     @Override
@@ -70,23 +71,12 @@ public class ConfigController extends SubController {
      */
     @Override
     public void refresh() {
-        Hospital selectedHospital = hospitalSelector.getSelectionModel().getSelectedItem();
-        if (selectedHospital != null) {
-            Optional<Hospital> hospital = State.getConfigManager().getHospitalById(selectedHospital.getId());
-            if (hospital.isPresent()) {
-                organSelector.getItems().clear();
-                organSelector.getItems().setAll(Organ.values());
-
-                for (Organ organ : hospital.get().getTransplantPrograms()) {
-                    organSelector.getCheckModel().check(organ);
-                }
-            }
-        }
-
         allowedCountries.getCheckModel().clearChecks();
         for (Country country : State.getConfigManager().getAllowedCountries()) {
             allowedCountries.getCheckModel().check(country);
         }
+        modifiedHospitalPrograms.clear();
+        newHospitalSelected();
     }
 
     /**
@@ -114,16 +104,20 @@ public class ConfigController extends SubController {
         }
 
         // Update hospital transplant programs
-        // todo update all hospital's transplant programs that have changed, not just the currently selected one
-        EnumSet<Organ> transplantProgram = EnumSet.noneOf(Organ.class);
-        transplantProgram.addAll(organSelector.getCheckModel().getCheckedItems());
-
-        Hospital selectedHospital = hospitalSelector.getSelectionModel().getSelectedItem();
-        if (selectedHospital != null) {
-            State.getConfigResolver().setTransplantProgramsForHospital(selectedHospital, transplantProgram);
-            Notifications.create().title("Updated transplant program").text("Transplant program has been updated for "
-                    + selectedHospital.getName()).showInformation();
+        // Send requests for each hospital which has had its programs modified
+        if (!modifiedHospitalPrograms.isEmpty()) {
+            for (Hospital hospital : modifiedHospitalPrograms.keySet()) {
+                State.getConfigResolver().setTransplantProgramsForHospital(hospital, modifiedHospitalPrograms.get(hospital));
+            }
+            Notifications.create()
+                    .title("Updated Transplant Programs")
+                    .text(String.format("Available transplant programs have been updated for these hospitals: \n%s.",
+                            modifiedHospitalPrograms.keySet().stream()
+                                    .map(Hospital::getName)
+                                    .collect(Collectors.joining(", \n"))))
+                    .showInformation();
         }
+        refresh();
     }
 
     /**
@@ -161,7 +155,42 @@ public class ConfigController extends SubController {
     }
 
     private void newHospitalSelected() {
-        refresh();
+        Hospital selectedHospital = hospitalSelector.getSelectionModel().getSelectedItem();
+        if (selectedHospital != null) {
+            // Remove the listener so it doesn't pick up these changes
+            organSelector.getCheckModel().getCheckedItems().removeListener(programsChangeListener);
+            organSelector.getCheckModel().clearChecks();
+
+            // Reset the tranplant programs selector
+            organSelector.getItems().clear();
+            organSelector.getItems().setAll(Organ.values());
+
+            if (modifiedHospitalPrograms.keySet().contains(selectedHospital)) {
+                // If programs for this hospital have been modified, use its modified programs for checked values
+                for (Organ organ : modifiedHospitalPrograms.get(selectedHospital)) {
+                    organSelector.getCheckModel().check(organ);
+                }
+            } else {
+                // Else, use current programs for checked values
+                for (Organ organ : selectedHospital.getTransplantPrograms()) {
+                    organSelector.getCheckModel().check(organ);
+                }
+            }
+
+            // Re-add the listener so that it picks up the changes again
+            organSelector.getCheckModel().getCheckedItems().addListener(programsChangeListener);
+        }
+    }
+
+    private void onTransplantProgramsChanged() {
+        // Determine the changed programs
+        Set<Organ> newPrograms = EnumSet.noneOf(Organ.class);
+        newPrograms.addAll(organSelector.getCheckModel().getCheckedItems());
+
+        // Put the modified programs into an entry for that hospital
+        modifiedHospitalPrograms.put(
+                hospitalSelector.getSelectionModel().getSelectedItem(),
+                newPrograms);
     }
 
     /**
@@ -193,5 +222,4 @@ public class ConfigController extends SubController {
     private void cancel() {
         refresh();
     }
-
 }
