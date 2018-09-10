@@ -555,7 +555,6 @@ public class MenuBarController extends SubController {
     @FXML
     private void openOrganWeb() {
         // Clear all open windows
-        mainController.removeAllPages();
         SpiderWebController spiderWebController = new SpiderWebController(windowContext.getViewClient());
     }
 

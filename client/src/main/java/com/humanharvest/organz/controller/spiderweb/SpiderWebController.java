@@ -70,14 +70,11 @@ public class SpiderWebController {
      */
     private void displayOrgans() {
         Collection<DonatedOrgan> donatedOrgans = State.getClientResolver().getDonatedOrgans(client);
-
         for (DonatedOrgan organ: donatedOrgans) {
-
             if (!organ.hasExpired()) {
 
                 State.setOrganToDisplay(organ);
                 MainController newMain = PageNavigator.openNewWindow();
-
                 PageNavigator.loadPage(Page.ORGAN_IMAGE, newMain);
 
             }

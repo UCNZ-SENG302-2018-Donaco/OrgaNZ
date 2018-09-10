@@ -3,12 +3,15 @@ package com.humanharvest.organz.state;
 import java.io.IOException;
 import java.io.InputStream;
 
+import com.humanharvest.organz.utilities.enums.Organ;
+
 import org.apache.commons.io.IOUtils;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  * Deals with all image handling in with the server for the client.
@@ -42,6 +45,12 @@ public class ImageManagerRest implements ImageManager {
         return responseEntity.getBody();
     }
 
+    /**
+     * Gets the default user image
+     *
+     * @return a byte array of the default image
+     * @throws IOException
+     */
     @Override
     public byte[] getDefaultImage() throws IOException {
         byte[] res;
@@ -49,6 +58,24 @@ public class ImageManagerRest implements ImageManager {
             res = IOUtils.toByteArray(in);
         }
         return res;
+    }
+
+    /**
+     * Gets an image which matches the supplied organType.
+     *
+     * @param organType the type of organ whos image is being retrieved
+     * @return a byte array of the organ image
+     */
+    @Override
+    public byte[] getOrganImage(Organ organType) {
+        HttpHeaders httpHeaders = generateHeaders();
+        HttpEntity<?> entity = new HttpEntity<>(null, httpHeaders);
+        ResponseEntity<byte[]> responseEntity = State.getRestTemplate()
+                .exchange(State.getBaseUri() + "organimage/" + organType.toString().toUpperCase(), HttpMethod.GET,
+                        entity, byte[].class, organType.toString().toUpperCase());
+
+        return responseEntity.getBody();
+
     }
 
     /**

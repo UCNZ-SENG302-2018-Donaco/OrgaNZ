@@ -88,22 +88,6 @@ public class MainController {
         pageHolder.getChildren().setAll(node);
     }
 
-    public void removeAllPages() {
-        Collection<Pane> allPanes = MultitouchHandler.getPaneCollection();
-
-        for (Pane p: allPanes) {
-            MultitouchHandler.removePane(p);
-        }
-
-        Collection<Stage> allStages = PageNavigatorTouch.stageCollection;
-
-        for (Stage s: allStages) {
-            s.close();
-        }
-
-
-    }
-
     void resetWindowContext() {
         windowContext = WindowContext.defaultContext();
     }

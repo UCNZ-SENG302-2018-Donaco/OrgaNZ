@@ -53,7 +53,8 @@ public final class State {
         STANDARD, TOUCH
     }
 
-    private static String baseUri = "http://csse-s302g7.canterbury.ac.nz:8080/";
+    private static String baseUri = "http://localhost:8080/";  //http://csse-s302g7.canterbury.ac.nz:8080/"; TODO
+    // uncomment before merging into dev
 
     private static DataStorageType currentStorageType = DataStorageType.MEMORY;
 

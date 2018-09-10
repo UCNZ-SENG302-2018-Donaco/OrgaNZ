@@ -34,24 +34,14 @@ public class OrganImageController extends SubController {
      * Loads the organs icon based on what type of organ it is.
      */
     private void loadImage() {
-        byte[] bytes;
-        switch (donatedOrgan.getOrganType()) {
-            case BONE:
-                //set bone image...
-            case HEART:
-                //set heart image...
-            default:
-                // set default image
-                try {
-                    bytes = State.getImageManager().getDefaultImage();
-                } catch (IOException e) {
-                    LOGGER.log(Level.SEVERE, "IO Exception when loading image ", e);
-                    return;
-                }
 
+        byte[] bytes = State.getImageManager().getOrganImage(donatedOrgan.getOrganType());
+        if (bytes != null) {
+            Image image = new Image(new ByteArrayInputStream(bytes));
+            organImage.setImage(image);
+        } else {
+            LOGGER.log(Level.SEVERE, "Organ image failed to load");
         }
-        Image image = new Image(new ByteArrayInputStream(bytes));
-        organImage.setImage(image);
 
     }
 

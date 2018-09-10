@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 
 import org.apache.commons.io.IOUtils;
@@ -38,6 +39,32 @@ public class ImageManagerMemory implements ImageManager {
             res = IOUtils.toByteArray(in);
         }
         return res;
+    }
+
+    @Override
+    public byte[] getOrganImage(Organ organ) {
+        byte[] bytes;
+        InputStream in;
+        try {
+            switch (organ) {
+                case BONE:
+                    //set bone image...
+                    in = getClass().getResourceAsStream("/images/bone.png");
+                    bytes = IOUtils.toByteArray(in);
+                case HEART:
+                    //set heart image...
+                    in = getClass().getResourceAsStream("/images/heart.png");
+                    bytes = IOUtils.toByteArray(in);
+
+                default:
+                    bytes = getDefaultImage();
+            }
+            return bytes;
+
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+            return null;
+        }
     }
 
     /**
