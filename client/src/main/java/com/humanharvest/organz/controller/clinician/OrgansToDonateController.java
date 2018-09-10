@@ -25,8 +25,10 @@ import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -110,7 +112,9 @@ public class OrgansToDonateController extends SubController {
     private CheckComboBox<Organ> organFilter;
 
     @FXML
-    private Button createTransplantProcedureButton;
+    private Button scheduleTransplantBtn;
+    @FXML
+    private DatePicker transplantDatePicker;
 
     @FXML
     private Text displayingXToYOfZText;
@@ -180,8 +184,8 @@ public class OrgansToDonateController extends SubController {
         potentialRecipients.setPlaceholder(placeholder);
 
         potentialRecipients.getSelectionModel().getSelectedItems().addListener(
-                (ListChangeListener<? super Client>) change -> updateCreateButton());
-        updateCreateButton();
+                (ListChangeListener<? super Client>) change -> updateScheduleTransplantControls());
+        updateScheduleTransplantControls();
 
         tableView.setOnSort(event -> updateOrgansToDonateList());
 
@@ -383,20 +387,31 @@ public class OrgansToDonateController extends SubController {
         setupDisplayingXToYOfZText(newOrgansToDonate.getTotalResults());
     }
 
-    private void updateCreateButton() {
+    private void updateScheduleTransplantControls() {
         List<Client> selectedClients = potentialRecipients.getSelectionModel().getSelectedItems();
         if (selectedClients.size() != 1) {
-            createTransplantProcedureButton.setDisable(true);
+            scheduleTransplantBtn.setDisable(true);
+            transplantDatePicker.setDisable(true);
         } else {
-            createTransplantProcedureButton.setDisable(false);
+            scheduleTransplantBtn.setDisable(false);
+            transplantDatePicker.setDisable(false);
         }
     }
 
     @FXML
-    private void createTransplantProcedure() {
+    private void scheduleTransplant() {
         // First make the TransplantRequest
         List<Client> selectedClients = potentialRecipients.getSelectionModel().getSelectedItems();
         if (selectedClients.size() != 1) {
+            return;
+        }
+
+        LocalDate transplantDate = transplantDatePicker.getValue();
+        if (transplantDate == null || transplantDate.isBefore(LocalDate.now())) {
+            PageNavigator.showAlert(AlertType.ERROR,
+                    "Invalid Transplant Date",
+                    "Please enter a valid date for the transplant to take place.",
+                    mainController.getStage());
             return;
         }
 
@@ -413,7 +428,13 @@ public class OrgansToDonateController extends SubController {
         }
         TransplantRequest request = optionalRequest.get();
 
-        State.getClientResolver().scheduleTransplantProcedure(organToDonate, request, LocalDate.now());
+        State.getClientResolver().scheduleTransplantProcedure(organToDonate, request, transplantDate);
+        Notifications.create()
+                .title("Scheduled Transplant")
+                .text(String.format("A transplant for %s from %s to %s has been scheduled on %s.",
+                        request.getRequestedOrgan(), organToDonate.getDonor().getFullName(), receiver.getFullName(),
+                        transplantDate))
+                .showInformation();
     }
 
     /**
