@@ -274,19 +274,19 @@ public class ClientResolverRest implements ClientResolver {
         TransplantRecord transplant = new TransplantRecord(organ, request, date);
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(
-                State.getBaseUri() + "/clients/{uid}/transplants")
+                State.getBaseUri() + "/clients/" + request.getClient().getUid() + "/transplants")
                 .queryParam("organId", organ.getId())
                 .queryParam("requestId", request.getId())
                 .queryParam("date", date.toString());
 
-        HttpHeaders httpHeaders = createHeaders(true);
+        HttpHeaders httpHeaders = createHeaders(false);
+        httpHeaders.setIfMatch(request.getClient().getETag());
         ResponseEntity<List<ProcedureRecord>> responseEntity = sendQuery(httpHeaders,
                 builder.toUriString(),
                 HttpMethod.POST,
                 transplant,
                 new ParameterizedTypeReference<List<ProcedureRecord>>() {
-                },
-                request.getClient().getUid());
+                });
 
         return responseEntity.getBody();
     }
