@@ -10,6 +10,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.paint.Color;
 
 import com.humanharvest.organz.DonatedOrgan;
+import com.humanharvest.organz.utilities.DurationFormatter.Format;
 
 public class DurationUntilExpiryCell extends TableCell<DonatedOrgan, Duration> {
 
@@ -102,7 +103,7 @@ public class DurationUntilExpiryCell extends TableCell<DonatedOrgan, Duration> {
             Duration timeSinceDeath = Duration.between(
                     getDonatedOrganForRow().getDateTimeOfDonation(),
                     LocalDateTime.now());
-            setText("N/A (" + getFormattedDuration(timeSinceDeath) + " since death)");
+            setText("N/A (" + getFormattedDuration(timeSinceDeath, Format.XHoursYMinutesSeconds) + " since death)");
             setStyle(null);
             setTextFill(Color.BLACK);
 
@@ -114,7 +115,7 @@ public class DurationUntilExpiryCell extends TableCell<DonatedOrgan, Duration> {
                         getDonatedOrganForRow().getDateTimeOfDonation()
                                 .plus(getDonatedOrganForRow().getOrganType().getMaxExpiration()),
                         LocalDateTime.now());
-                setText(String.format("Expired (%s ago)", getFormattedDuration(timeSinceExpiry)));
+                setText(String.format("Expired (%s ago)", getFormattedDuration(timeSinceExpiry, Format.XHoursYMinutesSeconds)));
             } else {
                 setText("Overridden");
             }
@@ -122,10 +123,7 @@ public class DurationUntilExpiryCell extends TableCell<DonatedOrgan, Duration> {
             setTextFill(Color.WHITE);
 
         } else {
-            // Split duration string into words, e.g. ["3", "days", "2", "hours", "10", "minutes",...]
-            // It then takes the first 4 words (except for seconds, then it just takes up to the seconds)
-            // and stores that in displayedDuration, e.g. "3 days 2 hours"
-            String displayedDuration = getFormattedDuration(item);
+            String displayedDuration = getFormattedDuration(item, Format.XHoursYMinutesSeconds);
 
             // Progress as a decimal. starts at 0 (at time of death) and goes to 1.
             double progressDecimal = getDonatedOrganForRow().getProgressDecimal();

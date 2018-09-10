@@ -19,6 +19,7 @@ import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 import com.humanharvest.organz.views.client.Views;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 
 /**
@@ -95,6 +96,7 @@ public class TransplantRequest {
         return requestDate;
     }
 
+    @JsonIgnore
     public Duration getTimeSinceRequest() {
         return Duration.between(requestDate, LocalDateTime.now());
     }

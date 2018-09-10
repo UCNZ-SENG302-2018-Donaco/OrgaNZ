@@ -4,6 +4,7 @@ import static com.humanharvest.organz.utilities.DurationFormatter.getFormattedDu
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -18,6 +19,7 @@ import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.clinician.ViewBaseController;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.DurationFormatter.Format;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
@@ -28,7 +30,7 @@ public class ReceiverOverviewController extends ViewBaseController {
     private static final Logger LOGGER = Logger.getLogger(ReceiverOverviewController.class.getName());
 
     private Client viewedClient;
-    private TransplantRequest transplantRequest;
+    private TransplantRequest viewedTransplantRequest;
 
     @FXML
     private ImageView imageView;
@@ -47,15 +49,28 @@ public class ReceiverOverviewController extends ViewBaseController {
 
     @FXML
     private Label age;
-
-    public ReceiverOverviewController(Client client, Organ organ) {
-        viewedClient = client;
-        transplantRequest = viewedClient.getTransplantRequest(organ);
-    }
-
-    public ReceiverOverviewController() {
+    /*
+        public ReceiverOverviewController(Client client, Organ organ) {
+            viewedClient = client;
+            System.out.println(viewedClient.getFullName());
+            System.out.println(viewedClient.getTransplantRequests().size());
+            viewedTransplantRequest = viewedClient.getTransplantRequest(organ);
+        }
+    */
+    public ReceiverOverviewController() { // test with first client
         viewedClient = State.getClientManager().getClients().get(0);
-        transplantRequest = viewedClient.getTransplantRequest(Organ.LIVER);
+        List<TransplantRequest> transplantRequests = State.getClientResolver().getTransplantRequests(viewedClient);
+        System.out.print(viewedClient.getFullName()+": ");
+        System.out.println(viewedClient.getTransplantRequests().size());
+        viewedTransplantRequest = null;
+
+        Organ organ = Organ.LIVER; // for testing
+
+        for (TransplantRequest transplantRequest : transplantRequests) {
+            if (transplantRequest.getRequestedOrgan() == organ) {
+                viewedTransplantRequest = viewedClient.getTransplantRequest(Organ.LIVER);
+            }
+        }
     }
 
     /**
@@ -68,10 +83,10 @@ public class ReceiverOverviewController extends ViewBaseController {
         age.setText(String.valueOf(viewedClient.getAge()));
         hospital.setText("X Hospital"); //todo
         travelTime.setText("x hours"); //todo
-        if (transplantRequest == null) {
+        if (viewedTransplantRequest == null) {
             requestedTime.setText("ERROR: not requested");
         } else {
-            requestedTime.setText(getFormattedDuration(transplantRequest.getTimeSinceRequest()));
+            requestedTime.setText(getFormattedDuration(viewedTransplantRequest.getTimeSinceRequest(), Format.Biggest));
         }
 
     }
