@@ -470,6 +470,11 @@ public class ViewProceduresController extends SubController {
     private void completeTransplant() {
         TransplantRecord record = (TransplantRecord) pastProcedureView.getSelectionModel().getSelectedItem();
         State.getClientResolver().completeTransplantRecord(record);
-        refresh();
+        Notifications.create()
+                .title("Completed Transplant")
+                .text(String.format("The transplant procedure for %s has been marked as completed.",
+                        record.getOrgan().getOrganType()))
+                .showInformation();
+        PageNavigator.refreshAllWindows();
     }
 }

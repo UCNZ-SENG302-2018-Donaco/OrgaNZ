@@ -435,6 +435,8 @@ public class OrgansToDonateController extends SubController {
                         request.getRequestedOrgan(), organToDonate.getDonor().getFullName(), receiver.getFullName(),
                         transplantDate))
                 .showInformation();
+        transplantDatePicker.setValue(null);
+        PageNavigator.refreshAllWindows();
     }
 
     /**

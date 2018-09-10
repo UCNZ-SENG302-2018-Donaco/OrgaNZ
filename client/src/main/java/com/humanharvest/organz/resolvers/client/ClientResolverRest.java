@@ -311,7 +311,7 @@ public class ClientResolverRest implements ClientResolver {
                 State.getBaseUri() + "clients/{uid}/transplants/{id}/complete",
                 HttpMethod.POST,
                 TransplantRecord.class,
-                record.getClient(),
+                record.getClient().getUid(),
                 record.getId());
         return responseEntity.getBody();
     }
