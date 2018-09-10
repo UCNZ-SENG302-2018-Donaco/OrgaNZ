@@ -27,7 +27,7 @@ public class ModifyClientObject extends ModifyBaseObject {
     private Gender gender;
     private BloodType bloodType;
     private Gender genderIdentity;
-    private Long hospitalId;
+    private Hospital hospital;
 
     private double height;
     private double weight;
@@ -221,10 +221,10 @@ public class ModifyClientObject extends ModifyBaseObject {
         this.country = country;
     }
 
-    public Long getHospital() { return hospitalId; }
+    public Hospital getHospital() { return hospital; }
 
-    public void setHospital(Long hospitalId){
-        registerChange("hospitalId");
-        this.hospitalId = hospitalId;
+    public void setHospital(Hospital hospital){
+        registerChange("hospital");
+        this.hospital = hospital;
     }
 }
