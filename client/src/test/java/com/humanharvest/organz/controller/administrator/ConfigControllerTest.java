@@ -1,6 +1,9 @@
 package com.humanharvest.organz.controller.administrator;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.testfx.api.FxAssert.verifyThat;
 import static org.testfx.matcher.control.ListViewMatchers.hasItems;
 
@@ -9,7 +12,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
-import javafx.stage.Stage;
+import javafx.scene.control.DialogPane;
 
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.Hospital;
@@ -47,21 +50,28 @@ public class ConfigControllerTest extends ControllerTest {
     public void hospitalListHasAllHospitals() {
         verifyThat("#hospitalSelector", hasItems(hospitals.size()));
     }
-
+/*
     @Test
     public void hospitalDetailsCanBeOpened() {
-        sleep(2000);
-
         // sort hospitals by name and get first hospital,
         // this ensures that the hospital is visible without scrolling.
         List<Hospital> hospitalList = new ArrayList<>(hospitals);
         hospitalList.sort(Comparator.comparing(Hospital::getName));
-        String hospitalName = hospitals.iterator().next().getName();
+        Hospital hospital = hospitals.iterator().next();
+        String hospitalName = hospital.getName();
 
         // Double click on the hospital and check it generates a popup about that hospital.
         doubleClickOn(hospitalName);
-        Stage stage = getTopModalStage();
-        assertEquals(hospitalName, stage.getTitle());
+        alertDialogHasHeaderAndContainsContent(hospitalName, hospital.getAddress());
+    }
+*/
+    public void alertDialogHasHeaderAndContainsContent(final String expectedHeader, final String expectedContent) {
+        final javafx.stage.Stage actualAlertDialog = getTopModalStage();
+        assertNotNull(actualAlertDialog);
+
+        final DialogPane dialogPane = (DialogPane) actualAlertDialog.getScene().getRoot();
+        assertEquals(expectedHeader, dialogPane.getHeaderText());
+        assertThat(dialogPane.getContentText(), containsString(expectedContent));
     }
 
 
