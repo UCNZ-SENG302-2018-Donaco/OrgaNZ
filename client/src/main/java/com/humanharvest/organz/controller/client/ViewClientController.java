@@ -172,7 +172,6 @@ public class ViewClientController extends ViewBaseController {
         btype.setItems(FXCollections.observableArrayList(BloodType.values()));
         Set<Hospital> hospitalSet = State.getConfigManager().getHospitals();
         ObservableList<Hospital> hospitals = FXCollections.observableArrayList(new ArrayList<>(hospitalSet));
-        //hospital.getItems().sort(Comparator.comparing(Hospital::getName));
         hospital.setItems(hospitals);
         hospital.getItems().sort(Comparator.comparing(Hospital::getName));
         regionCB.setItems(FXCollections.observableArrayList(Region.values()));
