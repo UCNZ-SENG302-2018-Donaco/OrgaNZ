@@ -189,7 +189,7 @@ public class ConfigController extends SubController {
             organSelector.getCheckModel().getCheckedItems().removeListener(programsChangeListener);
             organSelector.getCheckModel().clearChecks();
 
-            // Reset the tranplant programs selector
+            // Reset the transplant programs selector
             organSelector.getItems().clear();
             organSelector.getItems().setAll(Organ.values());
 
