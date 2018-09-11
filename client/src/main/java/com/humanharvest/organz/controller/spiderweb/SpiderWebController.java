@@ -74,7 +74,7 @@ public class SpiderWebController {
             if (!organ.hasExpired()) {
 
                 State.setOrganToDisplay(organ);
-                MainController newMain = PageNavigator.openNewWindow();
+                MainController newMain = PageNavigator.openNewWindow(80, 80);
                 PageNavigator.loadPage(Page.ORGAN_IMAGE, newMain);
 
             }
