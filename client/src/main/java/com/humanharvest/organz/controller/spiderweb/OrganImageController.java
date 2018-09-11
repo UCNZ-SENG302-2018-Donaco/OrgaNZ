@@ -1,7 +1,9 @@
 package com.humanharvest.organz.controller.spiderweb;
 
 import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -13,6 +15,8 @@ import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.controller.client.ViewClientController;
 import com.humanharvest.organz.state.State;
+
+import org.apache.commons.io.IOUtils;
 
 /**
  * A controller to display the image of an organ depending on its organ type.
@@ -35,11 +39,17 @@ public class OrganImageController extends SubController {
      */
     private void loadImage() {
 
-        byte[] bytes = State.getImageManager().getOrganImage(donatedOrgan.getOrganType());
-        if (bytes != null) {
+        byte[] bytes;
+
+        try (InputStream in = getClass().getResourceAsStream("/images/" + donatedOrgan.getOrganType().toString() + ".png")) {
+            bytes = IOUtils.toByteArray(in);
+
             Image image = new Image(new ByteArrayInputStream(bytes));
             organImage.setImage(image);
-        } else {
+        }
+
+        catch (Exception ex) {
+            System.out.println(ex.getMessage());
             LOGGER.log(Level.SEVERE, "Organ image failed to load");
         }
 

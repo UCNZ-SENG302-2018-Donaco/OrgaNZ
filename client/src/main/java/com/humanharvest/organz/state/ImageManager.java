@@ -23,8 +23,6 @@ public interface ImageManager {
     byte[] getDefaultImage() throws IOException;
 
 
-    byte[] getOrganImage(Organ organ);
-
     /**
      * Posts an image to the clients profile to replace their existing one (which may be the default one)
      *

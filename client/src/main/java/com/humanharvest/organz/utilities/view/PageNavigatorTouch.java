@@ -36,7 +36,6 @@ import com.humanharvest.organz.state.State;
 public class PageNavigatorTouch implements IPageNavigator {
 
     private static final Logger LOGGER = Logger.getLogger(PageNavigatorTouch.class.getName());
-    public static Collection<Stage> stageCollection = new HashSet<>();
 
     private static Optional<Transform> getWindowTransform(Window window) {
         if (window == null) {
@@ -136,7 +135,6 @@ public class PageNavigatorTouch implements IPageNavigator {
             stackPane.setPrefHeight(height);
 
             MultitouchHandler.addPane(mainPane);
-            stageCollection.add(newStage);
 
             return mainController;
         } catch (IOException e) {

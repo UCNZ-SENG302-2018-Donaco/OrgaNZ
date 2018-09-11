@@ -41,32 +41,6 @@ public class ImageManagerMemory implements ImageManager {
         return res;
     }
 
-    @Override
-    public byte[] getOrganImage(Organ organ) {
-        byte[] bytes;
-        InputStream in;
-        try {
-            switch (organ) {
-                case BONE:
-                    //set bone image...
-                    in = getClass().getResourceAsStream("/images/bone.png");
-                    bytes = IOUtils.toByteArray(in);
-                case HEART:
-                    //set heart image...
-                    in = getClass().getResourceAsStream("/images/heart.png");
-                    bytes = IOUtils.toByteArray(in);
-
-                default:
-                    bytes = getDefaultImage();
-            }
-            return bytes;
-
-        } catch (IOException ex) {
-            System.out.println(ex.getMessage());
-            return null;
-        }
-    }
-
     /**
      * Posts an image to the clients profile to replace their existing one (which may be the default one)
      *

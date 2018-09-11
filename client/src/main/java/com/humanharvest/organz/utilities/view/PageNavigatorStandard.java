@@ -31,7 +31,6 @@ import com.humanharvest.organz.state.State;
 public class PageNavigatorStandard implements IPageNavigator {
 
     private static final Logger LOGGER = Logger.getLogger(PageNavigatorStandard.class.getName());
-    public static Collection<Stage> stageCollection = new HashSet<>();
 
     /**
      * Loads the given page in the given MainController.
@@ -94,7 +93,6 @@ public class PageNavigatorStandard implements IPageNavigator {
             newStage.setMinHeight(height);
             newStage.setWidth(width);
             newStage.setHeight(height);
-            stageCollection.add(newStage);
 
             mainPane.setPrefWidth(width);
             mainPane.setPrefHeight(height);

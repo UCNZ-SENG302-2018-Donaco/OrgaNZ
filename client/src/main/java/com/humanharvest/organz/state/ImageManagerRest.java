@@ -60,23 +60,6 @@ public class ImageManagerRest implements ImageManager {
         return res;
     }
 
-    /**
-     * Gets an image which matches the supplied organType.
-     *
-     * @param organType the type of organ whos image is being retrieved
-     * @return a byte array of the organ image
-     */
-    @Override
-    public byte[] getOrganImage(Organ organType) {
-        HttpHeaders httpHeaders = generateHeaders();
-        HttpEntity<?> entity = new HttpEntity<>(null, httpHeaders);
-        ResponseEntity<byte[]> responseEntity = State.getRestTemplate()
-                .exchange(State.getBaseUri() + "organimage/" + organType.toString().toUpperCase(), HttpMethod.GET,
-                        entity, byte[].class, organType.toString().toUpperCase());
-
-        return responseEntity.getBody();
-
-    }
 
     /**
      * Posts an image to the clients profile to replace their existing one (which may be the default one)
