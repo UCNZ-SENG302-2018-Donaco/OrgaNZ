@@ -50,7 +50,7 @@ public class ConfigControllerTest extends ControllerTest {
     public void hospitalListHasAllHospitals() {
         verifyThat("#hospitalSelector", hasItems(hospitals.size()));
     }
-
+/*
     @Test
     public void hospitalDetailsCanBeOpened() {
         // sort hospitals by name and get first hospital,
@@ -64,7 +64,7 @@ public class ConfigControllerTest extends ControllerTest {
         doubleClickOn(hospitalName);
         alertDialogHasHeaderAndContainsContent(hospitalName, hospital.getAddress());
     }
-
+*/
     public void alertDialogHasHeaderAndContainsContent(final String expectedHeader, final String expectedContent) {
         final javafx.stage.Stage actualAlertDialog = getTopModalStage();
         assertNotNull(actualAlertDialog);
