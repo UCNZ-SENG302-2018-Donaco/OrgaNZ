@@ -546,14 +546,6 @@ public class Client implements ConcurrencyControlledEntity {
         updateModifiedTimestamp();
         this.currentAddress = currentAddress;
     }
-//
-//    public Hospital getHospital() {
-//        return hospital;
-//    }
-//
-//    public void setHospital(Hospital hospital) {
-//        this.hospital = hospital;
-//    }
 
     public String getRegion() {
         return region;
