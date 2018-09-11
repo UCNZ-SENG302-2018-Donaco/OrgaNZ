@@ -44,7 +44,7 @@
                                                 </CheckListView>
                                                 <HBox alignment="CENTER" prefHeight="38.0" prefWidth="272.0">
                                                    <children>
-                                      <Button mnemonicParsing="false" onAction="#selectAll" text="Select All    ">
+                                      <Button mnemonicParsing="false" onAction="#selectAll" text="Select All">
                                                          <HBox.margin>
                                                             <Insets left="10.0" right="10.0" />
                                                          </HBox.margin>
