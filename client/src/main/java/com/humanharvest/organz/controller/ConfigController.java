@@ -15,6 +15,7 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.HBox;
 import org.controlsfx.control.CheckListView;
@@ -24,6 +25,7 @@ import com.humanharvest.organz.Hospital;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.utilities.view.PageNavigator;
 
 public class ConfigController extends SubController {
 
@@ -50,12 +52,35 @@ public class ConfigController extends SubController {
         hospitalSelector.getSelectionModel().selectedItemProperty().addListener(observable -> newHospitalSelected());
         hospitalSelector.getSelectionModel().select(0);  // Select the first hospital by default
 
+        // Double-click to open hospital details
+        hospitalSelector.setOnMouseClicked(click -> {
+                    if (click.getClickCount() == 2) { // double-click
+                        Hospital hospital = hospitalSelector.getSelectionModel().getSelectedItem();
+                        generateHospitalAlert(hospital);
+                    }
+                }
+        );
+
         // Country selector
         Set<Country> selectedCountries = State.getConfigManager().getAllowedCountries();
         List<Country> allCountries = Arrays.asList(Country.values());
         SortedList<Country> countryList = getCountryListSortedByIfInCollection(allCountries, selectedCountries);
 
         allowedCountries.getItems().setAll(countryList);
+
+    }
+
+    /**
+     * Generates an information alert that displays details about a hospital.
+     * Displays name, address, and co-ordinates.
+     *
+     * @param hospital the hospital to display information about
+     */
+    private void generateHospitalAlert(Hospital hospital) {
+        // Note that 5 decimal places is used for lat-long to get accuracy of 1.1 metres.
+        String information = String.format("Address: %s.%nLocation: (%.5f, %.5f).",
+                hospital.getAddress(), hospital.getLatitude(), hospital.getLongitude());
+        PageNavigator.showAlert(AlertType.INFORMATION, hospital.getName(), information, mainController.getStage());
     }
 
     @Override
@@ -107,7 +132,8 @@ public class ConfigController extends SubController {
         // Send requests for each hospital which has had its programs modified
         if (!modifiedHospitalPrograms.isEmpty()) {
             for (Hospital hospital : modifiedHospitalPrograms.keySet()) {
-                State.getConfigResolver().setTransplantProgramsForHospital(hospital, modifiedHospitalPrograms.get(hospital));
+                State.getConfigResolver()
+                        .setTransplantProgramsForHospital(hospital, modifiedHospitalPrograms.get(hospital));
             }
             Notifications.create()
                     .title("Updated Transplant Programs")
