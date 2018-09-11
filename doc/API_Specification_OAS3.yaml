@@ -2032,7 +2032,7 @@ paths:
         - AdministratorAccess: []
       summary: "Returns a list of potential recipients for the organ, in priority order."
       parameters:
-        - $ref: '#/components/parameters/donatedOrgan'
+        - $ref: '#/components/schemas/donatedOrgan'
       responses:
         200:
           description: A list of clients
@@ -2583,7 +2583,7 @@ components:
         curedDate:
           $ref: '#/components/schemas/date'
         isChronic:
-          type: boolea
+          type: boolean
 
     procedureRecord:
       type: object
