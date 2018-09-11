@@ -1,4 +1,4 @@
-package com.humanharvest.organz.controller;
+package com.humanharvest.organz.controller.administrator;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -22,6 +22,8 @@ import org.controlsfx.control.CheckListView;
 import org.controlsfx.control.Notifications;
 
 import com.humanharvest.organz.Hospital;
+import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Organ;
