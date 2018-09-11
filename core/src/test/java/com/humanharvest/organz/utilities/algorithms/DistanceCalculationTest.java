@@ -1,5 +1,7 @@
 package com.humanharvest.organz.utilities.algorithms;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -31,6 +33,13 @@ public class DistanceCalculationTest {
     @Test
     public void distanceBetweenInKmTest() {
         double distanceInKm = DistanceCalculation.distanceBetweenInKm(lat1, lon1, lat2, lon2);
-        Assert.assertEquals(763.9, distanceInKm, 0.1);
+        assertEquals(763.9, distanceInKm, 0.1);
+    }
+
+    @Test
+    public void invalidLatitudeTest() {
+        double invalidLat = Double.NaN;
+        double distance = DistanceCalculation.distanceBetween(invalidLat, lon1, lat2, lon2);
+        assertEquals(Double.NaN, distance);
     }
 }

@@ -184,7 +184,7 @@ shown in the "Time until expiry" column of the table.
 
 ####AC6
 
-The default ordering of the table is done by the least amount of time left at the top of the tab;e for an organ.
+The default ordering of the table is done by the least amount of time left at the top of the table for an organ.
 
 ####AC7
 
@@ -233,4 +233,23 @@ Go to the Organs To Donate page, and check there is a coloured countdown and it 
 ####AC5
 
 ####AC6
+
+## Story 57 - Hospitals
+
+### Settings page
+
+Log in as an admin, and open the Settings page.
+
+You should see a list of hospitals, and be able to set transplant programs (by clicking Apply).
+
+Double-clicking on a hospital should bring up its address and coordinates.
+
+### Client profile
+
+Log in as a clincian, and open any client's profile.
+
+You should be able to change their hospital (by clicking Apply).
+
+
+
 
