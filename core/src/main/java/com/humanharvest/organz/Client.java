@@ -47,7 +47,6 @@ import com.humanharvest.organz.views.client.Views;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -86,7 +85,6 @@ public class Client implements ConcurrencyControlledEntity {
 
     @ManyToOne
     @JoinColumn(name="Hospital_id")
-    @JsonBackReference
     @JsonView(Views.Details.class)
     private Hospital hospital;
 
@@ -546,14 +544,6 @@ public class Client implements ConcurrencyControlledEntity {
         updateModifiedTimestamp();
         this.currentAddress = currentAddress;
     }
-//
-//    public Hospital getHospital() {
-//        return hospital;
-//    }
-//
-//    public void setHospital(Hospital hospital) {
-//        this.hospital = hospital;
-//    }
 
     public String getRegion() {
         return region;
