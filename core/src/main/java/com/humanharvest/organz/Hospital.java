@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
@@ -261,5 +262,23 @@ public class Hospital {
      */
     public Duration calculateTimeTo(Hospital otherHospital) {
         return calculateTimeTo(otherHospital, DEFAULT_HELICOPTER_SPEED);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Hospital)) {
+            return false;
+        }
+        Hospital hospital = (Hospital) o;
+        return Objects.equals(id, hospital.id) &&
+                Objects.equals(name, hospital.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name);
     }
 }
