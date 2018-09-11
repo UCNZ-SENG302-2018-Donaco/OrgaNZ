@@ -8,7 +8,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
@@ -35,6 +37,10 @@ public class MatchOrganToRecipientsTest {
     private BloodType bloodType = BloodType.A_POS;
     private Country country = Country.NZ;
     private String region = Region.CANTERBURY.toString();
+    private Set<Hospital> hospitals = Hospital.getDefaultHospitals();
+    private Iterator<Hospital> hospitalIterator = hospitals.iterator();
+    private Hospital donorHospital = hospitalIterator.next();
+    private Hospital hospital2 = hospitalIterator.next();
 
     private Collection<TransplantRequest> allTransplantRequests = new ArrayList<>();
 
@@ -86,7 +92,10 @@ public class MatchOrganToRecipientsTest {
         donor.setCountryOfDeath(country);
         donor.setRegionOfDeath(region);
         donor.setCityOfDeath("Christchurch");
-        donor.setHospital(Hospital.getDefaultHospitals().iterator().next());
+        donor.setHospital(donorHospital);
+
+        // Check the two hospitals aren't the same
+        assertNotEquals(donorHospital.getName(), hospital2.getName());
 
         organsToDonate.addAll(donor.getDonatedOrgans());
     }
@@ -398,5 +407,58 @@ public class MatchOrganToRecipientsTest {
         getListOfPotentialRecipients();
         assertEquals(2, eligibleClients.size());
     }
+
+    @Test
+    public void testHospitalComparison() {
+        recipient1.setHospital(hospital2);
+        recipient2.setHospital(donorHospital);
+
+        getListOfPotentialRecipients();
+        assertEquals(recipient2, eligibleClients.get(0));
+    }
+
+    @Test
+    public void testHospitalComparisonNullRegions() {
+        recipient1.setRegion(null);
+        recipient2.setRegion(null);
+        recipient1.setHospital(hospital2);
+        recipient2.setHospital(donorHospital);
+
+        getListOfPotentialRecipients();
+        assertEquals(recipient2, eligibleClients.get(0));
+    }
+
+    @Test
+    public void testOneHospitalNull() {
+        recipient1.setHospital(null);
+        recipient2.setHospital(donorHospital);
+
+        getListOfPotentialRecipients();
+        assertEquals(recipient2, eligibleClients.get(0));
+    }
+
+    @Test
+    public void testOneHospitalNullOneRegionNull() {
+        recipient1.setHospital(null);
+        recipient2.setRegion(null);
+        recipient2.setHospital(donorHospital);
+
+        getListOfPotentialRecipients();
+        assertEquals(recipient2, eligibleClients.get(0));
+    }
+
+    @Test
+    public void testTwoDifferentHospitals() {
+        // Create a fake hospital far away
+        Hospital farAwayHospital = new Hospital("middle of the ocean", 0, 0, "Atlantic Ocean");
+
+        recipient1.setHospital(hospital2);
+        recipient2.setHospital(farAwayHospital);
+
+        getListOfPotentialRecipients();
+        assertEquals(recipient1, eligibleClients.get(0));
+    }
+
+
 
 }
