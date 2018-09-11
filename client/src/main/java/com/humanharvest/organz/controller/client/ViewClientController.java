@@ -13,6 +13,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.format.FormatStyle;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
@@ -172,6 +173,7 @@ public class ViewClientController extends ViewBaseController {
         Set<Hospital> hospitalSet = State.getConfigManager().getHospitals();
         ObservableList<Hospital> hospitals = FXCollections.observableArrayList(new ArrayList<>(hospitalSet));
         hospital.setItems(hospitals);
+        hospital.getItems().sort(Comparator.comparing(Hospital::getName));
         regionCB.setItems(FXCollections.observableArrayList(Region.values()));
         deathRegionCB.setItems(FXCollections.observableArrayList(Region.values()));
         setEnabledCountries();
@@ -283,14 +285,19 @@ public class ViewClientController extends ViewBaseController {
         pname.setText(viewedClient.getPreferredName());
         dob.setValue(viewedClient.getDateOfBirth());
         gender.setValue(viewedClient.getGender());
-        if (viewedClient.getHospital() != null) {
-            hospital.setValue(viewedClient.getHospital());
-        }
         genderIdentity.setValue(viewedClient.getGenderIdentity());
         height.setText(String.valueOf(viewedClient.getHeight()));
         weight.setText(String.valueOf(viewedClient.getWeight()));
         btype.setValue(viewedClient.getBloodType());
         country.setValue(viewedClient.getCountry());
+        if (viewedClient.getHospital() == null) {
+            hospital.setValue(null);
+        } else {
+            hospital.setValue(hospital.getItems().stream()
+                    .filter(hospitalItem -> hospitalItem.getId().equals(viewedClient.getHospital().getId()))
+                    .findFirst()
+                    .orElse(null));
+        }
 
         enableAppropriateRegionInput(deathCountry, deathRegionCB, deathRegionTF);
         enableAppropriateRegionInput(country, regionCB, regionTF);

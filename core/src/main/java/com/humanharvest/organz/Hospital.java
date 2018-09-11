@@ -19,9 +19,16 @@ import javax.persistence.Table;
 
 import com.humanharvest.organz.utilities.algorithms.DistanceCalculation;
 import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.views.client.Views;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonView;
 
+@JsonAutoDetect(fieldVisibility = Visibility.ANY,
+        getterVisibility = Visibility.NONE,
+        setterVisibility = Visibility.NONE)
 @Entity
 @Table
 @Access(AccessType.FIELD)
@@ -34,6 +41,7 @@ public class Hospital {
 
     @Id
     @GeneratedValue
+    @JsonView(Views.Overview.class)
     private Long id;
 
     @ManyToOne
@@ -42,13 +50,18 @@ public class Hospital {
     private Config config;
 
     // todo should these be @tagged?
+    @JsonView(Views.Overview.class)
     private String name;
+    @JsonView(Views.Details.class)
     private double latitude = Double.NaN;
+    @JsonView(Views.Details.class)
     private double longitude = Double.NaN;
+    @JsonView(Views.Details.class)
     private String address;
 
     @ElementCollection(targetClass = Organ.class)
     @Enumerated(EnumType.STRING)
+    @JsonView(Views.Details.class)
     private Set<Organ> transplantPrograms;
 
     protected Hospital() {
