@@ -213,7 +213,7 @@ public class MatchOrganToRecipients {
             } else if (comparison == 0) {
                 // both hospitals are null - do region null comparison
                 Integer regionNullComparison = compareNulls(r1, r2);
-                return regionNullComparison == null ? 0 : comparison;
+                return regionNullComparison == null ? 0 : regionNullComparison;
             } else {
                 // one hospital is null
                 return comparison;

@@ -12,6 +12,7 @@ import java.util.List;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
+import com.humanharvest.organz.Hospital;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.utilities.enums.BloodType;
 import com.humanharvest.organz.utilities.enums.Country;
@@ -85,6 +86,7 @@ public class MatchOrganToRecipientsTest {
         donor.setCountryOfDeath(country);
         donor.setRegionOfDeath(region);
         donor.setCityOfDeath("Christchurch");
+        donor.setHospital(Hospital.getDefaultHospitals().iterator().next());
 
         organsToDonate.addAll(donor.getDonatedOrgans());
     }
