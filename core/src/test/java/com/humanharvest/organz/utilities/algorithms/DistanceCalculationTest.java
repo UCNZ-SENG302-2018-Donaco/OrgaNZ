@@ -40,6 +40,6 @@ public class DistanceCalculationTest {
     public void invalidLatitudeTest() {
         double invalidLat = Double.NaN;
         double distance = DistanceCalculation.distanceBetween(invalidLat, lon1, lat2, lon2);
-        assertEquals(Double.NaN, distance);
+        assertEquals(Double.NaN, distance, 1e-6);
     }
 }
