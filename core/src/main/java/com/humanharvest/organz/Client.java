@@ -31,6 +31,8 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -80,6 +82,11 @@ public class Client implements ConcurrencyControlledEntity {
     @JsonView(Views.Details.class)
     @Column(columnDefinition = "text")
     private String currentAddress;
+
+    @ManyToOne
+    @JoinColumn(name="Hospital_id")
+    @JsonView(Views.Details.class)
+    private Hospital hospital;
 
     @JsonView(Views.Overview.class)
     private String region = "Unspecified";
@@ -1194,8 +1201,18 @@ public class Client implements ConcurrencyControlledEntity {
         return country;
     }
 
+
     public void setCountry(Country country) {
         this.country = country;
+        updateModifiedTimestamp();
+    }
+
+    public Hospital getHospital() {
+        return hospital;
+    }
+
+    public void setHospital(Hospital hospital) {
+        this.hospital = hospital;
         updateModifiedTimestamp();
     }
 }

@@ -8,10 +8,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.Clinician;
+import com.humanharvest.organz.Hospital;
 import com.humanharvest.organz.state.AuthenticationManager;
 import com.humanharvest.organz.state.AuthenticationManagerFake;
 import com.humanharvest.organz.state.State;
@@ -48,6 +51,7 @@ public final class CucumberSteps implements En {
         createClinicianGiven();
         createAdministratorGiven();
         createDonatedOrganGiven();
+        createHospitalGiven();
 
         createSharedWhen();
         createClientWhen();
@@ -320,6 +324,17 @@ public final class CucumberSteps implements En {
             MockHttpServletRequestBuilder request = get(url);
             request = setupSharedHeaders(request);
             lastAction = mockMvc.perform(request);
+        });
+
+    }
+
+    private void createHospitalGiven() {
+
+        Given("^there is a test hospital$", () -> {
+            Hospital testHospital = new Hospital("Test Hospital", -43.5, 172.5, "1 Test Street");
+            Set<Hospital> hospitals = new HashSet<>();
+            hospitals.add(testHospital);
+            State.getConfigManager().setHospitals(hospitals);
         });
 
     }
