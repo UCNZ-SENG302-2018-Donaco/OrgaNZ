@@ -54,7 +54,7 @@ public abstract class ControllerTest extends ApplicationTest {
      *
      * @return the top modal window
      */
-    private static Stage getTopModalStage() {
+    protected static Stage getTopModalStage() {
         // Get a list of windows but ordered from top[0] to bottom[n] ones.
         List<Window> allWindows = new ArrayList<>(new FxRobot().robotContext().getWindowFinder().listWindows());
         Collections.reverse(allWindows);

@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.stream.Collectors;
 
+import com.humanharvest.organz.Hospital;
 import com.humanharvest.organz.utilities.enums.BloodType;
 import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Gender;
@@ -28,6 +29,7 @@ public class ModifyClientObject extends ModifyBaseObject {
     private Gender gender;
     private BloodType bloodType;
     private Gender genderIdentity;
+    private Hospital hospital;
 
     private double height;
     private double weight;
@@ -214,5 +216,12 @@ public class ModifyClientObject extends ModifyBaseObject {
     public void setCountry(Country country) {
         registerChange("country");
         this.country = country;
+    }
+
+    public Hospital getHospital() { return hospital; }
+
+    public void setHospital(Hospital hospital){
+        registerChange("hospital");
+        this.hospital = hospital;
     }
 }
