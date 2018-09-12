@@ -26,6 +26,7 @@ import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class ConfigControllerTest extends ControllerTest {
@@ -100,22 +101,9 @@ public class ConfigControllerTest extends ControllerTest {
         // click on the checkbox for the first organ, then the Apply button
         clickOn((Node) lookup("#organSelector").lookup(".check-box").nth(0).query());
         clickOn("Apply");
-
         assertThatHospitalOnlyContainsFirstOrgan(firstHospital);
     }
 
-    @Test
-    public void addTransplantProgramThenSelectAnotherHospital() {
-        // click on the first hospital, and select the first organ
-        clickOn(firstHospital.getName());
-        clickOn((Node) lookup("#organSelector").lookup(".check-box").nth(0).query());
-
-        // click on the second hospital, then click apply
-        clickOn(secondHospital.getName());
-        clickOn("Apply");
-
-        assertThatHospitalOnlyContainsFirstOrgan(firstHospital);
-    }
 
     @Test
     public void organChecksAreMaintainedAfterClickingOnAnotherHospital() {
