@@ -72,7 +72,7 @@ public class ClientProceduresController {
     public ResponseEntity<Collection<ProcedureRecord>> createProcedureRecord(
             @RequestBody ProcedureRecord procedureRecord,
             @PathVariable int uid,
-            @RequestHeader(value = "If-Match", required = false) String ETag,
+            @RequestHeader(value = "If-Match", required = false) String eTag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
             throws AuthenticationException, IfMatchFailedException, IfMatchRequiredException {
 
@@ -87,7 +87,7 @@ public class ClientProceduresController {
         Client client = optionalClient.get();
 
         //Check ETag
-        checkClientETag(client, ETag);
+        checkClientETag(client, eTag);
 
         // Execute add procedure action
         Action action = new AddProcedureRecordAction(client, procedureRecord, State.getClientManager());
@@ -107,7 +107,7 @@ public class ClientProceduresController {
             @RequestBody ModifyProcedureObject modifyProcedureObject,
             @PathVariable int uid,
             @PathVariable int id,
-            @RequestHeader(value = "If-Match", required = false) String ETag,
+            @RequestHeader(value = "If-Match", required = false) String eTag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken) throws AuthenticationException {
 
         // Check request has authorization to patch a procedure
@@ -122,7 +122,7 @@ public class ClientProceduresController {
         Client client = optionalClient.get();
 
         //Check ETag
-        checkClientETag(client, ETag);
+        checkClientETag(client, eTag);
 
         // Try to find a procedure record with matching id
         Optional<ProcedureRecord> optionalRecord = client.getProcedures().stream()
@@ -173,7 +173,7 @@ public class ClientProceduresController {
     public ResponseEntity deleteProcedureRecord(
             @PathVariable int uid,
             @PathVariable int id,
-            @RequestHeader(value = "If-Match", required = false) String ETag,
+            @RequestHeader(value = "If-Match", required = false) String eTag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
             throws AuthenticationException, IfMatchFailedException, IfMatchRequiredException {
 
@@ -189,7 +189,7 @@ public class ClientProceduresController {
         Client client = optionalClient.get();
 
         //Check ETag
-        checkClientETag(client, ETag);
+        checkClientETag(client, eTag);
 
         // Try to find a procedure record with matching id
         Optional<ProcedureRecord> optionalRecord = client.getProcedures().stream()
