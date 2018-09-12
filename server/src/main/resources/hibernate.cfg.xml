@@ -48,5 +48,6 @@
     <mapping class="com.humanharvest.organz.Administrator"/>
     <mapping class="com.humanharvest.organz.HistoryItem"/>
     <mapping class="com.humanharvest.organz.Config"/>
+    <mapping class="com.humanharvest.organz.Hospital"/>
   </session-factory>
 </hibernate-configuration>

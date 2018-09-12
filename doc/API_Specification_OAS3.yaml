@@ -1914,7 +1914,7 @@ paths:
         500:
           $ref: '#/components/responses/500InternalServerError'
 
-    ###Configurations
+  ###Configurations
   '/config/countries':
     get:
       tags:
@@ -1943,6 +1943,46 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/countryResponse'
+      responses:
+        200:
+          description: OK
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
+
+  '/config/hospitals':
+    get:
+      tags:
+        - Configuration
+      summary: Returns the list of hospitals
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/hospitalList'
+
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
+    post:
+      tags:
+        - Configuration
+      summary: Updates the allowed list of countries
+      security:
+        - AdministratorAccess: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/hospitalList'
       responses:
         200:
           description: OK
@@ -2076,7 +2116,7 @@ paths:
         - AdministratorAccess: []
       summary: "Returns a list of potential recipients for the organ, in priority order."
       parameters:
-        - $ref: '#/components/parameters/donatedOrgan'
+        - $ref: '#/components/schemas/donatedOrgan'
       responses:
         200:
           description: A list of clients
@@ -2711,6 +2751,29 @@ components:
       type: array
       items:
         $ref: '#/components/schemas/countryEnum'
+
+    hospitalList:
+      type: array
+      items:
+        $ref: '#/components/schemas/hospital'
+
+    hospital:
+      type: object
+      properties:
+        id:
+          type: number
+        name:
+          type: string
+        latitude:
+          type: number
+        longitude:
+          type: number
+        address:
+          type: string
+        transplantPrograms:
+          type: array
+          items:
+            $ref: '#/components/schemas/organEnum'
 
     textResponse:
       type: object

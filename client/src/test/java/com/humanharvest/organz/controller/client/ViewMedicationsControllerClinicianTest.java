@@ -14,19 +14,15 @@ import static org.testfx.util.NodeQueryUtils.isVisible;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.DialogPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.input.KeyCode;
-import javafx.stage.Stage;
-import javafx.stage.Window;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.Clinician;
@@ -42,7 +38,6 @@ import com.humanharvest.organz.utilities.web.DrugInteractionsHandler;
 import com.humanharvest.organz.utilities.web.MedActiveIngredientsHandler;
 
 import org.junit.Test;
-import org.testfx.api.FxRobot;
 
 public class ViewMedicationsControllerClinicianTest extends ControllerTest {
 
@@ -198,39 +193,6 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
     }
 
     // VIEWING ACTIVE INGREDIENTS //
-
-    /**
-     * Get the top modal window.
-     *
-     * @return the top modal window
-     */
-    private Stage getTopModalStage() {
-        // Get a list of windows but ordered from top[0] to bottom[n] ones.
-        List<Window> allWindows = new ArrayList<>(new FxRobot().robotContext().getWindowFinder().listWindows());
-        Collections.reverse(allWindows);
-
-        // Return the first found modal window.
-        return (Stage) allWindows
-                .stream()
-                .filter(window -> window instanceof Stage)
-                .findFirst()
-                .orElse(null);
-    }
-
-    /**
-     * Checks the current alert dialog displayed (on the top of the window stack) has the expected contents.
-     *
-     * @param expectedHeader Expected header of the dialog
-     * @param expectedContent Expected content of the dialog
-     */
-    private void checkAlertHasHeaderAndContent(String expectedHeader, String expectedContent) {
-        Stage actualAlertDialog = getTopModalStage();
-        assertNotNull(actualAlertDialog);
-
-        DialogPane dialogPane = (DialogPane) actualAlertDialog.getScene().getRoot();
-        assertEquals(expectedHeader, dialogPane.getHeaderText());
-        assertEquals(expectedContent, dialogPane.getContentText());
-    }
 
     /**
      * Create a mock ActiveIngredientsHandler that returns ingredients when passed medName.
