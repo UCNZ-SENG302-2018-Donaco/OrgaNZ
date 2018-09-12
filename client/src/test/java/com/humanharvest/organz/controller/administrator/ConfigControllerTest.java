@@ -94,7 +94,6 @@ public class ConfigControllerTest extends ControllerTest {
         assertThat(dialogPane.getContentText(), containsString(expectedContent));
     }
 
-    @Ignore
     @Test
     public void addTransplantProgram() {
         clickOn(firstHospital.getName());
@@ -105,18 +104,6 @@ public class ConfigControllerTest extends ControllerTest {
         assertThatHospitalOnlyContainsFirstOrgan(firstHospital);
     }
 
-    @Ignore
-    @Test
-    public void addTransplantProgramThenSelectAnotherHospital() {
-        // click on the first hospital, and select the first organ
-        clickOn(firstHospital.getName());
-        clickOn((Node) lookup("#organSelector").lookup(".check-box").nth(0).query());
-
-        // click on the second hospital, then click apply
-        clickOn(secondHospital.getName());
-        clickOn("Apply");
-        assertThatHospitalOnlyContainsFirstOrgan(firstHospital);
-    }
 
     @Test
     public void organChecksAreMaintainedAfterClickingOnAnotherHospital() {

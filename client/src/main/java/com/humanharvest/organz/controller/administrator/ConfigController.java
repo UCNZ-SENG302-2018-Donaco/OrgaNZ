@@ -111,23 +111,28 @@ public class ConfigController extends SubController {
      */
     @FXML
     private void apply() {
+
         // Update allowed countries
         EnumSet<Country> allowedCountriesSet = EnumSet.noneOf(Country.class);
         allowedCountriesSet.addAll(allowedCountries.getCheckModel().getCheckedItems());
-        State.getConfigManager().setAllowedCountries(allowedCountriesSet);
 
-        // Generate notification
-        Notifications.create().title("Updated Countries").text("Allowed countries have been updated").showInformation();
+        if (!State.getConfigManager().getAllowedCountries().equals(allowedCountriesSet)) {
 
-        // Sort the list, so that the updated allowed countries are at the top
-        ObservableList<Country> selectedCountries = allowedCountries.getCheckModel().getCheckedItems();
-        List<Country> allCountries = Arrays.asList(Country.values());
-        SortedList<Country> countryList = getCountryListSortedByIfInCollection(allCountries, selectedCountries);
-        // Reset the list's items
-        allowedCountries.setItems(countryList);
-        // Re-check every country was that checked before
-        for (Country country : selectedCountries) {
-            allowedCountries.getCheckModel().check(country);
+            // Generate notification
+            State.getConfigManager().setAllowedCountries(allowedCountriesSet);
+            Notifications.create().title("Updated Countries").text("Allowed countries have been updated")
+                    .showInformation();
+
+            // Sort the list, so that the updated allowed countries are at the top
+            ObservableList<Country> selectedCountries = allowedCountries.getCheckModel().getCheckedItems();
+            List<Country> allCountries = Arrays.asList(Country.values());
+            SortedList<Country> countryList = getCountryListSortedByIfInCollection(allCountries, selectedCountries);
+            // Reset the list's items
+            allowedCountries.setItems(countryList);
+            // Re-check every country was that checked before
+            for (Country country : selectedCountries) {
+                allowedCountries.getCheckModel().check(country);
+            }
         }
 
         // Update hospital transplant programs
