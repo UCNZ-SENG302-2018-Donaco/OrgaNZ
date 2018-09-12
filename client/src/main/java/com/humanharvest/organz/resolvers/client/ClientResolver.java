@@ -8,6 +8,7 @@ import java.util.Map;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.HistoryItem;
+import com.humanharvest.organz.Hospital;
 import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.ProcedureRecord;
@@ -67,7 +68,8 @@ public interface ClientResolver {
 
     List<ProcedureRecord> addProcedureRecord(Client client, ProcedureRecord procedureRecord);
 
-    List<ProcedureRecord> scheduleTransplantProcedure(DonatedOrgan organ, TransplantRequest request, LocalDate date);
+    List<ProcedureRecord> scheduleTransplantProcedure(DonatedOrgan organ, TransplantRequest request, Hospital hospital,
+            LocalDate date);
 
     DonatedOrgan manuallyOverrideOrgan(DonatedOrgan donatedOrgan, String overrideReason);
 

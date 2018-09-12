@@ -22,19 +22,21 @@ public class TransplantRecord extends ProcedureRecord {
     @OneToOne
     @JoinColumn(name = "organ_id")
     private DonatedOrgan organ;
-
     @OneToOne
     @JoinColumn(name = "request_id")
     private TransplantRequest request;
-
+    @OneToOne
+    @JoinColumn(name = "hospital_id")
+    private Hospital hospital;
     private boolean completed;
 
     protected TransplantRecord() {
     }
 
-    public TransplantRecord(DonatedOrgan organ, TransplantRequest request, LocalDate scheduledDate) {
+    public TransplantRecord(DonatedOrgan organ, TransplantRequest request, Hospital hospital, LocalDate scheduledDate) {
         this.organ = organ;
         this.request = request;
+        this.hospital = hospital;
         setDate(scheduledDate);
         setClient(request.getClient());
         setSummary(organ.getOrganType().toString() + " transplant");
@@ -57,6 +59,14 @@ public class TransplantRecord extends ProcedureRecord {
 
     public Client getReceiver() {
         return getClient();
+    }
+
+    public Hospital getHospital() {
+        return hospital;
+    }
+
+    public void setHospital(Hospital hospital) {
+        this.hospital = hospital;
     }
 
     public boolean isCompleted() {
