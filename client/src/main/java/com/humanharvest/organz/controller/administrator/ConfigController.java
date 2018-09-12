@@ -139,7 +139,7 @@ public class ConfigController extends SubController {
             }
             Notifications.create()
                     .title("Updated Transplant Programs")
-                    .text(String.format("Transplant programs have been updated for: \n%s.",
+                    .text(String.format("Programs have been updated for: \n%s.",
                             modifiedHospitalPrograms.keySet().stream()
                                     .map(Hospital::getName)
                                     .collect(Collectors.joining(", \n"))))
