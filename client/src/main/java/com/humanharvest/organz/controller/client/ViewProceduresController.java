@@ -364,26 +364,29 @@ public class ViewProceduresController extends SubController {
      */
     private void enableAppropriateButtons() {
         if (!windowContext.isClinViewClientWindow()) {
+            // Clients can't use any buttons
             return;
         }
         if (pastProcedureView.getSelectionModel().getSelectedItem() == null &&
                 pendingProcedureView.getSelectionModel().getSelectedItem() == null) {
+            // Nothing is selected
             deleteButton.setDisable(true);
             completeTransplantButton.setDisable(true);
         } else {
+            // Something is selected
             deleteButton.setDisable(false);
-            setResolveTransplantButton();
+            setCompleteTransplantButton();
         }
     }
 
     /**
-     * Enable or disable the resolve transplant button based on the currently selected item
+     * Enable or disable the Complete Transplant button based on the currently selected item
      * Will only be enabled if the currently selected item is:
      * In the past
      * A TransplantRecord
      * Has not yet been completed
      */
-    private void setResolveTransplantButton() {
+    private void setCompleteTransplantButton() {
         ProcedureRecord record = pastProcedureView.getSelectionModel().getSelectedItem();
         if (record instanceof TransplantRecord) {
             TransplantRecord tRecord = (TransplantRecord) record;

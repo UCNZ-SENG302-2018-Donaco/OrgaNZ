@@ -410,7 +410,8 @@ public class OrgansToDonateController extends SubController {
         if (transplantDate == null || transplantDate.isBefore(LocalDate.now())) {
             PageNavigator.showAlert(AlertType.ERROR,
                     "Invalid Transplant Date",
-                    "Please enter a valid date for the transplant to take place.",
+                    "Please enter a valid date for the transplant to take place. "
+                            + "A valid date is one that is today or in the future.",
                     mainController.getStage());
             return;
         }
