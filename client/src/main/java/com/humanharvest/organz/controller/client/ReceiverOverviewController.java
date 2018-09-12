@@ -13,6 +13,8 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
+import javafx.scene.layout.VBox;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.TransplantRequest;
@@ -23,11 +25,14 @@ import com.humanharvest.organz.utilities.DurationFormatter.Format;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
+import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
+import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
 
 public class ReceiverOverviewController extends ViewBaseController {
 
     private static final Logger LOGGER = Logger.getLogger(ReceiverOverviewController.class.getName());
+
 
     private Client viewedClient;
     private TransplantRequest viewedTransplantRequest;
@@ -49,6 +54,9 @@ public class ReceiverOverviewController extends ViewBaseController {
 
     @FXML
     private Label age;
+
+    @FXML
+    private  VBox receiverVBox;
     /*
         public ReceiverOverviewController(Client client, Organ organ) {
             viewedClient = client;
@@ -88,6 +96,20 @@ public class ReceiverOverviewController extends ViewBaseController {
         } else {
             requestedTime.setText(getFormattedDuration(viewedTransplantRequest.getTimeSinceRequest(), Format.Biggest));
         }
+
+        // Track the adding of panes with the spiderweb pane collection.
+        receiverVBox.setOnMouseClicked(mouseEvent -> {
+            if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 1) {
+                    MainController newMain = PageNavigator.openNewWindow();
+                    if (newMain != null) {
+                        newMain.setWindowContext(new WindowContextBuilder()
+                                .setAsClinicianViewClientWindow()
+                                .viewClient(viewedClient)
+                                .build());
+                        PageNavigator.loadPage(Page.VIEW_CLIENT, newMain);
+                    }
+                }
+            });
 
     }
 
