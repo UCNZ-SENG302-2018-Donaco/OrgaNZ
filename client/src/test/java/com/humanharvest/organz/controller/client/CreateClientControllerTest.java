@@ -49,6 +49,7 @@ public class CreateClientControllerTest extends ControllerTest {
         clickOn("#lastNamefld").write("b");
         clickOn("#dobFld").write("01/01/2000");
         clickOn("#createButton");
+        sleep(5000);
 
         assertEquals(Page.VIEW_CLIENT, mainController.getCurrentPage());
     }
