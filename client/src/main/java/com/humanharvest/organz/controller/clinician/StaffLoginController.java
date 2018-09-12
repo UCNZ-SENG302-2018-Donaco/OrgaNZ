@@ -17,6 +17,7 @@ import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.JSONConverter;
 import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
+import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 
@@ -82,7 +83,7 @@ public class StaffLoginController extends SubController {
 
         try {
             clinician = State.getAuthenticationManager().loginClinician(id, password.getText());
-        } catch (AuthenticationException e) {
+        } catch (AuthenticationException | ServerRestException e) {
             LOGGER.log(Level.INFO, e.getMessage(), e);
             PageNavigator.showAlert(AlertType.ERROR, "Invalid login", e.getLocalizedMessage(),
                     mainController.getStage());
@@ -104,7 +105,7 @@ public class StaffLoginController extends SubController {
         Administrator administrator;
         try {
             administrator = State.getAuthenticationManager().loginAdministrator(staffId.getText(), password.getText());
-        } catch (AuthenticationException e) {
+        } catch (AuthenticationException | ServerRestException e) {
             LOGGER.log(Level.INFO, e.getMessage(), e);
             PageNavigator.showAlert(AlertType.ERROR, "Invalid login", e.getLocalizedMessage(),
                     mainController.getStage());

@@ -32,6 +32,8 @@ import org.testfx.util.NodeQueryUtils;
 
 public class ViewProceduresControllerClinicianTest extends ControllerTest {
 
+    private final static Organ[] organs = Organ.values();
+
     private final int futureYear = LocalDate.now().plusYears(2).getYear();
 
     private final ProcedureRecord[] pastRecords = {
@@ -68,10 +70,10 @@ public class ViewProceduresControllerClinicianTest extends ControllerTest {
     private void resetRecords() {
 
         Set<Organ> organs = new HashSet<>();
-        organs.add(Organ.KIDNEY);
-        organs.add(Organ.LIVER);
+        organs.add(Organ.BONE_MARROW);
+        organs.add(Organ.BONE);
         pastRecords[0].setAffectedOrgans(organs);
-        organs.add(Organ.HEART);
+        organs.add(Organ.CONNECTIVE_TISSUE);
         pastRecords[1].setAffectedOrgans(organs);
         pendingRecords[0].setAffectedOrgans(organs);
 
@@ -222,7 +224,7 @@ public class ViewProceduresControllerClinicianTest extends ControllerTest {
         for (ProcedureRecord record : testClient.getPastProcedures()) {
             if ("C Summary 3".equals(record.getSummary())) {
                 Collection<Organ> affected = new HashSet<>();
-                affected.add(Organ.KIDNEY);
+                affected.add(organs[1]);
                 assertEquals(affected, record.getAffectedOrgans());
                 hasMatch = true;
                 break;
@@ -247,9 +249,9 @@ public class ViewProceduresControllerClinicianTest extends ControllerTest {
         for (ProcedureRecord record : testClient.getPastProcedures()) {
             if ("C Summary 3".equals(record.getSummary())) {
                 Collection<Organ> affected = new HashSet<>();
-                affected.add(Organ.LUNG);
-                affected.add(Organ.KIDNEY);
-                affected.add(Organ.PANCREAS);
+                affected.add(organs[1]);
+                affected.add(organs[2]);
+                affected.add(organs[4]);
                 assertEquals(affected, record.getAffectedOrgans());
                 hasMatch = true;
                 break;
@@ -271,8 +273,8 @@ public class ViewProceduresControllerClinicianTest extends ControllerTest {
         for (ProcedureRecord record : testClient.getPastProcedures()) {
             if ("B Summary 2".equals(record.getSummary())) {
                 Collection<Organ> affected = new HashSet<>();
-                affected.add(Organ.LIVER);
-                affected.add(Organ.HEART);
+                affected.add(organs[0]);
+                affected.add(organs[3]);
                 assertEquals(affected, record.getAffectedOrgans());
                 hasMatch = true;
                 break;
@@ -295,7 +297,7 @@ public class ViewProceduresControllerClinicianTest extends ControllerTest {
         for (ProcedureRecord record : testClient.getPastProcedures()) {
             if ("B Summary 2".equals(record.getSummary())) {
                 Collection<Organ> affected = new HashSet<>();
-                affected.add(Organ.HEART);
+                affected.add(organs[3]);
                 assertEquals(affected, record.getAffectedOrgans());
                 hasMatch = true;
                 break;
@@ -321,8 +323,8 @@ public class ViewProceduresControllerClinicianTest extends ControllerTest {
         for (ProcedureRecord record : testClient.getPastProcedures()) {
             if ("B Summary 2".equals(record.getSummary())) {
                 Collection<Organ> affected = new HashSet<>();
-                affected.add(Organ.PANCREAS);
-                affected.add(Organ.INTESTINE);
+                affected.add(organs[2]);
+                affected.add(organs[5]);
                 assertEquals(affected, record.getAffectedOrgans());
                 hasMatch = true;
                 break;
@@ -357,8 +359,8 @@ public class ViewProceduresControllerClinicianTest extends ControllerTest {
         for (ProcedureRecord record : testClient.getPendingProcedures()) {
             if ("B Summary 2".equals(record.getSummary())) {
                 Collection<Organ> affected = new HashSet<>();
-                affected.add(Organ.PANCREAS);
-                affected.add(Organ.INTESTINE);
+                affected.add(organs[2]);
+                affected.add(organs[5]);
                 assertEquals(affected, record.getAffectedOrgans());
                 assertEquals(LocalDate.of(futureYear, 10, 19), record.getDate());
                 hasMatch = true;
