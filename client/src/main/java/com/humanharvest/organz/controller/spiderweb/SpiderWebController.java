@@ -1,5 +1,6 @@
 package com.humanharvest.organz.controller.spiderweb;
 
+import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,9 +9,12 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.logging.Level;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
@@ -19,6 +23,8 @@ import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.touch.MultitouchHandler;
+import com.humanharvest.organz.utilities.exceptions.NotFoundException;
+import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.utilities.view.PageNavigatorTouch;
@@ -71,7 +77,16 @@ public class SpiderWebController {
     }
 
     private void displayDonatingClient() {
-        // Display donating client page here. Waiting on C4.
+        /*
+            MainController newMain = PageNavigator.openNewWindow(200,400);
+            PageNavigator.loadPage(Page.RECEIVER_OVERVIEW,newMain);
+            paneCollection.add(newMain.getPane());
+
+            newMain.getPane().setTranslateX(500);
+            newMain.getPane().setTranslate(500);
+         */
+
+
     }
 
     /**

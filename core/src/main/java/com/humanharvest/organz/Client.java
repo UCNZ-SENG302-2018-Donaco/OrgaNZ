@@ -953,7 +953,8 @@ public class Client implements ConcurrencyControlledEntity {
         Collection<String> matchedNames = new ArrayList<>();
 
         for (String searchedParam : searched) {
-            for (String name : lowercaseNames) {
+            for (String name : lowercaseNames)
+{
 
                 if (name.startsWith(searchedParam)) {
                     matchedNames.add(name);
@@ -973,6 +974,7 @@ public class Client implements ConcurrencyControlledEntity {
      */
     @Override
     public boolean equals(Object o) {
+
         if (this == o) {
             return true;
         }
@@ -999,6 +1001,7 @@ public class Client implements ConcurrencyControlledEntity {
 
     public void addTransplantRequest(TransplantRequest request) {
         transplantRequests.add(request);
+
         request.setClient(this);
         isReceiver = !transplantRequests.isEmpty();
     }
