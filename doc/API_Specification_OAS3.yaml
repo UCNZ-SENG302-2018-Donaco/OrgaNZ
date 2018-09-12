@@ -1,4 +1,4 @@
-openapi: "3.0.1"
+openapi: "3.0.3"
 info:
   version: 1.0.8
   title: "Organz API"
@@ -1975,7 +1975,7 @@ paths:
     post:
       tags:
         - Configuration
-      summary: Updates the allowed list of countries
+      summary: Updates the allowed list of hospitals
       security:
         - AdministratorAccess: []
       requestBody:
@@ -1983,6 +1983,37 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/hospitalList'
+      responses:
+        200:
+          description: OK
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
+
+  '/config/hospitals/{id}/transplantPrograms':
+    parameters:
+      - in: path
+        name: id
+        description: Hospital ID
+        required: true
+        schema:
+          type: integer
+    post:
+      tags:
+        - Configuration
+      summary: Updates the set of organs that the hospital can perform transplants for
+      security:
+        - AdministratorAccess: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/organTypeList'
       responses:
         200:
           description: OK
@@ -2774,6 +2805,11 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/organEnum'
+
+    organTypeList:
+      type: array
+      items:
+        $ref: '#/components/schemas/organEnum'
 
     textResponse:
       type: object
