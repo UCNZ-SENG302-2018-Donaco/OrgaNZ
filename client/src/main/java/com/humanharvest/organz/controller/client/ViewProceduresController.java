@@ -2,11 +2,9 @@ package com.humanharvest.organz.controller.client;
 
 import java.time.LocalDate;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import javafx.collections.FXCollections;
 import javafx.collections.transformation.SortedList;
@@ -328,17 +326,11 @@ public class ViewProceduresController extends SubController {
             return;
         }
 
-        List<ProcedureRecord> allProcedures = client.getProcedures();
-
         SortedList<ProcedureRecord> sortedPastProcedures = new SortedList<>(FXCollections.observableArrayList(
-                allProcedures.stream()
-                        .filter(record -> record.getDate().isBefore(LocalDate.now()))
-                        .collect(Collectors.toList())));
+                client.getPastProcedures()));
 
         SortedList<ProcedureRecord> sortedPendingProcedures = new SortedList<>(FXCollections.observableArrayList(
-                allProcedures.stream()
-                        .filter(record -> !record.getDate().isBefore(LocalDate.now()))
-                        .collect(Collectors.toList())));
+                client.getPendingProcedures()));
 
         sortedPendingProcedures.comparatorProperty().bind(pendingProcedureView.comparatorProperty());
         sortedPastProcedures.comparatorProperty().bind(pastProcedureView.comparatorProperty());
