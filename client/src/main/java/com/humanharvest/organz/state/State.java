@@ -29,6 +29,9 @@ import com.humanharvest.organz.resolvers.client.ClientResolverRest;
 import com.humanharvest.organz.resolvers.clinician.ClincianResolverMemory;
 import com.humanharvest.organz.resolvers.clinician.ClinicianResolver;
 import com.humanharvest.organz.resolvers.clinician.ClinicianResolverRest;
+import com.humanharvest.organz.resolvers.config.ConfigResolver;
+import com.humanharvest.organz.resolvers.config.ConfigResolverMemory;
+import com.humanharvest.organz.resolvers.config.ConfigResolverRest;
 import com.humanharvest.organz.utilities.RestErrorHandler;
 import com.humanharvest.organz.utilities.enums.Country;
 
@@ -70,6 +73,7 @@ public final class State {
     private static AdministratorResolver administratorResolver;
     private static FileResolver fileResolver;
     private static ConfigManager configManager;
+    private static ConfigResolver configResolver;
 
     private static Session session;
     private static boolean unsavedChanges;
@@ -109,6 +113,7 @@ public final class State {
             administratorManager = new AdministratorManagerRest();
             authenticationManager = new AuthenticationManagerRest();
             configManager = new ConfigManagerRest();
+            configResolver = new ConfigResolverRest();
             commandRunner = new CommandRunnerRest();
             actionResolver = new ActionResolverRest();
             clinicianResolver = new ClinicianResolverRest();
@@ -122,6 +127,7 @@ public final class State {
             administratorManager = new AdministratorManagerMemory();
             authenticationManager = new AuthenticationManagerMemory();
             configManager = new ConfigManagerMemory();
+            configResolver = new ConfigResolverMemory();
             commandRunner = commandText -> {
                 throw new UnsupportedOperationException("Memory storage type does not support running commands.");
             };
@@ -287,6 +293,10 @@ public static Stage getPrimaryStage() {
 
     public static ConfigManager getConfigManager() {
         return configManager;
+    }
+
+    public static ConfigResolver getConfigResolver() {
+        return configResolver;
     }
 
     public static Session getSession() {

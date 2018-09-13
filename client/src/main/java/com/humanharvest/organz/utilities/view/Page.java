@@ -29,7 +29,7 @@ public enum Page {
     VIEW_PROCEDURES("/fxml/view_procedures.fxml"),
     STAFF_LIST("/fxml/staff_list.fxml"),
     COMMAND_LINE("/fxml/command_line.fxml"),
-    ADMIN_CONFIG("/fxml/admin_config.fxml"),
+    ADMIN_CONFIG("/fxml/settings.fxml"),
     SUBMIT_DEATH_DETAILS("/fxml/submit_death_details.fxml"),
     TOUCH_ALERT("/fxml/touch_alert.fxml"),
     TOUCH_ALERT_TEXT("/fxml/touch_alert_text.fxml"),

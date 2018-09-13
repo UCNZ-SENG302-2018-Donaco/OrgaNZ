@@ -6,18 +6,18 @@ import java.time.Duration;
  * Enum for organs. Allows for to/from string conversion
  */
 public enum Organ {
-    LIVER("Liver", Duration.ofHours(24), Duration.ofHours(24)),
-    KIDNEY("Kidney", Duration.ofHours(48), Duration.ofHours(72)),
-    PANCREAS("Pancreas", Duration.ofHours(12), Duration.ofHours(24)),
-    HEART("Heart", Duration.ofHours(4), Duration.ofHours(6)),
-    LUNG("Lung", Duration.ofHours(4), Duration.ofHours(6)),
-    INTESTINE("Intestine", Duration.ofHours(8), Duration.ofHours(12)),
-    CORNEA("Cornea", Duration.ofDays(5), Duration.ofDays(7)),
-    MIDDLE_EAR("Middle ear", null, null),
-    SKIN("Skin", Duration.ofDays(365 * 3), Duration.ofDays(365 * 10)),
     BONE("Bone", Duration.ofDays(365 * 3), Duration.ofDays(365 * 10)),
     BONE_MARROW("Bone marrow", null, null),
-    CONNECTIVE_TISSUE("Connective tissue", null, null);
+    CORNEA("Cornea", Duration.ofDays(5), Duration.ofDays(7)),
+    CONNECTIVE_TISSUE("Connective tissue", null, null),
+    HEART("Heart", Duration.ofHours(4), Duration.ofHours(6)),
+    INTESTINE("Intestine", Duration.ofHours(8), Duration.ofHours(12)),
+    KIDNEY("Kidney", Duration.ofHours(48), Duration.ofHours(72)),
+    LIVER("Liver", Duration.ofHours(24), Duration.ofHours(24)),
+    LUNG("Lung", Duration.ofHours(4), Duration.ofHours(6)),
+    MIDDLE_EAR("Middle ear", null, null),
+    PANCREAS("Pancreas", Duration.ofHours(12), Duration.ofHours(24)),
+    SKIN("Skin", Duration.ofDays(365 * 3), Duration.ofDays(365 * 10));
 
     private static String mismatchText;
 
