@@ -1,7 +1,5 @@
 package com.humanharvest.organz.views.client;
 
-import com.humanharvest.organz.Hospital;
-
 import static com.humanharvest.organz.utilities.type_converters.StringFormatter.unCamelCase;
 
 import java.lang.reflect.Member;

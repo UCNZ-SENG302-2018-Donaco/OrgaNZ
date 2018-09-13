@@ -1,10 +1,7 @@
 package com.humanharvest.organz.controller.administrator;
 
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.testfx.api.FxAssert.verifyThat;
 import static org.testfx.matcher.control.ListViewMatchers.hasItems;
 
@@ -21,12 +18,10 @@ import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.Hospital;
 import com.humanharvest.organz.controller.ControllerTest;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class ConfigControllerTest extends ControllerTest {
