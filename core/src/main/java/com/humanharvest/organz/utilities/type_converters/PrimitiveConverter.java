@@ -5,6 +5,8 @@ import java.util.Map;
 
 public class PrimitiveConverter {
 
+    private static Map<Class<?>, Class<?>> PRIMITIVES_TO_WRAPPERS;
+
     /**
      * Returns an object converted from it's respective primitive. If already an object just returns it
      *
@@ -15,17 +17,23 @@ public class PrimitiveConverter {
         if (!toConvert.isPrimitive()) {
             return toConvert;
         } else {
-            Map<Class<?>, Class<?>> primitivesToWrappers = new HashMap<>();
-            primitivesToWrappers.put(boolean.class, Boolean.class);
-            primitivesToWrappers.put(byte.class, Byte.class);
-            primitivesToWrappers.put(char.class, Character.class);
-            primitivesToWrappers.put(double.class, Double.class);
-            primitivesToWrappers.put(float.class, Float.class);
-            primitivesToWrappers.put(int.class, Integer.class);
-            primitivesToWrappers.put(long.class, Long.class);
-            primitivesToWrappers.put(short.class, Short.class);
-            primitivesToWrappers.put(void.class, Void.class);
-            return primitivesToWrappers.get(toConvert);
+            if (PRIMITIVES_TO_WRAPPERS == null) {
+                createMap();
+            }
+            return PRIMITIVES_TO_WRAPPERS.get(toConvert);
         }
+    }
+
+    private void createMap() {
+        PRIMITIVES_TO_WRAPPERS = new HashMap<>();
+        PRIMITIVES_TO_WRAPPERS.put(boolean.class, Boolean.class);
+        PRIMITIVES_TO_WRAPPERS.put(byte.class, Byte.class);
+        PRIMITIVES_TO_WRAPPERS.put(char.class, Character.class);
+        PRIMITIVES_TO_WRAPPERS.put(double.class, Double.class);
+        PRIMITIVES_TO_WRAPPERS.put(float.class, Float.class);
+        PRIMITIVES_TO_WRAPPERS.put(int.class, Integer.class);
+        PRIMITIVES_TO_WRAPPERS.put(long.class, Long.class);
+        PRIMITIVES_TO_WRAPPERS.put(short.class, Short.class);
+        PRIMITIVES_TO_WRAPPERS.put(void.class, Void.class);
     }
 }
