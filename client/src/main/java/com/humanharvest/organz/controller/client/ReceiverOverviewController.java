@@ -78,7 +78,7 @@ public class ReceiverOverviewController extends ViewBaseController {
    * Initializes the UI for this page.
    */
   private void setClientFields() {
-    Client reciever = null;
+    Client receiver = null;
     if (viewedClient.getDonatedOrgans().size() > 0) {
       for (DonatedOrgan donatedOrgan:viewedClient.getDonatedOrgans()){
         /*
@@ -87,14 +87,14 @@ public class ReceiverOverviewController extends ViewBaseController {
         if (donatedOrgan.getOrganType() == Organ.LIVER) {
           List<Client> potentialMatches = State.getClientManager().getOrganMatches(donatedOrgan);
           if(potentialMatches.size() > 0) {
-            reciever = potentialMatches.get(0);
+              receiver = potentialMatches.get(0);
           }
         }
       }
 
-      name.setText(reciever.getFullName()); //todo reciever may be null
-      hospital.setText(reciever.getHospital().getName());
-      travelTime.setText(viewedClient.getHospital().calculateTimeTo(reciever.getHospital()).toString());
+      name.setText(receiver.getFullName()); //todo receiver may be null
+      hospital.setText(receiver.getHospital().getName());
+      travelTime.setText(viewedClient.getHospital().calculateTimeTo(receiver.getHospital()).toString());
 
       loadImage();
 
