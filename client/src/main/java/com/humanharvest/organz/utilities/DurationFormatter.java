@@ -1,6 +1,8 @@
 package com.humanharvest.organz.utilities;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 /**
  * Abstract class used to format durations.
@@ -34,7 +36,34 @@ public abstract class DurationFormatter {
     }
 
     private static String getDurationFormattedBiggest(Duration duration) {
-        return "some duration"; //todo
+
+        long years = ChronoUnit.YEARS.between(LocalDateTime.now(), LocalDateTime.now().plus(duration));
+        if (years > 1) {
+            return years + " years";
+        }
+
+        long months = ChronoUnit.MONTHS.between(LocalDateTime.now(), LocalDateTime.now().plus(duration));
+        if (months > 1) {
+            return months + " months";
+        }
+
+        long days = duration.toDays();
+        if (days > 1) {
+            return days + " days";
+        }
+
+        long hours = duration.toHours();
+        if (hours > 1) {
+            return hours + " hours";
+        }
+
+        long minutes = duration.toMinutes();
+        if (minutes > 1) {
+            return minutes + " minutes";
+        }
+
+        long seconds = duration.getSeconds();
+        return seconds + " seconds";
     }
 
     /**
