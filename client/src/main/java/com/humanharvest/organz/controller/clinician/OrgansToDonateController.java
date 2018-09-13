@@ -446,7 +446,7 @@ public class OrgansToDonateController extends SubController {
         if (!optionalRequest.isPresent()) {
             PageNavigator.showAlert(AlertType.ERROR,
                     "Could not find the transplant",
-                    "The specified transplant could not be located, maybe it was deleted?",
+                    "The specified transplant request could not be located, maybe it was deleted?",
                     mainController.getStage());
             return;
         }
