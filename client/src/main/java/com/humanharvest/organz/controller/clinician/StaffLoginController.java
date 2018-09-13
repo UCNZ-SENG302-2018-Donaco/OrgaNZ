@@ -60,15 +60,14 @@ public class StaffLoginController extends SubController {
      *
      * @return true if the staffID is a positive integer. False otherwise.
      */
-    private boolean isValidStaffIdInput() {
-        String idString = staffId.getText();
-        return idString != null && !idString.isEmpty();
+    private static boolean isValidStaffIdInput(String username) {
+        return username != null && !username.isEmpty();
     }
 
     /**
      * Alert to display that an invalid StaffId has been entered.
      */
-    private void invalidStaffIdAlert() {
+    private static void invalidStaffIdAlert(MainController mainController) {
         PageNavigator.showAlert(AlertType.ERROR, "Invalid Staff ID",
                 "Staff ID is invalid", mainController.getStage());
     }
@@ -77,12 +76,12 @@ public class StaffLoginController extends SubController {
      * Finds if there is a clinician with the staff id and password input and logs them in
      * Gives an alert if the password does not match the staff id
      */
-    private void signInClinician() {
-        int id = Integer.parseInt(staffId.getText());
+    private static void signInClinician(String username, String password, MainController mainController) {
+        int id = Integer.parseInt(username);
         Clinician clinician;
 
         try {
-            clinician = State.getAuthenticationManager().loginClinician(id, password.getText());
+            clinician = State.getAuthenticationManager().loginClinician(id, password);
         } catch (AuthenticationException | ServerRestException e) {
             LOGGER.log(Level.INFO, e.getMessage(), e);
             PageNavigator.showAlert(AlertType.ERROR, "Invalid login", e.getLocalizedMessage(),
@@ -101,10 +100,10 @@ public class StaffLoginController extends SubController {
      * Finds if there is an administrator with the username and password input and logs them in
      * Gives an alert if the password does not match the username
      */
-    private void signInAdministrator() {
+    private static void signInAdministrator(String username, String password, MainController mainController) {
         Administrator administrator;
         try {
-            administrator = State.getAuthenticationManager().loginAdministrator(staffId.getText(), password.getText());
+            administrator = State.getAuthenticationManager().loginAdministrator(username, password);
         } catch (AuthenticationException | ServerRestException e) {
             LOGGER.log(Level.INFO, e.getMessage(), e);
             PageNavigator.showAlert(AlertType.ERROR, "Invalid login", e.getLocalizedMessage(),
@@ -124,14 +123,18 @@ public class StaffLoginController extends SubController {
      */
     @FXML
     private void signIn() {
-        if (isValidStaffIdInput()) {
-            if (IS_NUMBER.matcher(staffId.getText()).matches()) {
-                signInClinician();
+        handleSignIn(staffId.getText(), password.getText(), mainController);
+    }
+
+    public static void handleSignIn(String username, String password, MainController mainController) {
+        if (isValidStaffIdInput(username)) {
+            if (IS_NUMBER.matcher(username).matches()) {
+                signInClinician(username, password, mainController);
             } else {
-                signInAdministrator();
+                signInAdministrator(username, password, mainController);
             }
         } else {
-            invalidStaffIdAlert();
+            invalidStaffIdAlert(mainController);
         }
     }
 }

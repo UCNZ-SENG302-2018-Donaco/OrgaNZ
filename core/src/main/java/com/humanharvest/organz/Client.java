@@ -31,6 +31,8 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -80,6 +82,11 @@ public class Client implements ConcurrencyControlledEntity {
     @JsonView(Views.Details.class)
     @Column(columnDefinition = "text")
     private String currentAddress;
+
+    @ManyToOne
+    @JoinColumn(name="Hospital_id")
+    @JsonView(Views.Details.class)
+    private Hospital hospital;
 
     @JsonView(Views.Overview.class)
     private String region = "Unspecified";
@@ -821,6 +828,24 @@ public class Client implements ConcurrencyControlledEntity {
         return Collections.unmodifiableList(transplantRequests);
     }
 
+    /**
+     * Returns the transplant request relevant to the passed in organ.
+     * If there is no such transplant request, returns null.
+     *
+     * @param organ the organ to get the transplant request for
+     * @return the transplant request that is for the passed in organ
+     */
+    public TransplantRequest getTransplantRequest(Organ organ) {
+        for (TransplantRequest transplantRequest : transplantRequests) {
+            if (transplantRequest.getRequestedOrgan() == organ) {
+                return transplantRequest;
+            }
+        }
+
+        // Couldn't find one
+        return null;
+    }
+
     public void setTransplantRequests(List<TransplantRequest> requests) {
         transplantRequests = new ArrayList<>(requests);
         for (TransplantRequest request : requests) {
@@ -953,7 +978,8 @@ public class Client implements ConcurrencyControlledEntity {
         Collection<String> matchedNames = new ArrayList<>();
 
         for (String searchedParam : searched) {
-            for (String name : lowercaseNames) {
+            for (String name : lowercaseNames)
+{
 
                 if (name.startsWith(searchedParam)) {
                     matchedNames.add(name);
@@ -973,6 +999,7 @@ public class Client implements ConcurrencyControlledEntity {
      */
     @Override
     public boolean equals(Object o) {
+
         if (this == o) {
             return true;
         }
@@ -999,6 +1026,7 @@ public class Client implements ConcurrencyControlledEntity {
 
     public void addTransplantRequest(TransplantRequest request) {
         transplantRequests.add(request);
+
         request.setClient(this);
         isReceiver = !transplantRequests.isEmpty();
     }
@@ -1068,7 +1096,8 @@ public class Client implements ConcurrencyControlledEntity {
      * @param regionOfDeath The region they died in.
      * @param cityOfDeath The city they died in.
      */
-    public void markDead(LocalDate dateOfDeath, LocalTime timeOfDeath, Country countryOfDeath, String regionOfDeath,
+    public void markDead(LocalDate dateOfDeath, LocalTime timeOfDeath, Country countryOfDeath, String
+            regionOfDeath,
             String cityOfDeath) {
         this.dateOfDeath = dateOfDeath;
         this.timeOfDeath = timeOfDeath;
@@ -1175,8 +1204,18 @@ public class Client implements ConcurrencyControlledEntity {
         return country;
     }
 
+
     public void setCountry(Country country) {
         this.country = country;
+        updateModifiedTimestamp();
+    }
+
+    public Hospital getHospital() {
+        return hospital;
+    }
+
+    public void setHospital(Hospital hospital) {
+        this.hospital = hospital;
         updateModifiedTimestamp();
     }
 }

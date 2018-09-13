@@ -13,6 +13,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.controller.clinician.StaffLoginController;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.state.State.DataStorageType;
 import com.humanharvest.organz.touch.MultitouchHandler;
@@ -115,6 +116,13 @@ public class AppUI extends Application {
 
         primaryStage.setMinHeight(639);
         primaryStage.setMinWidth(1016);
+
+        // Skips login page if arguments contains --login & --password
+        if (parameters.containsKey("login")) {
+            StaffLoginController.handleSignIn(parameters.get("login"),
+                    parameters.getOrDefault("password", ""),
+                    State.getMainControllers().get(0));
+        }
     }
 
     /**
