@@ -2,10 +2,14 @@ package com.humanharvest.organz.controller.client;
 
 import static com.humanharvest.organz.utilities.DurationFormatter.getFormattedDuration;
 
+import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
+import com.sun.tools.corba.se.idl.constExpr.Or;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -80,44 +84,42 @@ public class ReceiverOverviewController extends ViewBaseController {
    * Initializes the UI for this page.
    */
   private void setClientFields() {
-    List<TransplantRequest> transplantRequests = State.getClientResolver()
-        .getTransplantRequests(viewedClient);
-    viewedTransplantRequest = null;
-
-    Organ organ = Organ.LIVER; // for testing
-
-    for (TransplantRequest transplantRequest : transplantRequests) {
-      if (transplantRequest.getRequestedOrgan() == organ) {
-        viewedTransplantRequest = viewedClient.getTransplantRequest(Organ.LIVER);
+    Client reciever = null;
+    if (viewedClient.getDonatedOrgans().size() > 0) {
+      for (DonatedOrgan donatedOrgan:viewedClient.getDonatedOrgans()){
+        /**
+         * Temporary Will match any organ at later stage.
+         */
+        if (donatedOrgan.getOrganType() == Organ.LIVER) {
+          List<Client> potentialMatches = State.getClientManager().getOrganMatches(donatedOrgan);
+          if(potentialMatches.size() > 0) {
+            reciever = potentialMatches.get(0);
+          }
+        }
       }
-    }
 
-    try {
-      Client reciever = viewedTransplantRequest.getClient();
       name.setText(reciever.getFullName());
       hospital.setText(reciever.getHospital().getName());
-      travelTime
-          .setText(viewedClient.getHospital().calculateTimeTo(reciever.getHospital()).toString());
+      travelTime.setText(viewedClient.getHospital().calculateTimeTo(reciever.getHospital()).toString());
 
       loadImage();
 
-      // Track the adding of panes with the spiderweb pane collection.
-      receiverVBox.setOnMouseClicked(mouseEvent -> {
-        if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 1) {
-          MainController newMain = PageNavigator.openNewWindow();
-          if (newMain != null) {
-            newMain.setWindowContext(new WindowContextBuilder()
-                .setAsClinicianViewClientWindow()
-                .viewClient(viewedClient)
-                .build());
-            PageNavigator.loadPage(Page.VIEW_CLIENT, newMain);
-          }
-        }
-      });
-    } catch (NullPointerException e) {
-      PageNavigator.showAlert(AlertType.ERROR, "No Reciever","No Reciever that required Liver",mainController.getStage());
-
     }
+
+
+    // Track the adding of panes with the spiderweb pane collection.
+    receiverVBox.setOnMouseClicked(mouseEvent -> {
+      if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 1) {
+        MainController newMain = PageNavigator.openNewWindow();
+        if (newMain != null) {
+          newMain.setWindowContext(new WindowContextBuilder()
+              .setAsClinicianViewClientWindow()
+              .viewClient(viewedClient)
+              .build());
+          PageNavigator.loadPage(Page.VIEW_CLIENT, newMain);
+        }
+      }
+    });
 
   }
 

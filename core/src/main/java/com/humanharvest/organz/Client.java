@@ -1151,6 +1151,7 @@ public class Client implements ConcurrencyControlledEntity {
      * @param id The id to use for the {@link DonatedOrgan}
      */
     public void donateOrgan(Organ organ, LocalDateTime timeDonated, Long id) {
+        System.out.println(organ.toString());
         donatedOrgans.add(new DonatedOrgan(organ, this, timeDonated, id));
     }
 
