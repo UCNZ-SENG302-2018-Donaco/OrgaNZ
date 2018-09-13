@@ -444,6 +444,10 @@ public class OrgansToDonateController extends SubController {
                 .filter(r -> r.getRequestedOrgan() == organToDonate.getOrganType())
                 .findFirst();
         if (!optionalRequest.isPresent()) {
+            PageNavigator.showAlert(AlertType.ERROR,
+                    "Could not find the transplant",
+                    "The specified transplant could not be located, maybe it was deleted?",
+                    mainController.getStage());
             return;
         }
         TransplantRequest request = optionalRequest.get();
