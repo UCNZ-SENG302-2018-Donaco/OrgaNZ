@@ -80,43 +80,54 @@ public class ReceiverOverviewController extends ViewBaseController {
    * Initializes the UI for this page.
    */
   private void setClientFields() {
-    List<TransplantRequest> transplantRequests = State.getClientResolver()
-        .getTransplantRequests(viewedClient);
-    viewedTransplantRequest = null;
 
-    Organ organ = Organ.LIVER; // for testing
-
-    for (TransplantRequest transplantRequest : transplantRequests) {
-      if (transplantRequest.getRequestedOrgan() == organ) {
-        viewedTransplantRequest = viewedClient.getTransplantRequest(Organ.LIVER);
-      }
-    }
-
-    try {
-      Client reciever = viewedTransplantRequest.getClient();
-      name.setText(reciever.getFullName());
-      hospital.setText(reciever.getHospital().getName());
-      travelTime
-          .setText(viewedClient.getHospital().calculateTimeTo(reciever.getHospital()).toString());
-
+    if (true) {
+      name.setText(viewedClient.getFullName());
+      hospital.setText(viewedClient.getHospital().toString());
+      travelTime.setText("change this");
       loadImage();
 
-      // Track the adding of panes with the spiderweb pane collection.
-      receiverVBox.setOnMouseClicked(mouseEvent -> {
-        if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 1) {
-          MainController newMain = PageNavigator.openNewWindow();
-          if (newMain != null) {
-            newMain.setWindowContext(new WindowContextBuilder()
-                .setAsClinicianViewClientWindow()
-                .viewClient(viewedClient)
-                .build());
-            PageNavigator.loadPage(Page.VIEW_CLIENT, newMain);
-          }
-        }
-      });
-    } catch (NullPointerException e) {
-      PageNavigator.showAlert(AlertType.ERROR, "No Reciever","No Reciever that required Liver",mainController.getStage());
 
+    } else {
+      List<TransplantRequest> transplantRequests = State.getClientResolver()
+              .getTransplantRequests(viewedClient);
+      viewedTransplantRequest = null;
+
+      Organ organ = Organ.LIVER; // for testing
+
+      for (TransplantRequest transplantRequest : transplantRequests) {
+        if (transplantRequest.getRequestedOrgan() == organ) {
+          viewedTransplantRequest = viewedClient.getTransplantRequest(Organ.LIVER);
+        }
+      }
+
+      try {
+        Client reciever = viewedTransplantRequest.getClient();
+        name.setText(reciever.getFullName());
+        hospital.setText(reciever.getHospital().getName());
+        travelTime
+                .setText(viewedClient.getHospital().calculateTimeTo(reciever.getHospital()).toString());
+
+        loadImage();
+
+        // Track the adding of panes with the spiderweb pane collection.
+        receiverVBox.setOnMouseClicked(mouseEvent -> {
+          if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 1) {
+            MainController newMain = PageNavigator.openNewWindow();
+            if (newMain != null) {
+              newMain.setWindowContext(new WindowContextBuilder()
+                      .setAsClinicianViewClientWindow()
+                      .viewClient(viewedClient)
+                      .build());
+              PageNavigator.loadPage(Page.VIEW_CLIENT, newMain);
+            }
+          }
+        });
+      } catch (NullPointerException e) {
+        PageNavigator.showAlert(AlertType.ERROR, "No Reciever", "No Reciever that required Liver",
+                mainController.getStage());
+
+      }
     }
 
   }
@@ -124,7 +135,10 @@ public class ReceiverOverviewController extends ViewBaseController {
   @Override
   public void setup(MainController mainController) {
     super.setup(mainController);
-    viewedClient = windowContext.getViewClient();
+    viewedClient = State.getSpiderwebDonor();
+    System.out.println("in reciever");
+    System.out.println(State.getSpiderwebDonor());
+
     setClientFields();
     refresh();
   }
