@@ -34,7 +34,7 @@ public abstract class DurationFormatter {
     }
 
     private static String getDurationFormattedBiggest(Duration duration) {
-        return ""; //todo
+        return "some duration"; //todo
     }
 
     /**
