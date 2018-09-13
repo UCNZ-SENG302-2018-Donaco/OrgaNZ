@@ -1,15 +1,7 @@
 package com.humanharvest.organz.controller.client;
 
-import static com.humanharvest.organz.utilities.DurationFormatter.getFormattedDuration;
-
-import com.humanharvest.organz.DonatedOrgan;
-import com.humanharvest.organz.state.ClientManager;
-import com.humanharvest.organz.state.Session;
-import com.sun.tools.corba.se.idl.constExpr.Or;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,11 +15,13 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.VBox;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.clinician.ViewBaseController;
+import com.humanharvest.organz.state.ClientManager;
+import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.DurationFormatter.Format;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
@@ -87,7 +81,7 @@ public class ReceiverOverviewController extends ViewBaseController {
     Client reciever = null;
     if (viewedClient.getDonatedOrgans().size() > 0) {
       for (DonatedOrgan donatedOrgan:viewedClient.getDonatedOrgans()){
-        /**
+        /*
          * Temporary Will match any organ at later stage.
          */
         if (donatedOrgan.getOrganType() == Organ.LIVER) {
@@ -98,7 +92,7 @@ public class ReceiverOverviewController extends ViewBaseController {
         }
       }
 
-      name.setText(reciever.getFullName());
+      name.setText(reciever.getFullName()); //todo reciever may be null
       hospital.setText(reciever.getHospital().getName());
       travelTime.setText(viewedClient.getHospital().calculateTimeTo(reciever.getHospital()).toString());
 
