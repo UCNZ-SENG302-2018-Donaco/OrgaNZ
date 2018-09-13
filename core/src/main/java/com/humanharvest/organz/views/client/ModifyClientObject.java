@@ -1,6 +1,7 @@
 package com.humanharvest.organz.views.client;
 
 import com.humanharvest.organz.Hospital;
+
 import java.lang.reflect.Member;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -221,9 +222,11 @@ public class ModifyClientObject extends ModifyBaseObject {
         this.country = country;
     }
 
-    public Hospital getHospital() { return hospital; }
+    public Hospital getHospital() {
+        return hospital;
+    }
 
-    public void setHospital(Hospital hospital){
+    public void setHospital(Hospital hospital) {
         registerChange("hospital");
         this.hospital = hospital;
     }

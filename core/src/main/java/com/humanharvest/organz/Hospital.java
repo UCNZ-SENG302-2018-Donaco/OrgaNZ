@@ -212,10 +212,17 @@ public class Hospital {
 
     public Set<Organ> getTransplantPrograms() {
         if (transplantPrograms == null) {
-            return null;
+            return Collections.emptySet();
         }
 
         return Collections.unmodifiableSet(transplantPrograms);
+    }
+
+    /**
+     * @return true if transplantPrograms is null
+     */
+    public boolean transplantProgramsIsNull() {
+        return transplantPrograms == null;
     }
 
     public void setTransplantPrograms(Set<Organ> transplantPrograms) {

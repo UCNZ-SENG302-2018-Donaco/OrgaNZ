@@ -12,7 +12,7 @@ public final class HospitalValidator {
                 && !Double.isNaN(hospital.getLatitude())
                 && !Double.isNaN(hospital.getLongitude())
                 && !NotEmptyStringValidator.isInvalidString(hospital.getAddress())
-                && hospital.getTransplantPrograms() != null;
+                && !hospital.transplantProgramsIsNull();
     }
 
     public static boolean areValid(Iterable<Hospital> hospitals) {
