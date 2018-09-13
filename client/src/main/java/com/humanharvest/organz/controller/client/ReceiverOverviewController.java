@@ -34,8 +34,6 @@ import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder
 public class ReceiverOverviewController extends ViewBaseController {
 
   private static final Logger LOGGER = Logger.getLogger(ReceiverOverviewController.class.getName());
-
-
   private Client viewedClient;
   private TransplantRequest viewedTransplantRequest;
   private final Session session;
@@ -61,7 +59,20 @@ public class ReceiverOverviewController extends ViewBaseController {
   private Label age;
 
   @FXML
+  private Label col1Label;
+
+  @FXML
+  private Label col2Label;
+
+  @FXML
+  private Label col3Label;
+
+  @FXML
+  private Label col4Label;
+
+  @FXML
   private VBox receiverVBox;
+
 
   /*
       public ReceiverOverviewController(Client client, Organ organ) {
@@ -81,10 +92,16 @@ public class ReceiverOverviewController extends ViewBaseController {
    */
   private void setClientFields() {
 
-    if (true) {
+    if (true) { // Should be: if this is the clients spiderweb page
+
+      col2Label.setText("Died on:");
+      col3Label.setText("Blood Type:");
+
       name.setText(viewedClient.getFullName());
+      age.setText(("" + viewedClient.getAge()));
+      requestedTime.setText(viewedClient.getDateOfDeath().toString());
       hospital.setText(viewedClient.getHospital().toString());
-      travelTime.setText("change this");
+      travelTime.setText(viewedClient.getBloodType().toString()); // TravelTime name should be changed after C4 merge.
       loadImage();
 
 
