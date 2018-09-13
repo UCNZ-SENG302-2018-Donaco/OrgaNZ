@@ -78,12 +78,12 @@ public class SpiderWebController {
     }
 
     private void displayDonatingClient() {
-//        MainController newMain = PageNavigator.openNewWindow(200, 400);
-//        PageNavigator.loadPage(Page.RECEIVER_OVERVIEW, newMain);
-//        paneCollection.add(newMain.getPane());
-//
-//        newMain.getPane().setTranslateX(500);
-//        newMain.getPane().setTranslate(500);
+        MainController newMain = PageNavigator.openNewWindow(200, 400);
+        PageNavigator.loadPage(Page.RECEIVER_OVERVIEW, newMain);
+        paneCollection.add(newMain.getPane());
+
+        newMain.getPane().setTranslateX(800);
+        newMain.getPane().setTranslateY(300);
     }
 
     /**

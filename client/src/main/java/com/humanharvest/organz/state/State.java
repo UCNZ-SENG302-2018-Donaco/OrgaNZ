@@ -89,6 +89,7 @@ public final class State {
     private static UiType uiType = UiType.STANDARD;
     private static Stage primaryStage;
     private static DonatedOrgan organToDisplay;
+    private static Client spiderwebDonor;
 
     private State() {
     }
@@ -353,5 +354,13 @@ public static Stage getPrimaryStage() {
 
     public static void setOrganToDisplay(DonatedOrgan organToDisplay) {
         State.organToDisplay = organToDisplay;
+    }
+
+    public static Client getSpiderwebDonor() {
+        return spiderwebDonor;
+    }
+
+    public static void setSpiderwebDonor(Client spiderwebDonor) {
+        State.spiderwebDonor = spiderwebDonor;
     }
 }
