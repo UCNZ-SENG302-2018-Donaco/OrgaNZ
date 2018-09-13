@@ -25,9 +25,7 @@ public class ScheduleTransplantAction extends AddProcedureRecordAction {
     public ScheduleTransplantAction(DonatedOrgan organ, TransplantRequest request, Hospital hospital,
             LocalDate scheduledDate, ClientManager manager) throws DateOutOfBoundsException {
         // Create a new TransplantRecord using the parameters and pass to AddProcedureRecord constructor
-        super(request.getClient(),
-                new TransplantRecord(organ, request, hospital, scheduledDate),
-                manager);
+        super(request.getClient(), new TransplantRecord(organ, request, hospital, scheduledDate), manager);
 
         // Check that date is not out of bounds
         if (scheduledDate.isBefore(LocalDate.now())) {

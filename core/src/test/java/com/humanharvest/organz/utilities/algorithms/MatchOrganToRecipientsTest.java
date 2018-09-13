@@ -26,26 +26,31 @@ import org.junit.Test;
 
 public class MatchOrganToRecipientsTest {
 
-    private Client recipient1 = new Client(1);
-    private Client recipient2 = new Client(2);
-    private Client recipient3 = new Client(3);
-    private Client donor = new Client(10);
-    private LocalDate dateOfBirth = LocalDate.now().minusYears(18);
-    private Collection<DonatedOrgan> organsToDonate = new ArrayList<>();
+    private Client recipient1;
+    private Client recipient2;
+    private Client recipient3;
+    private Client donor;
+    private LocalDate DATE_OF_BIRTH = LocalDate.now().minusYears(18);
+    private Collection<DonatedOrgan> organsToDonate;
     private List<Client> eligibleClients;
-    private Organ organ = Organ.LIVER;
-    private BloodType bloodType = BloodType.A_POS;
-    private Country country = Country.NZ;
-    private String region = Region.CANTERBURY.toString();
-    private Set<Hospital> hospitals = Hospital.getDefaultHospitals();
-    private Iterator<Hospital> hospitalIterator = hospitals.iterator();
-    private Hospital donorHospital = hospitalIterator.next();
-    private Hospital hospital2 = hospitalIterator.next();
+    private Organ ORGAN = Organ.LIVER;
+    private BloodType BLOOD_TYPE = BloodType.A_POS;
+    private Country COUNTRY = Country.NZ;
+    private String REGION = Region.CANTERBURY.toString();
+    private Set<Hospital> HOSPITALS = Hospital.getDefaultHospitals();
+    private Iterator<Hospital> HOSPITAL_ITERATOR = HOSPITALS.iterator();
+    private Hospital DONOR_HOSPITAL = HOSPITAL_ITERATOR.next();
+    private Hospital SECOND_HOSPITAL = HOSPITAL_ITERATOR.next();
 
-    private Collection<TransplantRequest> allTransplantRequests = new ArrayList<>();
+    private Collection<TransplantRequest> allTransplantRequests;
 
     @Before
     public void setUp() {
+
+        recipient1 = new Client(1);
+        recipient2 = new Client(2);
+        recipient3 = new Client(3);
+        donor = new Client(10);
 
         // Add clients to list
         List<Client> clients = new ArrayList<>();
@@ -54,56 +59,41 @@ public class MatchOrganToRecipientsTest {
         clients.add(recipient3);
         clients.add(donor);
 
+        allTransplantRequests = new ArrayList<>();
+        organsToDonate = new ArrayList<>();
+
         // Make transplant requests for recipients
-        TransplantRequest transplantRequest1 = new TransplantRequest(recipient1, organ);
+        TransplantRequest transplantRequest1 = new TransplantRequest(recipient1, ORGAN);
         transplantRequest1.setClient(recipient1);
         allTransplantRequests.add(transplantRequest1);
-        //recipient1.addTransplantRequest(transplantRequest1);
-        TransplantRequest transplantRequest2 = new TransplantRequest(recipient2, organ);
+        TransplantRequest transplantRequest2 = new TransplantRequest(recipient2, ORGAN);
         transplantRequest2.setClient(recipient2);
         allTransplantRequests.add(transplantRequest2);
-        //recipient2.addTransplantRequest(transplantRequest2);
 
-        // Set country and region for recipients
-        recipient1.setCountry(country);
-        recipient1.setRegion(region);
-        recipient2.setCountry(country);
-        recipient2.setRegion(region);
-        recipient3.setCountry(country);
-        recipient3.setRegion(region);
-
-        // Set blood type
-        recipient1.setBloodType(bloodType);
-        recipient2.setBloodType(bloodType);
-        recipient3.setBloodType(bloodType);
-        donor.setBloodType(bloodType);
-
-        // Set dates of birth
-        recipient1.setDateOfBirth(dateOfBirth);
-        recipient2.setDateOfBirth(dateOfBirth);
-        recipient3.setDateOfBirth(dateOfBirth);
-        donor.setDateOfBirth(dateOfBirth);
+        for (Client client : clients) {
+            client.setCountry(COUNTRY);
+            client.setRegion(REGION);
+            client.setBloodType(BLOOD_TYPE);
+            client.setDateOfBirth(DATE_OF_BIRTH);
+        }
 
         // Setup donor's organ to donate, and death
         LocalDateTime now = LocalDateTime.now();
-        donor.donateOrgan(organ, now);
+        donor.donateOrgan(ORGAN, now);
         donor.setDateOfDeath(now.toLocalDate());
         donor.setTimeOfDeath(now.toLocalTime());
-        donor.setCountryOfDeath(country);
-        donor.setRegionOfDeath(region);
+        donor.setCountryOfDeath(COUNTRY);
+        donor.setRegionOfDeath(REGION);
         donor.setCityOfDeath("Christchurch");
-        donor.setHospital(donorHospital);
+        donor.setHospital(DONOR_HOSPITAL);
 
         // Check the two hospitals aren't the same
-        assertNotEquals(donorHospital.getName(), hospital2.getName());
+        assertNotEquals(DONOR_HOSPITAL.getName(), SECOND_HOSPITAL.getName());
 
         organsToDonate.addAll(donor.getDonatedOrgans());
     }
 
     private void getListOfPotentialRecipients() {
-        // This for-loop is just to get the one element out of the collection, so it should only run once
-        //Collection<TransplantRequest> allTransplantRequests = State.getClientManager().getAllTransplantRequests();
-
         for (DonatedOrgan donatedOrgan : organsToDonate) {
             eligibleClients = MatchOrganToRecipients.getListOfPotentialRecipients(donatedOrgan, allTransplantRequests);
         }
@@ -112,8 +102,7 @@ public class MatchOrganToRecipientsTest {
     @Test
     public void testThirdOrgan() {
         // This test is designed to check that adding a third organ normally works
-        TransplantRequest transplantRequest3 = new TransplantRequest(recipient3, organ);
-        transplantRequest3.setClient(recipient3);
+        TransplantRequest transplantRequest3 = new TransplantRequest(recipient3, ORGAN);
         recipient3.addTransplantRequest(transplantRequest3);
         allTransplantRequests.add(transplantRequest3);
 
@@ -136,7 +125,7 @@ public class MatchOrganToRecipientsTest {
     @Test
     public void testWrongOrganType() {
         Organ organ = Organ.BONE_MARROW;
-        assertNotEquals(organ, this.organ); // check this is the wrong organ type
+        assertNotEquals(organ, ORGAN); // check this is the wrong organ type
         TransplantRequest transplantRequest3 = new TransplantRequest(recipient3, organ);
         recipient3.addTransplantRequest(transplantRequest3);
 
@@ -167,7 +156,7 @@ public class MatchOrganToRecipientsTest {
     public void testWrongBloodType() {
         BloodType bloodType = BloodType.O_NEG;
         recipient1.setBloodType(bloodType);
-        assertNotEquals(bloodType, this.bloodType);
+        assertNotEquals(bloodType, BLOOD_TYPE);
 
         getListOfPotentialRecipients();
         assertEquals(recipient2, eligibleClients.get(0));
@@ -215,7 +204,7 @@ public class MatchOrganToRecipientsTest {
     // Request time comparison
 
     private void testOneRecipientEarlier(Client recipient) throws Exception {
-        TransplantRequest transplantRequest3 = new TransplantRequest(recipient1, organ);
+        TransplantRequest transplantRequest3 = new TransplantRequest(recipient1, ORGAN);
         // Use reflection to set the date to a week ago
         Class<?> c = transplantRequest3.getClass();
         Field f = c.getDeclaredField("requestDateTime");
@@ -410,8 +399,8 @@ public class MatchOrganToRecipientsTest {
 
     @Test
     public void testHospitalComparison() {
-        recipient1.setHospital(hospital2);
-        recipient2.setHospital(donorHospital);
+        recipient1.setHospital(SECOND_HOSPITAL);
+        recipient2.setHospital(DONOR_HOSPITAL);
 
         getListOfPotentialRecipients();
         assertEquals(recipient2, eligibleClients.get(0));
@@ -421,8 +410,8 @@ public class MatchOrganToRecipientsTest {
     public void testHospitalComparisonNullRegions() {
         recipient1.setRegion(null);
         recipient2.setRegion(null);
-        recipient1.setHospital(hospital2);
-        recipient2.setHospital(donorHospital);
+        recipient1.setHospital(SECOND_HOSPITAL);
+        recipient2.setHospital(DONOR_HOSPITAL);
 
         getListOfPotentialRecipients();
         assertEquals(recipient2, eligibleClients.get(0));
@@ -431,7 +420,7 @@ public class MatchOrganToRecipientsTest {
     @Test
     public void testOneHospitalNull() {
         recipient1.setHospital(null);
-        recipient2.setHospital(donorHospital);
+        recipient2.setHospital(DONOR_HOSPITAL);
 
         getListOfPotentialRecipients();
         assertEquals(recipient2, eligibleClients.get(0));
@@ -441,7 +430,7 @@ public class MatchOrganToRecipientsTest {
     public void testOneHospitalNullOneRegionNull() {
         recipient1.setHospital(null);
         recipient2.setRegion(null);
-        recipient2.setHospital(donorHospital);
+        recipient2.setHospital(DONOR_HOSPITAL);
 
         getListOfPotentialRecipients();
         assertEquals(recipient2, eligibleClients.get(0));
@@ -452,13 +441,10 @@ public class MatchOrganToRecipientsTest {
         // Create a fake hospital far away
         Hospital farAwayHospital = new Hospital("middle of the ocean", 0, 0, "Atlantic Ocean");
 
-        recipient1.setHospital(hospital2);
+        recipient1.setHospital(SECOND_HOSPITAL);
         recipient2.setHospital(farAwayHospital);
 
         getListOfPotentialRecipients();
         assertEquals(recipient1, eligibleClients.get(0));
     }
-
-
-
 }

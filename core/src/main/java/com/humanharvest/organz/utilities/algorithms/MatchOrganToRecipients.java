@@ -11,6 +11,7 @@ import com.humanharvest.organz.Hospital;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Region;
+import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 
 public class MatchOrganToRecipients {
 
@@ -264,8 +265,7 @@ public class MatchOrganToRecipients {
                     && donor.getBloodType() != null && recipient.getBloodType() != null
                     && donor.getBloodType().equals(recipient.getBloodType())
                     && agesMatch(donor.getAge(), recipient.getAge())
-                    && recipient.getTransplantRequests().stream().noneMatch(
-                    t -> t.getRequestedOrgan() == donatedOrgan.getOrganType())) {
+                    && transplantRequest.getStatus() == TransplantRequestStatus.WAITING) {
                 potentialTransplantRequests.add(transplantRequest);
             }
         }

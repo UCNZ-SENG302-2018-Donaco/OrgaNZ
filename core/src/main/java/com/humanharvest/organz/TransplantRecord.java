@@ -8,6 +8,8 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
+import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
+
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 
@@ -43,6 +45,7 @@ public class TransplantRecord extends ProcedureRecord {
         setDescription(String.format("Transplant of %s from donor '%s' to recipient '%s'.",
                 organ.getOrganType().toString(), organ.getDonor().getFullName(), request.getClient().getFullName()));
         addAffectedOrgan(organ.getOrganType());
+        request.setStatus(TransplantRequestStatus.SCHEDULED);
     }
 
     public DonatedOrgan getOrgan() {
