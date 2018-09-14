@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -80,7 +81,7 @@ public class ConfigController extends SubController {
      */
     private void generateHospitalAlert(Hospital hospital) {
         // Note that 5 decimal places is used for lat-long to get accuracy of 1.1 metres.
-        String information = String.format("Address: %s.%nLocation: (%.5f, %.5f).",
+        String information = String.format(Locale.UK, "Address: %s.%nLocation: (%.5f, %.5f).",
                 hospital.getAddress(), hospital.getLatitude(), hospital.getLongitude());
         PageNavigator.showAlert(AlertType.INFORMATION, hospital.getName(), information, mainController.getStage());
     }
@@ -138,13 +139,12 @@ public class ConfigController extends SubController {
         // Update hospital transplant programs
         // Send requests for each hospital which has had its programs modified
         if (!modifiedHospitalPrograms.isEmpty()) {
-            for (Hospital hospital : modifiedHospitalPrograms.keySet()) {
-                State.getConfigResolver()
-                        .setTransplantProgramsForHospital(hospital, modifiedHospitalPrograms.get(hospital));
+            for (Map.Entry<Hospital, Set<Organ>> entry : modifiedHospitalPrograms.entrySet()) {
+                State.getConfigResolver().setTransplantProgramsForHospital(entry.getKey(), entry.getValue());
             }
             Notifications.create()
                     .title("Updated Transplant Programs")
-                    .text(String.format("Programs have been updated for: \n%s.",
+                    .text(String.format(Locale.UK, "Programs have been updated for: %n%s.",
                             modifiedHospitalPrograms.keySet().stream()
                                     .map(Hospital::getName)
                                     .collect(Collectors.joining(", \n"))))
@@ -231,8 +231,8 @@ public class ConfigController extends SubController {
      */
     @FXML
     private void selectAll() {
-        EnumSet<Country> allowedCountries = EnumSet.allOf(Country.class);
-        State.getConfigManager().setAllowedCountries(allowedCountries);
+        EnumSet<Country> newAllowedCountries = EnumSet.allOf(Country.class);
+        State.getConfigManager().setAllowedCountries(newAllowedCountries);
 
         refresh();
     }
@@ -242,8 +242,8 @@ public class ConfigController extends SubController {
      */
     @FXML
     private void selectNone() {
-        EnumSet<Country> allowedCountries = EnumSet.noneOf(Country.class);
-        State.getConfigManager().setAllowedCountries(allowedCountries);
+        EnumSet<Country> newAllowedCountries = EnumSet.noneOf(Country.class);
+        State.getConfigManager().setAllowedCountries(newAllowedCountries);
 
         refresh();
     }

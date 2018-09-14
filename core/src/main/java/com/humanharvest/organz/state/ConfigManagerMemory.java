@@ -9,7 +9,6 @@ import java.util.Set;
 import com.humanharvest.organz.Config;
 import com.humanharvest.organz.Hospital;
 import com.humanharvest.organz.utilities.enums.Country;
-import com.humanharvest.organz.utilities.enums.Organ;
 
 public class ConfigManagerMemory implements ConfigManager {
 
