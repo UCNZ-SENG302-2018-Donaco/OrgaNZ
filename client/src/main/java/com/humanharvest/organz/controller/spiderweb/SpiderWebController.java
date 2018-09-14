@@ -1,16 +1,21 @@
 package com.humanharvest.organz.controller.spiderweb;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.transform.Affine;
@@ -20,6 +25,7 @@ import javafx.stage.Stage;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.controller.components.DurationUntilExpiryCell;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.touch.FocusArea;
 import com.humanharvest.organz.touch.MultitouchHandler;
@@ -112,6 +118,7 @@ public class SpiderWebController {
                 Line connector = new Line();
                 connector.setFill(Color.BLACK);
                 connector.setStroke(Color.BLACK);
+
                 deceasedDonorPane.localToParentTransformProperty().addListener((observable, oldValue, newValue) -> {
                     Bounds bounds = deceasedDonorPane.getBoundsInParent();
                     connector.setStartX(bounds.getMinX() + bounds.getWidth()/2);
@@ -130,7 +137,38 @@ public class SpiderWebController {
                 connector.setEndX(bounds.getMinX() + bounds2.getWidth()/2);
                 connector.setEndY(bounds.getMinY() + bounds2.getHeight()/2);
                 canvas.getChildren().add(connector);
+
+                // Attach timer to update table each second (for time until expiration)
+                final Timeline clock = new Timeline(new KeyFrame(
+                        javafx.util.Duration.millis(1000),
+                        event -> {
+                            updateConnector(organ, connector, organPane);
+                        }));
+                clock.setCycleCount(Animation.INDEFINITE);
+                clock.play();
             }
+        }
+    }
+
+    private void updateConnector(DonatedOrgan donatedOrgan, Line line, Pane organPane) {
+        Duration duration = donatedOrgan.getDurationUntilExpiry();
+        if (duration == null || duration.isZero() || duration.isNegative() || duration.equals(Duration.ZERO) ||
+                duration.minusSeconds(1).isNegative()) {
+            line.setStyle("-fx-background-color: #202020");
+
+            StackPane stackPane = (StackPane) organPane.getChildren().get(0);
+            stackPane.setStyle("-fx-background-color: rgba(0,15,128,0.8)");
+
+        } else {
+            // Progress as a decimal. starts at 0 (at time of death) and goes to 1.
+            double progressDecimal = donatedOrgan.getProgressDecimal();
+            double fullMarker = donatedOrgan.getFullMarker();
+
+            // Calculate colour
+            String style = DurationUntilExpiryCell.getStyleForProgress(progressDecimal, fullMarker);
+            style = style.replace("-fx-background-color", "-fx-stroke");
+
+            line.setStyle(style);
         }
     }
 }

@@ -26,7 +26,7 @@ public class DurationUntilExpiryCell extends TableCell<DonatedOrgan, Duration> {
      * @param fullMarker how far along the lower bound starts; this area will be grey (e.g. 0.9 for near the end)
      * @return stylesheet instruction, in the form "-fx-background-color: linear-gradient(...)"
      */
-    private static String getStyleForProgress(double progress, double fullMarker) {
+    public static String getStyleForProgress(double progress, double fullMarker) {
         String green;
         String red;
         String blue = "00"; // no blue
