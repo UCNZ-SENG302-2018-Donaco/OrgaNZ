@@ -1,7 +1,6 @@
 package com.humanharvest.organz.controller.client;
 
 import static com.humanharvest.organz.state.State.getClientResolver;
-import static com.humanharvest.organz.state.State.getImageManager;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -25,6 +24,7 @@ import com.humanharvest.organz.Client;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.clinician.ViewBaseController;
+import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.DurationFormatter;
 import com.humanharvest.organz.utilities.DurationFormatter.Format;
 import com.humanharvest.organz.utilities.enums.Organ;
@@ -98,7 +98,7 @@ public class ReceiverOverviewController extends ViewBaseController {
         }
 
         // Set wait time
-        List<TransplantRequest> transplantRequests = getClientResolver().getTransplantRequests(viewedClient);
+        List<TransplantRequest> transplantRequests = State.getClientResolver().getTransplantRequests(viewedClient);
         for (TransplantRequest transplantRequest : transplantRequests) {
             if (transplantRequest.getRequestedOrgan() == organ) {
                 viewedTransplantRequest = transplantRequest;
@@ -110,9 +110,7 @@ public class ReceiverOverviewController extends ViewBaseController {
         loadImage();
 
         // Track the adding of panes with the spiderweb pane collection.
-        receiverVBox.setOnMouseClicked(mouseEvent ->
-
-        {
+        receiverVBox.setOnMouseClicked(mouseEvent -> {
             if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 1) {
                 MainController newMain = PageNavigator.openNewWindow();
                 if (newMain != null) {
@@ -152,10 +150,10 @@ public class ReceiverOverviewController extends ViewBaseController {
     private void loadImage() {
         byte[] bytes;
         try {
-            bytes = getImageManager().getClientImage(viewedClient.getUid());
+            bytes = State.getImageManager().getClientImage(viewedClient.getUid());
         } catch (NotFoundException ignored) {
             try {
-                bytes = getImageManager().getDefaultImage();
+                bytes = State.getImageManager().getDefaultImage();
             } catch (IOException e) {
                 LOGGER.log(Level.SEVERE, "IO Exception when loading image ", e);
                 return;
