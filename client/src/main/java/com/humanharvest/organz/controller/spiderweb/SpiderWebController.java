@@ -37,12 +37,13 @@ public class SpiderWebController {
     private static final Logger LOGGER = Logger.getLogger(SpiderWebController.class.getName());
 
     private final Client client;
-    private final List<Pane> paneCollection;
+
     private Pane canvas;
+    private Pane deceasedDonorPane;
+    private List<Pane> organNodes = new ArrayList<>();
 
     public SpiderWebController(Client client) {
         this.client = client;
-        paneCollection = new ArrayList<>();
         setupNewStage();
         displayDonatingClient();
         displayOrgans();
@@ -80,7 +81,7 @@ public class SpiderWebController {
     private void displayDonatingClient() {
         MainController newMain = PageNavigator.openNewWindow(200, 400);
         PageNavigator.loadPage(Page.RECEIVER_OVERVIEW, newMain);
-        paneCollection.add(newMain.getPane());
+        deceasedDonorPane = newMain.getPane();
 
         FocusArea focusArea = ((FocusArea) newMain.getPane().getUserData());
         focusArea.setTransform(new Affine(new Translate(1000, 500)));
@@ -94,44 +95,41 @@ public class SpiderWebController {
 
         int x = 0;
         int y = 0;
-        Pane currentPane = null;
-        Pane previousPane;
         for (DonatedOrgan organ: donatedOrgans) {
             if (!organ.hasExpired()) {
-                previousPane = currentPane;
-
                 State.setOrganToDisplay(organ);
                 MainController newMain = PageNavigator.openNewWindow(80, 80);
                 PageNavigator.loadPage(Page.ORGAN_IMAGE, newMain);
-                currentPane = newMain.getPane();
-                paneCollection.add(currentPane);
+                Pane organPane = newMain.getPane();
+                organNodes.add(organPane);
 
-                FocusArea focusArea = ((FocusArea) currentPane.getUserData());
+                FocusArea focusArea = ((FocusArea) organPane.getUserData());
                 focusArea.setTransform(new Affine(new Translate(x, y)));
                 x += 100;
                 y += 50;
 
                 // Create the line
-                /*
-                if (previousPane != null) {
-                    Line connector = new Line();
-                    connector.setFill(Color.BLACK);
-                    connector.setStroke(Color.BLACK);
-                    final Pane finalPP = previousPane;
-                    final Pane finalCP = currentPane;
-                    previousPane.localToParentTransformProperty().addListener((observable, oldValue, newValue) -> {
-                        Bounds boundsInParent = finalPP.getBoundsInParent();
-                        connector.setStartX(boundsInParent.getMinX() + boundsInParent.getWidth()/2);
-                        connector.setStartY(boundsInParent.getMinY() + boundsInParent.getHeight()/2);
-                    });
-                    currentPane.localToParentTransformProperty().addListener((observable, oldValue, newValue) -> {
-                        Bounds boundsInParent = finalCP.getBoundsInParent();
-                        connector.setEndX(boundsInParent.getMinX() + boundsInParent.getWidth()/2);
-                        connector.setEndY(boundsInParent.getMinY() + boundsInParent.getHeight()/2);
-                    });
-                    canvas.getChildren().add(connector);
-                }
-                */
+                Line connector = new Line();
+                connector.setFill(Color.BLACK);
+                connector.setStroke(Color.BLACK);
+                deceasedDonorPane.localToParentTransformProperty().addListener((observable, oldValue, newValue) -> {
+                    Bounds bounds = deceasedDonorPane.getBoundsInParent();
+                    connector.setStartX(bounds.getMinX() + bounds.getWidth()/2);
+                    connector.setStartY(bounds.getMinY() + bounds.getHeight()/2);
+                });
+                organPane.localToParentTransformProperty().addListener((observable, oldValue, newValue) -> {
+                    Bounds bounds = organPane.getBoundsInParent();
+                    connector.setEndX(bounds.getMinX() + bounds.getWidth()/2);
+                    connector.setEndY(bounds.getMinY() + bounds.getHeight()/2);
+                });
+                // TODO probably remove at some point
+                Bounds bounds = deceasedDonorPane.getBoundsInParent();
+                connector.setStartX(bounds.getMinX() + bounds.getWidth()/2);
+                connector.setStartY(bounds.getMinY() + bounds.getHeight()/2);
+                Bounds bounds2 = organPane.getBoundsInParent();
+                connector.setEndX(bounds.getMinX() + bounds2.getWidth()/2);
+                connector.setEndY(bounds.getMinY() + bounds2.getHeight()/2);
+                canvas.getChildren().add(connector);
             }
         }
     }
