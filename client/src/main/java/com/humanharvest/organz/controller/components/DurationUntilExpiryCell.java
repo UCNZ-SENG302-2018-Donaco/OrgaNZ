@@ -26,7 +26,7 @@ public class DurationUntilExpiryCell extends TableCell<DonatedOrgan, Duration> {
      * @param fullMarker how far along the lower bound starts; this area will be grey (e.g. 0.9 for near the end)
      * @return stylesheet instruction, in the form "-fx-background-color: linear-gradient(...)"
      */
-    private static String getStyleForProgress(double progress, double fullMarker) {
+    public static String getStyleForProgress(double progress, double fullMarker) {
         String green;
         String red;
         String blue = "00"; // no blue
@@ -35,7 +35,7 @@ public class DurationUntilExpiryCell extends TableCell<DonatedOrgan, Duration> {
         double higherPercent;
         double progressForColour;
         String maroonColour = "aa0000";
-        String whiteColour = "transparent";
+        String whiteColour = "white";
         String greyColour = "aaaaaa";
         String middleColour;
 
@@ -81,6 +81,10 @@ public class DurationUntilExpiryCell extends TableCell<DonatedOrgan, Duration> {
 
         // Generate style string
         String colour = red + green + blue;
+
+        // This is the effective translation of the below string format for slightly easier reading
+        //linear-gradient(to right, #colour 0%, #colour lowerPercent%, midColour lowerPercent%, midColour higherPercent%, #greyColour higherPercent%, #greyColour 100%);"
+
         return String.format("-fx-background-color: "
                         + "linear-gradient(to right, #%s 0%%, #%s %s%%, %s %s%%, %s %s%%, #%s %s%%, #%s 100%%);",
                 colour, colour, lowerPercent, middleColour, lowerPercent, middleColour, higherPercent,
