@@ -1,11 +1,8 @@
 package com.humanharvest.organz.controller.client;
 
-import static com.humanharvest.organz.state.State.getClientResolver;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.time.Duration;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -150,7 +147,11 @@ public class ReceiverOverviewController extends ViewBaseController {
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
-        viewedClient = windowContext.getViewClient();
+        if (windowContext == null) {
+            viewedClient = State.getSpiderwebDonor();
+        } else {
+            viewedClient = windowContext.getViewClient();
+        }
         refresh();
     }
 
