@@ -83,7 +83,7 @@ public class ClientTransplantRequestsControllerTest {
 
         validTransplantRequestJson = "{\n"
                 + "  \"requestedOrgan\": \"LIVER\",\n"
-                + "  \"requestDate\": \"2017-07-18T14:11:20.202\",\n"
+                + "  \"requestDateTime\": \"2017-07-18T14:11:20.202\",\n"
                 + "  \"resolvedDate\": \"2017-07-19T14:11:20.202\",\n"
                 + "  \"status\": \"WAITING\",\n"
                 + "  \"resolvedReason\": \"reason\"\n"
@@ -170,7 +170,7 @@ public class ClientTransplantRequestsControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(contentType))
                 .andExpect(jsonPath("$[1].requestedOrgan", is("LIVER")))
-                .andExpect(jsonPath("$[1].requestDate", is("2017-07-18T14:11:20.202")))
+                .andExpect(jsonPath("$[1].requestDateTime", is("2017-07-18T14:11:20.202")))
                 .andExpect(jsonPath("$[1].resolvedDate", is("2017-07-19T14:11:20.202")))
                 .andExpect(jsonPath("$[1].status", is("WAITING")))
                 .andExpect(jsonPath("$[1].resolvedReason", is("reason")));
@@ -180,7 +180,7 @@ public class ClientTransplantRequestsControllerTest {
     public void createValidTransplantRequestNullResolvedReasonTest() throws Exception {
         String json = "{\n"
                 + "  \"requestedOrgan\": \"LIVER\",\n"
-                + "  \"requestDate\": \"2017-07-18T14:11:20.202\",\n"
+                + "  \"requestDateTime\": \"2017-07-18T14:11:20.202\",\n"
                 + "  \"resolvedDate\": \"2017-07-19T14:11:20.202\",\n"
                 + "  \"status\": \"WAITING\""
                 + "}";
@@ -192,7 +192,7 @@ public class ClientTransplantRequestsControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(contentType))
                 .andExpect(jsonPath("$[1].requestedOrgan", is("LIVER")))
-                .andExpect(jsonPath("$[1].requestDate", is("2017-07-18T14:11:20.202")))
+                .andExpect(jsonPath("$[1].requestDateTime", is("2017-07-18T14:11:20.202")))
                 .andExpect(jsonPath("$[1].resolvedDate", is("2017-07-19T14:11:20.202")))
                 .andExpect(jsonPath("$[1].status", is("WAITING")))
                 .andExpect(jsonPath("$[1].resolvedReason", isEmptyOrNullString()));
@@ -202,7 +202,7 @@ public class ClientTransplantRequestsControllerTest {
     public void createValidTransplantRequestNullResolvedDateTest() throws Exception {
         String json = "{\n"
                 + "  \"requestedOrgan\": \"LIVER\",\n"
-                + "  \"requestDate\": \"2017-07-18T14:11:20.202\",\n"
+                + "  \"requestDateTime\": \"2017-07-18T14:11:20.202\",\n"
                 + "  \"status\": \"WAITING\",\n"
                 + "  \"resolvedReason\": \"reason\"\n"
                 + "}";
@@ -214,7 +214,7 @@ public class ClientTransplantRequestsControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(contentType))
                 .andExpect(jsonPath("$[1].requestedOrgan", is("LIVER")))
-                .andExpect(jsonPath("$[1].requestDate", is("2017-07-18T14:11:20.202")))
+                .andExpect(jsonPath("$[1].requestDateTime", is("2017-07-18T14:11:20.202")))
                 .andExpect(jsonPath("$[1].resolvedDate", isEmptyOrNullString()))
                 .andExpect(jsonPath("$[1].status", is("WAITING")))
                 .andExpect(jsonPath("$[1].resolvedReason", is("reason")));
@@ -224,7 +224,7 @@ public class ClientTransplantRequestsControllerTest {
     public void createTransplantRequestInvalidOrganTest() throws Exception {
         String json = "{\n"
                 + "  \"requestedOrgan\": \"invalid organ\",\n"
-                + "  \"requestDate\": \"2017-07-18T14:11:20.202\",\n"
+                + "  \"requestDateTime\": \"2017-07-18T14:11:20.202\",\n"
                 + "  \"resolvedDate\": \"2017-07-19T14:11:20.202\",\n"
                 + "  \"status\": \"WAITING\",\n"
                 + "  \"resolvedReason\": \"reason\"\n"
@@ -241,7 +241,7 @@ public class ClientTransplantRequestsControllerTest {
     public void createTransplantRequestInvalidDateTest() throws Exception {
         String json = "{\n"
                 + "  \"requestedOrgan\": \"LIVER\",\n"
-                + "  \"requestDate\": \"invalid date\",\n"
+                + "  \"requestDateTime\": \"invalid date\",\n"
                 + "  \"resolvedDate\": \"2017-07-19T14:11:20.202\",\n"
                 + "  \"status\": \"WAITING\",\n"
                 + "  \"resolvedReason\": \"reason\"\n"
@@ -258,7 +258,7 @@ public class ClientTransplantRequestsControllerTest {
     public void createTransplantRequestInvalidStatusTest() throws Exception {
         String json = "{\n"
                 + "  \"requestedOrgan\": \"LIVER\",\n"
-                + "  \"requestDate\": \"2017-07-18T14:11:20.202\",\n"
+                + "  \"requestDateTime\": \"2017-07-18T14:11:20.202\",\n"
                 + "  \"resolvedDate\": \"2017-07-19T14:11:20.202\",\n"
                 + "  \"status\": \"invalid status\",\n"
                 + "  \"resolvedReason\": \"reason\"\n"
@@ -420,7 +420,7 @@ public class ClientTransplantRequestsControllerTest {
     private void setUpTransplantRequests() throws Exception {
         String anotherValidTransplantRequestJson = "{\n"
                 + "  \"requestedOrgan\": \"HEART\",\n"
-                + "  \"requestDate\": \"2017-07-18T14:11:20.202\",\n"
+                + "  \"requestDateTime\": \"2017-07-18T14:11:20.202\",\n"
                 + "  \"resolvedDate\": \"2017-07-19T14:11:20.202\",\n"
                 + "  \"status\": \"WAITING\",\n"
                 + "  \"resolvedReason\": \"reason\"\n"
@@ -428,7 +428,7 @@ public class ClientTransplantRequestsControllerTest {
 
         String oneMoreValidTransplantRequestJson = "{\n"
                 + "  \"requestedOrgan\": \"CORNEA\",\n"
-                + "  \"requestDate\": \"2017-07-18T14:11:20.202\",\n"
+                + "  \"requestDateTime\": \"2017-07-18T14:11:20.202\",\n"
                 + "  \"resolvedDate\": \"2017-07-19T14:11:20.202\",\n"
                 + "  \"status\": \"WAITING\",\n"
                 + "  \"resolvedReason\": \"reason\"\n"
