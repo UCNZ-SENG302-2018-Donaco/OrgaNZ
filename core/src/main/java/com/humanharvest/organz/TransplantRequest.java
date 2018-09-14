@@ -41,9 +41,9 @@ public class TransplantRequest {
     @JsonView(Views.Overview.class)
     private Organ requestedOrgan;
     @JsonView(Views.Overview.class)
-    private LocalDateTime requestDate;
+    private LocalDateTime requestDateTime;
     @JsonView(Views.Overview.class)
-    private LocalDateTime resolvedDate;
+    private LocalDateTime resolvedDateTime;
     @Enumerated(EnumType.STRING)
     @JsonView(Views.Overview.class)
     private TransplantRequestStatus status = TransplantRequestStatus.WAITING;
@@ -57,13 +57,13 @@ public class TransplantRequest {
     public TransplantRequest(Client client, Organ requestedOrgan) {
         this.client = client;
         this.requestedOrgan = requestedOrgan;
-        requestDate = LocalDateTime.now();
+        requestDateTime = LocalDateTime.now();
     }
 
     public TransplantRequest(Client client, Organ requestedOrgan, LocalDateTime requestDate) {
         this.client = client;
         this.requestedOrgan = requestedOrgan;
-        this.requestDate = requestDate;
+        this.requestDateTime = requestDate;
     }
 
     public Long getId() {
@@ -92,21 +92,21 @@ public class TransplantRequest {
         return requestedOrgan;
     }
 
-    public LocalDateTime getRequestDate() {
-        return requestDate;
+    public LocalDateTime getRequestDateTime() {
+        return requestDateTime;
     }
 
     @JsonIgnore
     public Duration getTimeSinceRequest() {
-        return Duration.between(requestDate, LocalDateTime.now());
+        return Duration.between(requestDateTime, LocalDateTime.now());
     }
 
-    public LocalDateTime getResolvedDate() {
-        return resolvedDate;
+    public LocalDateTime getResolvedDateTime() {
+        return resolvedDateTime;
     }
 
-    public void setResolvedDate(LocalDateTime resolvedDate) {
-        this.resolvedDate = resolvedDate;
+    public void setResolvedDateTime(LocalDateTime resolvedDate) {
+        this.resolvedDateTime = resolvedDate;
     }
 
     public TransplantRequestStatus getStatus() {
