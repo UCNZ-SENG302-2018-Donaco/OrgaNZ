@@ -9,6 +9,9 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Label;
@@ -107,15 +110,7 @@ public class ReceiverOverviewController extends ViewBaseController {
         }
 
         // Set wait time
-        String waitTimeString = "Error: no request";
-        List<TransplantRequest> transplantRequests = getClientResolver().getTransplantRequests(viewedClient);
-        for (TransplantRequest transplantRequest : transplantRequests) {
-            if (transplantRequest.getRequestedOrgan() == organ) {
-                Duration waitTime = transplantRequest.getTimeSinceRequest();
-                waitTimeString = DurationFormatter.getFormattedDuration(waitTime, Format.Biggest);
-            }
-        }
-        requestedTime.setText(waitTimeString);
+        updateWaitTime();
 
         // Set image
         loadImage();
@@ -136,6 +131,18 @@ public class ReceiverOverviewController extends ViewBaseController {
             }
         });
 
+    }
+
+    private void updateWaitTime() {
+        String waitTimeString = "Error: no request";
+        List<TransplantRequest> transplantRequests = getClientResolver().getTransplantRequests(viewedClient);
+        for (TransplantRequest transplantRequest : transplantRequests) {
+            if (transplantRequest.getRequestedOrgan() == organ) {
+                Duration waitTime = transplantRequest.getTimeSinceRequest();
+                waitTimeString = DurationFormatter.getFormattedDuration(waitTime, Format.Biggest);
+            }
+        }
+        requestedTime.setText(waitTimeString);
     }
 
     @Override
@@ -175,6 +182,13 @@ public class ReceiverOverviewController extends ViewBaseController {
 
     @FXML
     private void initialize() {
+
+        // Setup ticking
+        final Timeline clock = new Timeline(new KeyFrame(
+                javafx.util.Duration.millis(1000),
+                event -> updateWaitTime()));
+        clock.setCycleCount(Animation.INDEFINITE);
+        clock.play();
 
     }
 
