@@ -600,4 +600,39 @@ public class ClientManagerDBPure implements ClientManager {
         Collection<TransplantRequest> transplantRequests = getAllTransplantRequests();
         return MatchOrganToRecipients.getListOfPotentialRecipients(donatedOrgan, transplantRequests);
     }
+
+    /**
+     * Determines whether a donor is deceased and has chosen to donate organs that are currently available (not expired)
+     * @param client client to determine viability of as an organ donor
+     * @return boolean of whether the given client is viable as an organ donor
+     */
+    private boolean isViableDonor(Client client) {
+        if (client.isDead()) {
+            for (DonatedOrgan organ : client.getDonatedOrgans()) {
+                if (!organ.hasExpired()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Fetches viable deceased donors from the database
+     * @return list of viable deceased donors
+     */
+    @Override
+    public List<Client> getViableDeceasedDonors() {
+
+        List<Client> allClients = getClients();
+        List<Client> viableClients = new ArrayList<>();
+
+        for (Client client : allClients) {
+            if (isViableDonor(client)) {
+                viableClients.add(client);
+            }
+        }
+
+        return viableClients;
+    }
 }
