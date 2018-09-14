@@ -343,6 +343,17 @@ public class ClientController {
 
     }
 
+    /**
+     * Gets the image that matches the given client based on their uid. If it does not match then the default photo will
+     * be sent. All images are transferred using byte arrays.
+     *
+     * @param uid the id of the client
+     * @param authToken id token
+     * @return a byte array of the image
+     * @throws IfMatchRequiredException Thrown if there is no If-Match header, will result in a 428 error
+     * @throws IfMatchFailedException Thrown if the If-Match header does not match the Clients ETag. 412 error
+     * @throws InvalidRequestException Generic 400 exception if fields are malformed or inconsistent
+     */
     @GetMapping("clients/{uid}/image")
     public ResponseEntity<byte[]> getClientImage(
             @PathVariable int uid,
@@ -380,6 +391,15 @@ public class ClientController {
         }
     }
 
+    /**
+     * Saves the given image under the uid.
+     *
+     * @param uid id of the client
+     * @param image the image to save
+     * @param etag The corresponding If-Match header to check for concurrent update handling
+     * @param authToken id token
+     * @return the status of success/failure of the image posting
+     */
     @PostMapping("clients/{uid}/image")
     public ResponseEntity<?> postClientImage(
             @PathVariable int uid,
@@ -418,6 +438,15 @@ public class ClientController {
         }
     }
 
+    /**
+     * Deletes an image that matches the client.
+     *
+     * @param uid id of the client
+     * @param etag The corresponding If-Match header to check for concurrent update handling
+     * @param authToken id tokenn
+     * @return the status on whether or not the image was successfully deleted
+     * @throws InvalidRequestException Generic 400 exception if fields are malformed or inconsistent
+     */
     @DeleteMapping("clients/{uid}/image")
     public ResponseEntity<?> deleteClientImage(
             @PathVariable int uid,
@@ -456,4 +485,43 @@ public class ClientController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    /**
+     * Gets an image which matches the type of organ requested.
+     *
+     * @param organType type of organ
+     * @param authToken id token
+     * @return a byte array of the organ which matches the organ type.
+     * @throws IfMatchRequiredException Thrown if there is no If-Match header, will result in a 428 error
+     * @throws IfMatchFailedException Thrown if the If-Match header does not match the Clients ETag. 412 error
+     * @throws InvalidRequestException Generic 400 exception if fields are malformed or inconsisten
+     */
+    @GetMapping("organimage/{organType}")
+    public ResponseEntity<byte[]> getOrganImage(
+            @PathVariable Organ organType,
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
+            throws InvalidRequestException, IfMatchFailedException, IfMatchRequiredException {
+
+        // Check if the directory exists. If not, then clearly the image doesn't
+        File directory = new File(State.getImageDirectory());
+        if (!directory.exists()) {
+            throw new NotFoundException();
+        }
+
+        // Get the organ image
+        System.out.println(State.getImageDirectory() + organType.toString() + ".png");
+        try (InputStream in = new FileInputStream(State.getImageDirectory() + organType.toString() + ".png")) {
+            byte[] out = IOUtils.toByteArray(in);
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Content-Type", "image/png");
+            return new ResponseEntity<>(out, headers, HttpStatus.OK);
+        } catch (FileNotFoundException ex) {
+            throw new NotFoundException(ex);
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+
 }

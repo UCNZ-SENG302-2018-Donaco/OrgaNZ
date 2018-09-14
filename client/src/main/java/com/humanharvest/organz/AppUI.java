@@ -35,7 +35,7 @@ import org.tuiofx.internal.base.TuioFXCanvas;
 public class AppUI extends Application {
 
     static {
-        // Must be done here, since getting the property happends before the class is created
+        // Must be done here, since getting the property happens before the class is created
         if (System.getProperty("prism.maxvram") == null) {
             ReflectionUtils.setStaticField(PrismSettings.class, "maxVram", 2L * 1024 * 1024 * 1024); //2GB
         }
