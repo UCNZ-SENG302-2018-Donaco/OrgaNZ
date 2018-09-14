@@ -828,6 +828,24 @@ public class Client implements ConcurrencyControlledEntity {
         return Collections.unmodifiableList(transplantRequests);
     }
 
+    /**
+     * Returns the transplant request relevant to the passed in organ.
+     * If there is no such transplant request, returns null.
+     *
+     * @param organ the organ to get the transplant request for
+     * @return the transplant request that is for the passed in organ
+     */
+    public TransplantRequest getTransplantRequest(Organ organ) {
+        for (TransplantRequest transplantRequest : transplantRequests) {
+            if (transplantRequest.getRequestedOrgan() == organ) {
+                return transplantRequest;
+            }
+        }
+
+        // Couldn't find one
+        return null;
+    }
+
     public void setTransplantRequests(List<TransplantRequest> requests) {
         transplantRequests = new ArrayList<>(requests);
         for (TransplantRequest request : requests) {
@@ -1075,7 +1093,10 @@ public class Client implements ConcurrencyControlledEntity {
      * @param regionOfDeath The region they died in.
      * @param cityOfDeath The city they died in.
      */
-    public void markDead(LocalDate dateOfDeath, LocalTime timeOfDeath, Country countryOfDeath, String regionOfDeath,
+    public void markDead(LocalDate dateOfDeath,
+            LocalTime timeOfDeath,
+            Country countryOfDeath,
+            String regionOfDeath,
             String cityOfDeath) {
         this.dateOfDeath = dateOfDeath;
         this.timeOfDeath = timeOfDeath;

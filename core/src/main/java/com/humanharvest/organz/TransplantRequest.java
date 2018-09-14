@@ -1,5 +1,6 @@
 package com.humanharvest.organz;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
@@ -18,6 +19,7 @@ import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 import com.humanharvest.organz.views.client.Views;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 
 /**
@@ -92,6 +94,11 @@ public class TransplantRequest {
 
     public LocalDateTime getRequestDate() {
         return requestDate;
+    }
+
+    @JsonIgnore
+    public Duration getTimeSinceRequest() {
+        return Duration.between(requestDate, LocalDateTime.now());
     }
 
     public LocalDateTime getResolvedDate() {
