@@ -70,6 +70,6 @@ public class TransplantsControllerOneItemTest extends ControllerTest {
                 request.getClient().getFullName(),
                 request.getRequestedOrgan(),
                 request.getClient().getRegion(),
-                request.getRequestDate()));
+                request.getRequestDateTime()));
     }
 }

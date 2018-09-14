@@ -100,7 +100,7 @@ public class ClientResolverMemory implements ClientResolver {
     @Override
     public List<TransplantRequest> createTransplantRequest(Client client, CreateTransplantRequestView request) {
         TransplantRequest transplantRequest = new TransplantRequest(client, request.getRequestedOrgan(),
-                request.getRequestDate());
+                request.getRequestDateTime());
         client.addTransplantRequest(transplantRequest);
         State.getClientManager().applyChangesTo(client);
         return client.getTransplantRequests();
@@ -162,7 +162,7 @@ public class ClientResolverMemory implements ClientResolver {
             ResolveTransplantRequestObject resolveTransplantRequestObject) {
         request.setStatus(resolveTransplantRequestObject.getStatus());
         request.setResolvedReason(resolveTransplantRequestObject.getResolvedReason());
-        request.setResolvedDate(resolveTransplantRequestObject.getResolvedDate());
+        request.setResolvedDateTime(resolveTransplantRequestObject.getResolvedDateTime());
         return request;
     }
 

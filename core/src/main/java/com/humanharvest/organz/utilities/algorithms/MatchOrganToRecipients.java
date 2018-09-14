@@ -53,9 +53,9 @@ public class MatchOrganToRecipients {
      */
     private static int compareCountryCloseness(Country c1, Country c2, Country targetCountry) {
         // Check if the one of the recipients is in the same country that the donor died
-        if (c1.equals(targetCountry)) {
+        if (c1 == targetCountry) {
             return -1;
-        } else if (c2.equals(targetCountry)) {
+        } else if (c2 == targetCountry) {
             return 1;
         } else { // Neither is in the same country, so calculate closest country
             double distanceToCountry1 = distanceBetween(c1, targetCountry);
@@ -186,12 +186,12 @@ public class MatchOrganToRecipients {
         }
 
         // If they are in different countries, check which one is closest
-        if (!country1.equals(country2)) {
+        if (country1 != country2) {
             return compareCountryCloseness(country1, country2, deathCountry);
         }
 
         // If they are in the same country, but the donated organ is in a different country
-        if (!country1.equals(deathCountry)) {
+        if (country1 != deathCountry) {
             return 0;
         }
 
@@ -270,8 +270,8 @@ public class MatchOrganToRecipients {
 
         // Sort the list by when the transplant request was made, then where the potential recipient lives
         potentialTransplantRequests.sort((t1, t2) -> {
-            LocalDateTime requestDate1 = t1.getRequestDate().truncatedTo(ChronoUnit.DAYS);
-            LocalDateTime requestDate2 = t2.getRequestDate().truncatedTo(ChronoUnit.DAYS);
+            LocalDateTime requestDate1 = t1.getRequestDateTime().truncatedTo(ChronoUnit.DAYS);
+            LocalDateTime requestDate2 = t2.getRequestDateTime().truncatedTo(ChronoUnit.DAYS);
             int timeComparison = requestDate1.compareTo(requestDate2);
 
             if (timeComparison != 0) { // different time, so just compare using that

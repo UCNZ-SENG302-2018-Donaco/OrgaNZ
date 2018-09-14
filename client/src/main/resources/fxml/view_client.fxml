@@ -244,6 +244,7 @@
                           </children>
                         </GridPane>
                       </children>
+                      <Button mnemonicParsing="false" onAction="#openRecDetForLiver" text="Open receiver details for liver" />
                     </VBox>
                     <VBox spacing="10.0" GridPane.columnIndex="2">
                       <children>
