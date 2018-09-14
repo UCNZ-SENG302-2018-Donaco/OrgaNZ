@@ -448,12 +448,4 @@ public class RequestOrgansController extends SubController {
 
         PageNavigator.loadPage(Page.SUBMIT_DEATH_DETAILS, newMain);
     }
-
-    /**
-     * Returns to the view client details page.
-     */
-    @FXML
-    private void returnToViewClient() {
-        PageNavigator.loadPage(Page.VIEW_CLIENT, mainController);
-    }
 }

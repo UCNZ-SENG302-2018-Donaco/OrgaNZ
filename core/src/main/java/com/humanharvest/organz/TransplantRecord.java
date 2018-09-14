@@ -8,6 +8,8 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 
+import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
+
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 
@@ -22,25 +24,28 @@ public class TransplantRecord extends ProcedureRecord {
     @OneToOne
     @JoinColumn(name = "organ_id")
     private DonatedOrgan organ;
-
     @OneToOne
     @JoinColumn(name = "request_id")
     private TransplantRequest request;
-
+    @OneToOne
+    @JoinColumn(name = "hospital_id")
+    private Hospital hospital;
     private boolean completed;
 
     protected TransplantRecord() {
     }
 
-    public TransplantRecord(DonatedOrgan organ, TransplantRequest request, LocalDate scheduledDate) {
+    public TransplantRecord(DonatedOrgan organ, TransplantRequest request, Hospital hospital, LocalDate scheduledDate) {
         this.organ = organ;
         this.request = request;
+        this.hospital = hospital;
         setDate(scheduledDate);
         setClient(request.getClient());
         setSummary(organ.getOrganType().toString() + " transplant");
         setDescription(String.format("Transplant of %s from donor '%s' to recipient '%s'.",
                 organ.getOrganType().toString(), organ.getDonor().getFullName(), request.getClient().getFullName()));
         addAffectedOrgan(organ.getOrganType());
+        request.setStatus(TransplantRequestStatus.SCHEDULED);
     }
 
     public DonatedOrgan getOrgan() {
@@ -57,6 +62,14 @@ public class TransplantRecord extends ProcedureRecord {
 
     public Client getReceiver() {
         return getClient();
+    }
+
+    public Hospital getHospital() {
+        return hospital;
+    }
+
+    public void setHospital(Hospital hospital) {
+        this.hospital = hospital;
     }
 
     public boolean isCompleted() {

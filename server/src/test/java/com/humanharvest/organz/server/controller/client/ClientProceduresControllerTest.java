@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
+import com.humanharvest.organz.Hospital;
 import com.humanharvest.organz.ProcedureRecord;
 import com.humanharvest.organz.TransplantRecord;
 import com.humanharvest.organz.TransplantRequest;
@@ -225,7 +226,8 @@ public class ClientProceduresControllerTest {
 
         DonatedOrgan donatedOrgan = new DonatedOrgan(Organ.LIVER, donor, LocalDateTime.now(), (long) 1232131);
 
-        TransplantRecord transplantRecord = new TransplantRecord(donatedOrgan, request, LocalDate.now().plusDays(1));
+        TransplantRecord transplantRecord = new TransplantRecord(donatedOrgan, request,
+                Hospital.getDefaultHospitals().iterator().next(), LocalDate.now().plusDays(1));
         transplantRecord.setId(12);
 
         testClient.addProcedureRecord(transplantRecord);
@@ -246,7 +248,8 @@ public class ClientProceduresControllerTest {
 
         DonatedOrgan donatedOrgan = new DonatedOrgan(Organ.LIVER, donor, LocalDateTime.now(), (long) 1232131);
 
-        TransplantRecord transplantRecord = new TransplantRecord(donatedOrgan, request, LocalDate.now());
+        TransplantRecord transplantRecord = new TransplantRecord(donatedOrgan, request,
+                Hospital.getDefaultHospitals().iterator().next(), LocalDate.now());
         transplantRecord.setId(12);
 
         testClient.addProcedureRecord(transplantRecord);

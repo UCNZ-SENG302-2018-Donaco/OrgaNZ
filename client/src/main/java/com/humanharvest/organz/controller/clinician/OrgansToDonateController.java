@@ -27,6 +27,7 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
@@ -49,6 +50,7 @@ import org.controlsfx.control.Notifications;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
+import com.humanharvest.organz.Hospital;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SidebarController;
@@ -115,6 +117,9 @@ public class OrgansToDonateController extends SubController {
     private Button scheduleTransplantBtn;
     @FXML
     private DatePicker transplantDatePicker;
+
+    @FXML
+    private ChoiceBox<Hospital> transplantHospitalChoice;
 
     @FXML
     private Text displayingXToYOfZText;
@@ -208,6 +213,10 @@ public class OrgansToDonateController extends SubController {
         // Sort by time until expiry column by default.
         tableView.getSortOrder().clear();
         tableView.getSortOrder().add(timeUntilExpiryCol);
+
+        // Setup transplant hospital choice picker
+        transplantHospitalChoice.setItems(FXCollections.observableArrayList(State.getConfigManager().getHospitals()));
+        transplantHospitalChoice.getItems().sort(Comparator.comparing(Hospital::getName));
     }
 
     /**
@@ -392,9 +401,11 @@ public class OrgansToDonateController extends SubController {
         if (selectedClients.size() != 1) {
             scheduleTransplantBtn.setDisable(true);
             transplantDatePicker.setDisable(true);
+            transplantHospitalChoice.setDisable(true);
         } else {
             scheduleTransplantBtn.setDisable(false);
             transplantDatePicker.setDisable(false);
+            transplantHospitalChoice.setDisable(false);
         }
     }
 
@@ -410,7 +421,16 @@ public class OrgansToDonateController extends SubController {
         if (transplantDate == null || transplantDate.isBefore(LocalDate.now())) {
             PageNavigator.showAlert(AlertType.ERROR,
                     "Invalid Transplant Date",
-                    "Please enter a valid date for the transplant to take place.",
+                    "Please enter a valid date for the transplant to take place. "
+                            + "A valid date is one that is today or in the future.",
+                    mainController.getStage());
+            return;
+        }
+
+        if (transplantHospitalChoice.getValue() == null) {
+            PageNavigator.showAlert(AlertType.ERROR,
+                    "Missing Transplant Hospital",
+                    "Please select a hospital for the transplant to take place in.",
                     mainController.getStage());
             return;
         }
@@ -424,18 +444,27 @@ public class OrgansToDonateController extends SubController {
                 .filter(r -> r.getRequestedOrgan() == organToDonate.getOrganType())
                 .findFirst();
         if (!optionalRequest.isPresent()) {
+            PageNavigator.showAlert(AlertType.ERROR,
+                    "Could not find the transplant",
+                    "The specified transplant request could not be located, maybe it was deleted?",
+                    mainController.getStage());
             return;
         }
         TransplantRequest request = optionalRequest.get();
 
-        State.getClientResolver().scheduleTransplantProcedure(organToDonate, request, transplantDate);
+        State.getClientResolver().scheduleTransplantProcedure(organToDonate, request,
+                transplantHospitalChoice.getValue(), transplantDate);
         Notifications.create()
                 .title("Scheduled Transplant")
                 .text(String.format("A transplant for %s from %s to %s has been scheduled on %s.",
                         request.getRequestedOrgan(), organToDonate.getDonor().getFullName(), receiver.getFullName(),
                         transplantDate))
                 .showInformation();
+
+        // Reset values
         transplantDatePicker.setValue(null);
+        transplantHospitalChoice.getSelectionModel().clearSelection();
+
         PageNavigator.refreshAllWindows();
     }
 

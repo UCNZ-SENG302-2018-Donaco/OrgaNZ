@@ -2,11 +2,9 @@ package com.humanharvest.organz.controller.client;
 
 import java.time.LocalDate;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import javafx.collections.FXCollections;
 import javafx.collections.transformation.SortedList;
@@ -328,17 +326,11 @@ public class ViewProceduresController extends SubController {
             return;
         }
 
-        List<ProcedureRecord> allProcedures = client.getProcedures();
-
         SortedList<ProcedureRecord> sortedPastProcedures = new SortedList<>(FXCollections.observableArrayList(
-                allProcedures.stream()
-                        .filter(record -> record.getDate().isBefore(LocalDate.now()))
-                        .collect(Collectors.toList())));
+                client.getPastProcedures()));
 
         SortedList<ProcedureRecord> sortedPendingProcedures = new SortedList<>(FXCollections.observableArrayList(
-                allProcedures.stream()
-                        .filter(record -> !record.getDate().isBefore(LocalDate.now()))
-                        .collect(Collectors.toList())));
+                client.getPendingProcedures()));
 
         sortedPendingProcedures.comparatorProperty().bind(pendingProcedureView.comparatorProperty());
         sortedPastProcedures.comparatorProperty().bind(pastProcedureView.comparatorProperty());
@@ -364,26 +356,29 @@ public class ViewProceduresController extends SubController {
      */
     private void enableAppropriateButtons() {
         if (!windowContext.isClinViewClientWindow()) {
+            // Clients can't use any buttons
             return;
         }
         if (pastProcedureView.getSelectionModel().getSelectedItem() == null &&
                 pendingProcedureView.getSelectionModel().getSelectedItem() == null) {
+            // Nothing is selected
             deleteButton.setDisable(true);
             completeTransplantButton.setDisable(true);
         } else {
+            // Something is selected
             deleteButton.setDisable(false);
-            setResolveTransplantButton();
+            setCompleteTransplantButton();
         }
     }
 
     /**
-     * Enable or disable the resolve transplant button based on the currently selected item
+     * Enable or disable the Complete Transplant button based on the currently selected item
      * Will only be enabled if the currently selected item is:
      * In the past
      * A TransplantRecord
      * Has not yet been completed
      */
-    private void setResolveTransplantButton() {
+    private void setCompleteTransplantButton() {
         ProcedureRecord record = pastProcedureView.getSelectionModel().getSelectedItem();
         if (record instanceof TransplantRecord) {
             TransplantRecord tRecord = (TransplantRecord) record;

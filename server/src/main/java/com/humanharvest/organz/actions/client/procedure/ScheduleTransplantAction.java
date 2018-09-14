@@ -3,6 +3,7 @@ package com.humanharvest.organz.actions.client.procedure;
 import java.time.LocalDate;
 
 import com.humanharvest.organz.DonatedOrgan;
+import com.humanharvest.organz.Hospital;
 import com.humanharvest.organz.TransplantRecord;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.state.ClientManager;
@@ -21,12 +22,10 @@ public class ScheduleTransplantAction extends AddProcedureRecordAction {
      * @param request The {@link TransplantRequest} to be fulfilled.
      * @param manager The {@link ClientManager} to apply the changes with.
      */
-    public ScheduleTransplantAction(DonatedOrgan organ, TransplantRequest request, LocalDate scheduledDate,
-            ClientManager manager) throws DateOutOfBoundsException {
+    public ScheduleTransplantAction(DonatedOrgan organ, TransplantRequest request, Hospital hospital,
+            LocalDate scheduledDate, ClientManager manager) throws DateOutOfBoundsException {
         // Create a new TransplantRecord using the parameters and pass to AddProcedureRecord constructor
-        super(request.getClient(),
-                new TransplantRecord(organ, request, scheduledDate),
-                manager);
+        super(request.getClient(), new TransplantRecord(organ, request, hospital, scheduledDate), manager);
 
         // Check that date is not out of bounds
         if (scheduledDate.isBefore(LocalDate.now())) {

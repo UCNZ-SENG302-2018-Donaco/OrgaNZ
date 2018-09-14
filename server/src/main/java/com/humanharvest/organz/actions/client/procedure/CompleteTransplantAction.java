@@ -56,7 +56,7 @@ public class CompleteTransplantAction extends ClientAction {
         record.getOrgan().setReceiver(null);
 
         TransplantRequest request = record.getRequest();
-        request.setStatus(TransplantRequestStatus.WAITING);
+        request.setStatus(TransplantRequestStatus.SCHEDULED);
         request.setResolvedDateTime(null);
         request.setResolvedReason(null);
 

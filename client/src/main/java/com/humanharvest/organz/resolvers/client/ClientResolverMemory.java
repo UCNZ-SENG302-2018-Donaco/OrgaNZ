@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.HistoryItem;
+import com.humanharvest.organz.Hospital;
 import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.ProcedureRecord;
@@ -133,8 +134,8 @@ public class ClientResolverMemory implements ClientResolver {
 
     @Override
     public List<ProcedureRecord> scheduleTransplantProcedure(DonatedOrgan organ, TransplantRequest request,
-            LocalDate date) {
-        TransplantRecord transplant = new TransplantRecord(organ, request, date);
+            Hospital hospital, LocalDate date) {
+        TransplantRecord transplant = new TransplantRecord(organ, request, hospital, date);
         return addProcedureRecord(request.getClient(), transplant);
     }
 

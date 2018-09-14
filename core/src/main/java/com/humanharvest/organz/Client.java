@@ -31,6 +31,8 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -80,6 +82,11 @@ public class Client implements ConcurrencyControlledEntity {
     @JsonView(Views.Details.class)
     @Column(columnDefinition = "text")
     private String currentAddress;
+
+    @ManyToOne
+    @JoinColumn(name="Hospital_id")
+    @JsonView(Views.Details.class)
+    private Hospital hospital;
 
     @JsonView(Views.Overview.class)
     private String region = "Unspecified";
@@ -757,17 +764,6 @@ public class Client implements ConcurrencyControlledEntity {
     }
 
     /**
-     * Returns a list of procedures that the client has previously undergone.
-     *
-     * @return A list of past procedures for the client.
-     */
-    public List<ProcedureRecord> getPastProcedures() {
-        return Collections.unmodifiableList(procedures.stream()
-                .filter(record -> record.getDate().isBefore(LocalDate.now()))
-                .collect(Collectors.toList()));
-    }
-
-    /**
      * Adds Illness history to Person
      *
      * @param record IllnessRecord that is wanted to be added
@@ -813,9 +809,21 @@ public class Client implements ConcurrencyControlledEntity {
      */
     public List<ProcedureRecord> getPendingProcedures() {
         return Collections.unmodifiableList(procedures.stream()
-                .filter(record -> !record.getDate().isBefore(LocalDate.now()))
+                .filter(record -> record.getDate().isAfter(LocalDate.now()))
                 .collect(Collectors.toList()));
     }
+
+    /**
+     * Returns a list of procedures that the client has previously undergone.
+     *
+     * @return A list of past procedures for the client.
+     */
+    public List<ProcedureRecord> getPastProcedures() {
+        return Collections.unmodifiableList(procedures.stream()
+                .filter(record -> !record.getDate().isAfter(LocalDate.now()))
+                .collect(Collectors.toList()));
+    }
+
 
     public List<TransplantRequest> getTransplantRequests() {
         return Collections.unmodifiableList(transplantRequests);
@@ -1175,8 +1183,18 @@ public class Client implements ConcurrencyControlledEntity {
         return country;
     }
 
+
     public void setCountry(Country country) {
         this.country = country;
+        updateModifiedTimestamp();
+    }
+
+    public Hospital getHospital() {
+        return hospital;
+    }
+
+    public void setHospital(Hospital hospital) {
+        this.hospital = hospital;
         updateModifiedTimestamp();
     }
 }

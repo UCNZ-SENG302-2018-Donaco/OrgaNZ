@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.HistoryItem;
+import com.humanharvest.organz.Hospital;
 import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.ProcedureRecord;
@@ -270,13 +271,14 @@ public class ClientResolverRest implements ClientResolver {
 
     @Override
     public List<ProcedureRecord> scheduleTransplantProcedure(DonatedOrgan organ, TransplantRequest request,
-            LocalDate date) {
-        TransplantRecord transplant = new TransplantRecord(organ, request, date);
+            Hospital hospital, LocalDate date) {
+        TransplantRecord transplant = new TransplantRecord(organ, request, hospital, date);
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(
                 State.getBaseUri() + "/clients/" + request.getClient().getUid() + "/transplants")
                 .queryParam("organId", organ.getId())
                 .queryParam("requestId", request.getId())
+                .queryParam("hospitalId", hospital.getId())
                 .queryParam("date", date.toString());
 
         HttpHeaders httpHeaders = createHeaders(false);

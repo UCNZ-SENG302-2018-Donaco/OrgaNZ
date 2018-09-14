@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
+import com.humanharvest.organz.Hospital;
 import com.humanharvest.organz.ProcedureRecord;
 import com.humanharvest.organz.TransplantRecord;
 import com.humanharvest.organz.TransplantRequest;
@@ -230,6 +231,7 @@ public class ClientProceduresController {
             @PathVariable int uid,
             @RequestParam long organId,
             @RequestParam long requestId,
+            @RequestParam long hospitalId,
             @RequestParam(name = "date") String dateString,
             @RequestHeader(value = "If-Match", required = false) String ETag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
@@ -266,6 +268,13 @@ public class ClientProceduresController {
         }
         TransplantRequest request = optionalRequest.get();
 
+        Optional<Hospital> optionalHospital = State.getConfigManager().getHospitalById(hospitalId);
+        if (!optionalHospital.isPresent()) {
+            // No hospital exists with that id, return 400
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        Hospital hospital = optionalHospital.get();
+
         LocalDate date;
         try {
             date = LocalDate.parse(dateString);
@@ -281,7 +290,7 @@ public class ClientProceduresController {
 
         // Execute add procedure action
         try {
-            Action action = new ScheduleTransplantAction(organ, request, date, State.getClientManager());
+            Action action = new ScheduleTransplantAction(organ, request, hospital, date, State.getClientManager());
             State.getActionInvoker(authToken).execute(action);
         } catch (DateOutOfBoundsException exc) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
