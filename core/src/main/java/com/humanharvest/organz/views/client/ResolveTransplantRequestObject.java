@@ -6,26 +6,26 @@ import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 
 public class ResolveTransplantRequestObject {
 
-    private LocalDateTime resolvedDate;
+    private LocalDateTime resolvedDateTime;
     private TransplantRequestStatus status;
     private String resolvedReason;
 
     public ResolveTransplantRequestObject() {
     }
 
-    public ResolveTransplantRequestObject(LocalDateTime resolvedDate, TransplantRequestStatus status, String
+    public ResolveTransplantRequestObject(LocalDateTime resolvedDateTime, TransplantRequestStatus status, String
             resolvedReason) {
-        this.resolvedDate = resolvedDate;
+        this.resolvedDateTime = resolvedDateTime;
         this.status = status;
         this.resolvedReason = resolvedReason;
     }
 
-    public LocalDateTime getResolvedDate() {
-        return resolvedDate;
+    public LocalDateTime getResolvedDateTime() {
+        return resolvedDateTime;
     }
 
-    public void setResolvedDate(LocalDateTime resolvedDate) {
-        this.resolvedDate = resolvedDate;
+    public void setResolvedDateTime(LocalDateTime resolvedDateTime) {
+        this.resolvedDateTime = resolvedDateTime;
     }
 
     public TransplantRequestStatus getStatus() {

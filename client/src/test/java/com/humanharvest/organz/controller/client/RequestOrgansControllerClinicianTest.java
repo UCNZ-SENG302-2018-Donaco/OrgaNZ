@@ -107,7 +107,7 @@ public class RequestOrgansControllerClinicianTest extends ControllerTest {
         for (TransplantRequest request : getCurrSampleRequests()) {
             verifyThat("#currentRequestsTable", containsRow(
                     request.getRequestedOrgan(),
-                    request.getRequestDate()));
+                    request.getRequestDateTime()));
         }
     }
 
@@ -116,7 +116,7 @@ public class RequestOrgansControllerClinicianTest extends ControllerTest {
         for (TransplantRequest request : getPastSampleRequests()) {
             verifyThat("#pastRequestsTable", containsRow(
                     request.getRequestedOrgan(),
-                    request.getRequestDate()));
+                    request.getRequestDateTime()));
         }
     }
 
@@ -159,7 +159,7 @@ public class RequestOrgansControllerClinicianTest extends ControllerTest {
             TransplantRequest request = findRequest.get();
             verifyThat("#currentRequestsTable", containsRow(
                     request.getRequestedOrgan(),
-                    request.getRequestDate()));
+                    request.getRequestDateTime()));
         } else {
             fail("The request was not added to the client.");
         }
