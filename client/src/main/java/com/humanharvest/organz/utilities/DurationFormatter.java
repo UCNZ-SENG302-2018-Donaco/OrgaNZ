@@ -63,7 +63,11 @@ public abstract class DurationFormatter {
         }
 
         long seconds = duration.getSeconds();
-        return seconds + " seconds";
+        if (seconds == 1) {
+            return "1 second";
+        } else {
+            return seconds + " seconds";
+        }
     }
 
     /**
