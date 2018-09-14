@@ -92,7 +92,7 @@ public class TransplantRequest {
         return requestedOrgan;
     }
 
-    public LocalDateTime getRequestDate() {
+    public LocalDateTime getRequestDateTime() {
         return requestDateTime;
     }
 
@@ -101,11 +101,11 @@ public class TransplantRequest {
         return Duration.between(requestDateTime, LocalDateTime.now());
     }
 
-    public LocalDateTime getResolvedDate() {
+    public LocalDateTime getResolvedDateTime() {
         return resolvedDateTime;
     }
 
-    public void setResolvedDate(LocalDateTime resolvedDate) {
+    public void setResolvedDateTime(LocalDateTime resolvedDate) {
         this.resolvedDateTime = resolvedDate;
     }
 

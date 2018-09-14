@@ -84,7 +84,7 @@ public class ClientTransplantRequestsControllerTest {
         validTransplantRequestJson = "{\n"
                 + "  \"requestedOrgan\": \"LIVER\",\n"
                 + "  \"requestDateTime\": \"2017-07-18T14:11:20.202\",\n"
-                + "  \"resolvedDate\": \"2017-07-19T14:11:20.202\",\n"
+                + "  \"resolvedDateTime\": \"2017-07-19T14:11:20.202\",\n"
                 + "  \"status\": \"WAITING\",\n"
                 + "  \"resolvedReason\": \"reason\"\n"
                 + "}";
@@ -171,7 +171,7 @@ public class ClientTransplantRequestsControllerTest {
                 .andExpect(content().contentType(contentType))
                 .andExpect(jsonPath("$[1].requestedOrgan", is("LIVER")))
                 .andExpect(jsonPath("$[1].requestDateTime", is("2017-07-18T14:11:20.202")))
-                .andExpect(jsonPath("$[1].resolvedDate", is("2017-07-19T14:11:20.202")))
+                .andExpect(jsonPath("$[1].resolvedDateTime", is("2017-07-19T14:11:20.202")))
                 .andExpect(jsonPath("$[1].status", is("WAITING")))
                 .andExpect(jsonPath("$[1].resolvedReason", is("reason")));
     }
@@ -181,7 +181,7 @@ public class ClientTransplantRequestsControllerTest {
         String json = "{\n"
                 + "  \"requestedOrgan\": \"LIVER\",\n"
                 + "  \"requestDateTime\": \"2017-07-18T14:11:20.202\",\n"
-                + "  \"resolvedDate\": \"2017-07-19T14:11:20.202\",\n"
+                + "  \"resolvedDateTime\": \"2017-07-19T14:11:20.202\",\n"
                 + "  \"status\": \"WAITING\""
                 + "}";
         mockMvc.perform(post("/clients/" + testClient.getUid() + "/transplantRequests")
@@ -193,7 +193,7 @@ public class ClientTransplantRequestsControllerTest {
                 .andExpect(content().contentType(contentType))
                 .andExpect(jsonPath("$[1].requestedOrgan", is("LIVER")))
                 .andExpect(jsonPath("$[1].requestDateTime", is("2017-07-18T14:11:20.202")))
-                .andExpect(jsonPath("$[1].resolvedDate", is("2017-07-19T14:11:20.202")))
+                .andExpect(jsonPath("$[1].resolvedDateTime", is("2017-07-19T14:11:20.202")))
                 .andExpect(jsonPath("$[1].status", is("WAITING")))
                 .andExpect(jsonPath("$[1].resolvedReason", isEmptyOrNullString()));
     }
@@ -215,7 +215,7 @@ public class ClientTransplantRequestsControllerTest {
                 .andExpect(content().contentType(contentType))
                 .andExpect(jsonPath("$[1].requestedOrgan", is("LIVER")))
                 .andExpect(jsonPath("$[1].requestDateTime", is("2017-07-18T14:11:20.202")))
-                .andExpect(jsonPath("$[1].resolvedDate", isEmptyOrNullString()))
+                .andExpect(jsonPath("$[1].resolvedDateTime", isEmptyOrNullString()))
                 .andExpect(jsonPath("$[1].status", is("WAITING")))
                 .andExpect(jsonPath("$[1].resolvedReason", is("reason")));
     }
@@ -225,7 +225,7 @@ public class ClientTransplantRequestsControllerTest {
         String json = "{\n"
                 + "  \"requestedOrgan\": \"invalid organ\",\n"
                 + "  \"requestDateTime\": \"2017-07-18T14:11:20.202\",\n"
-                + "  \"resolvedDate\": \"2017-07-19T14:11:20.202\",\n"
+                + "  \"resolvedDateTime\": \"2017-07-19T14:11:20.202\",\n"
                 + "  \"status\": \"WAITING\",\n"
                 + "  \"resolvedReason\": \"reason\"\n"
                 + "}";
@@ -242,7 +242,7 @@ public class ClientTransplantRequestsControllerTest {
         String json = "{\n"
                 + "  \"requestedOrgan\": \"LIVER\",\n"
                 + "  \"requestDateTime\": \"invalid date\",\n"
-                + "  \"resolvedDate\": \"2017-07-19T14:11:20.202\",\n"
+                + "  \"resolvedDateTime\": \"2017-07-19T14:11:20.202\",\n"
                 + "  \"status\": \"WAITING\",\n"
                 + "  \"resolvedReason\": \"reason\"\n"
                 + "}";
@@ -259,7 +259,7 @@ public class ClientTransplantRequestsControllerTest {
         String json = "{\n"
                 + "  \"requestedOrgan\": \"LIVER\",\n"
                 + "  \"requestDateTime\": \"2017-07-18T14:11:20.202\",\n"
-                + "  \"resolvedDate\": \"2017-07-19T14:11:20.202\",\n"
+                + "  \"resolvedDateTime\": \"2017-07-19T14:11:20.202\",\n"
                 + "  \"status\": \"invalid status\",\n"
                 + "  \"resolvedReason\": \"reason\"\n"
                 + "}";
@@ -335,7 +335,7 @@ public class ClientTransplantRequestsControllerTest {
                 .header("X-Auth-Token", VALID_AUTH)
                 .contentType(contentType)
                 .content("{\n"
-                        + "  \"resolvedDate\": \"" + localDateTimeString + "\",\n"
+                        + "  \"resolvedDateTime\": \"" + localDateTimeString + "\",\n"
                         + "  \"status\": \"CANCELLED\",\n"
                         + "  \"resolvedReason\": \"it was a mistake\"\n"
                         + "}"))
@@ -356,7 +356,7 @@ public class ClientTransplantRequestsControllerTest {
                 .header("X-Auth-Token", VALID_AUTH)
                 .contentType(contentType)
                 .content("{\n"
-                        + "  \"resolvedDate\": \"2019-07-19T14:11:20.202\",\n"
+                        + "  \"resolvedDateTime\": \"2019-07-19T14:11:20.202\",\n"
                         + "  \"status\": \"CANCELLED\",\n"
                         + "  \"resolvedReason\": \"it was a mistake\"\n"
                         + "}"))
@@ -376,7 +376,7 @@ public class ClientTransplantRequestsControllerTest {
                 .header("X-Auth-Token", VALID_AUTH)
                 .contentType(contentType)
                 .content("{\n"
-                        + "  \"resolvedDate\": \"" + localDateTimeString + "\",\n"
+                        + "  \"resolvedDateTime\": \"" + localDateTimeString + "\",\n"
                         + "  \"status\": \"CANCELLED\",\n"
                         + "  \"resolvedReason\": \"it was a mistake\"\n"
                         + "}"))
@@ -391,7 +391,7 @@ public class ClientTransplantRequestsControllerTest {
                 .header("X-Auth-Token", INVALID_AUTH)
                 .contentType(contentType)
                 .content("{\n"
-                        + "  \"resolvedDate\": \"2019-07-19T14:11:20.202\",\n"
+                        + "  \"resolvedDateTime\": \"2019-07-19T14:11:20.202\",\n"
                         + "  \"status\": \"CANCELLED\",\n"
                         + "  \"resolvedReason\": \"it was a mistake\"\n"
                         + "}"))
@@ -407,7 +407,7 @@ public class ClientTransplantRequestsControllerTest {
                 .header("X-Auth-Token", VALID_AUTH)
                 .contentType(contentType)
                 .content("{\n"
-                        + "  \"resolvedDate\": \"2019-07-19T14:11:20.202\",\n"
+                        + "  \"resolvedDateTime\": \"2019-07-19T14:11:20.202\",\n"
                         + "  \"status\": \"CANCELLED\",\n"
                         + "  \"resolvedReason\": \"it was a mistake\"\n"
                         + "}"))
@@ -421,7 +421,7 @@ public class ClientTransplantRequestsControllerTest {
         String anotherValidTransplantRequestJson = "{\n"
                 + "  \"requestedOrgan\": \"HEART\",\n"
                 + "  \"requestDateTime\": \"2017-07-18T14:11:20.202\",\n"
-                + "  \"resolvedDate\": \"2017-07-19T14:11:20.202\",\n"
+                + "  \"resolvedDateTime\": \"2017-07-19T14:11:20.202\",\n"
                 + "  \"status\": \"WAITING\",\n"
                 + "  \"resolvedReason\": \"reason\"\n"
                 + "}";
@@ -429,7 +429,7 @@ public class ClientTransplantRequestsControllerTest {
         String oneMoreValidTransplantRequestJson = "{\n"
                 + "  \"requestedOrgan\": \"CORNEA\",\n"
                 + "  \"requestDateTime\": \"2017-07-18T14:11:20.202\",\n"
-                + "  \"resolvedDate\": \"2017-07-19T14:11:20.202\",\n"
+                + "  \"resolvedDateTime\": \"2017-07-19T14:11:20.202\",\n"
                 + "  \"status\": \"WAITING\",\n"
                 + "  \"resolvedReason\": \"reason\"\n"
                 + "}";

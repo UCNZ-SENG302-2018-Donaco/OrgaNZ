@@ -76,7 +76,7 @@ public class ResolveTransplantRequestActionTest extends BaseTest {
                 manager);
         invoker.execute(action);
 
-        Duration timeDiff = Duration.between(LocalDateTime.now(), testRequest.getResolvedDate());
+        Duration timeDiff = Duration.between(LocalDateTime.now(), testRequest.getResolvedDateTime());
         assertTrue(Math.abs(timeDiff.getSeconds()) < 3);
     }
 }

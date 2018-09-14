@@ -7,14 +7,14 @@ import com.humanharvest.organz.utilities.enums.Organ;
 public class CreateTransplantRequestView {
 
     private Organ requestedOrgan;
-    private LocalDateTime requestDate;
+    private LocalDateTime requestDateTime;
 
     public CreateTransplantRequestView() {
     }
 
-    public CreateTransplantRequestView(Organ requestedOrgan, LocalDateTime requestDate) {
+    public CreateTransplantRequestView(Organ requestedOrgan, LocalDateTime requestDateTime) {
         this.requestedOrgan = requestedOrgan;
-        this.requestDate = requestDate;
+        this.requestDateTime = requestDateTime;
     }
 
     public Organ getRequestedOrgan() {
@@ -25,11 +25,11 @@ public class CreateTransplantRequestView {
         this.requestedOrgan = requestedOrgan;
     }
 
-    public LocalDateTime getRequestDate() {
-        return requestDate;
+    public LocalDateTime getRequestDateTime() {
+        return requestDateTime;
     }
 
-    public void setRequestDate(LocalDateTime requestDate) {
-        this.requestDate = requestDate;
+    public void setRequestDateTime(LocalDateTime requestDateTime) {
+        this.requestDateTime = requestDateTime;
     }
 }
