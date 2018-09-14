@@ -1093,8 +1093,10 @@ public class Client implements ConcurrencyControlledEntity {
      * @param regionOfDeath The region they died in.
      * @param cityOfDeath The city they died in.
      */
-    public void markDead(LocalDate dateOfDeath, LocalTime timeOfDeath, Country countryOfDeath, String
-            regionOfDeath,
+    public void markDead(LocalDate dateOfDeath,
+            LocalTime timeOfDeath,
+            Country countryOfDeath,
+            String regionOfDeath,
             String cityOfDeath) {
         this.dateOfDeath = dateOfDeath;
         this.timeOfDeath = timeOfDeath;
@@ -1151,7 +1153,6 @@ public class Client implements ConcurrencyControlledEntity {
      * @param id The id to use for the {@link DonatedOrgan}
      */
     public void donateOrgan(Organ organ, LocalDateTime timeDonated, Long id) {
-        System.out.println(organ.toString());
         donatedOrgans.add(new DonatedOrgan(organ, this, timeDonated, id));
     }
 

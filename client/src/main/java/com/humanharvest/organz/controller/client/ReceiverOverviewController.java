@@ -1,7 +1,5 @@
 package com.humanharvest.organz.controller.client;
 
-import static com.humanharvest.organz.state.State.*;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.time.Duration;
@@ -26,6 +24,7 @@ import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.clinician.ViewBaseController;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
+import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.DurationFormatter;
 import com.humanharvest.organz.utilities.DurationFormatter.Format;
 import com.humanharvest.organz.utilities.enums.Organ;
@@ -75,9 +74,10 @@ public class ReceiverOverviewController extends ViewBaseController {
             viewedTransplantRequest = viewedClient.getTransplantRequest(organ);
         }
     */
-    public ReceiverOverviewController() { // test with first client
-        manager = getClientManager();
-        session = getSession();
+    public ReceiverOverviewController() {
+        // test with first client
+        manager = State.getClientManager();
+        session = State.getSession();
     }
 
     /**
@@ -120,9 +120,7 @@ public class ReceiverOverviewController extends ViewBaseController {
         loadImage();
 
         // Track the adding of panes with the spiderweb pane collection.
-        receiverVBox.setOnMouseClicked(mouseEvent ->
-
-        {
+        receiverVBox.setOnMouseClicked(mouseEvent -> {
             if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 1) {
                 MainController newMain = PageNavigator.openNewWindow();
                 if (newMain != null) {
@@ -139,7 +137,7 @@ public class ReceiverOverviewController extends ViewBaseController {
 
     private void updateWaitTime() {
         String waitTimeString = "Error: no request";
-        List<TransplantRequest> transplantRequests = getClientResolver().getTransplantRequests(viewedClient);
+        List<TransplantRequest> transplantRequests = State.getClientResolver().getTransplantRequests(viewedClient);
         for (TransplantRequest transplantRequest : transplantRequests) {
             if (transplantRequest.getRequestedOrgan() == organ) {
                 Duration waitTime = transplantRequest.getTimeSinceRequest();
@@ -165,10 +163,10 @@ public class ReceiverOverviewController extends ViewBaseController {
     private void loadImage() {
         byte[] bytes;
         try {
-            bytes = getImageManager().getClientImage(viewedClient.getUid());
+            bytes = State.getImageManager().getClientImage(viewedClient.getUid());
         } catch (NotFoundException ignored) {
             try {
-                bytes = getImageManager().getDefaultImage();
+                bytes = State.getImageManager().getDefaultImage();
             } catch (IOException e) {
                 LOGGER.log(Level.SEVERE, "IO Exception when loading image ", e);
                 return;
