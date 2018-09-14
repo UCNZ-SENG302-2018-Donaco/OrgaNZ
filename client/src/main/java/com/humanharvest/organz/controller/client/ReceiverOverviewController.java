@@ -104,7 +104,11 @@ public class ReceiverOverviewController extends ViewBaseController {
         // Set travel time
         if (donor != null && viewedClient.getHospital() != null && donor.getHospital() != null) {
             Duration timeBetweenHospitals = viewedClient.getHospital().calculateTimeTo(donor.getHospital());
-            travelTime.setText(DurationFormatter.getFormattedDuration(timeBetweenHospitals, Format.Biggest));
+            if (timeBetweenHospitals.isZero()) {
+                travelTime.setText("None");
+            } else {
+                travelTime.setText(DurationFormatter.getFormattedDuration(timeBetweenHospitals, Format.Biggest));
+            }
         } else {
             travelTime.setText("Unknown");
         }
