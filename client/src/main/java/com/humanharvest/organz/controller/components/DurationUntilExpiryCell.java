@@ -1,5 +1,7 @@
 package com.humanharvest.organz.controller.components;
 
+import static com.humanharvest.organz.utilities.DurationFormatter.getFormattedDuration;
+
 import java.time.Duration;
 import java.time.LocalDateTime;
 
@@ -8,6 +10,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.paint.Color;
 
 import com.humanharvest.organz.DonatedOrgan;
+import com.humanharvest.organz.utilities.DurationFormatter.Format;
 
 public class DurationUntilExpiryCell extends TableCell<DonatedOrgan, Duration> {
 
@@ -84,37 +87,6 @@ public class DurationUntilExpiryCell extends TableCell<DonatedOrgan, Duration> {
                 greyColour, higherPercent, greyColour);
     }
 
-    /**
-     * Returns the duration, formatted to display x hours, y minutes (or x hours, y seconds if there are less than 60
-     * seconds).
-     *
-     * @param duration the duration to format
-     * @return the formatted string
-     */
-    private static String getFormattedDuration(Duration duration) {
-        String formattedDuration;
-        long hours = duration.toHours();
-        if (hours == 1) {
-            formattedDuration = "1 hour ";
-        } else {
-            formattedDuration = hours + " hours ";
-        }
-        long minutes = duration.toMinutes() % 60;
-        if (minutes == 0) { // no minutes, just seconds (and perhaps hours)
-            long seconds = duration.getSeconds() % 3600;
-            if (seconds == 1) {
-                formattedDuration += "1 second";
-            } else {
-                formattedDuration += seconds + " seconds";
-            }
-        } else if (minutes == 1) {
-            formattedDuration += "1 minute";
-        } else {
-            formattedDuration += minutes + " minutes";
-        }
-        return formattedDuration;
-    }
-
     private DonatedOrgan getDonatedOrganForRow() {
         return getTableView().getItems().get(getIndex());
     }
@@ -131,7 +103,7 @@ public class DurationUntilExpiryCell extends TableCell<DonatedOrgan, Duration> {
             Duration timeSinceDeath = Duration.between(
                     getDonatedOrganForRow().getDateTimeOfDonation(),
                     LocalDateTime.now());
-            setText("N/A (" + getFormattedDuration(timeSinceDeath) + " since death)");
+            setText("N/A (" + getFormattedDuration(timeSinceDeath, Format.XHoursYMinutesSeconds) + " since death)");
             setStyle(null);
             setTextFill(Color.BLACK);
 
@@ -143,7 +115,7 @@ public class DurationUntilExpiryCell extends TableCell<DonatedOrgan, Duration> {
                         getDonatedOrganForRow().getDateTimeOfDonation()
                                 .plus(getDonatedOrganForRow().getOrganType().getMaxExpiration()),
                         LocalDateTime.now());
-                setText(String.format("Expired (%s ago)", getFormattedDuration(timeSinceExpiry)));
+                setText(String.format("Expired (%s ago)", getFormattedDuration(timeSinceExpiry, Format.XHoursYMinutesSeconds)));
             } else {
                 setText("Overridden");
             }
@@ -151,10 +123,7 @@ public class DurationUntilExpiryCell extends TableCell<DonatedOrgan, Duration> {
             setTextFill(Color.WHITE);
 
         } else {
-            // Split duration string into words, e.g. ["3", "days", "2", "hours", "10", "minutes",...]
-            // It then takes the first 4 words (except for seconds, then it just takes up to the seconds)
-            // and stores that in displayedDuration, e.g. "3 days 2 hours"
-            String displayedDuration = getFormattedDuration(item);
+            String displayedDuration = getFormattedDuration(item, Format.XHoursYMinutesSeconds);
 
             // Progress as a decimal. starts at 0 (at time of death) and goes to 1.
             double progressDecimal = getDonatedOrganForRow().getProgressDecimal();

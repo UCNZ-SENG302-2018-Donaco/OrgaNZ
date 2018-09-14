@@ -1,5 +1,6 @@
 package com.humanharvest.organz;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
@@ -18,6 +19,7 @@ import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 import com.humanharvest.organz.views.client.Views;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 
 /**
@@ -39,9 +41,9 @@ public class TransplantRequest {
     @JsonView(Views.Overview.class)
     private Organ requestedOrgan;
     @JsonView(Views.Overview.class)
-    private LocalDateTime requestDate;
+    private LocalDateTime requestDateTime;
     @JsonView(Views.Overview.class)
-    private LocalDateTime resolvedDate;
+    private LocalDateTime resolvedDateTime;
     @Enumerated(EnumType.STRING)
     @JsonView(Views.Overview.class)
     private TransplantRequestStatus status = TransplantRequestStatus.WAITING;
@@ -55,13 +57,13 @@ public class TransplantRequest {
     public TransplantRequest(Client client, Organ requestedOrgan) {
         this.client = client;
         this.requestedOrgan = requestedOrgan;
-        requestDate = LocalDateTime.now();
+        requestDateTime = LocalDateTime.now();
     }
 
     public TransplantRequest(Client client, Organ requestedOrgan, LocalDateTime requestDate) {
         this.client = client;
         this.requestedOrgan = requestedOrgan;
-        this.requestDate = requestDate;
+        this.requestDateTime = requestDate;
     }
 
     public Long getId() {
@@ -90,16 +92,21 @@ public class TransplantRequest {
         return requestedOrgan;
     }
 
-    public LocalDateTime getRequestDate() {
-        return requestDate;
+    public LocalDateTime getRequestDateTime() {
+        return requestDateTime;
     }
 
-    public LocalDateTime getResolvedDate() {
-        return resolvedDate;
+    @JsonIgnore
+    public Duration getTimeSinceRequest() {
+        return Duration.between(requestDateTime, LocalDateTime.now());
     }
 
-    public void setResolvedDate(LocalDateTime resolvedDate) {
-        this.resolvedDate = resolvedDate;
+    public LocalDateTime getResolvedDateTime() {
+        return resolvedDateTime;
+    }
+
+    public void setResolvedDateTime(LocalDateTime resolvedDate) {
+        this.resolvedDateTime = resolvedDate;
     }
 
     public TransplantRequestStatus getStatus() {

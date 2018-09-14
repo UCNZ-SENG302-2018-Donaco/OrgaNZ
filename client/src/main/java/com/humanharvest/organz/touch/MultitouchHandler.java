@@ -44,6 +44,7 @@ import org.tuiofx.widgets.skin.OnScreenKeyboard;
 
 public final class MultitouchHandler {
 
+    public static final double MIN_VELOCITY_THRESHOLD = 10;
     private static final double COLLISION_VELOCITY_LOSS = 0.5;
     private static final double SURFACE_TENSION = 0.2;
     private static final long PHYSICS_MILLISECOND_PERIOD = 16;

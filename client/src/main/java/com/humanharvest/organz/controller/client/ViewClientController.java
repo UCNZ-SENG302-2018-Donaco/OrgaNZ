@@ -12,7 +12,10 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.format.FormatStyle;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Objects;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -40,6 +43,7 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import org.controlsfx.control.Notifications;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.Hospital;
 import com.humanharvest.organz.controller.AlertHelper;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.clinician.ViewBaseController;
@@ -55,7 +59,9 @@ import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.validators.client.ClientBornAndDiedDatesValidator;
+import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
+import com.humanharvest.organz.utilities.view.WindowContext;
 import com.humanharvest.organz.views.client.ModifyClientObject;
 
 import org.apache.commons.io.IOUtils;
@@ -93,6 +99,8 @@ public class ViewClientController extends ViewBaseController {
     private ChoiceBox<Gender> gender, genderIdentity;
     @FXML
     private ChoiceBox<BloodType> btype;
+    @FXML
+    private ChoiceBox<Hospital> hospital;
     @FXML
     private ChoiceBox<Region> regionCB, deathRegionCB;
     @FXML
@@ -164,6 +172,10 @@ public class ViewClientController extends ViewBaseController {
         gender.setItems(FXCollections.observableArrayList(Gender.values()));
         genderIdentity.setItems(FXCollections.observableArrayList(Gender.values()));
         btype.setItems(FXCollections.observableArrayList(BloodType.values()));
+        Set<Hospital> hospitalSet = State.getConfigManager().getHospitals();
+        ObservableList<Hospital> hospitals = FXCollections.observableArrayList(new ArrayList<>(hospitalSet));
+        hospital.setItems(hospitals);
+        hospital.getItems().sort(Comparator.comparing(Hospital::getName));
         regionCB.setItems(FXCollections.observableArrayList(Region.values()));
         deathRegionCB.setItems(FXCollections.observableArrayList(Region.values()));
         setEnabledCountries();
@@ -280,6 +292,14 @@ public class ViewClientController extends ViewBaseController {
         weight.setText(String.valueOf(viewedClient.getWeight()));
         btype.setValue(viewedClient.getBloodType());
         country.setValue(viewedClient.getCountry());
+        if (viewedClient.getHospital() == null) {
+            hospital.setValue(null);
+        } else {
+            hospital.setValue(hospital.getItems().stream()
+                    .filter(hospitalItem -> hospitalItem.getId().equals(viewedClient.getHospital().getId()))
+                    .findFirst()
+                    .orElse(null));
+        }
 
         enableAppropriateRegionInput(deathCountry, deathRegionCB, deathRegionTF);
         enableAppropriateRegionInput(country, regionCB, regionTF);
@@ -557,6 +577,7 @@ public class ViewClientController extends ViewBaseController {
      * Once that occurs, updateDeathFields calls applyChanges, or that is called directly if the client is not dead.
      */
     private void updateChanges() {
+
         ModifyClientObject modifyClientObject = new ModifyClientObject();
 
         // Add the basic changes to the ModifyClientObject
@@ -596,6 +617,7 @@ public class ViewClientController extends ViewBaseController {
         addChangeIfDifferent(modifyClientObject, viewedClient, "bloodType", btype.getValue());
         addChangeIfDifferent(modifyClientObject, viewedClient, "currentAddress", address.getText());
         addChangeIfDifferent(modifyClientObject, viewedClient, "country", country.getValue());
+        addChangeIfDifferent(modifyClientObject, viewedClient, "hospital", hospital.getValue());
 
         // Register region change
         if (country.getValue() == Country.NZ) {
@@ -719,5 +741,19 @@ public class ViewClientController extends ViewBaseController {
             ageDisplayLabel.setText("Age at death:");
         }
         ageLabel.setText(String.valueOf(viewedClient.getAge()));
+    }
+
+    @FXML
+    private void openRecDetForLiver() {
+
+        MainController newMain = PageNavigator.openNewWindow(200, 400);
+        if (newMain != null) {
+            newMain.setWindowContext(new WindowContext.WindowContextBuilder()
+                    .setAsClinicianViewClientWindow()
+                    .viewClient(viewedClient)
+                    .build());
+            PageNavigator.loadPage(Page.RECEIVER_OVERVIEW, newMain);
+        }
+
     }
 }
