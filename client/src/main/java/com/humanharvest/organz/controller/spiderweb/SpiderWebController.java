@@ -82,8 +82,8 @@ public class SpiderWebController {
         PageNavigator.loadPage(Page.RECEIVER_OVERVIEW, newMain);
         paneCollection.add(newMain.getPane());
 
-        newMain.getPane().setTranslateX(800);
-        newMain.getPane().setTranslateY(300);
+        FocusArea focusArea = ((FocusArea) newMain.getPane().getUserData());
+        focusArea.setTransform(new Affine(new Translate(1000, 500)));
     }
 
     /**
@@ -112,6 +112,7 @@ public class SpiderWebController {
                 y += 50;
 
                 // Create the line
+                /*
                 if (previousPane != null) {
                     Line connector = new Line();
                     connector.setFill(Color.BLACK);
@@ -128,14 +129,9 @@ public class SpiderWebController {
                         connector.setEndX(boundsInParent.getMinX() + boundsInParent.getWidth()/2);
                         connector.setEndY(boundsInParent.getMinY() + boundsInParent.getHeight()/2);
                     });
-                    /*
-                    connector.startXProperty().bind(currentPane.localToParentTransformProperty());
-                    connector.startYProperty().bind(currentPane.layoutYProperty().add(currentPane.translateYProperty()));
-                    connector.endXProperty().bind(previousPane.layoutXProperty().add(previousPane.translateXProperty()));
-                    connector.endYProperty().bind(previousPane.layoutYProperty().add(previousPane.translateYProperty()));
-                    */
                     canvas.getChildren().add(connector);
                 }
+                */
             }
         }
     }
