@@ -745,7 +745,8 @@ public class ViewClientController extends ViewBaseController {
 
     @FXML
     private void openRecDetForLiver() {
-        MainController newMain = PageNavigator.openNewWindow();
+
+        MainController newMain = PageNavigator.openNewWindow(200, 400);
         if (newMain != null) {
             newMain.setWindowContext(new WindowContext.WindowContextBuilder()
                     .setAsClinicianViewClientWindow()

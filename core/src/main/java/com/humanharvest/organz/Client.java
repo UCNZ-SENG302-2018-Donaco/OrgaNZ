@@ -1096,8 +1096,10 @@ public class Client implements ConcurrencyControlledEntity {
      * @param regionOfDeath The region they died in.
      * @param cityOfDeath The city they died in.
      */
-    public void markDead(LocalDate dateOfDeath, LocalTime timeOfDeath, Country countryOfDeath, String
-            regionOfDeath,
+    public void markDead(LocalDate dateOfDeath,
+            LocalTime timeOfDeath,
+            Country countryOfDeath,
+            String regionOfDeath,
             String cityOfDeath) {
         this.dateOfDeath = dateOfDeath;
         this.timeOfDeath = timeOfDeath;
