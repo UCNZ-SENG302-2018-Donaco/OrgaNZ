@@ -41,7 +41,7 @@ public class TransplantRequest {
     @JsonView(Views.Overview.class)
     private Organ requestedOrgan;
     @JsonView(Views.Overview.class)
-    private LocalDateTime requestDate;
+    private LocalDateTime requestDateTime;
     @JsonView(Views.Overview.class)
     private LocalDateTime resolvedDate;
     @Enumerated(EnumType.STRING)
@@ -57,13 +57,13 @@ public class TransplantRequest {
     public TransplantRequest(Client client, Organ requestedOrgan) {
         this.client = client;
         this.requestedOrgan = requestedOrgan;
-        requestDate = LocalDateTime.now();
+        requestDateTime = LocalDateTime.now();
     }
 
     public TransplantRequest(Client client, Organ requestedOrgan, LocalDateTime requestDate) {
         this.client = client;
         this.requestedOrgan = requestedOrgan;
-        this.requestDate = requestDate;
+        this.requestDateTime = requestDate;
     }
 
     public Long getId() {
@@ -93,12 +93,12 @@ public class TransplantRequest {
     }
 
     public LocalDateTime getRequestDate() {
-        return requestDate;
+        return requestDateTime;
     }
 
     @JsonIgnore
     public Duration getTimeSinceRequest() {
-        return Duration.between(requestDate, LocalDateTime.now());
+        return Duration.between(requestDateTime, LocalDateTime.now());
     }
 
     public LocalDateTime getResolvedDate() {
