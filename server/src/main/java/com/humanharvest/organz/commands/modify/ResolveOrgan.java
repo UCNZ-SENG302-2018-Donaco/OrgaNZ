@@ -97,7 +97,7 @@ public class ResolveOrgan implements Runnable {
                 action = new ResolveTransplantRequestAction(selectedTransplantRequest,
                         TransplantRequestStatus.COMPLETED,
                         "Transplant took place.",
-                        selectedTransplantRequest.getResolvedDate(),
+                        selectedTransplantRequest.getResolvedDateTime(),
                         manager);
 
                 break;
@@ -105,7 +105,7 @@ public class ResolveOrgan implements Runnable {
                 action = new ResolveTransplantRequestAction(selectedTransplantRequest,
                         TransplantRequestStatus.CANCELLED,
                         "The client has deceased.",
-                        selectedTransplantRequest.getResolvedDate(),
+                        selectedTransplantRequest.getResolvedDateTime(),
                         manager);
 
                 break;
@@ -113,7 +113,7 @@ public class ResolveOrgan implements Runnable {
                 action = new ResolveTransplantRequestAction(selectedTransplantRequest,
                         TransplantRequestStatus.CANCELLED,
                         "The disease was cured.",
-                        selectedTransplantRequest.getResolvedDate(),
+                        selectedTransplantRequest.getResolvedDateTime(),
                         manager);
 
                 break;
@@ -121,7 +121,7 @@ public class ResolveOrgan implements Runnable {
                 action = new ResolveTransplantRequestAction(selectedTransplantRequest,
                         TransplantRequestStatus.CANCELLED,
                         "Request was a mistake.",
-                        selectedTransplantRequest.getResolvedDate(),
+                        selectedTransplantRequest.getResolvedDateTime(),
                         manager);
 
                 break;
@@ -130,7 +130,7 @@ public class ResolveOrgan implements Runnable {
                     action = new ResolveTransplantRequestAction(selectedTransplantRequest,
                             TransplantRequestStatus.CANCELLED,
                             message,
-                            selectedTransplantRequest.getResolvedDate(),
+                            selectedTransplantRequest.getResolvedDateTime(),
                             manager);
                 } else {
                     outputStream
