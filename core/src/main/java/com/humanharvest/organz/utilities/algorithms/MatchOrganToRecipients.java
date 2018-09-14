@@ -281,8 +281,8 @@ public abstract class MatchOrganToRecipients {
 
         // Sort the list by when the transplant request was made, then where the potential recipient lives
         potentialTransplantRequests.sort((t1, t2) -> {
-            LocalDateTime requestDate1 = t1.getRequestDate().truncatedTo(ChronoUnit.DAYS);
-            LocalDateTime requestDate2 = t2.getRequestDate().truncatedTo(ChronoUnit.DAYS);
+            LocalDateTime requestDate1 = t1.getRequestDateTime().truncatedTo(ChronoUnit.DAYS);
+            LocalDateTime requestDate2 = t2.getRequestDateTime().truncatedTo(ChronoUnit.DAYS);
             int timeComparison = requestDate1.compareTo(requestDate2);
 
             if (timeComparison != 0) { // different time, so just compare using that

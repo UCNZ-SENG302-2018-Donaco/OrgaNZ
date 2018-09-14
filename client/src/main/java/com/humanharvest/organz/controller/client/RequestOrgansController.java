@@ -157,11 +157,11 @@ public class RequestOrgansController extends SubController {
 
         // Setup all cell value factories
         organCurrCol.setCellValueFactory(new PropertyValueFactory<>("requestedOrgan"));
-        requestDateCurrCol.setCellValueFactory(new PropertyValueFactory<>("requestDate"));
+        requestDateCurrCol.setCellValueFactory(new PropertyValueFactory<>("requestDateTime"));
         organPastCol.setCellValueFactory(new PropertyValueFactory<>("requestedOrgan"));
-        requestDatePastCol.setCellValueFactory(new PropertyValueFactory<>("requestDate"));
+        requestDatePastCol.setCellValueFactory(new PropertyValueFactory<>("requestDateTime"));
         requestStatusPastCol.setCellValueFactory(new PropertyValueFactory<>("status"));
-        resolvedDatePastCol.setCellValueFactory(new PropertyValueFactory<>("resolvedDate"));
+        resolvedDatePastCol.setCellValueFactory(new PropertyValueFactory<>("resolvedDateTime"));
         resolvedReasonPastCol.setCellValueFactory(new PropertyValueFactory<>("resolvedReason"));
 
         // Format all the datetime cells

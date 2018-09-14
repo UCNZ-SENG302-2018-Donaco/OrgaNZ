@@ -60,7 +60,9 @@ import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.validators.NotEmptyStringValidator;
 import com.humanharvest.organz.utilities.validators.client.ClientBornAndDiedDatesValidator;
+import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
+import com.humanharvest.organz.utilities.view.WindowContext;
 import com.humanharvest.organz.views.client.ModifyClientObject;
 
 import org.apache.commons.io.IOUtils;
@@ -735,5 +737,19 @@ public class ViewClientController extends ViewBaseController {
             ageDisplayLabel.setText("Age at death:");
         }
         ageLabel.setText(String.valueOf(viewedClient.getAge()));
+    }
+
+    @FXML
+    private void openRecDetForLiver() {
+
+        MainController newMain = PageNavigator.openNewWindow(200, 400);
+        if (newMain != null) {
+            newMain.setWindowContext(new WindowContext.WindowContextBuilder()
+                    .setAsClinicianViewClientWindow()
+                    .viewClient(viewedClient)
+                    .build());
+            PageNavigator.loadPage(Page.RECEIVER_OVERVIEW, newMain);
+        }
+
     }
 }

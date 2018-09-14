@@ -100,7 +100,7 @@ public class ResolveOrgan implements Runnable {
         if (message != null) {
             return new ResolveTransplantRequestAction(selectedTransplantRequest,
                     TransplantRequestStatus.CANCELLED, message,
-                    selectedTransplantRequest.getResolvedDate(), manager);
+                    selectedTransplantRequest.getResolvedDateTime(), manager);
         } else {
             outputStream.println("Custom resolve reason must have a message specified for why "
                     + "the organ has been resolved. The request is still active.");
@@ -120,28 +120,28 @@ public class ResolveOrgan implements Runnable {
                 action = new ResolveTransplantRequestAction(selectedTransplantRequest,
                         TransplantRequestStatus.COMPLETED,
                         "Transplant took place.",
-                        selectedTransplantRequest.getResolvedDate(), manager);
+                        selectedTransplantRequest.getResolvedDateTime(), manager);
 
                 break;
             case DECEASED:
                 action = new ResolveTransplantRequestAction(selectedTransplantRequest,
                         TransplantRequestStatus.CANCELLED,
                         "The client has deceased.",
-                        selectedTransplantRequest.getResolvedDate(), manager);
+                        selectedTransplantRequest.getResolvedDateTime(), manager);
 
                 break;
             case CURED:
                 action = new ResolveTransplantRequestAction(selectedTransplantRequest,
                         TransplantRequestStatus.CANCELLED,
                         "The disease was cured.",
-                        selectedTransplantRequest.getResolvedDate(), manager);
+                        selectedTransplantRequest.getResolvedDateTime(), manager);
 
                 break;
             case ERROR:
                 action = new ResolveTransplantRequestAction(selectedTransplantRequest,
                         TransplantRequestStatus.CANCELLED,
                         "Request was a mistake.",
-                        selectedTransplantRequest.getResolvedDate(), manager);
+                        selectedTransplantRequest.getResolvedDateTime(), manager);
 
                 break;
             case CUSTOM:

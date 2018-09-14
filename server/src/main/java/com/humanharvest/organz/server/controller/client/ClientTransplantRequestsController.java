@@ -237,9 +237,9 @@ public class ClientTransplantRequestsController {
         // Only the status, resolved reason, and resolved date (and time) are allowed to change.
         // The client, organ, and request date (and time) must stay the same.
         // If anything has illegally changed, it will return a 400.
-        if (resolveRequestObject.getResolvedDate() == null ||
+        if (resolveRequestObject.getResolvedDateTime() == null ||
                 NotEmptyStringValidator.isInvalidString(resolveRequestObject.getResolvedReason()) ||
-                resolveRequestObject.getResolvedDate().isBefore(originalTransplantRequest.getRequestDate())) {
+                resolveRequestObject.getResolvedDateTime().isBefore(originalTransplantRequest.getRequestDateTime())) {
             // illegal changes
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -248,7 +248,7 @@ public class ClientTransplantRequestsController {
         Action action = new ResolveTransplantRequestAction(originalTransplantRequest,
                 resolveRequestObject.getStatus(),
                 resolveRequestObject.getResolvedReason(),
-                resolveRequestObject.getResolvedDate(),
+                resolveRequestObject.getResolvedDateTime(),
                 State.getClientManager());
         State.getActionInvoker(authToken).execute(action);
 
