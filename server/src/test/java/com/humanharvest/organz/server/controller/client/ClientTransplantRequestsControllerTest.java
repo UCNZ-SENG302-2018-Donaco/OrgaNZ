@@ -342,7 +342,7 @@ public class ClientTransplantRequestsControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(contentType))
                 .andExpect(jsonPath("$.requestedOrgan", is("LIVER")))
-                .andExpect(jsonPath("$.resolvedDate", is(localDateTimeString)))
+                .andExpect(jsonPath("$.resolvedDateTime", is(localDateTimeString)))
                 .andExpect(jsonPath("$.status", is("CANCELLED")))
                 .andExpect(jsonPath("$.resolvedReason", is("it was a mistake")));
     }
