@@ -21,6 +21,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.VBox;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.Hospital;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.clinician.ViewBaseController;
@@ -70,7 +71,8 @@ public class ReceiverOverviewController extends ViewBaseController {
     private void setClientFields() {
         //todo replace dummy donor and organ
         Client dummyDonor = new Client();
-        dummyDonor.setHospital(viewedClient.getHospital());
+        dummyDonor.setHospital(new Hospital("", viewedClient.getHospital().getLatitude()+1,
+                viewedClient.getHeight(), ""));
         donor = dummyDonor;
         organ = Organ.LIVER;
 
@@ -91,7 +93,9 @@ public class ReceiverOverviewController extends ViewBaseController {
             if (timeBetweenHospitals.isZero()) {
                 travelTime.setText("None");
             } else {
-                travelTime.setText(DurationFormatter.getFormattedDuration(timeBetweenHospitals, Format.Biggest));
+                travelTime.setText(DurationFormatter.getFormattedDuration(timeBetweenHospitals, Format.Biggest)
+                        + String.format("%n(%.0f km)",
+                        viewedClient.getHospital().calculateDistanceTo(donor.getHospital())));
             }
         } else {
             travelTime.setText("Unknown");
