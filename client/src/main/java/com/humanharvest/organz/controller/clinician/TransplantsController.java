@@ -208,7 +208,7 @@ public class TransplantsController extends SubController {
         organCol.setCellValueFactory(new PropertyValueFactory<>("requestedOrgan"));
         regionCol.setCellValueFactory(cellData -> new SimpleStringProperty(
                 cellData.getValue().getClient().getRegion()));
-        dateCol.setCellValueFactory(new PropertyValueFactory<>("requestDate"));
+        dateCol.setCellValueFactory(new PropertyValueFactory<>("requestDateTime"));
 
         // Format all the datetime cells
         dateCol.setCellFactory(cell -> formatDateTimeCell());
