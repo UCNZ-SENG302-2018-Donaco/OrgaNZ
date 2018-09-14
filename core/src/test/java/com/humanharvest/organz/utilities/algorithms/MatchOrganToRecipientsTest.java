@@ -218,7 +218,7 @@ public class MatchOrganToRecipientsTest {
         TransplantRequest transplantRequest3 = new TransplantRequest(recipient1, organ);
         // Use reflection to set the date to a week ago
         Class<?> c = transplantRequest3.getClass();
-        Field f = c.getDeclaredField("requestDate");
+        Field f = c.getDeclaredField("requestDateTime");
         f.setAccessible(true);
         f.set(transplantRequest3, LocalDateTime.now().minusDays(7));
 
