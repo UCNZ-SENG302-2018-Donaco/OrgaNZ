@@ -1,6 +1,7 @@
 package com.humanharvest.organz.controller.client;
 
-import static com.humanharvest.organz.state.State.*;
+import static com.humanharvest.organz.state.State.getClientResolver;
+import static com.humanharvest.organz.state.State.getImageManager;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -24,8 +25,6 @@ import com.humanharvest.organz.Client;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.clinician.ViewBaseController;
-import com.humanharvest.organz.state.ClientManager;
-import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.utilities.DurationFormatter;
 import com.humanharvest.organz.utilities.DurationFormatter.Format;
 import com.humanharvest.organz.utilities.enums.Organ;
@@ -43,8 +42,6 @@ public class ReceiverOverviewController extends ViewBaseController {
     private Client donor;
     private Organ organ;
     private TransplantRequest viewedTransplantRequest;
-    private final Session session;
-    private final ClientManager manager;
 
     @FXML
     private ImageView imageView;
@@ -66,19 +63,6 @@ public class ReceiverOverviewController extends ViewBaseController {
 
     @FXML
     private VBox receiverVBox;
-
-    /*
-        public ReceiverOverviewController(Client client, Organ organ) {
-            viewedClient = client;
-            System.out.println(viewedClient.getFullName());
-            System.out.println(viewedClient.getTransplantRequests().size());
-            viewedTransplantRequest = viewedClient.getTransplantRequest(organ);
-        }
-    */
-    public ReceiverOverviewController() { // test with first client
-        manager = getClientManager();
-        session = getSession();
-    }
 
     /**
      * Initializes the UI for this page.
@@ -114,6 +98,12 @@ public class ReceiverOverviewController extends ViewBaseController {
         }
 
         // Set wait time
+        List<TransplantRequest> transplantRequests = getClientResolver().getTransplantRequests(viewedClient);
+        for (TransplantRequest transplantRequest : transplantRequests) {
+            if (transplantRequest.getRequestedOrgan() == organ) {
+                viewedTransplantRequest = transplantRequest;
+            }
+        }
         updateWaitTime();
 
         // Set image
@@ -138,15 +128,12 @@ public class ReceiverOverviewController extends ViewBaseController {
     }
 
     private void updateWaitTime() {
-        String waitTimeString = "Error: no request";
-        List<TransplantRequest> transplantRequests = getClientResolver().getTransplantRequests(viewedClient);
-        for (TransplantRequest transplantRequest : transplantRequests) {
-            if (transplantRequest.getRequestedOrgan() == organ) {
-                Duration waitTime = transplantRequest.getTimeSinceRequest();
-                waitTimeString = DurationFormatter.getFormattedDuration(waitTime, Format.Biggest);
-            }
+        if (viewedTransplantRequest == null) {
+            requestedTime.setText("Error: no request");
+        } else {
+            Duration waitTime = viewedTransplantRequest.getTimeSinceRequest();
+            requestedTime.setText(DurationFormatter.getFormattedDuration(waitTime, Format.Biggest));
         }
-        requestedTime.setText(waitTimeString);
     }
 
     @Override
