@@ -142,13 +142,12 @@ public class ReceiverOverviewController extends ViewBaseController {
     public void setup(MainController mainController) {
         super.setup(mainController);
         viewedClient = windowContext.getViewClient();
-        setClientFields();
         refresh();
     }
 
     @Override
     public void refresh() {
-        //TODO
+        setClientFields();
     }
 
     private void loadImage() {
