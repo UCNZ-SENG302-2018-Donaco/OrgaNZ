@@ -13,6 +13,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -88,9 +89,7 @@ public class SpiderWebController {
         MainController newMain = PageNavigator.openNewWindow(200, 400);
         PageNavigator.loadPage(Page.RECEIVER_OVERVIEW, newMain);
         deceasedDonorPane = newMain.getPane();
-
-        FocusArea focusArea = ((FocusArea) newMain.getPane().getUserData());
-        focusArea.setTransform(new Affine(new Translate(1000, 500)));
+        setPositionUsingTransform(deceasedDonorPane, canvas.getWidth()/2, canvas.getHeight()/2);
     }
 
     /**
@@ -98,9 +97,6 @@ public class SpiderWebController {
      */
     private void displayOrgans() {
         Collection<DonatedOrgan> donatedOrgans = State.getClientResolver().getDonatedOrgans(client);
-
-        int x = 0;
-        int y = 0;
         for (DonatedOrgan organ: donatedOrgans) {
             if (!organ.hasExpired()) {
                 State.setOrganToDisplay(organ);
@@ -109,16 +105,11 @@ public class SpiderWebController {
                 Pane organPane = newMain.getPane();
                 organNodes.add(organPane);
 
-                FocusArea focusArea = ((FocusArea) organPane.getUserData());
-                focusArea.setTransform(new Affine(new Translate(x, y)));
-                x += 100;
-                y += 50;
-
                 // Create the line
                 Line connector = new Line();
                 connector.setFill(Color.BLACK);
                 connector.setStroke(Color.BLACK);
-
+                connector.setStrokeWidth(4);
                 deceasedDonorPane.localToParentTransformProperty().addListener((observable, oldValue, newValue) -> {
                     Bounds bounds = deceasedDonorPane.getBoundsInParent();
                     connector.setStartX(bounds.getMinX() + bounds.getWidth()/2);
@@ -129,25 +120,20 @@ public class SpiderWebController {
                     connector.setEndX(bounds.getMinX() + bounds.getWidth()/2);
                     connector.setEndY(bounds.getMinY() + bounds.getHeight()/2);
                 });
-                // TODO probably remove at some point
+                canvas.getChildren().add( 0, connector);
                 Bounds bounds = deceasedDonorPane.getBoundsInParent();
                 connector.setStartX(bounds.getMinX() + bounds.getWidth()/2);
                 connector.setStartY(bounds.getMinY() + bounds.getHeight()/2);
-                Bounds bounds2 = organPane.getBoundsInParent();
-                connector.setEndX(bounds.getMinX() + bounds2.getWidth()/2);
-                connector.setEndY(bounds.getMinY() + bounds2.getHeight()/2);
-                canvas.getChildren().add(connector);
 
                 // Attach timer to update table each second (for time until expiration)
                 final Timeline clock = new Timeline(new KeyFrame(
                         javafx.util.Duration.millis(1000),
-                        event -> {
-                            updateConnector(organ, connector, organPane);
-                        }));
+                        event -> updateConnector(organ, connector, organPane)));
                 clock.setCycleCount(Animation.INDEFINITE);
                 clock.play();
             }
         }
+        layoutOrganNodes(300);
     }
 
     private void updateConnector(DonatedOrgan donatedOrgan, Line line, Pane organPane) {
@@ -171,5 +157,30 @@ public class SpiderWebController {
             style = style.replace("to right", "from 0% 0% to 100% 100%");
             line.setStyle(style);
         }
+    }
+
+    private void addOrganNode(DonatedOrgan organ) {
+
+    }
+
+    private void layoutOrganNodes(double radius) {
+        final int numNodes = organNodes.size();
+        final double angleSize = (Math.PI * 2) / numNodes;
+
+        for (int i = 0; i < numNodes; i++) {
+            setPositionUsingTransform(organNodes.get(i),
+                    deceasedDonorPane.getLocalToParentTransform().getTx() + radius * Math.sin(angleSize * i),
+                    deceasedDonorPane.getLocalToParentTransform().getTy() + radius * Math.cos(angleSize * i));
+        }
+    }
+
+    /**
+     * Sets a node's position using an {@link Affine} transform. The node must have an {@link FocusArea} for its
+     * {@link Node#getUserData()}.
+     * @param node A node with a FocusArea.
+     */
+    private static void setPositionUsingTransform(Node node, double x, double y) {
+        FocusArea focusArea = (FocusArea) node.getUserData();
+        focusArea.setTransform(new Affine(new Translate(x, y)));
     }
 }
