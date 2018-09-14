@@ -166,8 +166,9 @@ public class SpiderWebController {
 
             // Calculate colour
             String style = DurationUntilExpiryCell.getStyleForProgress(progressDecimal, fullMarker);
-            style = style.replace("-fx-background-color", "-fx-stroke");
 
+            style = style.replace("-fx-background-color", "-fx-stroke");
+            style = style.replace("to right", "from 0% 0% to 100% 100%");
             line.setStyle(style);
         }
     }
