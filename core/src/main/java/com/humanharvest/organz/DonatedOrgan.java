@@ -45,6 +45,8 @@ public class DonatedOrgan {
     private LocalDateTime dateTimeOfDonation;
     @JsonView(Views.Overview.class)
     private String overrideReason;  // If null this implies the organ was not manually overriden
+    @JsonView(Views.Overview.class)
+    private boolean available = true;
 
     protected DonatedOrgan() {
     }
@@ -158,5 +160,13 @@ public class DonatedOrgan {
     public void cancelManualOverride() {
         this.overrideReason = null;
         donor.updateHasOverriddenOrgans();
+    }
+
+    public boolean isAvailable() {
+        return available;
+    }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
     }
 }

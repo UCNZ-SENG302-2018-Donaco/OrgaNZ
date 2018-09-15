@@ -15,6 +15,8 @@ import com.humanharvest.organz.utilities.exceptions.DateOutOfBoundsException;
  */
 public class ScheduleTransplantAction extends AddProcedureRecordAction {
 
+    private DonatedOrgan donatedOrgan;
+
     /**
      * Creates a new action to schedule a transplant procedure.
      *
@@ -33,5 +35,18 @@ public class ScheduleTransplantAction extends AddProcedureRecordAction {
         if (scheduledDate.isBefore(LocalDate.now())) {
             throw new DateOutOfBoundsException("A transplant cannot be scheduled in the past.");
         }
+        donatedOrgan = organ;
+    }
+
+    @Override
+    public void execute() {
+        super.execute();
+        donatedOrgan.setAvailable(false);
+    }
+
+    @Override
+    public void unExecute() {
+        super.unExecute();
+        donatedOrgan.setAvailable(true);
     }
 }

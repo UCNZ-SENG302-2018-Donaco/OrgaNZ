@@ -261,11 +261,10 @@ public class MatchOrganToRecipients {
             Client recipient = transplantRequest.getClient();
 
             if (donatedOrgan.getOrganType().equals(transplantRequest.getRequestedOrgan())
+                    && donatedOrgan.isAvailable()
                     && donor.getBloodType() != null && recipient.getBloodType() != null
                     && donor.getBloodType().equals(recipient.getBloodType())
-                    && agesMatch(donor.getAge(), recipient.getAge())
-                    && recipient.getTransplantRequests().stream().noneMatch(
-                    t -> t.getRequestedOrgan() == donatedOrgan.getOrganType())) {
+                    && agesMatch(donor.getAge(), recipient.getAge())) {
                 potentialTransplantRequests.add(transplantRequest);
             }
         }
