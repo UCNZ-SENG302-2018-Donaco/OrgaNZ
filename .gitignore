@@ -22,6 +22,8 @@
 # Log file for the app
 organz.log
 organz.log.*
+organz-server.log
+organz-server.log.*
 
 # Lock files, such as the one for the log file
 *.lck

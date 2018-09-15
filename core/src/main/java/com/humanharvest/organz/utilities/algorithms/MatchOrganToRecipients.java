@@ -11,6 +11,7 @@ import com.humanharvest.organz.Hospital;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Region;
+import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 
 public class MatchOrganToRecipients {
 
@@ -53,9 +54,9 @@ public class MatchOrganToRecipients {
      */
     private static int compareCountryCloseness(Country c1, Country c2, Country targetCountry) {
         // Check if the one of the recipients is in the same country that the donor died
-        if (c1.equals(targetCountry)) {
+        if (c1 == targetCountry) {
             return -1;
-        } else if (c2.equals(targetCountry)) {
+        } else if (c2 == targetCountry) {
             return 1;
         } else { // Neither is in the same country, so calculate closest country
             double distanceToCountry1 = distanceBetween(c1, targetCountry);
@@ -186,12 +187,12 @@ public class MatchOrganToRecipients {
         }
 
         // If they are in different countries, check which one is closest
-        if (!country1.equals(country2)) {
+        if (country1 != country2) {
             return compareCountryCloseness(country1, country2, deathCountry);
         }
 
         // If they are in the same country, but the donated organ is in a different country
-        if (!country1.equals(deathCountry)) {
+        if (country1 != deathCountry) {
             return 0;
         }
 
@@ -264,7 +265,8 @@ public class MatchOrganToRecipients {
                     && donatedOrgan.isAvailable()
                     && donor.getBloodType() != null && recipient.getBloodType() != null
                     && donor.getBloodType().equals(recipient.getBloodType())
-                    && agesMatch(donor.getAge(), recipient.getAge())) {
+                    && agesMatch(donor.getAge(), recipient.getAge())
+                    && transplantRequest.getStatus() == TransplantRequestStatus.WAITING) {
                 potentialTransplantRequests.add(transplantRequest);
             }
         }

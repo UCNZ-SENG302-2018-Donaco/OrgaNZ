@@ -1,6 +1,6 @@
 package com.humanharvest.organz.server.controller.client;
 
-import static com.humanharvest.organz.utilities.validators.ClientValidator.checkClientETag;
+import static com.humanharvest.organz.utilities.validators.ClientValidator.checkETag;
 
 import java.awt.image.ImagingOpException;
 import java.io.File;
@@ -215,7 +215,7 @@ public class ClientController {
         State.getAuthenticationManager().verifyClientAccess(authToken, client);
 
         //Check ETag
-        checkClientETag(client, etag);
+        checkETag(client, etag);
 
         //Validate the request, if there are any errors an exception will be thrown.
         if (!ModifyClientValidator.isValid(client, modifyClientObject)) {
@@ -306,7 +306,7 @@ public class ClientController {
         State.getAuthenticationManager().verifyClientAccess(authToken, client);
 
         //Check ETag
-        checkClientETag(client, etag);
+        checkETag(client, etag);
 
         DeleteClientAction action = new DeleteClientAction(client, State.getClientManager());
         State.getActionInvoker(authToken).execute(action);
@@ -404,7 +404,7 @@ public class ClientController {
         State.getAuthenticationManager().verifyClientAccess(authToken, client);
 
         //Check ETag
-        checkClientETag(client, etag);
+        checkETag(client, etag);
 
         AddImageAction action = new AddImageAction(client, image, State.getImageDirectory());
 
@@ -441,7 +441,7 @@ public class ClientController {
         State.getAuthenticationManager().verifyClientAccess(authToken, client);
 
         //Check ETag
-        checkClientETag(client, etag);
+        checkETag(client, etag);
 
         try {
             DeleteImageAction action = new DeleteImageAction(client, State.getImageDirectory());

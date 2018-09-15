@@ -125,20 +125,23 @@
                         <Insets />
                       </VBox.margin>
                     </ListView>
-                    <GridPane hgap="3.0">
+                    <GridPane hgap="3.0" vgap="3.0">
                        <VBox.margin>
-                          <Insets top="5.0" />
+                          <Insets top="3.0" />
                        </VBox.margin>
                        <columnConstraints>
-                          <ColumnConstraints hgrow="SOMETIMES" percentWidth="50.0" />
-                          <ColumnConstraints hgrow="SOMETIMES" percentWidth="50.0" />
+                          <ColumnConstraints hgrow="SOMETIMES" minWidth="60.0" />
+                          <ColumnConstraints hgrow="SOMETIMES" />
                        </columnConstraints>
                        <rowConstraints>
+                                    <RowConstraints />
                           <RowConstraints vgrow="SOMETIMES" />
+                                    <RowConstraints vgrow="SOMETIMES" />
                        </rowConstraints>
                        <children>
-                          <DatePicker fx:id="transplantDatePicker" maxWidth="1.7976931348623157E308" promptText="dd/mm/yyyy" />
-                          <ChoiceBox fx:id="transplantHospitalChoice" prefHeight="27.0" prefWidth="234.0" GridPane.columnIndex="1" />
+                          <DatePicker fx:id="transplantDatePicker" maxWidth="1.7976931348623157E308" promptText="dd/mm/yyyy" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                          <ChoiceBox fx:id="transplantHospitalChoice" maxWidth="1.7976931348623157E308" GridPane.columnSpan="2" GridPane.rowIndex="2" />
+                          <Label text="Date:" GridPane.rowIndex="1" />
                        </children>
                     </GridPane>
                     <Button fx:id="scheduleTransplantBtn" alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#scheduleTransplant" text="Schedule Transplant">

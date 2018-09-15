@@ -1,6 +1,6 @@
 package com.humanharvest.organz.server.controller.client;
 
-import static com.humanharvest.organz.utilities.validators.ClientValidator.checkClientETag;
+import static com.humanharvest.organz.utilities.validators.ClientValidator.checkETag;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
@@ -85,7 +85,7 @@ public class ClientProceduresController {
     public ResponseEntity<Collection<ProcedureRecord>> createProcedureRecord(
             @RequestBody ProcedureRecord procedureRecord,
             @PathVariable int uid,
-            @RequestHeader(value = "If-Match", required = false) String ETag,
+            @RequestHeader(value = "If-Match", required = false) String eTag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
             throws AuthenticationException, IfMatchFailedException, IfMatchRequiredException {
 
@@ -100,7 +100,7 @@ public class ClientProceduresController {
         Client client = optionalClient.get();
 
         //Check ETag
-        checkClientETag(client, ETag);
+        checkETag(client, eTag);
 
         // Execute add procedure action
         Action action = new AddProcedureRecordAction(client, procedureRecord, State.getClientManager());
@@ -120,7 +120,7 @@ public class ClientProceduresController {
             @RequestBody ModifyProcedureObject modifyProcedureObject,
             @PathVariable int uid,
             @PathVariable int id,
-            @RequestHeader(value = "If-Match", required = false) String ETag,
+            @RequestHeader(value = "If-Match", required = false) String eTag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken) throws AuthenticationException {
 
         // Check request has authorization to patch a procedure
@@ -135,7 +135,7 @@ public class ClientProceduresController {
         Client client = optionalClient.get();
 
         //Check ETag
-        checkClientETag(client, ETag);
+        checkETag(client, eTag);
 
         // Try to find a procedure record with matching id
         Optional<ProcedureRecord> optionalRecord = client.getProcedures().stream()
@@ -186,7 +186,7 @@ public class ClientProceduresController {
     public ResponseEntity deleteProcedureRecord(
             @PathVariable int uid,
             @PathVariable int id,
-            @RequestHeader(value = "If-Match", required = false) String ETag,
+            @RequestHeader(value = "If-Match", required = false) String eTag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
             throws AuthenticationException, IfMatchFailedException, IfMatchRequiredException {
 
@@ -202,7 +202,7 @@ public class ClientProceduresController {
         Client client = optionalClient.get();
 
         //Check ETag
-        checkClientETag(client, ETag);
+        checkETag(client, eTag);
 
         // Try to find a procedure record with matching id
         Optional<ProcedureRecord> optionalRecord = client.getProcedures().stream()
@@ -248,7 +248,7 @@ public class ClientProceduresController {
         Client client = optionalClient.get();
 
         // Check ETag
-        //checkClientETag(client, ETag); TODO figure out why this fails when enabled
+        checkETag(client, ETag);
 
         // Find the organ to be transplanted
         Optional<DonatedOrgan> optionalOrgan = State.getClientManager().getAllOrgansToDonate().stream()
@@ -258,7 +258,6 @@ public class ClientProceduresController {
             // No organ exists with that id, return 400
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        DonatedOrgan organ = optionalOrgan.get();
 
         // Find the recipient's request for this organ
         Optional<TransplantRequest> optionalRequest = client.getTransplantRequestById(requestId);
@@ -266,14 +265,12 @@ public class ClientProceduresController {
             // No request exists with that id, return 400
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        TransplantRequest request = optionalRequest.get();
 
         Optional<Hospital> optionalHospital = State.getConfigManager().getHospitalById(hospitalId);
         if (!optionalHospital.isPresent()) {
             // No hospital exists with that id, return 400
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        Hospital hospital = optionalHospital.get();
 
         LocalDate date;
         try {
@@ -284,12 +281,15 @@ public class ClientProceduresController {
         }
 
         // Check that the organ hasn't been donated yet, and the request is still waiting
+        DonatedOrgan organ = optionalOrgan.get();
+        TransplantRequest request = optionalRequest.get();
         if (!(organ.getReceiver() == null && request.getStatus() == TransplantRequestStatus.WAITING)) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
         // Execute add procedure action
         try {
+            Hospital hospital = optionalHospital.get();
             Action action = new ScheduleTransplantAction(organ, request, hospital, date, State.getClientManager());
             State.getActionInvoker(authToken).execute(action);
         } catch (DateOutOfBoundsException exc) {
@@ -324,7 +324,7 @@ public class ClientProceduresController {
         Client client = optionalClient.get();
 
         //Check ETag
-        checkClientETag(client, ETag);
+        checkETag(client, ETag);
 
         // Try to find a transplant record with matching id
         Optional<ProcedureRecord> optionalRecord = client.getProcedures().stream()

@@ -19,6 +19,8 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.persistence.Access;
@@ -43,6 +45,7 @@ import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
+import com.humanharvest.organz.utilities.type_converters.BloodTypeConverter;
 import com.humanharvest.organz.views.client.Views;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
@@ -62,9 +65,11 @@ import com.fasterxml.jackson.annotation.JsonView;
 @Access(AccessType.FIELD)
 public class Client implements ConcurrencyControlledEntity {
 
+    private static final Logger LOGGER = Logger.getLogger(Client.class.getName());
+
     private static final Pattern whiteSpace = Pattern.compile("\\s+");
 
-    @JsonView(Views.Details.class)
+    @JsonView(Views.Overview.class)
     private final Instant createdTimestamp;
 
     @Id
@@ -125,7 +130,7 @@ public class Client implements ConcurrencyControlledEntity {
     @JsonView(Views.Details.class)
     private boolean dateOfDeathIsEditable = true;
 
-    @JsonView(Views.Details.class)
+    @JsonView(Views.Overview.class)
     private Instant modifiedTimestamp;
 
     @JsonView(Views.Overview.class)
@@ -220,6 +225,7 @@ public class Client implements ConcurrencyControlledEntity {
     }
 
     private void updateModifiedTimestamp() {
+        LOGGER.log(Level.INFO, "Timestamp updated", new RuntimeException());
         modifiedTimestamp = Instant.now();
     }
 
@@ -829,6 +835,24 @@ public class Client implements ConcurrencyControlledEntity {
         return Collections.unmodifiableList(transplantRequests);
     }
 
+    /**
+     * Returns the transplant request relevant to the passed in organ.
+     * If there is no such transplant request, returns null.
+     *
+     * @param organ the organ to get the transplant request for
+     * @return the transplant request that is for the passed in organ
+     */
+    public TransplantRequest getTransplantRequest(Organ organ) {
+        for (TransplantRequest transplantRequest : transplantRequests) {
+            if (transplantRequest.getRequestedOrgan() == organ) {
+                return transplantRequest;
+            }
+        }
+
+        // Couldn't find one
+        return null;
+    }
+
     public void setTransplantRequests(List<TransplantRequest> requests) {
         transplantRequests = new ArrayList<>(requests);
         for (TransplantRequest request : requests) {
@@ -1076,7 +1100,10 @@ public class Client implements ConcurrencyControlledEntity {
      * @param regionOfDeath The region they died in.
      * @param cityOfDeath The city they died in.
      */
-    public void markDead(LocalDate dateOfDeath, LocalTime timeOfDeath, Country countryOfDeath, String regionOfDeath,
+    public void markDead(LocalDate dateOfDeath,
+            LocalTime timeOfDeath,
+            Country countryOfDeath,
+            String regionOfDeath,
             String cityOfDeath) {
         this.dateOfDeath = dateOfDeath;
         this.timeOfDeath = timeOfDeath;

@@ -1,6 +1,6 @@
 package com.humanharvest.organz.server.controller.client;
 
-import static com.humanharvest.organz.utilities.validators.ClientValidator.checkClientETag;
+import static com.humanharvest.organz.utilities.validators.ClientValidator.checkETag;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -169,7 +169,7 @@ public class ClientTransplantRequestsController {
         Client client = optionalClient.get();
 
         //Check ETag
-        checkClientETag(client, ETag);
+        checkETag(client, ETag);
 
         // Validate the transplant request
         try {
@@ -222,7 +222,7 @@ public class ClientTransplantRequestsController {
         Client client = optionalClient.get();
 
         //Check ETag
-        checkClientETag(client, ETag);
+        checkETag(client, ETag);
 
         // Get the original transplant request given by the ID
         Optional<TransplantRequest> optionalRequest = client.getTransplantRequestById(id);

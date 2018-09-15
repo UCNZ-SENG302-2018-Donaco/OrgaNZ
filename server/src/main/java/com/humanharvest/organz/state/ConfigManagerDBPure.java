@@ -13,10 +13,8 @@ import com.humanharvest.organz.Config;
 import com.humanharvest.organz.Hospital;
 import com.humanharvest.organz.database.DBManager;
 import com.humanharvest.organz.utilities.enums.Country;
-import com.humanharvest.organz.utilities.enums.Organ;
 
 import org.hibernate.Transaction;
-import picocli.CommandLine.DuplicateOptionAnnotationsException;
 
 public class ConfigManagerDBPure implements ConfigManager {
 
@@ -116,6 +114,9 @@ public class ConfigManagerDBPure implements ConfigManager {
     public Set<Hospital> getHospitals() {
         Config config = getConfig();
         configuration = config;
+        if (config == null) {
+            return Collections.emptySet();
+        }
         return Collections.unmodifiableSet(config.getHospitals());
     }
 
