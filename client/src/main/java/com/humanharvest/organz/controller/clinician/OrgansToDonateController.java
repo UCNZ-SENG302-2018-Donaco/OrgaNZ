@@ -129,7 +129,7 @@ public class OrgansToDonateController extends SubController {
     private final Session session;
     private final ClientManager manager;
     private final ObservableList<DonatedOrgan> observableOrgansToDonate = FXCollections.observableArrayList();
-    private final SortedList<DonatedOrgan> sortedOrgansToDonate = new SortedList<>(observableOrgansToDonate);
+    private SortedList<DonatedOrgan> sortedOrgansToDonate = new SortedList<>(observableOrgansToDonate);
     private DonatedOrgan selectedOrgan;
     private Set<String> regionsToFilter;
     private EnumSet<Organ> organsToFilter;
@@ -456,7 +456,12 @@ public class OrgansToDonateController extends SubController {
                     mainController.getStage());
             return;
         }
+
+        // Refresh the client to get the latest etag
         TransplantRequest request = optionalRequest.get();
+        request.setClient(State.getClientManager()
+                .getClientByID(request.getClient().getUid())
+                .orElseThrow(IllegalStateException::new));
 
         State.getClientResolver().scheduleTransplantProcedure(organToDonate, request,
                 transplantHospitalChoice.getValue(), transplantDate);

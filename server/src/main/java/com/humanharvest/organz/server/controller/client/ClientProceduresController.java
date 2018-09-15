@@ -248,7 +248,7 @@ public class ClientProceduresController {
         Client client = optionalClient.get();
 
         // Check ETag
-        //checkClientETag(client, ETag); TODO figure out why this fails when enabled
+        checkClientETag(client, ETag);
 
         // Find the organ to be transplanted
         Optional<DonatedOrgan> optionalOrgan = State.getClientManager().getAllOrgansToDonate().stream()
@@ -258,7 +258,6 @@ public class ClientProceduresController {
             // No organ exists with that id, return 400
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        DonatedOrgan organ = optionalOrgan.get();
 
         // Find the recipient's request for this organ
         Optional<TransplantRequest> optionalRequest = client.getTransplantRequestById(requestId);
@@ -266,14 +265,12 @@ public class ClientProceduresController {
             // No request exists with that id, return 400
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        TransplantRequest request = optionalRequest.get();
 
         Optional<Hospital> optionalHospital = State.getConfigManager().getHospitalById(hospitalId);
         if (!optionalHospital.isPresent()) {
             // No hospital exists with that id, return 400
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        Hospital hospital = optionalHospital.get();
 
         LocalDate date;
         try {
@@ -284,12 +281,15 @@ public class ClientProceduresController {
         }
 
         // Check that the organ hasn't been donated yet, and the request is still waiting
+        DonatedOrgan organ = optionalOrgan.get();
+        TransplantRequest request = optionalRequest.get();
         if (!(organ.getReceiver() == null && request.getStatus() == TransplantRequestStatus.WAITING)) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
         // Execute add procedure action
         try {
+            Hospital hospital = optionalHospital.get();
             Action action = new ScheduleTransplantAction(organ, request, hospital, date, State.getClientManager());
             State.getActionInvoker(authToken).execute(action);
         } catch (DateOutOfBoundsException exc) {

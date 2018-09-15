@@ -3,10 +3,12 @@ package com.humanharvest.organz.server;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.state.State.DataStorageType;
+import com.humanharvest.organz.utilities.LoggerSetup;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -33,6 +35,8 @@ public class Application {
 
         // Initialize storage with storage argument
         initStorage(namedArgs.get("storage"));
+
+        LoggerSetup.setup("organz-server.log", Level.INFO);
 
         // Run Spring Boot Application (server)
         SpringApplication.run(Application.class, args);

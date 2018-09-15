@@ -3,8 +3,12 @@ package com.humanharvest.organz.utilities.validators;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.ConcurrencyControlledEntity;
 import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.ProcedureRecord;
@@ -16,26 +20,31 @@ import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
  * A static validator class used to check the integrity of a Client object
  * Class is abstract as it only contains static methods and should not be instantiated
  */
-public abstract class ClientValidator {
+public final class ClientValidator {
 
-    private static final double DELTA = 1e-6;
+    private static final Logger LOGGER = Logger.getLogger(ClientValidator.class.getName());
+    private static final double DELTA = 1.0e-6;
+
+    private ClientValidator() {
+    }
 
     /**
-     * Checks that the given ETag matches the current ETag for the client,
-     * and exception is thrown if the ETag is missing or does not match
+     * Checks that the given etag matches the current etag for the client,
+     * and exception is thrown if the etag is missing or does not match
      *
-     * @param client client to validate the ETag for
-     * @param ETag The corresponding If-Match header to check for concurrent update handling
-     * @throws IfMatchRequiredException Thrown if the ETag header is missing
-     * @throws IfMatchFailedException Thrown if the ETag does not match the clients current ETag
+     * @param client client to validate the etag for
+     * @param etag The corresponding If-Match header to check for concurrent update handling
+     * @throws IfMatchRequiredException Thrown if the etag header is missing
+     * @throws IfMatchFailedException Thrown if the etag does not match the clients current etag
      */
-    public static void checkClientETag(Client client, String ETag)
+    public static void checkClientETag(ConcurrencyControlledEntity controlledEntity, String etag)
             throws IfMatchRequiredException, IfMatchFailedException {
 
-        if (ETag == null) {
+        if (etag == null) {
             throw new IfMatchRequiredException();
-        } else if (!client.getETag().equals(ETag)) {
-            throw new IfMatchFailedException();
+        } else if (!Objects.equals(controlledEntity.getETag(), etag)) {
+            LOGGER.log(Level.INFO, "ETag was " + etag + "; Expected " + controlledEntity.getETag());
+            throw new IfMatchFailedException("ETag was " + etag + "; Expected " + controlledEntity.getETag());
         }
     }
 
