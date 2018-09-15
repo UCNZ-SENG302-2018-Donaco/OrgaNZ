@@ -8,6 +8,7 @@ import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
@@ -53,7 +54,6 @@ import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.Hospital;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.controller.MainController;
-import com.humanharvest.organz.controller.SidebarController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.controller.components.DurationUntilExpiryCell;
 import com.humanharvest.organz.controller.components.TouchAlertTextController;
@@ -77,8 +77,10 @@ import com.humanharvest.organz.views.clinician.DonatedOrganSortPolicy;
 public class OrgansToDonateController extends SubController {
 
     private static final int ROWS_PER_PAGE = 30;
-    private static final Logger LOGGER = Logger.getLogger(SidebarController.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(OrgansToDonateController.class.getName());
     private static final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("d MMM yyyy hh:mm a");
+
+    private static final Hospital dummyHospital = new Hospital("Choose hospital...", 0, 0, "");
 
     @FXML
     private HBox menuBarPane;
@@ -124,10 +126,10 @@ public class OrgansToDonateController extends SubController {
     @FXML
     private Text displayingXToYOfZText;
 
-    private Session session;
-    private ClientManager manager;
-    private ObservableList<DonatedOrgan> observableOrgansToDonate = FXCollections.observableArrayList();
-    private SortedList<DonatedOrgan> sortedOrgansToDonate = new SortedList<>(observableOrgansToDonate);
+    private final Session session;
+    private final ClientManager manager;
+    private final ObservableList<DonatedOrgan> observableOrgansToDonate = FXCollections.observableArrayList();
+    private final SortedList<DonatedOrgan> sortedOrgansToDonate = new SortedList<>(observableOrgansToDonate);
     private DonatedOrgan selectedOrgan;
     private Set<String> regionsToFilter;
     private EnumSet<Organ> organsToFilter;
@@ -217,6 +219,8 @@ public class OrgansToDonateController extends SubController {
         // Setup transplant hospital choice picker
         transplantHospitalChoice.setItems(FXCollections.observableArrayList(State.getConfigManager().getHospitals()));
         transplantHospitalChoice.getItems().sort(Comparator.comparing(Hospital::getName));
+        transplantHospitalChoice.getItems().add(0, dummyHospital);
+        transplantHospitalChoice.setValue(dummyHospital);
     }
 
     /**
@@ -427,7 +431,9 @@ public class OrgansToDonateController extends SubController {
             return;
         }
 
-        if (transplantHospitalChoice.getValue() == null) {
+        if (transplantHospitalChoice.getValue() == null ||
+                Objects.equals(transplantHospitalChoice.getValue(), dummyHospital)) {
+
             PageNavigator.showAlert(AlertType.ERROR,
                     "Missing Transplant Hospital",
                     "Please select a hospital for the transplant to take place in.",
@@ -463,7 +469,7 @@ public class OrgansToDonateController extends SubController {
 
         // Reset values
         transplantDatePicker.setValue(null);
-        transplantHospitalChoice.getSelectionModel().clearSelection();
+        transplantHospitalChoice.setValue(dummyHospital);
 
         PageNavigator.refreshAllWindows();
     }
@@ -476,7 +482,7 @@ public class OrgansToDonateController extends SubController {
      */
     private DonatedOrganSortPolicy getSortPolicy() {
         ObservableList<TableColumn<DonatedOrgan, ?>> sortOrder = tableView.getSortOrder();
-        if (sortOrder.size() == 0) {
+        if (sortOrder.isEmpty()) {
             return new DonatedOrganSortPolicy(DonatedOrganSortOptionsEnum.TIME_UNTIL_EXPIRY, false);
         }
         TableColumn<DonatedOrgan, ?> sortColumn = tableView.getSortOrder().get(0);
@@ -510,7 +516,7 @@ public class OrgansToDonateController extends SubController {
             List<Client> matches = State.getClientManager().getOrganMatches(selectedOrgan);
             potentialRecipients.setItems(FXCollections.observableArrayList(matches));
 
-            if (matches.size() == 0) {
+            if (matches.isEmpty()) {
                 placeholder.setText("No potential recipients for this organ");
             }
 

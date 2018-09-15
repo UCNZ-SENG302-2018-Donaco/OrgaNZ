@@ -140,9 +140,8 @@
                        </rowConstraints>
                        <children>
                           <DatePicker fx:id="transplantDatePicker" maxWidth="1.7976931348623157E308" promptText="dd/mm/yyyy" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                          <ChoiceBox fx:id="transplantHospitalChoice" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                          <ChoiceBox fx:id="transplantHospitalChoice" maxWidth="1.7976931348623157E308" GridPane.columnSpan="2" GridPane.rowIndex="2" />
                           <Label text="Date:" GridPane.rowIndex="1" />
-                          <Label layoutX="10.0" layoutY="18.0" text="Hospital:" GridPane.rowIndex="2" />
                        </children>
                     </GridPane>
                     <Button fx:id="scheduleTransplantBtn" alignment="CENTER" contentDisplay="CENTER" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#scheduleTransplant" text="Schedule Transplant">
