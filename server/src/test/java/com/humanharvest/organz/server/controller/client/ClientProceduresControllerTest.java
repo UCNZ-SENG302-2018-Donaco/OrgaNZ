@@ -218,7 +218,7 @@ public class ClientProceduresControllerTest {
     }
 
     @Test
-    public void resolveFutureTransplant() throws Exception {
+    public void resolveTransplantTwice() throws Exception {
         Client donor = new Client(1231);
 
         TransplantRequest request = new TransplantRequest(testClient, Organ.LIVER);
@@ -231,6 +231,12 @@ public class ClientProceduresControllerTest {
         transplantRecord.setId(12);
 
         testClient.addProcedureRecord(transplantRecord);
+
+        mockMvc.perform(post(
+                "/clients/" + testClient.getUid() + "/transplants/12/complete")
+                .header("If-Match", testClient.getETag())
+                .header("X-Auth-Token", VALID_AUTH))
+                .andExpect(status().isOk());
 
         mockMvc.perform(post(
                 "/clients/" + testClient.getUid() + "/transplants/12/complete")
