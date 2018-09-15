@@ -225,7 +225,7 @@ public class Client implements ConcurrencyControlledEntity {
     }
 
     private void updateModifiedTimestamp() {
-        LOGGER.log(Level.INFO, "Timestamp updated", new RuntimeException());
+        LOGGER.log(Level.FINEST, "Timestamp updated", new RuntimeException());
         modifiedTimestamp = Instant.now();
     }
 
