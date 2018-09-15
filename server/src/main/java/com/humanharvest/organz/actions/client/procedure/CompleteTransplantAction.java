@@ -28,8 +28,8 @@ public class CompleteTransplantAction extends ClientAction {
     public CompleteTransplantAction(TransplantRecord record, ClientManager manager)
             throws DateOutOfBoundsException {
         super(record.getClient(), manager);
-        if (record.getDate().isAfter(LocalDate.now())) {
-            throw new DateOutOfBoundsException("The transplant cannot be resolved when it is in the future");
+        if (record.isCompleted()) {
+            throw new DateOutOfBoundsException("The transplant cannot be resolved twice");
         }
         this.record = record;
     }
@@ -42,6 +42,9 @@ public class CompleteTransplantAction extends ClientAction {
 
         TransplantRequest request = record.getRequest();
         request.setResolvedReason("The transplant has been completed");
+        if (record.getDate().isAfter(LocalDate.now())) {
+            record.setDate(LocalDate.now());
+        }
         request.setResolvedDateTime(record.getDate().atTime(LocalTime.now()));
         request.setStatus(TransplantRequestStatus.COMPLETED);
 

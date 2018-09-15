@@ -18,19 +18,20 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 <?import org.controlsfx.control.CheckComboBox?>
-<VBox xmlns:fx="http://javafx.com/fxml/1" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.161" fx:controller="com.humanharvest.organz.controller.client.ViewProceduresController">
-  <SplitPane VBox.vgrow="ALWAYS" dividerPositions="0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="200.0">
-    <HBox maxHeight="-Infinity" minHeight="-Infinity" fx:id="menuBarPane"/>
-    <SplitPane VBox.vgrow="ALWAYS" dividerPositions="0.5">
-      <HBox maxWidth="-Infinity" fx:id="sidebarPane"/>
+
+<VBox prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.client.ViewProceduresController">
+  <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+    <HBox fx:id="menuBarPane" maxHeight="-Infinity" minHeight="-Infinity" />
+    <SplitPane dividerPositions="0.5" VBox.vgrow="ALWAYS">
+      <HBox fx:id="sidebarPane" maxWidth="-Infinity" />
       <BorderPane>
         <top>
-          <Text BorderPane.alignment="CENTER" strokeType="OUTSIDE" strokeWidth="0.0" text="View/edit procedures" textAlignment="CENTER">
+          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="View/edit procedures" textAlignment="CENTER" BorderPane.alignment="CENTER">
             <font>
-              <Font size="24.0"/>
+              <Font size="24.0" />
             </font>
             <BorderPane.margin>
-              <Insets top="50.0"/>
+              <Insets top="50.0" />
             </BorderPane.margin>
           </Text>
         </top>
@@ -40,96 +41,96 @@
           <VBox BorderPane.alignment="CENTER">
             <VBox fx:id="newProcedurePane">
               <VBox.margin>
-                <Insets left="10.0" right="10.0" top="20.0"/>
+                <Insets left="10.0" right="10.0" top="20.0" />
               </VBox.margin>
               <HBox alignment="CENTER_LEFT" spacing="10.0">
                 <Label maxWidth="1.7976931348623157E308" minWidth="98.0" text="New Procedure:">
                   <font>
-                    <Font size="14.0"/>
+                    <Font size="14.0" />
                   </font>
                   <HBox.margin>
-                    <Insets/>
+                    <Insets />
                   </HBox.margin>
                 </Label>
-                <TextField HBox.hgrow="ALWAYS" maxWidth="1.7976931348623157E308" onAction="#addProcedure" promptText="Summary" fx:id="summaryField"/>
-                <DatePicker HBox.hgrow="ALWAYS" promptText="Procedure Date" fx:id="dateField">
+                <TextField fx:id="summaryField" maxWidth="1.7976931348623157E308" onAction="#addProcedure" promptText="Summary" HBox.hgrow="ALWAYS" />
+                <DatePicker fx:id="dateField" promptText="Procedure Date" HBox.hgrow="ALWAYS">
                   <HBox.margin>
-                    <Insets/>
+                    <Insets />
                   </HBox.margin>
                 </DatePicker>
                 <Label maxWidth="1.7976931348623157E308" minWidth="56.0" text="Affected:">
                   <font>
-                    <Font size="14.0"/>
+                    <Font size="14.0" />
                   </font>
                 </Label>
-                <CheckComboBox HBox.hgrow="ALWAYS" maxWidth="150.0" fx:id="affectedOrgansField"/>
-                <Button alignment="TOP_LEFT" minWidth="96.0" mnemonicParsing="false" onAction="#addProcedure" text="Add Procedure"/>
+                <CheckComboBox fx:id="affectedOrgansField" maxWidth="150.0" HBox.hgrow="ALWAYS" />
+                <Button alignment="TOP_LEFT" minWidth="96.0" mnemonicParsing="false" onAction="#addProcedure" text="Add Procedure" />
               </HBox>
-              <TextArea prefHeight="75.0" promptText="Description" fx:id="descriptionField">
+              <TextArea fx:id="descriptionField" prefHeight="75.0" promptText="Description">
                 <VBox.margin>
-                  <Insets left="107.0" top="10.0"/>
+                  <Insets left="107.0" top="10.0" />
                 </VBox.margin>
               </TextArea>
-              <Text fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" fx:id="errorMessage">
+              <Text fx:id="errorMessage" fill="RED" strokeType="OUTSIDE" strokeWidth="0.0">
                 <VBox.margin>
-                  <Insets top="10.0"/>
+                  <Insets top="10.0" />
                 </VBox.margin>
               </Text>
             </VBox>
             <HBox VBox.vgrow="ALWAYS">
               <VBox.margin>
-                <Insets bottom="20.0" left="10.0" right="10.0" top="10.0"/>
+                <Insets bottom="20.0" left="10.0" right="10.0" top="10.0" />
               </VBox.margin>
-              <GridPane HBox.hgrow="ALWAYS" hgap="10.0">
+              <GridPane hgap="10.0" HBox.hgrow="ALWAYS">
                 <columnConstraints>
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                 </columnConstraints>
                 <rowConstraints>
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                 </rowConstraints>
                 <children>
                   <Label text="Past Procedures">
                     <font>
-                      <Font name="System Bold" size="12.0"/>
+                      <Font name="System Bold" size="12.0" />
                     </font>
                   </Label>
-                  <TableView GridPane.columnSpan="2" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS" editable="true" fx:id="pastProcedureView">
+                  <TableView fx:id="pastProcedureView" editable="true" GridPane.columnSpan="2" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS">
                     <columnResizePolicy>
-                      <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                      <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                     </columnResizePolicy>
                     <columns>
-                      <TableColumn prefWidth="75.0" text="Summary" fx:id="summaryPastCol"/>
-                      <TableColumn prefWidth="75.0" text="Date" fx:id="datePastCol"/>
-                      <TableColumn prefWidth="75.0" text="Affected Organs" fx:id="affectedPastCol"/>
-                      <TableColumn prefWidth="75.0" text="Description" fx:id="descriptionPastCol"/>
+                      <TableColumn fx:id="summaryPastCol" prefWidth="75.0" text="Summary" />
+                      <TableColumn fx:id="datePastCol" prefWidth="75.0" text="Date" />
+                      <TableColumn fx:id="affectedPastCol" prefWidth="75.0" text="Affected Organs" />
+                      <TableColumn fx:id="descriptionPastCol" prefWidth="75.0" text="Description" />
                     </columns>
                     <GridPane.margin>
-                      <Insets/>
+                      <Insets />
                     </GridPane.margin>
                   </TableView>
-                  <Label GridPane.columnIndex="2" text="Pending Procedures">
+                  <Label text="Pending Procedures" GridPane.columnIndex="2">
                     <font>
-                      <Font name="System Bold" size="12.0"/>
+                      <Font name="System Bold" size="12.0" />
                     </font>
                   </Label>
-                  <TableView GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS" editable="true" fx:id="pendingProcedureView">
+                  <TableView fx:id="pendingProcedureView" editable="true" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS">
                     <columns>
-                      <TableColumn prefWidth="75.0" text="Summary" fx:id="summaryPendCol"/>
-                      <TableColumn prefWidth="75.0" text="Date" fx:id="datePendCol"/>
-                      <TableColumn prefWidth="75.0" text="Affected Organs" fx:id="affectedPendCol"/>
-                      <TableColumn prefWidth="75.0" text="Description" fx:id="descriptionPendCol"/>
+                      <TableColumn fx:id="summaryPendCol" prefWidth="75.0" text="Summary" />
+                      <TableColumn fx:id="datePendCol" prefWidth="75.0" text="Date" />
+                      <TableColumn fx:id="affectedPendCol" prefWidth="75.0" text="Affected Organs" />
+                      <TableColumn fx:id="descriptionPendCol" prefWidth="75.0" text="Description" />
                     </columns>
                     <columnResizePolicy>
-                      <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                      <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                     </columnResizePolicy>
                   </TableView>
-                  <Button GridPane.columnIndex="1" GridPane.halignment="RIGHT" mnemonicParsing="false" onAction="#completeTransplant" text="Complete Transplant" fx:id="completeTransplantButton">
+                  <Button fx:id="completeTransplantButton" mnemonicParsing="false" onAction="#completeTransplant" text="Complete Transplant" GridPane.columnIndex="3" GridPane.halignment="RIGHT">
                     <GridPane.margin>
-                      <Insets/>
+                      <Insets />
                     </GridPane.margin>
                   </Button>
                 </children>
@@ -138,11 +139,11 @@
           </VBox>
         </center>
         <bottom>
-          <HBox BorderPane.alignment="CENTER" alignment="TOP_CENTER" spacing="10.0" fx:id="procedureButtonsPane">
+          <HBox fx:id="procedureButtonsPane" alignment="TOP_CENTER" spacing="10.0" BorderPane.alignment="CENTER">
             <BorderPane.margin>
-              <Insets bottom="20.0" left="10.0" right="10.0"/>
+              <Insets bottom="20.0" left="10.0" right="10.0" />
             </BorderPane.margin>
-            <Button mnemonicParsing="false" onAction="#deleteProcedure" text="Delete" fx:id="deleteButton"/>
+            <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteProcedure" text="Delete" />
           </HBox>
         </bottom>
       </BorderPane>

@@ -12,6 +12,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
@@ -21,6 +22,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
+import javafx.util.converter.DefaultStringConverter;
 import org.controlsfx.control.CheckComboBox;
 import org.controlsfx.control.Notifications;
 
@@ -49,7 +51,7 @@ public class ViewProceduresController extends SubController {
 
     private static final Logger LOGGER = Logger.getLogger(ViewProceduresController.class.getName());
 
-    private Session session;
+    private final Session session;
     private Client client;
 
     @FXML
@@ -81,7 +83,7 @@ public class ViewProceduresController extends SubController {
     @FXML
     private Button completeTransplantButton;
 
-    private TableView<ProcedureRecord> selectedTableView = null;
+    private TableView<ProcedureRecord> selectedTableView;
 
     /**
      * Gets the current session from the global state.
@@ -223,9 +225,9 @@ public class ViewProceduresController extends SubController {
 
         // Setup the cell factories (these generate the editable cells)
         summaryPastCol.setCellFactory(TextFieldTableCell.forTableColumn());
-        summaryPendCol.setCellFactory(TextFieldTableCell.forTableColumn());
+        summaryPendCol.setCellFactory(cell -> formatOutOfDate());
         descriptionPastCol.setCellFactory(TextFieldTableCell.forTableColumn());
-        descriptionPendCol.setCellFactory(TextFieldTableCell.forTableColumn());
+        descriptionPendCol.setCellFactory(cell -> formatOutOfDate());
         datePastCol.setCellFactory(DatePickerCell::new);
         datePendCol.setCellFactory(DatePickerCell::new);
         affectedPastCol.setCellFactory(OrganCheckComboBoxCell::new);
@@ -263,6 +265,21 @@ public class ViewProceduresController extends SubController {
 
         // Setup the "new procedure" affected organs input with all organ values
         affectedOrgansField.getItems().setAll(Organ.values());
+    }
+
+    private static TableCell<ProcedureRecord, String> formatOutOfDate() {
+        return new TextFieldTableCell<ProcedureRecord, String>(new DefaultStringConverter()) {
+            @Override
+            public void updateItem(String item, boolean empty) {
+                TransplantRecord record = getTableRow().getItem() instanceof TransplantRecord ?
+                        (TransplantRecord) getTableRow().getItem() : null;
+                super.updateItem(item, empty);
+
+                if (record != null && record.getDate().isBefore(LocalDate.now())) {
+                    setStyle("-fx-text-fill: red;");
+                }
+            }
+        };
     }
 
     /**
@@ -379,7 +396,7 @@ public class ViewProceduresController extends SubController {
      * Has not yet been completed
      */
     private void setCompleteTransplantButton() {
-        ProcedureRecord record = pastProcedureView.getSelectionModel().getSelectedItem();
+        ProcedureRecord record = pendingProcedureView.getSelectionModel().getSelectedItem();
         if (record instanceof TransplantRecord) {
             TransplantRecord tRecord = (TransplantRecord) record;
             // Disable the button if the record is completed, else enable it
@@ -463,7 +480,7 @@ public class ViewProceduresController extends SubController {
 
     @FXML
     private void completeTransplant() {
-        TransplantRecord record = (TransplantRecord) pastProcedureView.getSelectionModel().getSelectedItem();
+        TransplantRecord record = (TransplantRecord) pendingProcedureView.getSelectionModel().getSelectedItem();
         State.getClientResolver().completeTransplantRecord(record);
         Notifications.create()
                 .title("Completed Transplant")

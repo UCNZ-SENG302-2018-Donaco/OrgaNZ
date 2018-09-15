@@ -815,7 +815,12 @@ public class Client implements ConcurrencyControlledEntity {
      */
     public List<ProcedureRecord> getPendingProcedures() {
         return Collections.unmodifiableList(procedures.stream()
-                .filter(record -> record.getDate().isAfter(LocalDate.now()))
+                .filter(record -> {
+                    if (record instanceof TransplantRecord) {
+                        return !((TransplantRecord)record).isCompleted();
+                    }
+                    return record.getDate().isAfter(LocalDate.now());
+                })
                 .collect(Collectors.toList()));
     }
 
@@ -826,7 +831,12 @@ public class Client implements ConcurrencyControlledEntity {
      */
     public List<ProcedureRecord> getPastProcedures() {
         return Collections.unmodifiableList(procedures.stream()
-                .filter(record -> !record.getDate().isAfter(LocalDate.now()))
+                .filter(record -> {
+                    if (record instanceof TransplantRecord) {
+                        return ((TransplantRecord)record).isCompleted();
+                    }
+                    return !record.getDate().isAfter(LocalDate.now());
+                })
                 .collect(Collectors.toList()));
     }
 
