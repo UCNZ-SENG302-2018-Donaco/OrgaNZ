@@ -1,6 +1,6 @@
 package com.humanharvest.organz.server.controller.client;
 
-import static com.humanharvest.organz.utilities.validators.ClientValidator.checkClientETag;
+import static com.humanharvest.organz.utilities.validators.ClientValidator.checkETag;
 
 import java.util.List;
 import java.util.Optional;
@@ -79,7 +79,7 @@ public class ClientIllnessesController {
         State.getAuthenticationManager().verifyClientAccess(authToken, client);
 
         //Check ETag
-        checkClientETag(client, ETag);
+        checkETag(client, ETag);
 
         IllnessRecord record = client.getIllnessById(id);
 

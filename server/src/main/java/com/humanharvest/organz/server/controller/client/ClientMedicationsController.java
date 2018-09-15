@@ -1,6 +1,6 @@
 package com.humanharvest.organz.server.controller.client;
 
-import static com.humanharvest.organz.utilities.validators.ClientValidator.checkClientETag;
+import static com.humanharvest.organz.utilities.validators.ClientValidator.checkETag;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -92,7 +92,7 @@ public class ClientMedicationsController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        checkClientETag(client.get(), ETag);
+        checkETag(client.get(), ETag);
 
         MedicationRecord record = new MedicationRecord(medicationRecordView.getName(),
                 medicationRecordView.getStarted(),
@@ -140,7 +140,7 @@ public class ClientMedicationsController {
         // Check authentication
         State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
 
-        checkClientETag(client.get(), ETag);
+        checkETag(client.get(), ETag);
 
         MedicationRecord record = client.get().getMedicationRecord(id);
 
@@ -190,7 +190,7 @@ public class ClientMedicationsController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        checkClientETag(client.get(), ETag);
+        checkETag(client.get(), ETag);
 
         MedicationRecord record = client.get().getMedicationRecord(id);
 
@@ -236,7 +236,7 @@ public class ClientMedicationsController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        checkClientETag(client.get(), ETag);
+        checkETag(client.get(), ETag);
 
         MedicationRecord record = client.get().getMedicationRecord(id);
 

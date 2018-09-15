@@ -32,12 +32,12 @@ public final class ClientValidator {
      * Checks that the given etag matches the current etag for the client,
      * and exception is thrown if the etag is missing or does not match
      *
-     * @param client client to validate the etag for
+     * @param controlledEntity entity to validate the etag for
      * @param etag The corresponding If-Match header to check for concurrent update handling
      * @throws IfMatchRequiredException Thrown if the etag header is missing
      * @throws IfMatchFailedException Thrown if the etag does not match the clients current etag
      */
-    public static void checkClientETag(ConcurrencyControlledEntity controlledEntity, String etag)
+    public static void checkETag(ConcurrencyControlledEntity controlledEntity, String etag)
             throws IfMatchRequiredException, IfMatchFailedException {
 
         if (etag == null) {

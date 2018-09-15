@@ -1,6 +1,6 @@
 package com.humanharvest.organz.server.controller.client;
 
-import static com.humanharvest.organz.utilities.validators.ClientValidator.checkClientETag;
+import static com.humanharvest.organz.utilities.validators.ClientValidator.checkETag;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
@@ -100,7 +100,7 @@ public class ClientProceduresController {
         Client client = optionalClient.get();
 
         //Check ETag
-        checkClientETag(client, eTag);
+        checkETag(client, eTag);
 
         // Execute add procedure action
         Action action = new AddProcedureRecordAction(client, procedureRecord, State.getClientManager());
@@ -135,7 +135,7 @@ public class ClientProceduresController {
         Client client = optionalClient.get();
 
         //Check ETag
-        checkClientETag(client, eTag);
+        checkETag(client, eTag);
 
         // Try to find a procedure record with matching id
         Optional<ProcedureRecord> optionalRecord = client.getProcedures().stream()
@@ -202,7 +202,7 @@ public class ClientProceduresController {
         Client client = optionalClient.get();
 
         //Check ETag
-        checkClientETag(client, eTag);
+        checkETag(client, eTag);
 
         // Try to find a procedure record with matching id
         Optional<ProcedureRecord> optionalRecord = client.getProcedures().stream()
@@ -248,7 +248,7 @@ public class ClientProceduresController {
         Client client = optionalClient.get();
 
         // Check ETag
-        checkClientETag(client, ETag);
+        checkETag(client, ETag);
 
         // Find the organ to be transplanted
         Optional<DonatedOrgan> optionalOrgan = State.getClientManager().getAllOrgansToDonate().stream()
@@ -324,7 +324,7 @@ public class ClientProceduresController {
         Client client = optionalClient.get();
 
         //Check ETag
-        checkClientETag(client, ETag);
+        checkETag(client, ETag);
 
         // Try to find a transplant record with matching id
         Optional<ProcedureRecord> optionalRecord = client.getProcedures().stream()

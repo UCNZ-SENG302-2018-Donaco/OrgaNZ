@@ -1,6 +1,6 @@
 package com.humanharvest.organz.server.controller.client;
 
-import static com.humanharvest.organz.utilities.validators.ClientValidator.checkClientETag;
+import static com.humanharvest.organz.utilities.validators.ClientValidator.checkETag;
 
 import java.util.Map;
 import java.util.Map.Entry;
@@ -81,7 +81,7 @@ public class ClientDonationStatusController {
         State.getAuthenticationManager().verifyClientAccess(authToken, client);
 
         //Check ETag
-        checkClientETag(client, ETag);
+        checkETag(client, ETag);
 
         //Create the action
         ModifyClientOrgansAction action = new ModifyClientOrgansAction(client, State.getClientManager());
