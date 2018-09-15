@@ -154,7 +154,9 @@ public class SpiderWebController {
             String style = DurationUntilExpiryCell.getStyleForProgress(progressDecimal, fullMarker);
 
             style = style.replace("-fx-background-color", "-fx-stroke");
-            style = style.replace("to right", "from 0% 0% to 100% 100%");
+            String replace = String.format("from %s %s to %s %s", line.getStartX(), line.getStartY(), line.getEndX(),
+                    line.getEndY());
+            style = style.replace("to right", replace);
             line.setStyle(style);
         }
     }
