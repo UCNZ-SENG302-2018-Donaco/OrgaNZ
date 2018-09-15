@@ -564,6 +564,7 @@ public class ClientManagerDBPure implements ClientManager {
         List<DonatedOrgan> filteredOrgans = getAllOrgansToDonate().stream()
                 .filter(organ -> organ.getDurationUntilExpiry() == null || !organ.getDurationUntilExpiry().isZero())
                 .filter(organ -> organ.getOverrideReason() == null)
+                .filter(DonatedOrgan::isAvailable)
                 .filter(organ -> regionsToFilter.isEmpty()
                         || regionsToFilter.contains(organ.getDonor().getRegionOfDeath())
                         || (regionsToFilter.contains("International")

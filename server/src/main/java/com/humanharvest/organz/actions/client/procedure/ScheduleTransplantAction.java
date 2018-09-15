@@ -7,6 +7,7 @@ import com.humanharvest.organz.Hospital;
 import com.humanharvest.organz.TransplantRecord;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.state.ClientManager;
+import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 import com.humanharvest.organz.utilities.exceptions.DateOutOfBoundsException;
 
 /**
@@ -16,6 +17,7 @@ import com.humanharvest.organz.utilities.exceptions.DateOutOfBoundsException;
 public class ScheduleTransplantAction extends AddProcedureRecordAction {
 
     private DonatedOrgan donatedOrgan;
+    private TransplantRequest request;
 
     /**
      * Creates a new action to schedule a transplant procedure.
@@ -34,17 +36,22 @@ public class ScheduleTransplantAction extends AddProcedureRecordAction {
             throw new DateOutOfBoundsException("A transplant cannot be scheduled in the past.");
         }
         donatedOrgan = organ;
+        this.request = request;
     }
 
     @Override
     public void execute() {
         super.execute();
         donatedOrgan.setAvailable(false);
+        request.setStatus(TransplantRequestStatus.SCHEDULED);
+        manager.applyChangesTo(client);
     }
 
     @Override
     public void unExecute() {
         super.unExecute();
         donatedOrgan.setAvailable(true);
+        request.setStatus(TransplantRequestStatus.WAITING);
+        manager.applyChangesTo(client);
     }
 }

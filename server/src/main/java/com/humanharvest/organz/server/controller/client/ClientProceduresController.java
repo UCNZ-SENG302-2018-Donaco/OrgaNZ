@@ -290,7 +290,8 @@ public class ClientProceduresController {
         // Execute add procedure action
         try {
             Hospital hospital = optionalHospital.get();
-            Action action = new ScheduleTransplantAction(organ, request, hospital, date, State.getClientManager());
+            ScheduleTransplantAction action = new ScheduleTransplantAction(organ, request, hospital, date,
+                    State.getClientManager());
             State.getActionInvoker(authToken).execute(action);
         } catch (DateOutOfBoundsException exc) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

@@ -45,7 +45,6 @@ import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
-import com.humanharvest.organz.utilities.type_converters.BloodTypeConverter;
 import com.humanharvest.organz.views.client.Views;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
@@ -225,7 +224,7 @@ public class Client implements ConcurrencyControlledEntity {
     }
 
     private void updateModifiedTimestamp() {
-        LOGGER.log(Level.INFO, "Timestamp updated", new RuntimeException());
+        LOGGER.log(Level.FINEST, "Timestamp updated", new RuntimeException());
         modifiedTimestamp = Instant.now();
     }
 

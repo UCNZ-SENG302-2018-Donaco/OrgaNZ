@@ -1,4 +1,4 @@
-package com.humanharvest.organz.server.controller;
+package com.humanharvest.organz.server.controller.client;
 
 import java.util.Collection;
 import java.util.HashSet;

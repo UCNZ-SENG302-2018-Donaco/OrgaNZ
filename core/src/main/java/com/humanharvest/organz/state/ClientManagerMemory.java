@@ -428,6 +428,7 @@ public class ClientManagerMemory implements ClientManager {
                 .map(Client::getDonatedOrgans)
                 .flatMap(Collection::stream)
                 .filter(organ -> organ.getDurationUntilExpiry() == null || !organ.getDurationUntilExpiry().isZero())
+                .filter(DonatedOrgan::isAvailable)
                 .filter(organ -> organ.getOverrideReason() == null)
                 .filter(organ -> regionsToFilter.isEmpty()
                         || regionsToFilter.contains(organ.getDonor().getRegionOfDeath())
