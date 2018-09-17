@@ -1,6 +1,7 @@
 package com.humanharvest.organz.utilities.view;
 
-import javafx.beans.property.Property;
+import java.util.function.Consumer;
+
 import javafx.scene.control.Alert;
 import javafx.scene.layout.Region;
 import javafx.stage.Window;
@@ -64,9 +65,10 @@ public interface IPageNavigator {
      * @param alertType the type of alert to show (can determine its style and button options).
      * @param title the text to show as the title and heading of the alert.
      * @param bodyText the text to show within the body of the alert.
-     * @return an Optional for the button that was clicked to dismiss the alert.
+     * @param onResponse a callback for when an ok/cancel button is clicked.
      */
-    Property<Boolean> showAlert(Alert.AlertType alertType, String title, String bodyText, Window window);
+    void showAlert(Alert.AlertType alertType, String title, String bodyText, Window window,
+            Consumer<Boolean> onResponse);
 
     TouchAlertTextController showAlertWithText(String title, String bodyText, Window window);
 }

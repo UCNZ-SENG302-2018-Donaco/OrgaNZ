@@ -3,6 +3,7 @@ package com.humanharvest.organz.utilities.view;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -79,7 +80,7 @@ public class PageNavigatorTouch implements IPageNavigator {
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Couldn't load the page", e);
             showAlert(Alert.AlertType.ERROR, "Could not load page: " + page,
-                    "The page loader failed to load the layout for the page.", controller.getStage());
+                    "The page loader failed to load the layout for the page.", controller.getStage(), null);
         }
     }
 
@@ -126,7 +127,7 @@ public class PageNavigatorTouch implements IPageNavigator {
             LOGGER.log(Level.SEVERE, "Error loading new window\n", e);
             // Will throw if MAIN's fxml file could not be loaded.
             showAlert(Alert.AlertType.ERROR, "New window could not be created",
-                    "The page loader failed to load the layout for the new window.", null);
+                    "The page loader failed to load the layout for the new window.", null, null);
             return null;
         }
     }
@@ -137,10 +138,11 @@ public class PageNavigatorTouch implements IPageNavigator {
      * @param alertType the type of alert to show (can determine its style and button options).
      * @param title the text to show as the title and heading of the alert.
      * @param bodyText the text to show within the body of the alert.
-     * @return an Optional for the button that was clicked to dismiss the alert.
+     * @param onResponse a callback for when an ok/cancel button is clicked.
      */
     @Override
-    public Property<Boolean> showAlert(Alert.AlertType alertType, String title, String bodyText, Window window) {
+    public void showAlert(Alert.AlertType alertType, String title, String bodyText, Window window,
+            Consumer<Boolean> onResponse) {
         LOGGER.info("Opening new window");
         try {
             Stage newStage = new Stage();
@@ -148,7 +150,7 @@ public class PageNavigatorTouch implements IPageNavigator {
             Pane mainPane = loader.load();
 
             TouchAlertController controller = loader.getController();
-            controller.setup(alertType, title, bodyText, newStage, mainPane);
+            controller.setup(alertType, title, bodyText, newStage, mainPane, onResponse);
 
             MultitouchHandler.addPane(mainPane);
 
@@ -157,13 +159,11 @@ public class PageNavigatorTouch implements IPageNavigator {
                 mainPane.getTransforms().add(new Affine(transform));
             });
 
-            return controller.getResultProperty();
-
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Error loading new window\n", e);
-            Property<Boolean> result = new SimpleBooleanProperty();
-            result.setValue(false);
-            return result;
+            if (onResponse != null) {
+                onResponse.accept(false);
+            }
         }
     }
 

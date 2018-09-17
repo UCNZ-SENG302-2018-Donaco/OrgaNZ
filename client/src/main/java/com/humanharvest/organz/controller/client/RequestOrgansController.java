@@ -6,7 +6,6 @@ import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javafx.beans.property.Property;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -418,22 +417,13 @@ public class RequestOrgansController extends SubController {
 
             // Offer to go to medical history page if they said a disease was cured
             if (resolvedReasonDropdownChoice == ResolveReason.CURED) { // "Disease was cured"
-                Property<Boolean> response = PageNavigator.showAlert(AlertType.CONFIRMATION,
+                PageNavigator.showAlert(AlertType.CONFIRMATION,
                         "Go to Medical History Page",
                         "Do you want to go to the medical history page to mark the disease that was cured?",
-                        mainController.getStage());
-
-                if (response.getValue() != null) {
-                    if (response.getValue()) {
-                        PageNavigator.loadPage(Page.VIEW_MEDICAL_HISTORY, mainController);
-                    }
-                } else {
-                    response.addListener((observable, oldValue, newValue) -> {
-                        if (newValue) {
+                        mainController.getStage(),
+                        isOk -> {
                             PageNavigator.loadPage(Page.VIEW_MEDICAL_HISTORY, mainController);
-                        }
-                    });
-                }
+                        });
             }
         }
     }

@@ -13,7 +13,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javafx.application.Platform;
-import javafx.beans.property.Property;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -29,11 +28,11 @@ import javafx.stage.Stage;
 import org.controlsfx.control.Notifications;
 
 import com.humanharvest.organz.AppUI;
-import com.humanharvest.organz.touch.MultitouchHandler;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.state.State.UiType;
+import com.humanharvest.organz.touch.MultitouchHandler;
 import com.humanharvest.organz.utilities.CacheManager;
 import com.humanharvest.organz.utilities.exceptions.BadRequestException;
 import com.humanharvest.organz.utilities.view.Page;
@@ -436,22 +435,13 @@ public class MenuBarController extends SubController {
     private void load() {
 
         // Confirm that the user wants to overwrite current data with data from a file
-        Property<Boolean> response = PageNavigator.showAlert(AlertType.CONFIRMATION,
+        PageNavigator.showAlert(AlertType.CONFIRMATION,
                 "Confirm load from file",
                 "Loading from a file will overwrite all current data. Would you like to proceed?",
-                mainController.getStage());
-
-        if (response.getValue() != null) {
-            if (response.getValue()) {
-                loadFile();
-            }
-        } else {
-            response.addListener((observable, oldValue, newValue) -> {
-                if (newValue) {
+                mainController.getStage(),
+                isOk -> {
                     loadFile();
-                }
-            });
-        }
+                });
     }
 
     private void loadFile() {

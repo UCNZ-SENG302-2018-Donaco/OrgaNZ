@@ -2,11 +2,10 @@ package com.humanharvest.organz.utilities.view;
 
 import java.io.IOException;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javafx.beans.property.Property;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -49,7 +48,7 @@ public class PageNavigatorStandard implements IPageNavigator {
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Couldn't load the page", e);
             showAlert(Alert.AlertType.ERROR, "Could not load page: " + page,
-                    "The page loader failed to load the layout for the page.", controller.getStage());
+                    "The page loader failed to load the layout for the page.", controller.getStage(), null);
         }
     }
 
@@ -97,7 +96,7 @@ public class PageNavigatorStandard implements IPageNavigator {
             LOGGER.log(Level.SEVERE, "Error loading new window\n", e);
             // Will throw if MAIN's fxml file could not be loaded.
             showAlert(Alert.AlertType.ERROR, "New window could not be created",
-                    "The page loader failed to load the layout for the new window.", null);
+                    "The page loader failed to load the layout for the new window.", null, null);
             return null;
         }
     }
@@ -108,19 +107,20 @@ public class PageNavigatorStandard implements IPageNavigator {
      * @param alertType the type of alert to show (can determine its style and button options).
      * @param title the text to show as the title and heading of the alert.
      * @param bodyText the text to show within the body of the alert.
-     * @return an Optional for the button that was clicked to dismiss the alert.
+     * @param onResponse a callback for when an ok/cancel button is clicked.
      */
     @Override
-    public Property<Boolean> showAlert(Alert.AlertType alertType, String title, String bodyText, Window window) {
-        Property<Boolean> booleanProperty = new SimpleBooleanProperty();
+    public void showAlert(Alert.AlertType alertType, String title, String bodyText, Window window,
+            Consumer<Boolean> onResponse) {
         Alert alert = generateAlert(alertType, title, bodyText);
         Optional<ButtonType> result = alert.showAndWait();
-        if (result.isPresent() && result.get() == ButtonType.OK) {
-            booleanProperty.setValue(true);
-        } else {
-            booleanProperty.setValue(false);
+        if (onResponse != null) {
+            if (result.isPresent() && result.get() == ButtonType.OK) {
+                onResponse.accept(true);
+            } else {
+                onResponse.accept(false);
+            }
         }
-        return booleanProperty;
     }
 
     @Override

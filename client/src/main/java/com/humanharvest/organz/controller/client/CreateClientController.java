@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javafx.beans.property.Property;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -93,22 +92,13 @@ public class CreateClientController extends SubController {
         } else {
             //Duplicate user warning alert
             if (manager.doesClientExist(firstNameFld.getText(), lastNamefld.getText(), dobFld.getValue())) {
-                Property<Boolean> response = PageNavigator.showAlert(AlertType.CONFIRMATION,
+                PageNavigator.showAlert(AlertType.CONFIRMATION,
                         "Duplicate Client Warning",
                         "This client is a duplicate of one that already exists. Would you still like to create it?",
-                        mainController.getStage());
-
-                if (response.getValue() != null) {
-                    if (response.getValue()) {
-                        createClientLogic();
-                    }
-                } else {
-                    response.addListener((observable, oldValue, newValue) -> {
-                        if (newValue) {
+                        mainController.getStage(),
+                        isOk -> {
                             createClientLogic();
-                        }
-                    });
-                }
+                        });
             } else {
                 createClientLogic();
             }
