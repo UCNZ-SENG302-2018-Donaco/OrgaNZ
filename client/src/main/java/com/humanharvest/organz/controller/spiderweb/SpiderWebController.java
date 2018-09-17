@@ -11,18 +11,17 @@ import java.util.logging.Logger;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Translate;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import com.humanharvest.organz.Client;
@@ -93,9 +92,9 @@ public class SpiderWebController {
         deceasedDonorPane = newMain.getPane();
         deceasedDonorPane.disableProperty();
 
-        setPositionUsingTransform(deceasedDonorPane, canvas.getWidth()/2, canvas.getHeight()/2);
-
-
+        int centerX = (int) Screen.getPrimary().getVisualBounds().getWidth() / 2;
+        int centerY = (int) Screen.getPrimary().getVisualBounds().getHeight() / 2;
+        setPositionUsingTransform(deceasedDonorPane, centerX, centerY);
     }
 
 
@@ -120,12 +119,9 @@ public class SpiderWebController {
                 Pane organPane = newMain.getPane();
                 organNodes.add(organPane);
                 //TODO: Fix so organ stays expired once web is closed.
-                organPane.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                    @Override
-                    public void handle(MouseEvent click) {
-                        if(click.getClickCount() == 2){
-                            manuallyOverrideOrgan(organ);
-                        }
+                organPane.setOnMouseClicked(click -> {
+                    if (click.getClickCount() == 2) {
+                        manuallyOverrideOrgan(organ);
                     }
                 });
 
@@ -138,16 +134,19 @@ public class SpiderWebController {
                     Bounds bounds = deceasedDonorPane.getBoundsInParent();
                     connector.setStartX(bounds.getMinX() + bounds.getWidth()/2);
                     connector.setStartY(bounds.getMinY() + bounds.getHeight()/2);
+                    updateConnector(organ, connector, organPane);
                 });
                 organPane.localToParentTransformProperty().addListener((observable, oldValue, newValue) -> {
                     Bounds bounds = organPane.getBoundsInParent();
                     connector.setEndX(bounds.getMinX() + bounds.getWidth()/2);
                     connector.setEndY(bounds.getMinY() + bounds.getHeight()/2);
+                    updateConnector(organ, connector, organPane);
                 });
                 canvas.getChildren().add( 0, connector);
                 Bounds bounds = deceasedDonorPane.getBoundsInParent();
                 connector.setStartX(bounds.getMinX() + bounds.getWidth()/2);
                 connector.setStartY(bounds.getMinY() + bounds.getHeight()/2);
+                updateConnector(organ, connector, organPane);
 
                 // Attach timer to update table each second (for time until expiration)
                 final Timeline clock = new Timeline(new KeyFrame(
