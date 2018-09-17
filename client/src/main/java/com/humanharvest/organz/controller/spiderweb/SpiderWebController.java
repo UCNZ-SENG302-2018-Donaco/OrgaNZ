@@ -11,10 +11,12 @@ import java.util.logging.Logger;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -89,7 +91,20 @@ public class SpiderWebController {
         MainController newMain = PageNavigator.openNewWindow(200, 400);
         PageNavigator.loadPage(Page.RECEIVER_OVERVIEW, newMain);
         deceasedDonorPane = newMain.getPane();
+        deceasedDonorPane.disableProperty();
+
         setPositionUsingTransform(deceasedDonorPane, canvas.getWidth()/2, canvas.getHeight()/2);
+
+
+    }
+
+
+    /**
+     * Manually Overrides Organ.
+     * @param donatedOrgan
+     */
+    private void manuallyOverrideOrgan(DonatedOrgan donatedOrgan){
+        donatedOrgan.manuallyOverride("Manually Overridden by Doctor using WebView");
     }
 
     /**
@@ -104,6 +119,15 @@ public class SpiderWebController {
                 PageNavigator.loadPage(Page.ORGAN_IMAGE, newMain);
                 Pane organPane = newMain.getPane();
                 organNodes.add(organPane);
+                //TODO: Fix so organ stays expired once web is closed.
+                organPane.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent click) {
+                        if(click.getClickCount() == 2){
+                            manuallyOverrideOrgan(organ);
+                        }
+                    }
+                });
 
                 // Create the line
                 Line connector = new Line();
@@ -131,6 +155,7 @@ public class SpiderWebController {
                         event -> updateConnector(organ, connector, organPane)));
                 clock.setCycleCount(Animation.INDEFINITE);
                 clock.play();
+
             }
         }
         layoutOrganNodes(300);
