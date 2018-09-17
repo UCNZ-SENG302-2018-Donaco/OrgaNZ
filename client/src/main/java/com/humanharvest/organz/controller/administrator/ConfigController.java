@@ -41,8 +41,8 @@ public class ConfigController extends SubController {
     @FXML
     private CheckListView<Organ> organSelector;
 
-    private Map<Hospital, Set<Organ>> modifiedHospitalPrograms = new HashMap<>();
-    private ListChangeListener<? super Organ> programsChangeListener = change -> onTransplantProgramsChanged();
+    private final Map<Hospital, Set<Organ>> modifiedHospitalPrograms = new HashMap<>();
+    private final ListChangeListener<? super Organ> programsChangeListener = change -> onTransplantProgramsChanged();
 
     public ConfigController() {
     }
@@ -70,7 +70,6 @@ public class ConfigController extends SubController {
         SortedList<Country> countryList = getCountryListSortedByIfInCollection(allCountries, selectedCountries);
 
         allowedCountries.getItems().setAll(countryList);
-
     }
 
     /**
@@ -104,6 +103,10 @@ public class ConfigController extends SubController {
             allowedCountries.getCheckModel().check(country);
         }
         modifiedHospitalPrograms.clear();
+
+        hospitalSelector.getItems().setAll(State.getConfigManager().getHospitals());
+        hospitalSelector.getItems().sort(Comparator.comparing(Hospital::getName));
+
         newHospitalSelected();
     }
 
@@ -162,7 +165,7 @@ public class ConfigController extends SubController {
      * @param selectedCountries the subcollection of the list that the user has selected
      * @return the sorted list of countries
      */
-    private SortedList<Country> getCountryListSortedByIfInCollection(List<Country> countries,
+    private SortedList<Country> getCountryListSortedByIfInCollection(Collection<Country> countries,
             Collection<Country> selectedCountries) {
         SortedList<Country> countryList =
                 new SortedList<>(FXCollections.observableArrayList(countries));

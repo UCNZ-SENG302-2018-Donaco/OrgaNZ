@@ -99,7 +99,7 @@ public class Hospital {
      * @return a set of hospitals
      */
     public static Set<Hospital> getDefaultHospitals() {
-        return new HashSet<>(Arrays.asList(
+        Set<Hospital> hospitals = new HashSet<>(Arrays.asList(
                 new Hospital("Auckland City Hospital", -36.8604597, 174.7691264,
                         "2 Park Road, Grafton, Auckland 1023"),
                 new Hospital("Greenlane Clinical Centre", -36.8944687, 174.7805867,
@@ -175,6 +175,14 @@ public class Hospital {
                 new Hospital("Whanganui Hospital", -39.9451776, 175.0369961,
                         "100 Heads Road, Gonville, Wanganui 4501")
         ));
+
+        for (Hospital hospital : hospitals) {
+            for (Organ organ : Organ.values()) {
+                hospital.addTransplantProgramFor(organ);
+            }
+        }
+
+        return hospitals;
     }
 
     @Override
@@ -272,14 +280,14 @@ public class Hospital {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object obj) {
+        if (this == obj) {
             return true;
         }
-        if (!(o instanceof Hospital)) {
+        if (!(obj instanceof Hospital)) {
             return false;
         }
-        Hospital hospital = (Hospital) o;
+        Hospital hospital = (Hospital) obj;
         return Objects.equals(id, hospital.id) &&
                 Objects.equals(name, hospital.name);
     }
