@@ -101,10 +101,8 @@ public class SpiderWebController extends SubController {
         FocusArea focusArea = (FocusArea) node.getUserData();
 
         Affine transform = new Affine();
-        transform.prepend(new Rotate(angle));
         transform.prepend(new Translate(x, y));
-        System.out.println(angle);
-
+        transform.prepend(new Rotate(angle, x, y));
         focusArea.setTransform(transform);
     }
 
