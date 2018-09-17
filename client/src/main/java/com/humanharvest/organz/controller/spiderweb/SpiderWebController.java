@@ -16,7 +16,6 @@ import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.shape.Line;
 import javafx.scene.transform.Affine;
@@ -165,7 +164,7 @@ public class SpiderWebController extends SubController {
         Duration duration = donatedOrgan.getDurationUntilExpiry();
         if (duration == null || duration.isZero() || duration.isNegative() || duration.equals(Duration.ZERO) ||
                 duration.minusSeconds(1).isNegative()) {
-            line.setStroke(Color.rgb(32, 32, 32));
+            line.setStroke(ExpiryBarUtils.greyColour);
         } else {
             // Progress as a decimal. starts at 0 (at time of death) and goes to 1.
             double progressDecimal = donatedOrgan.getProgressDecimal();
