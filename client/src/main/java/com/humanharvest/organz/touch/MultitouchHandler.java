@@ -377,12 +377,14 @@ public final class MultitouchHandler {
     }
 
     private static void handleMouseClickedEvent(MouseEvent event) {
-        mousePosX = event.getSceneX();
-        mousePosY = event.getSceneY();
+        if (!event.isSynthesized()) {
+            mousePosX = event.getSceneX();
+            mousePosY = event.getSceneY();
+        }
     }
 
     private static void handleMouseDragEvent(MouseEvent event) {
-        if (!event.isPrimaryButtonDown()) {
+        if (!event.isPrimaryButtonDown() || event.isSynthesized()) {
             return;
         }
 
