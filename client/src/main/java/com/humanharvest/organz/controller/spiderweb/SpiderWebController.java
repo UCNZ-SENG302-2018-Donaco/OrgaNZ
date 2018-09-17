@@ -17,9 +17,9 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.transform.Affine;
+import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -86,15 +86,24 @@ public class SpiderWebController {
         stage.show();
     }
 
-    private void displayDonatingClient() {
-        MainController newMain = PageNavigator.openNewWindow(200, 400);
-        PageNavigator.loadPage(Page.RECEIVER_OVERVIEW, newMain);
-        deceasedDonorPane = newMain.getPane();
-        deceasedDonorPane.disableProperty();
+    /**
+     * Sets a node's position using an {@link Affine} transform. The node must have an {@link FocusArea} for its
+     * {@link Node#getUserData()}.
+     *
+     * @param node The node to apply the transform to. Must have a focusArea
+     * @param x The x translation
+     * @param y The y translation
+     * @param angle The angle to rotate (degrees)
+     */
+    private static void setPositionUsingTransform(Node node, double x, double y, double angle) {
+        FocusArea focusArea = (FocusArea) node.getUserData();
 
-        int centerX = (int) Screen.getPrimary().getVisualBounds().getWidth() / 2;
-        int centerY = (int) Screen.getPrimary().getVisualBounds().getHeight() / 2;
-        setPositionUsingTransform(deceasedDonorPane, centerX, centerY);
+        Affine transform = new Affine();
+        transform.prepend(new Rotate(angle));
+        transform.prepend(new Translate(x, y));
+        System.out.println(angle);
+
+        focusArea.setTransform(transform);
     }
 
 
@@ -127,8 +136,6 @@ public class SpiderWebController {
 
                 // Create the line
                 Line connector = new Line();
-                connector.setFill(Color.BLACK);
-                connector.setStroke(Color.BLACK);
                 connector.setStrokeWidth(4);
                 deceasedDonorPane.localToParentTransformProperty().addListener((observable, oldValue, newValue) -> {
                     Bounds bounds = deceasedDonorPane.getBoundsInParent();
@@ -189,6 +196,17 @@ public class SpiderWebController {
 
     }
 
+    private void displayDonatingClient() {
+        MainController newMain = PageNavigator.openNewWindow(200, 400);
+        PageNavigator.loadPage(Page.RECEIVER_OVERVIEW, newMain);
+        deceasedDonorPane = newMain.getPane();
+        deceasedDonorPane.disableProperty();
+
+        int centerX = (int) Screen.getPrimary().getVisualBounds().getWidth() / 2;
+        int centerY = (int) Screen.getPrimary().getVisualBounds().getHeight() / 2;
+        setPositionUsingTransform(deceasedDonorPane, centerX, centerY, 0);
+    }
+
     private void layoutOrganNodes(double radius) {
         final int numNodes = organNodes.size();
         final double angleSize = (Math.PI * 2) / numNodes;
@@ -196,17 +214,8 @@ public class SpiderWebController {
         for (int i = 0; i < numNodes; i++) {
             setPositionUsingTransform(organNodes.get(i),
                     deceasedDonorPane.getLocalToParentTransform().getTx() + radius * Math.sin(angleSize * i),
-                    deceasedDonorPane.getLocalToParentTransform().getTy() + radius * Math.cos(angleSize * i));
+                    deceasedDonorPane.getLocalToParentTransform().getTy() + radius * Math.cos(angleSize * i),
+                    360 - Math.toDegrees(angleSize * i));
         }
-    }
-
-    /**
-     * Sets a node's position using an {@link Affine} transform. The node must have an {@link FocusArea} for its
-     * {@link Node#getUserData()}.
-     * @param node A node with a FocusArea.
-     */
-    private static void setPositionUsingTransform(Node node, double x, double y) {
-        FocusArea focusArea = (FocusArea) node.getUserData();
-        focusArea.setTransform(new Affine(new Translate(x, y)));
     }
 }
