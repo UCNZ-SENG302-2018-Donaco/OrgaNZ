@@ -13,17 +13,20 @@ import org.junit.jupiter.api.Test;
 
 public class HospitalTest {
 
-    private Hospital hospital;
-    private final Organ organ = Organ.LIVER;
-
     private final Set<Organ> organs = new HashSet<>();
+    private final Organ organ = Organ.LIVER;
     private final Organ organ1 = Organ.HEART;
     private final Organ organ2 = Organ.BONE;
+
+    private Hospital hospital;
 
     @BeforeEach
     public void setUp() {
         Set<Hospital> hospitals = Hospital.getDefaultHospitals();
         hospital = (Hospital) hospitals.toArray()[0];
+        for (Organ organ : Organ.values()) {
+            hospital.removeTransplantProgramFor(organ);
+        }
 
         organs.add(organ1);
         organs.add(organ2);

@@ -431,8 +431,8 @@ public class OrgansToDonateController extends SubController {
             return;
         }
 
-        if (transplantHospitalChoice.getValue() == null ||
-                Objects.equals(transplantHospitalChoice.getValue(), dummyHospital)) {
+        Hospital transplantHospital = transplantHospitalChoice.getValue();
+        if (transplantHospital == null || Objects.equals(transplantHospital, dummyHospital)) {
 
             PageNavigator.showAlert(AlertType.ERROR,
                     "Missing Transplant Hospital",
@@ -464,7 +464,7 @@ public class OrgansToDonateController extends SubController {
                 .orElseThrow(IllegalStateException::new));
 
         State.getClientResolver().scheduleTransplantProcedure(organToDonate, request,
-                transplantHospitalChoice.getValue(), transplantDate);
+                transplantHospital, transplantDate);
         Notifications.create()
                 .title("Scheduled Transplant")
                 .text(String.format("A transplant for %s from %s to %s has been scheduled on %s.",
