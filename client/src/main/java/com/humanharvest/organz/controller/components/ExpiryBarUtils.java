@@ -14,7 +14,7 @@ import javafx.scene.paint.Stop;
 
 public class ExpiryBarUtils {
 
-    private static final Color greyColour = Color.rgb(170, 170, 170);
+    public static final Color greyColour = Color.rgb(170, 170, 170);
     private static final Color maroonColour = Color.rgb(170, 0, 0);
 
     /**
