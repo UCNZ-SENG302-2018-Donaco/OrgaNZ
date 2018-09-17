@@ -80,10 +80,14 @@ public class ReceiverOverviewController extends ViewBaseController {
     private void setClientFields() {
         //todo replace dummy donor and organ
         Client dummyDonor = new Client();
-        dummyDonor.setHospital(new Hospital("", viewedClient.getHospital().getLatitude()+1,
-                viewedClient.getHeight(), ""));
-        donor = dummyDonor;
-        organ = Organ.LIVER;
+        if (dummyDonor.getHospital() == null) {
+            dummyDonor.setHospital(new Hospital("temp", 0, 0, "nowhere"));
+        } else {
+            dummyDonor.setHospital(new Hospital("", viewedClient.getHospital().getLatitude() + 1,
+                    viewedClient.getHeight(), ""));
+            donor = dummyDonor;
+            organ = Organ.LIVER;
+        }
 
         // Set name and age
         name.setText(viewedClient.getFullName());
@@ -120,7 +124,7 @@ public class ReceiverOverviewController extends ViewBaseController {
 
         // Track the adding of panes with the spiderweb pane collection.
         receiverVBox.setOnMouseClicked(mouseEvent -> {
-            if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 1) {
+            if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 2) {
                 MainController newMain = PageNavigator.openNewWindow();
                 if (newMain != null) {
                     newMain.setWindowContext(new WindowContextBuilder()

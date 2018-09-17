@@ -27,6 +27,7 @@ import javafx.stage.Stage;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.controller.components.DurationUntilExpiryCell;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.touch.FocusArea;
@@ -40,7 +41,7 @@ import org.tuiofx.internal.base.TuioFXCanvas;
 /**
  * The Spider web controller which handles everything to do with displaying panes in the spider web stage.
  */
-public class SpiderWebController {
+public class SpiderWebController extends SubController {
 
     private static final Logger LOGGER = Logger.getLogger(SpiderWebController.class.getName());
 
@@ -56,6 +57,7 @@ public class SpiderWebController {
         displayDonatingClient();
         displayOrgans();
     }
+
 
     /**
      * Create a new stage to display all of the pane in.
@@ -108,14 +110,6 @@ public class SpiderWebController {
 
 
     /**
-     * Manually Overrides Organ.
-     * @param donatedOrgan
-     */
-    private void manuallyOverrideOrgan(DonatedOrgan donatedOrgan){
-        donatedOrgan.manuallyOverride("Manually Overridden by Doctor using WebView");
-    }
-
-    /**
      * Loads a window for each non expired organ.
      */
     private void displayOrgans() {
@@ -129,11 +123,13 @@ public class SpiderWebController {
                 organNodes.add(organPane);
                 //TODO: Fix so organ stays expired once web is closed.
                 organPane.setOnMouseClicked(click -> {
-                    if (click.getClickCount() == 2) {
-                        manuallyOverrideOrgan(organ);
+                    if (click.getClickCount() == 3) {
+
+                        State.getClientResolver().manuallyOverrideOrgan(organ, "Manually Overridden by Doctor using WebView");
+                        organ.manuallyOverride("Manually Overridden by Doctor using WebView");
+
                     }
                 });
-
                 // Create the line
                 Line connector = new Line();
                 connector.setStrokeWidth(4);
