@@ -351,19 +351,28 @@ public class ClientManagerDBPure implements ClientManager {
 
     @Override
     public void applyChangesTo(Client client) {
+        applyChangesToObject(client);
+    }
+
+    @Override
+    public void applyChangesTo(DonatedOrgan organ) {
+        applyChangesToObject(organ);
+    }
+
+    private void applyChangesToObject(Object object) {
         Transaction trns = null;
 
         try (Session session = dbManager.getDBSession()) {
             trns = session.beginTransaction();
 
             try {
-                session.update(client);
+                session.update(object);
                 trns.commit();
             } catch (OptimisticLockException exc) {
                 // TODO fix this hack
                 try (Session otherSession = dbManager.getDBSession()) {
                     trns = otherSession.beginTransaction();
-                    otherSession.replicate(client, ReplicationMode.OVERWRITE);
+                    otherSession.replicate(object, ReplicationMode.OVERWRITE);
                     trns.commit();
                 }
             }

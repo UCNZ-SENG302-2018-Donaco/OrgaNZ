@@ -2,6 +2,7 @@ package com.humanharvest.organz;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -168,5 +169,25 @@ public class DonatedOrgan {
 
     public void setAvailable(boolean available) {
         this.available = available;
+
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof DonatedOrgan)) {
+            return false;
+        }
+        DonatedOrgan that = (DonatedOrgan) o;
+        return Objects.equals(id, that.id) &&
+                organType == that.organType;
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(id, organType);
     }
 }

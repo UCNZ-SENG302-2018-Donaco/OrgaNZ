@@ -276,6 +276,10 @@ public class ClientManagerMemory implements ClientManager {
         }
     }
 
+    @Override
+    public void applyChangesTo(DonatedOrgan donatedOrgan) {
+    }
+
     /**
      * Checks if a user already exists with that first + last name and date of birth
      *

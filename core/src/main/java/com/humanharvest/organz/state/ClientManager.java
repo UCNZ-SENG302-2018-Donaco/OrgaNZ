@@ -48,6 +48,8 @@ public interface ClientManager {
 
     void applyChangesTo(Client client);
 
+    void applyChangesTo(DonatedOrgan organ);
+
     /**
      * Returns the client that has the given id.
      *

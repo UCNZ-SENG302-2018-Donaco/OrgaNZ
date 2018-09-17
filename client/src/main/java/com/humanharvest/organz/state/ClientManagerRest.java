@@ -124,6 +124,11 @@ public class ClientManagerRest implements ClientManager {
     }
 
     @Override
+    public void applyChangesTo(DonatedOrgan donatedOrgan) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public Optional<Client> getClientByID(int id)
             throws AuthenticationException, IfMatchFailedException, IfMatchRequiredException {
 

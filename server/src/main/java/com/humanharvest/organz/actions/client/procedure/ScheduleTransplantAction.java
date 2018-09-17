@@ -45,6 +45,7 @@ public class ScheduleTransplantAction extends AddProcedureRecordAction {
         donatedOrgan.setAvailable(false);
         request.setStatus(TransplantRequestStatus.SCHEDULED);
         manager.applyChangesTo(client);
+        manager.applyChangesTo(donatedOrgan);
     }
 
     @Override
@@ -53,5 +54,6 @@ public class ScheduleTransplantAction extends AddProcedureRecordAction {
         donatedOrgan.setAvailable(true);
         request.setStatus(TransplantRequestStatus.WAITING);
         manager.applyChangesTo(client);
+        manager.applyChangesTo(donatedOrgan);
     }
 }
