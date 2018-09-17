@@ -9,6 +9,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import javafx.event.Event;
+import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.CacheHint;
 import javafx.scene.Node;
@@ -122,7 +123,9 @@ public final class MultitouchHandler {
 
             FocusArea focusArea = (FocusArea) pane.getUserData();
 
-            focusArea.prependTransform(new Translate(delta.getX(), delta.getY()));
+            if (focusArea.isTranslatable()) {
+                focusArea.prependTransform(new Translate(delta.getX(), delta.getY()));
+            }
             currentTouch.setCurrentScreenPoint(touchPointPosition);
         }
     }
@@ -172,39 +175,52 @@ public final class MultitouchHandler {
         double angleDelta = PointUtils.calculateAngleDelta(currentTouch, otherTouch, touchPoint);
 
         // The centre between the two fingers in screen coordinates.
-        Point2D centre = PointUtils.min(currentTouch.getCurrentScreenPoint(), otherTouch.getCurrentScreenPoint())
-                .add(PointUtils.abs(currentTouch.getCurrentScreenPoint().subtract(otherTouch.getCurrentScreenPoint()))
-                        .multiply(0.5));
+        Point2D centre;
+        if (focusArea.isTranslatable()) {
+            centre = PointUtils.min(currentTouch.getCurrentScreenPoint(), otherTouch.getCurrentScreenPoint())
+                    .add(PointUtils.abs(currentTouch.getCurrentScreenPoint().subtract(otherTouch.getCurrentScreenPoint()))
+                            .multiply(0.5));
+        } else {
+            Bounds bounds = pane.getBoundsInParent();
+            centre = new Point2D((bounds.getMinX() + bounds.getMaxX()) / 2, 
+                    (bounds.getMinY() + bounds.getMaxY()) / 2);
+        }
 
         // Only process if we have touch history (ie, not a new touch)
         if (currentTouch.getLastCentre() != null) {
             // Translate the pane
             Point2D delta = centre.subtract(currentTouch.getLastCentre());
             delta = handleBoundsCheck(delta, pane);
-            focusArea.prependTransform(new Translate(delta.getX(), delta.getY()));
+            if (focusArea.isTranslatable()) {
+                focusArea.prependTransform(new Translate(delta.getX(), delta.getY()));
+            }
 
             // Scale the pane
-            double scaleDifference =
-                    new Point2D(touchPoint.getX(), touchPoint.getY()).distance(
-                            otherTouch.getCurrentScreenPoint()) /
-                            currentTouch.getCurrentScreenPoint().distance(otherTouch.getCurrentScreenPoint());
+            if (focusArea.isScalable()) {
+                double scaleDifference =
+                        new Point2D(touchPoint.getX(), touchPoint.getY()).distance(
+                                otherTouch.getCurrentScreenPoint()) /
+                                currentTouch.getCurrentScreenPoint().distance(otherTouch.getCurrentScreenPoint());
 
-            Affine oldTransform = new Affine(focusArea.getTransform());
+                Affine oldTransform = new Affine(focusArea.getTransform());
 
-            Scale scaleTransform = new Scale(scaleDifference, scaleDifference, centre.getX(), centre.getY());
-            focusArea.prependTransform(scaleTransform);
+                Scale scaleTransform = new Scale(scaleDifference, scaleDifference, centre.getX(), centre.getY());
+                focusArea.prependTransform(scaleTransform);
 
-            double currentMxx = focusArea.getTransform().getMxx();
-            double currentMxy = focusArea.getTransform().getMxy();
-            double scaleX = Math.sqrt(currentMxx * currentMxx + currentMxy * currentMxy);
+                double currentMxx = focusArea.getTransform().getMxx();
+                double currentMxy = focusArea.getTransform().getMxy();
+                double scaleX = Math.sqrt(currentMxx * currentMxx + currentMxy * currentMxy);
 
-            if (scaleX < 0.25 || scaleX > 2) {
-                focusArea.setTransform(oldTransform);
+                if (scaleX < 0.25 || scaleX > 2) {
+                    focusArea.setTransform(oldTransform);
+                }
             }
         }
 
         // Rotate the pane
-        focusArea.prependTransform(new Rotate(Math.toDegrees(angleDelta), centre.getX(), centre.getY()));
+        if (focusArea.isRotatable()) {
+            focusArea.prependTransform(new Rotate(Math.toDegrees(angleDelta), centre.getX(), centre.getY()));
+        }
 
         // Update touch state
         currentTouch.setLastCentre(centre);
@@ -391,7 +407,8 @@ public final class MultitouchHandler {
         Node selectedNode = event.getPickResult().getIntersectedNode();
         Optional<Pane> optionalPane = findPane(selectedNode);
         Optional<Node> importantElement = getImportantElement(selectedNode);
-        if (optionalPane.isPresent() && !importantElement.isPresent()) {
+        if (optionalPane.isPresent() && !importantElement.isPresent() &&
+                getFocusAreaHandler(selectedNode).orElseThrow(IllegalArgumentException::new).isTranslatable()) {
             Pane pane = optionalPane.get();
             pane.setTranslateX(pane.getTranslateX() + event.getSceneX() - mousePosX);
             pane.setTranslateY(pane.getTranslateY() + event.getSceneY() - mousePosY);
@@ -467,7 +484,8 @@ public final class MultitouchHandler {
     private static void processPhysics() {
         for (FocusArea focusArea : focusAreas) {
             if (findPaneTouches(focusArea.getPane()).isEmpty() &&
-                    (focusArea.getVelocity().getX() != 0 || focusArea.getVelocity().getY() != 0)) {
+                    (focusArea.getVelocity().getX() != 0 || focusArea.getVelocity().getY() != 0) &&
+                    focusArea.isTranslatable()) {
                 Point2D velocity = focusArea.getVelocity();
                 Point2D delta = velocity.multiply(0.001 * PHYSICS_MILLISECOND_PERIOD);
 
