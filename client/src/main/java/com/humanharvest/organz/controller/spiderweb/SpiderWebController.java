@@ -133,7 +133,8 @@ public class SpiderWebController extends SubController {
                 connector.setStrokeWidth(4);
                 Text durationText = new Text(ExpiryBarUtils.getDurationString(organ));
 
-                deceasedDonorPane.localToParentTransformProperty().addListener((observable, oldValue, newValue) -> {
+                // Redraws lines when organs or donor pane is moved
+                 deceasedDonorPane.localToParentTransformProperty().addListener((observable, oldValue, newValue) -> {
                     Bounds bounds = deceasedDonorPane.getBoundsInParent();
                     connector.setStartX(bounds.getMinX() + bounds.getWidth() / 2);
                     connector.setStartY(bounds.getMinY() + bounds.getHeight() / 2);
@@ -204,7 +205,7 @@ public class SpiderWebController extends SubController {
         MainController newMain = PageNavigator.openNewWindow(200, 400);
         PageNavigator.loadPage(Page.RECEIVER_OVERVIEW, newMain);
         deceasedDonorPane = newMain.getPane();
-        deceasedDonorPane.disableProperty();
+        ((FocusArea) deceasedDonorPane.getUserData()).setTranslatable(false);
 
         int centerX = (int) Screen.getPrimary().getVisualBounds().getWidth() / 2;
         int centerY = (int) Screen.getPrimary().getVisualBounds().getHeight() / 2;

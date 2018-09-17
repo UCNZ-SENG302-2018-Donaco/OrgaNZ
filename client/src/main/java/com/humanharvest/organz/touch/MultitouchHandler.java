@@ -23,7 +23,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.input.GestureEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.input.RotateEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.input.TouchEvent;
@@ -52,9 +51,6 @@ public final class MultitouchHandler {
     private static final List<CurrentTouch> touches = new ArrayList<>();
     private static Pane rootPane;
     private static Timer physicsTimer;
-    private static double mousePosX;
-    private static double mousePosY;
-    private static boolean isMouseScroll = true;
 
     private MultitouchHandler() {
     }
@@ -67,12 +63,7 @@ public final class MultitouchHandler {
 
         root.addEventFilter(TouchEvent.ANY, MultitouchHandler::handleTouchEvent);
 
-        root.addEventFilter(MouseEvent.MOUSE_DRAGGED, MultitouchHandler::handleMouseDragEvent);
-        root.addEventFilter(MouseEvent.MOUSE_PRESSED, MultitouchHandler::handleMouseClickedEvent);
-
-        root.addEventFilter(ScrollEvent.SCROLL_STARTED, event -> isMouseScroll = false);
-        root.addEventFilter(ScrollEvent.SCROLL_FINISHED, event -> isMouseScroll = true);
-        root.addEventFilter(ScrollEvent.SCROLL, MultitouchHandler::handleMouseScrollEvent);
+        root.addEventFilter(ScrollEvent.ANY, Event::consume);
         root.addEventFilter(GestureEvent.ANY, Event::consume);
         root.addEventFilter(RotateEvent.ANY, Event::consume);
 
@@ -122,7 +113,9 @@ public final class MultitouchHandler {
 
             FocusArea focusArea = (FocusArea) pane.getUserData();
 
-            focusArea.prependTransform(new Translate(delta.getX(), delta.getY()));
+            if (focusArea.isTranslatable()) {
+                focusArea.prependTransform(new Translate(delta.getX(), delta.getY()));
+            }
             currentTouch.setCurrentScreenPoint(touchPointPosition);
         }
     }
@@ -172,39 +165,50 @@ public final class MultitouchHandler {
         double angleDelta = PointUtils.calculateAngleDelta(currentTouch, otherTouch, touchPoint);
 
         // The centre between the two fingers in screen coordinates.
-        Point2D centre = PointUtils.min(currentTouch.getCurrentScreenPoint(), otherTouch.getCurrentScreenPoint())
-                .add(PointUtils.abs(currentTouch.getCurrentScreenPoint().subtract(otherTouch.getCurrentScreenPoint()))
-                        .multiply(0.5));
+        Point2D centre;
+        if (focusArea.isTranslatable()) {
+            centre = PointUtils.min(currentTouch.getCurrentScreenPoint(), otherTouch.getCurrentScreenPoint())
+                    .add(PointUtils.abs(currentTouch.getCurrentScreenPoint().subtract(otherTouch.getCurrentScreenPoint()))
+                            .multiply(0.5));
+        } else {
+            centre = PointUtils.getCentreOfPane(pane);
+        }
 
         // Only process if we have touch history (ie, not a new touch)
         if (currentTouch.getLastCentre() != null) {
             // Translate the pane
             Point2D delta = centre.subtract(currentTouch.getLastCentre());
             delta = handleBoundsCheck(delta, pane);
-            focusArea.prependTransform(new Translate(delta.getX(), delta.getY()));
+            if (focusArea.isTranslatable()) {
+                focusArea.prependTransform(new Translate(delta.getX(), delta.getY()));
+            }
 
             // Scale the pane
-            double scaleDifference =
-                    new Point2D(touchPoint.getX(), touchPoint.getY()).distance(
-                            otherTouch.getCurrentScreenPoint()) /
-                            currentTouch.getCurrentScreenPoint().distance(otherTouch.getCurrentScreenPoint());
+            if (focusArea.isScalable()) {
+                double scaleDifference =
+                        new Point2D(touchPoint.getX(), touchPoint.getY()).distance(
+                                otherTouch.getCurrentScreenPoint()) /
+                                currentTouch.getCurrentScreenPoint().distance(otherTouch.getCurrentScreenPoint());
 
-            Affine oldTransform = new Affine(focusArea.getTransform());
+                Affine oldTransform = new Affine(focusArea.getTransform());
 
-            Scale scaleTransform = new Scale(scaleDifference, scaleDifference, centre.getX(), centre.getY());
-            focusArea.prependTransform(scaleTransform);
+                Scale scaleTransform = new Scale(scaleDifference, scaleDifference, centre.getX(), centre.getY());
+                focusArea.prependTransform(scaleTransform);
 
-            double currentMxx = focusArea.getTransform().getMxx();
-            double currentMxy = focusArea.getTransform().getMxy();
-            double scaleX = Math.sqrt(currentMxx * currentMxx + currentMxy * currentMxy);
+                double currentMxx = focusArea.getTransform().getMxx();
+                double currentMxy = focusArea.getTransform().getMxy();
+                double scaleX = Math.sqrt(currentMxx * currentMxx + currentMxy * currentMxy);
 
-            if (scaleX < 0.25 || scaleX > 2) {
-                focusArea.setTransform(oldTransform);
+                if (scaleX < 0.25 || scaleX > 2) {
+                    focusArea.setTransform(oldTransform);
+                }
             }
         }
 
         // Rotate the pane
-        focusArea.prependTransform(new Rotate(Math.toDegrees(angleDelta), centre.getX(), centre.getY()));
+        if (focusArea.isRotatable()) {
+            focusArea.prependTransform(new Rotate(Math.toDegrees(angleDelta), centre.getX(), centre.getY()));
+        }
 
         // Update touch state
         currentTouch.setLastCentre(centre);
@@ -272,10 +276,9 @@ public final class MultitouchHandler {
 
         CurrentTouch currentTouch = touches.get(touchPoint.getId());
         if (currentTouch == null) {
-            Node selectedNode = touchPoint.getPickResult().getIntersectedNode();
             currentTouch = new CurrentTouch(
-                    findPane(selectedNode).orElse(null),
-                    getImportantElement(selectedNode).orElse(null));
+                    findPane(touchPoint.getPickResult().getIntersectedNode()).orElse(null),
+                    getImportantElement(touchPoint).orElse(null));
             touches.set(touchPoint.getId(), currentTouch);
         }
 
@@ -283,9 +286,10 @@ public final class MultitouchHandler {
     }
 
     /**
-     * Returns an important (ie, text, button, list, etc) node if the given Node is one otherwise null.
+     * Returns an important (ie, text, button, list, etc) node if the touchPoint intersects it.
      */
-    private static Optional<Node> getImportantElement(Node node) {
+    private static Optional<Node> getImportantElement(TouchPoint touchPoint) {
+        Node node = touchPoint.getPickResult().getIntersectedNode();
 
         while (node != null && !Objects.equals(node, rootPane)) {
             if (node instanceof Button) {
@@ -376,41 +380,6 @@ public final class MultitouchHandler {
         focusAreas.remove(focusArea);
     }
 
-    private static void handleMouseClickedEvent(MouseEvent event) {
-        if (!event.isSynthesized()) {
-            mousePosX = event.getSceneX();
-            mousePosY = event.getSceneY();
-        }
-    }
-
-    private static void handleMouseDragEvent(MouseEvent event) {
-        if (!event.isPrimaryButtonDown() || event.isSynthesized()) {
-            return;
-        }
-
-        Node selectedNode = event.getPickResult().getIntersectedNode();
-        Optional<Pane> optionalPane = findPane(selectedNode);
-        Optional<Node> importantElement = getImportantElement(selectedNode);
-        if (optionalPane.isPresent() && !importantElement.isPresent()) {
-            Pane pane = optionalPane.get();
-            pane.setTranslateX(pane.getTranslateX() + event.getSceneX() - mousePosX);
-            pane.setTranslateY(pane.getTranslateY() + event.getSceneY() - mousePosY);
-            mousePosX = event.getSceneX();
-            mousePosY = event.getSceneY();
-        }
-    }
-
-    private static void handleMouseScrollEvent(ScrollEvent event) {
-        if (isMouseScroll) {
-            Optional<Pane> optionalPane = findPane(event.getPickResult().getIntersectedNode());
-            if (optionalPane.isPresent()) {
-                Pane pane = optionalPane.get();
-                pane.setScaleX(pane.getScaleX() + event.getDeltaY() * 0.001);
-                pane.setScaleY(pane.getScaleY() + event.getDeltaY() * 0.001);
-            }
-        }
-    }
-
     private static void handleTouchEvent(TouchEvent event) {
         TouchPoint touchPoint = event.getTouchPoint();
         CurrentTouch currentTouch = getCurrentTouch(touchPoint);
@@ -467,7 +436,8 @@ public final class MultitouchHandler {
     private static void processPhysics() {
         for (FocusArea focusArea : focusAreas) {
             if (findPaneTouches(focusArea.getPane()).isEmpty() &&
-                    (focusArea.getVelocity().getX() != 0 || focusArea.getVelocity().getY() != 0)) {
+                    (focusArea.getVelocity().getX() != 0 || focusArea.getVelocity().getY() != 0) &&
+                    focusArea.isTranslatable()) {
                 Point2D velocity = focusArea.getVelocity();
                 Point2D delta = velocity.multiply(0.001 * PHYSICS_MILLISECOND_PERIOD);
 
