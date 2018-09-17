@@ -5,8 +5,12 @@ import static com.humanharvest.organz.utilities.DurationFormatter.getFormattedDu
 import java.time.Duration;
 import java.time.LocalDateTime;
 
+import javafx.geometry.Insets;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
 
 import com.humanharvest.organz.DonatedOrgan;
@@ -16,79 +20,6 @@ public class DurationUntilExpiryCell extends TableCell<DonatedOrgan, Duration> {
 
     public DurationUntilExpiryCell(TableColumn<DonatedOrgan, Duration> column) {
         super();
-    }
-
-    /**
-     * Generates a stylesheet instruction for setting the background colour of a cell.
-     * The colour is based on progressForColour, and how much the cell is filled in is based on totalProgress.
-     *
-     * @param progress how far along the bar should be, from 0 to 1: 0 maps to empty, and 1 maps to full
-     * @param fullMarker how far along the lower bound starts; this area will be grey (e.g. 0.9 for near the end)
-     * @return stylesheet instruction, in the form "-fx-background-color: linear-gradient(...)"
-     */
-    public static String getStyleForProgress(double progress, double fullMarker) {
-        String green;
-        String red;
-        String blue = "00"; // no blue
-
-        double lowerPercent;
-        double higherPercent;
-        double progressForColour;
-        String maroonColour = "aa0000";
-        String whiteColour = "white";
-        String greyColour = "aaaaaa";
-        String middleColour;
-
-        if (progress < 0.0001) {
-            progress = 0;
-        }
-        double percent = progress * 100;
-
-        // Calculate percentages and the middle colour (white if it's not reached lower bound, maroon if it has)
-        if (progress < fullMarker) { // Hasn't reached lower bound yet
-            progressForColour = progress / fullMarker;
-            lowerPercent = percent;
-            higherPercent = fullMarker * 100;
-            middleColour = whiteColour;
-        } else { // In lower bound
-            progressForColour = 1;
-            lowerPercent = fullMarker * 100;
-            higherPercent = percent;
-            middleColour = maroonColour;
-        }
-
-        // Calculate colours
-        if (progressForColour < 0.5) { // less than halfway, mostly green
-            int redNumber = (int) Math.round(progressForColour * 255 * 2);
-            red = Integer.toHexString(redNumber);
-            if (red.length() == 1) {
-                red = "0" + red;
-            }
-            green = "ff";
-
-        } else { // over halfway, mostly red
-            red = "ff";
-            int greenNumber = (int) Math.round((1 - progressForColour) * 255 * 2);
-            green = Integer.toHexString(greenNumber);
-            if (green.length() == 1) {
-                green = "0" + green;
-            }
-        }
-
-        // Check they haven't overflowed
-        assert red.length() == 2;
-        assert green.length() == 2;
-
-        // Generate style string
-        String colour = red + green + blue;
-
-        // This is the effective translation of the below string format for slightly easier reading
-        //linear-gradient(to right, #colour 0%, #colour lowerPercent%, midColour lowerPercent%, midColour higherPercent%, #greyColour higherPercent%, #greyColour 100%);"
-
-        return String.format("-fx-background-color: "
-                        + "linear-gradient(to right, #%s 0%%, #%s %s%%, %s %s%%, %s %s%%, #%s %s%%, #%s 100%%);",
-                colour, colour, lowerPercent, middleColour, lowerPercent, middleColour, higherPercent,
-                greyColour, higherPercent, greyColour);
     }
 
     private DonatedOrgan getDonatedOrganForRow() {
@@ -119,11 +50,13 @@ public class DurationUntilExpiryCell extends TableCell<DonatedOrgan, Duration> {
                         getDonatedOrganForRow().getDateTimeOfDonation()
                                 .plus(getDonatedOrganForRow().getOrganType().getMaxExpiration()),
                         LocalDateTime.now());
-                setText(String.format("Expired (%s ago)", getFormattedDuration(timeSinceExpiry, Format.XHoursYMinutesSeconds)));
+
+                setText(String.format("Expired (%s ago)",
+                        getFormattedDuration(timeSinceExpiry, Format.XHoursYMinutesSeconds)));
             } else {
                 setText("Overridden");
             }
-            setStyle("-fx-background-color: #202020");
+            setBackground(new Background(new BackgroundFill(Color.rgb(32, 32, 32), CornerRadii.EMPTY, Insets.EMPTY)));
             setTextFill(Color.WHITE);
 
         } else {
@@ -132,9 +65,6 @@ public class DurationUntilExpiryCell extends TableCell<DonatedOrgan, Duration> {
             // Progress as a decimal. starts at 0 (at time of death) and goes to 1.
             double progressDecimal = getDonatedOrganForRow().getProgressDecimal();
             double fullMarker = getDonatedOrganForRow().getFullMarker();
-
-            // Calculate colour
-            String style = getStyleForProgress(progressDecimal, fullMarker);
 
             if (progressDecimal >= fullMarker) {
                 setTextFill(Color.WHITE);
@@ -149,7 +79,7 @@ public class DurationUntilExpiryCell extends TableCell<DonatedOrgan, Duration> {
             }
 
             setText(displayedDuration);
-            setStyle(style);
+            setBackground(ExpiryBarUtils.getBackground(progressDecimal, fullMarker));
         }
     }
 }
