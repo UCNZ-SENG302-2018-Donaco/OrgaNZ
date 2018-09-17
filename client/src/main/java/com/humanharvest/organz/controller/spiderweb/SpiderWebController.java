@@ -18,6 +18,7 @@ import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.shape.Line;
+import javafx.scene.text.Text;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
@@ -130,28 +131,33 @@ public class SpiderWebController extends SubController {
                 // Create the line
                 Line connector = new Line();
                 connector.setStrokeWidth(4);
+                Text durationText = new Text(ExpiryBarUtils.getDurationString(organ));
+
                 deceasedDonorPane.localToParentTransformProperty().addListener((observable, oldValue, newValue) -> {
                     Bounds bounds = deceasedDonorPane.getBoundsInParent();
                     connector.setStartX(bounds.getMinX() + bounds.getWidth() / 2);
                     connector.setStartY(bounds.getMinY() + bounds.getHeight() / 2);
-                    updateConnector(organ, connector, organPane);
+                    updateConnector(organ, connector, durationText);
                 });
                 organPane.localToParentTransformProperty().addListener((observable, oldValue, newValue) -> {
                     Bounds bounds = organPane.getBoundsInParent();
                     connector.setEndX(bounds.getMinX() + bounds.getWidth() / 2);
                     connector.setEndY(bounds.getMinY() + bounds.getHeight() / 2);
-                    updateConnector(organ, connector, organPane);
+                    updateConnector(organ, connector, durationText);
                 });
+
                 canvas.getChildren().add(0, connector);
+                canvas.getChildren().add(0, durationText);
+
                 Bounds bounds = deceasedDonorPane.getBoundsInParent();
                 connector.setStartX(bounds.getMinX() + bounds.getWidth() / 2);
                 connector.setStartY(bounds.getMinY() + bounds.getHeight() / 2);
-                updateConnector(organ, connector, organPane);
+                updateConnector(organ, connector, durationText);
 
                 // Attach timer to update connector each second (for time until expiration)
                 final Timeline clock = new Timeline(new KeyFrame(
                         javafx.util.Duration.seconds(1),
-                        event -> updateConnector(organ, connector, organPane)));
+                        event -> updateConnector(organ, connector, durationText)));
                 clock.setCycleCount(Animation.INDEFINITE);
                 clock.play();
 
@@ -160,10 +166,9 @@ public class SpiderWebController extends SubController {
         layoutOrganNodes(300);
     }
 
-    private void updateConnector(DonatedOrgan donatedOrgan, Line line, Pane organPane) {
+    private void updateConnector(DonatedOrgan donatedOrgan, Line line, Text durationText) {
         Duration duration = donatedOrgan.getDurationUntilExpiry();
-        if (duration == null || duration.isZero() || duration.isNegative() || duration.equals(Duration.ZERO) ||
-                duration.minusSeconds(1).isNegative()) {
+        if (ExpiryBarUtils.durationIsZero(duration)) {
             line.setStroke(ExpiryBarUtils.greyColour);
         } else {
             // Progress as a decimal. starts at 0 (at time of death) and goes to 1.
@@ -175,6 +180,20 @@ public class SpiderWebController extends SubController {
 
             line.setStroke(linearGradient);
         }
+
+        durationText.setText(ExpiryBarUtils.getDurationString(donatedOrgan));
+
+        durationText.setX((line.getStartX() + line.getEndX()) / 2);
+        durationText.setY((line.getStartY() + line.getEndY()) / 2);
+        durationText.setRotate(getAngle(line.getStartX(), line.getStartY(), line.getEndX(), line.getEndY()));
+    }
+
+    private double getAngle(double x1, double y1, double x2, double y2) {
+        double angle = Math.toDegrees(Math.atan2(y1 - y2, x1 - x2));
+        if (angle < 0) {
+            angle += 360;
+        }
+        return angle;
     }
 
     private void addOrganNode(DonatedOrgan organ) {

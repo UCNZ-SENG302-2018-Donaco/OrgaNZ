@@ -1,9 +1,6 @@
 package com.humanharvest.organz.controller.components;
 
-import static com.humanharvest.organz.utilities.DurationFormatter.getFormattedDuration;
-
 import java.time.Duration;
-import java.time.LocalDateTime;
 
 import javafx.geometry.Insets;
 import javafx.scene.control.TableCell;
@@ -14,7 +11,6 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
 
 import com.humanharvest.organz.DonatedOrgan;
-import com.humanharvest.organz.utilities.DurationFormatter.Format;
 
 public class DurationUntilExpiryCell extends TableCell<DonatedOrgan, Duration> {
 
@@ -33,38 +29,26 @@ public class DurationUntilExpiryCell extends TableCell<DonatedOrgan, Duration> {
         if (empty) {
             setText(null);
             setStyle(null);
+            return;
+        }
 
-        } else if (item == null) { // no expiration
-            Duration timeSinceDeath = Duration.between(
-                    getDonatedOrganForRow().getDateTimeOfDonation(),
-                    LocalDateTime.now());
-            setText("N/A (" + getFormattedDuration(timeSinceDeath, Format.XHoursYMinutesSeconds) + " since death)");
+        DonatedOrgan donatedOrgan = getDonatedOrganForRow();
+
+        if (item == null) { // no expiration
+            setText(ExpiryBarUtils.getDurationString(donatedOrgan));
             setStyle(null);
             setTextFill(Color.BLACK);
 
-        } else if (item.isZero() || item.isNegative() || item.equals(Duration.ZERO) ||
-                item.minusSeconds(1).isNegative()) {
+        } else if (ExpiryBarUtils.durationIsZero(item)) {
             // Duration is essentially zero, or is zero, or the organ was overridden
-            if (getDonatedOrganForRow().getOverrideReason() == null) {
-                Duration timeSinceExpiry = Duration.between(
-                        getDonatedOrganForRow().getDateTimeOfDonation()
-                                .plus(getDonatedOrganForRow().getOrganType().getMaxExpiration()),
-                        LocalDateTime.now());
-
-                setText(String.format("Expired (%s ago)",
-                        getFormattedDuration(timeSinceExpiry, Format.XHoursYMinutesSeconds)));
-            } else {
-                setText("Overridden");
-            }
+            setText(ExpiryBarUtils.getDurationString(donatedOrgan));
             setBackground(new Background(new BackgroundFill(Color.rgb(32, 32, 32), CornerRadii.EMPTY, Insets.EMPTY)));
             setTextFill(Color.WHITE);
 
         } else {
-            String displayedDuration = getFormattedDuration(item, Format.XHoursYMinutesSeconds);
-
             // Progress as a decimal. starts at 0 (at time of death) and goes to 1.
-            double progressDecimal = getDonatedOrganForRow().getProgressDecimal();
-            double fullMarker = getDonatedOrganForRow().getFullMarker();
+            double progressDecimal = donatedOrgan.getProgressDecimal();
+            double fullMarker = donatedOrgan.getFullMarker();
 
             if (progressDecimal >= fullMarker) {
                 setTextFill(Color.WHITE);
@@ -78,7 +62,7 @@ public class DurationUntilExpiryCell extends TableCell<DonatedOrgan, Duration> {
                 }
             }
 
-            setText(displayedDuration);
+            setText(ExpiryBarUtils.getDurationString(donatedOrgan));
             setBackground(ExpiryBarUtils.getBackground(progressDecimal, fullMarker));
         }
     }

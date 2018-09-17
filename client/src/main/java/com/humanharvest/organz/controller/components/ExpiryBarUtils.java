@@ -1,5 +1,9 @@
 package com.humanharvest.organz.controller.components;
 
+import static com.humanharvest.organz.utilities.DurationFormatter.getFormattedDuration;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +15,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.CycleMethod;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
+
+import com.humanharvest.organz.DonatedOrgan;
+import com.humanharvest.organz.utilities.DurationFormatter.Format;
 
 public class ExpiryBarUtils {
 
@@ -117,6 +124,40 @@ public class ExpiryBarUtils {
         BackgroundFill backgroundFill = new BackgroundFill(linearGradient, CornerRadii.EMPTY, Insets.EMPTY);
 
         return new Background(backgroundFill);
+    }
+
+    public static String getDurationString(DonatedOrgan donatedOrgan) {
+        Duration durationUntilExpiry = donatedOrgan.getDurationUntilExpiry();
+
+        if (durationUntilExpiry == null) {
+            Duration timeSinceDeath = Duration.between(
+                    donatedOrgan.getDateTimeOfDonation(),
+                    LocalDateTime.now());
+            return ("N/A (" + getFormattedDuration(timeSinceDeath, Format.XHoursYMinutesSeconds) + " since death)");
+
+        } else if (durationIsZero(durationUntilExpiry)) {
+            if (donatedOrgan.getOverrideReason() == null) {
+                Duration timeSinceExpiry = Duration.between(
+                        donatedOrgan.getDateTimeOfDonation()
+                                .plus(donatedOrgan.getOrganType().getMaxExpiration()),
+                        LocalDateTime.now());
+
+                return (String.format("Expired (%s ago)",
+                        getFormattedDuration(timeSinceExpiry, Format.XHoursYMinutesSeconds)));
+            } else {
+                return "Overridden";
+            }
+        } else {
+            return getFormattedDuration(durationUntilExpiry, Format.XHoursYMinutesSeconds);
+        }
+    }
+
+    public static boolean durationIsZero(Duration duration) {
+        return duration == null ||
+                duration.isZero() ||
+                duration.isNegative() ||
+                duration.equals(Duration.ZERO) ||
+                duration.minusSeconds(1).isNegative();
     }
 }
 
