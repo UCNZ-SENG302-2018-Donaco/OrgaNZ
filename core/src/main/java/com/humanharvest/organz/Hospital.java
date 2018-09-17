@@ -245,6 +245,10 @@ public class Hospital {
         return transplantPrograms.remove(organ);
     }
 
+    public boolean hasTransplantProgram(Organ organ) {
+        return transplantPrograms.contains(organ);
+    }
+
     /**
      * Calculates and returns the Haversine distance between the current and the given hospitals in km
      *

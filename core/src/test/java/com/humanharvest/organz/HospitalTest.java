@@ -57,8 +57,8 @@ public class HospitalTest {
 
         // Check that heart and bone have been added, and liver is no longer there
         assertEquals(2, hospital.getTransplantPrograms().size());
-        assertTrue(hospital.getTransplantPrograms().contains(organ1));
-        assertTrue(hospital.getTransplantPrograms().contains(organ2));
+        assertTrue(hospital.hasTransplantProgram(organ1));
+        assertTrue(hospital.hasTransplantProgram(organ2));
     }
 
     @Test

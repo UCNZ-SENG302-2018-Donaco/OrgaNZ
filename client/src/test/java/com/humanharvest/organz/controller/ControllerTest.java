@@ -2,7 +2,6 @@ package com.humanharvest.organz.controller;
 
 import static org.mockito.Mockito.mock;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -77,7 +76,7 @@ public abstract class ControllerTest extends ApplicationTest {
     }
 
     @Override
-    public void start(Stage stage) throws IOException {
+    public void start(Stage stage) throws Exception {
         // Load main pane and controller
         FXMLLoader mainLoader = new FXMLLoader(getClass().getResource(Page.MAIN.getPath()));
         Pane mainPane = mainLoader.load();
@@ -118,5 +117,5 @@ public abstract class ControllerTest extends ApplicationTest {
 
     protected abstract Page getPage();
 
-    protected abstract void initState();
+    protected abstract void initState() throws Exception;
 }
