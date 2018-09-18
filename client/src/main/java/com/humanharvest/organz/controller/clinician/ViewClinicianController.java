@@ -104,7 +104,7 @@ public class ViewClinicianController extends ViewBaseController {
     /**
      * @return the clinician that the admin should view by default
      */
-    private Clinician getClinicianForAdminToView() {
+    private static Clinician getClinicianForAdminToView() {
         if (State.getViewedClinician() != null) {
             Clinician clinician = State.getViewedClinician();
             State.setViewedClinician(null);
