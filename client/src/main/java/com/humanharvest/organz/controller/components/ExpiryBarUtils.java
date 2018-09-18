@@ -133,7 +133,7 @@ public class ExpiryBarUtils {
             Duration timeSinceDeath = Duration.between(
                     donatedOrgan.getDateTimeOfDonation(),
                     LocalDateTime.now());
-            return ("N/A (" + getFormattedDuration(timeSinceDeath, Format.XHoursYMinutesSeconds) + " since death)");
+            return "N/A (" + getFormattedDuration(timeSinceDeath, Format.X_HOURS_Y_MINUTES_SECONDS) + " since death)";
 
         } else if (durationIsZero(durationUntilExpiry)) {
             if (donatedOrgan.getOverrideReason() == null) {
@@ -142,13 +142,13 @@ public class ExpiryBarUtils {
                                 .plus(donatedOrgan.getOrganType().getMaxExpiration()),
                         LocalDateTime.now());
 
-                return (String.format("Expired (%s ago)",
-                        getFormattedDuration(timeSinceExpiry, Format.XHoursYMinutesSeconds)));
+                return String.format("Expired (%s ago)",
+                        getFormattedDuration(timeSinceExpiry, Format.X_HOURS_Y_MINUTES_SECONDS));
             } else {
                 return "Overridden";
             }
         } else {
-            return getFormattedDuration(durationUntilExpiry, Format.XHoursYMinutesSeconds);
+            return getFormattedDuration(durationUntilExpiry, Format.X_HOURS_Y_MINUTES_SECONDS);
         }
     }
 
