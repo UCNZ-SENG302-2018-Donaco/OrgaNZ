@@ -155,9 +155,9 @@ public class ClinicianManagerDBPure implements ClinicianManager {
         try (org.hibernate.Session session = dbManager.getDBSession()) {
             trns = session.beginTransaction();
 
-            collision = dbManager.getDBSession().createQuery("SELECT c from Clinician c Where c.id = :id")
+            collision = !dbManager.getDBSession().createQuery("SELECT c from Clinician c Where c.id = :id")
                     .setParameter("id", id)
-                    .getResultList().size() > 0;
+                    .getResultList().isEmpty();
             trns.commit();
         } catch (RollbackException e) {
             LOGGER.log(Level.WARNING, e.getMessage(), e);
