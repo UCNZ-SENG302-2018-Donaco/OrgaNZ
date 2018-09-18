@@ -117,10 +117,14 @@ public class ClientManagerDBPure implements ClientManager {
         // Setup the client type filters. For this we use an EXISTS (or NOT) then a separate SELECT on
         // the respective table where uid=uid.
         // LIMIT 1 is an efficiency increase as we do not need to keep looking once we have a result (boolean true)
-        String isDonor = "EXISTS (SELECT donating.Client_uid FROM Client_organsDonating AS donating WHERE donating.Client_uid=c.uid LIMIT 1)";
-        String notIsDonor = "NOT EXISTS (SELECT donating.Client_uid FROM Client_organsDonating AS donating WHERE donating.Client_uid=c.uid LIMIT 1)";
-        String isRequesting = "EXISTS (SELECT requesting.Client_uid FROM TransplantRequest AS requesting WHERE requesting.Client_uid=c.uid LIMIT 1)";
-        String notIsRequesting = "NOT EXISTS (SELECT requesting.Client_uid FROM TransplantRequest AS requesting WHERE requesting.Client_uid=c.uid LIMIT 1)";
+        String isDonor = "EXISTS (SELECT donating.Client_uid FROM Client_organsDonating AS donating "
+                + "WHERE donating.Client_uid=c.uid LIMIT 1)";
+        String notIsDonor = "NOT EXISTS (SELECT donating.Client_uid FROM Client_organsDonating AS donating "
+                + "WHERE donating.Client_uid=c.uid LIMIT 1)";
+        String isRequesting = "EXISTS (SELECT requesting.Client_uid FROM TransplantRequest AS requesting "
+                + "WHERE requesting.Client_uid=c.uid LIMIT 1)";
+        String notIsRequesting = "NOT EXISTS (SELECT requesting.Client_uid FROM TransplantRequest AS requesting "
+                + "WHERE requesting.Client_uid=c.uid LIMIT 1)";
 
         //TODO: Make this use the complex sort as in ClientNameSorter
         String nameSort = "lastName";
