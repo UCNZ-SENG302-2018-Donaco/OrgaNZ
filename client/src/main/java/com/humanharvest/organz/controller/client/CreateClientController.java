@@ -91,18 +91,16 @@ public class CreateClientController extends SubController {
                     "Invalid Date of Birth",
                     "The date of birth cannot be after today.", mainController.getStage());
         } else {
-            //Duplicate user warning alert
             if (manager.doesClientExist(firstNameFld.getText(), lastNamefld.getText(), dobFld.getValue())) {
+                //Duplicate user warning alert
                 Property<Boolean> response = PageNavigator.showAlert(AlertType.CONFIRMATION,
                         "Duplicate Client Warning",
                         "This client is a duplicate of one that already exists. Would you still like to create it?",
                         mainController.getStage());
 
-                if (response.getValue() != null) {
-                    if (response.getValue()) {
-                        createClientLogic();
-                    }
-                } else {
+                if (response.getValue()) {
+                    createClientLogic();
+                } else if (response.getValue() == null) {
                     response.addListener((observable, oldValue, newValue) -> {
                         if (newValue) {
                             createClientLogic();

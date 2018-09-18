@@ -1,12 +1,13 @@
 package com.humanharvest.organz.views.client;
 
-import com.humanharvest.organz.Hospital;
+import static com.humanharvest.organz.utilities.type_converters.StringFormatter.unCamelCase;
 
 import java.lang.reflect.Member;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.stream.Collectors;
 
+import com.humanharvest.organz.Hospital;
 import com.humanharvest.organz.utilities.enums.BloodType;
 import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Gender;
@@ -40,11 +41,6 @@ public class ModifyClientObject extends ModifyBaseObject {
     private String regionOfDeath;
     private String cityOfDeath;
     private Country countryOfDeath;
-
-    private static String unCamelCase(String inCamelCase) {
-        String unCamelCased = inCamelCase.replaceAll("([a-z])([A-Z]+)", "$1 $2");
-        return unCamelCased.substring(0, 1).toUpperCase() + unCamelCased.substring(1);
-    }
 
     private static String fieldString(Member field) {
         return String.format("Updated %s", unCamelCase(field.getName()));

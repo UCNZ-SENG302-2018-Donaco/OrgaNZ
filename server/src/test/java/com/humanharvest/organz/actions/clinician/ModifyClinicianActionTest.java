@@ -28,7 +28,7 @@ public class ModifyClinicianActionTest extends BaseTest {
     }
 
     @Test
-    public void CheckClinicianModifyNameTest() throws NoSuchMethodException, NoSuchFieldException {
+    public void CheckClinicianModifyNameTest() throws ReflectiveOperationException {
         ModifyClinicianAction action = new ModifyClinicianAction(baseClinician, manager);
         action.addChange("setFirstName", baseClinician.getFirstName(), "New");
         invoker.execute(action);
@@ -36,7 +36,7 @@ public class ModifyClinicianActionTest extends BaseTest {
     }
 
     @Test
-    public void CheckClinicianModifyUndoNameTest() throws NoSuchMethodException, NoSuchFieldException {
+    public void CheckClinicianModifyUndoNameTest() throws ReflectiveOperationException {
         ModifyClinicianAction action = new ModifyClinicianAction(baseClinician, manager);
         action.addChange("setFirstName", baseClinician.getFirstName(), "New");
         invoker.execute(action);
@@ -45,7 +45,7 @@ public class ModifyClinicianActionTest extends BaseTest {
     }
 
     @Test
-    public void CheckClinicianMultipleUpdateValuesTest() throws NoSuchMethodException, NoSuchFieldException {
+    public void CheckClinicianMultipleUpdateValuesTest() throws ReflectiveOperationException {
         ModifyClinicianAction action = new ModifyClinicianAction(baseClinician, manager);
         action.addChange("setFirstName", baseClinician.getFirstName(), "New");
         action.addChange("setRegion", baseClinician.getRegion(), Region.CANTERBURY.toString());
@@ -55,7 +55,7 @@ public class ModifyClinicianActionTest extends BaseTest {
     }
 
     @Test
-    public void CheckClinicianMultipleUpdateValuesUndoTest() throws NoSuchMethodException, NoSuchFieldException {
+    public void CheckClinicianMultipleUpdateValuesUndoTest() throws ReflectiveOperationException {
         ModifyClinicianAction action = new ModifyClinicianAction(baseClinician, manager);
         action.addChange("setFirstName", baseClinician.getFirstName(), "New");
         action.addChange("setRegion", baseClinician.getRegion(), Region.CANTERBURY.toString());
@@ -66,14 +66,14 @@ public class ModifyClinicianActionTest extends BaseTest {
     }
 
     @Test(expected = NoSuchMethodException.class)
-    public void InvalidSetterFieldTest() throws NoSuchMethodException, NoSuchFieldException {
+    public void InvalidSetterFieldTest() throws ReflectiveOperationException {
         ModifyClinicianAction action = new ModifyClinicianAction(baseClinician, manager);
         action.addChange("notAField", "Old", "New");
         invoker.execute(action);
     }
 
     @Test(expected = NoSuchFieldException.class)
-    public void InvalidSetterAttributeTest() throws NoSuchMethodException, NoSuchFieldException {
+    public void InvalidSetterAttributeTest() throws ReflectiveOperationException {
         ModifyClinicianAction action = new ModifyClinicianAction(baseClinician, manager);
         action.addChange("setFirstName", 1, "New");
         invoker.execute(action);

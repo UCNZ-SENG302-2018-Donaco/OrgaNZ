@@ -46,7 +46,6 @@ public class MatchOrgansToRecipientsController {
 
         // Verify that request has clinician/admin authorization - otherwise 401 Unauthorised
         State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
-        //Collection<TransplantRequest> allTransplantRequests = State.getClientManager().getAllTransplantRequests();
 
         if (donatedOrganOptional.isPresent()) {
             donatedOrgan = donatedOrganOptional.get();

@@ -61,7 +61,7 @@ public class OrgansController {
         final Set<String> regionsToFilter = new HashSet<>();
         if (regions != null) {
             for (String region : regions) {
-                regionsToFilter.add(region.replaceAll("%20", " "));
+                regionsToFilter.add(region.replace("%20", " "));
             }
         }
 
