@@ -50,7 +50,7 @@ public class SpiderWebController extends SubController {
 
     private Pane canvas;
     private Pane deceasedDonorPane;
-    private List<Pane> organNodes = new ArrayList<>();
+    private final List<Pane> organNodes = new ArrayList<>();
 
     public SpiderWebController(Client client) {
         this.client = client;
@@ -134,7 +134,7 @@ public class SpiderWebController extends SubController {
                 Text durationText = new Text(ExpiryBarUtils.getDurationString(organ));
 
                 // Redraws lines when organs or donor pane is moved
-                 deceasedDonorPane.localToParentTransformProperty().addListener((observable, oldValue, newValue) -> {
+                deceasedDonorPane.localToParentTransformProperty().addListener((observable, oldValue, newValue) -> {
                     Bounds bounds = deceasedDonorPane.getBoundsInParent();
                     connector.setStartX(bounds.getMinX() + bounds.getWidth() / 2);
                     connector.setStartY(bounds.getMinY() + bounds.getHeight() / 2);

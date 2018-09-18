@@ -5,8 +5,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import javafx.event.Event;
 import javafx.geometry.Point2D;
@@ -42,15 +40,9 @@ import org.tuiofx.widgets.skin.OnScreenKeyboard;
 
 public final class MultitouchHandler {
 
-    public static final double MIN_VELOCITY_THRESHOLD = 10;
-    private static final double COLLISION_VELOCITY_LOSS = 0.5;
-    private static final double SURFACE_TENSION = 0.2;
-    private static final long PHYSICS_MILLISECOND_PERIOD = 16;
-
-    private static final Collection<FocusArea> focusAreas = new ArrayList<>();
+    static final Collection<FocusArea> focusAreas = new ArrayList<>();
     private static final List<CurrentTouch> touches = new ArrayList<>();
     private static Pane rootPane;
-    private static Timer physicsTimer;
 
     private MultitouchHandler() {
     }
@@ -67,13 +59,9 @@ public final class MultitouchHandler {
         root.addEventFilter(GestureEvent.ANY, Event::consume);
         root.addEventFilter(RotateEvent.ANY, Event::consume);
 
-        physicsTimer = new Timer();
-        physicsTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                processPhysics();
-            }
-        }, 0, PHYSICS_MILLISECOND_PERIOD);
+//        HackyMouseTouch.initialise(root);
+
+        PhysicsHelper.initialise(rootPane);
     }
 
     /**
@@ -168,7 +156,8 @@ public final class MultitouchHandler {
         Point2D centre;
         if (focusArea.isTranslatable()) {
             centre = PointUtils.min(currentTouch.getCurrentScreenPoint(), otherTouch.getCurrentScreenPoint())
-                    .add(PointUtils.abs(currentTouch.getCurrentScreenPoint().subtract(otherTouch.getCurrentScreenPoint()))
+                    .add(PointUtils.abs(currentTouch.getCurrentScreenPoint()
+                            .subtract(otherTouch.getCurrentScreenPoint()))
                             .multiply(0.5));
         } else {
             centre = PointUtils.getCentreOfPane(pane);
@@ -227,7 +216,7 @@ public final class MultitouchHandler {
     /**
      * Find all touches this pane owns.
      */
-    private static List<CurrentTouch> findPaneTouches(Pane pane) {
+    static List<CurrentTouch> findPaneTouches(Pane pane) {
         List<CurrentTouch> results = new ArrayList<>();
         for (CurrentTouch currentTouch : touches) {
             if (currentTouch != null) {
@@ -243,7 +232,7 @@ public final class MultitouchHandler {
     /**
      * Finds the pane this node belongs to, or Optional.empty() if the node doesn't belong to any pane.
      */
-    private static Optional<Pane> findPane(Node node) {
+    static Optional<Pane> findPane(Node node) {
         if (node == null) {
             return Optional.empty();
         }
@@ -278,7 +267,7 @@ public final class MultitouchHandler {
         if (currentTouch == null) {
             currentTouch = new CurrentTouch(
                     findPane(touchPoint.getPickResult().getIntersectedNode()).orElse(null),
-                    getImportantElement(touchPoint).orElse(null));
+                    getImportantElement(touchPoint.getPickResult().getIntersectedNode()).orElse(null));
             touches.set(touchPoint.getId(), currentTouch);
         }
 
@@ -288,8 +277,7 @@ public final class MultitouchHandler {
     /**
      * Returns an important (ie, text, button, list, etc) node if the touchPoint intersects it.
      */
-    private static Optional<Node> getImportantElement(TouchPoint touchPoint) {
-        Node node = touchPoint.getPickResult().getIntersectedNode();
+    static Optional<Node> getImportantElement(Node node) {
 
         while (node != null && !Objects.equals(node, rootPane)) {
             if (node instanceof Button) {
@@ -431,60 +419,11 @@ public final class MultitouchHandler {
     }
 
     /**
-     * Processes physics for the focus areas.
-     */
-    private static void processPhysics() {
-        for (FocusArea focusArea : focusAreas) {
-            if (findPaneTouches(focusArea.getPane()).isEmpty() &&
-                    (focusArea.getVelocity().getX() != 0 || focusArea.getVelocity().getY() != 0) &&
-                    focusArea.isTranslatable()) {
-                Point2D velocity = focusArea.getVelocity();
-                Point2D delta = velocity.multiply(0.001 * PHYSICS_MILLISECOND_PERIOD);
-
-                Point2D centre = PointUtils.getCentreOfPane(focusArea.getPane());
-
-                if (centre.getX() + delta.getX() < 0) {
-                    delta = new Point2D(-centre.getX(), delta.getY());
-                    velocity = new Point2D(-velocity.getX() * COLLISION_VELOCITY_LOSS,
-                            velocity.getY() * COLLISION_VELOCITY_LOSS);
-                }
-
-                if (centre.getY() + delta.getY() < 0) {
-                    delta = new Point2D(delta.getX(), -centre.getY());
-                    velocity = new Point2D(velocity.getX() * COLLISION_VELOCITY_LOSS,
-                            -velocity.getY() * COLLISION_VELOCITY_LOSS);
-                }
-
-                if (centre.getX() + delta.getX() > rootPane.getWidth()) {
-                    delta = new Point2D(rootPane.getWidth() - centre.getX(), delta.getY());
-                    velocity = new Point2D(-velocity.getX() * COLLISION_VELOCITY_LOSS,
-                            velocity.getY() * COLLISION_VELOCITY_LOSS);
-                }
-
-                if (centre.getY() + delta.getY() > rootPane.getHeight()) {
-                    delta = new Point2D(delta.getX(), rootPane.getHeight() - centre.getY());
-                    velocity = new Point2D(velocity.getX() * COLLISION_VELOCITY_LOSS,
-                            -velocity.getY() * COLLISION_VELOCITY_LOSS);
-                }
-
-                focusArea.prependTransform(new Translate(delta.getX(), delta.getY()));
-
-                velocity = velocity.multiply(1 - (1 - SURFACE_TENSION) * (0.001 * PHYSICS_MILLISECOND_PERIOD));
-                if (PointUtils.distance(velocity, Point2D.ZERO) < 1) {
-                    velocity = Point2D.ZERO;
-                }
-
-                focusArea.setVelocity(velocity);
-            }
-        }
-    }
-
-    /**
      * Called when the stage is closing.
      * Cleans up all resources.
      */
     public static void stageClosing() {
-        physicsTimer.cancel();
+        PhysicsHelper.stop();
     }
 }
 
