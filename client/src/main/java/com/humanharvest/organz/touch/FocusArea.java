@@ -45,6 +45,9 @@ public class FocusArea implements InvalidationListener {
     private final Collection<Consumer<EventTarget>> popupHandlers = new ArrayList<>();
     private final Pane pane;
     private boolean outOfDate = true;
+    private boolean translatable = true;
+    private boolean scalable = true;
+    private boolean rotatable = true;
 
     private Affine transform;
 
@@ -180,7 +183,7 @@ public class FocusArea implements InvalidationListener {
         Point2D positionDelta = centre.subtract(timedPoint.getPosition());
         velocity = new Point2D(positionDelta.getX() / timeDelta, positionDelta.getY() / timeDelta);
 
-        if (PointUtils.distance(Point2D.ZERO, velocity) < MultitouchHandler.MIN_VELOCITY_THRESHOLD) {
+        if (PointUtils.distance(Point2D.ZERO, velocity) < PhysicsHelper.MIN_VELOCITY_THRESHOLD) {
             velocity = Point2D.ZERO;
         }
 
@@ -193,6 +196,10 @@ public class FocusArea implements InvalidationListener {
 
     public Point2D getVelocity() {
         return velocity;
+    }
+
+    public void addVelocity(Point2D velocityDelta) {
+        velocity = velocity.add(velocityDelta);
     }
 
     public void setVelocity(Point2D velocity) {
@@ -341,5 +348,29 @@ public class FocusArea implements InvalidationListener {
         public Point2D getPosition() {
             return position;
         }
+    }
+
+    public boolean isTranslatable() {
+        return translatable;
+    }
+
+    public void setTranslatable(boolean translatable) {
+        this.translatable = translatable;
+    }
+
+    public boolean isScalable() {
+        return scalable;
+    }
+
+    public void setScalable(boolean scalable) {
+        this.scalable = scalable;
+    }
+
+    public boolean isRotatable() {
+        return rotatable;
+    }
+
+    public void setRotatable(boolean rotatable) {
+        this.rotatable = rotatable;
     }
 }

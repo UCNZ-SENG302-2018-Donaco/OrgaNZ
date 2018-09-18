@@ -1,8 +1,6 @@
 package com.humanharvest.organz.controller.spiderweb;
 
 import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -49,7 +47,6 @@ public class OrganImageController extends SubController {
         }
 
         catch (Exception ex) {
-            System.out.println(ex.getMessage());
             LOGGER.log(Level.SEVERE, "Organ image failed to load");
         }
 

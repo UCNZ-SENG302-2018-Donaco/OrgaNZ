@@ -16,17 +16,20 @@ import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
+import javafx.scene.paint.LinearGradient;
 import javafx.scene.shape.Line;
+import javafx.scene.text.Text;
 import javafx.scene.transform.Affine;
+import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.controller.MainController;
-import com.humanharvest.organz.controller.components.DurationUntilExpiryCell;
+import com.humanharvest.organz.controller.SubController;
+import com.humanharvest.organz.controller.components.ExpiryBarUtils;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.touch.FocusArea;
 import com.humanharvest.organz.touch.MultitouchHandler;
@@ -39,7 +42,7 @@ import org.tuiofx.internal.base.TuioFXCanvas;
 /**
  * The Spider web controller which handles everything to do with displaying panes in the spider web stage.
  */
-public class SpiderWebController {
+public class SpiderWebController extends SubController {
 
     private static final Logger LOGGER = Logger.getLogger(SpiderWebController.class.getName());
 
@@ -47,13 +50,31 @@ public class SpiderWebController {
 
     private Pane canvas;
     private Pane deceasedDonorPane;
-    private List<Pane> organNodes = new ArrayList<>();
+    private final List<Pane> organNodes = new ArrayList<>();
 
     public SpiderWebController(Client client) {
         this.client = client;
         setupNewStage();
         displayDonatingClient();
         displayOrgans();
+    }
+
+    /**
+     * Sets a node's position using an {@link Affine} transform. The node must have an {@link FocusArea} for its
+     * {@link Node#getUserData()}.
+     *
+     * @param node The node to apply the transform to. Must have a focusArea
+     * @param x The x translation
+     * @param y The y translation
+     * @param angle The angle to rotate (degrees)
+     */
+    private static void setPositionUsingTransform(Node node, double x, double y, double angle) {
+        FocusArea focusArea = (FocusArea) node.getUserData();
+
+        Affine transform = new Affine();
+        transform.prepend(new Translate(x, y));
+        transform.prepend(new Rotate(angle, x, y));
+        focusArea.setTransform(transform);
     }
 
     /**
@@ -85,82 +106,120 @@ public class SpiderWebController {
         stage.show();
     }
 
-    private void displayDonatingClient() {
-        MainController newMain = PageNavigator.openNewWindow(200, 400);
-        PageNavigator.loadPage(Page.RECEIVER_OVERVIEW, newMain);
-        deceasedDonorPane = newMain.getPane();
-        setPositionUsingTransform(deceasedDonorPane, canvas.getWidth()/2, canvas.getHeight()/2);
-    }
-
     /**
      * Loads a window for each non expired organ.
      */
     private void displayOrgans() {
         Collection<DonatedOrgan> donatedOrgans = State.getClientResolver().getDonatedOrgans(client);
-        for (DonatedOrgan organ: donatedOrgans) {
+        for (DonatedOrgan organ : donatedOrgans) {
             if (!organ.hasExpired()) {
                 State.setOrganToDisplay(organ);
                 MainController newMain = PageNavigator.openNewWindow(80, 80);
                 PageNavigator.loadPage(Page.ORGAN_IMAGE, newMain);
                 Pane organPane = newMain.getPane();
                 organNodes.add(organPane);
+                //TODO: Fix so organ stays expired once web is closed.
+                organPane.setOnMouseClicked(click -> {
+                    if (click.getClickCount() == 3) {
 
+                        State.getClientResolver()
+                                .manuallyOverrideOrgan(organ, "Manually Overridden by Doctor using WebView");
+                        organ.manuallyOverride("Manually Overridden by Doctor using WebView");
+
+                    }
+                });
                 // Create the line
                 Line connector = new Line();
-                connector.setFill(Color.BLACK);
-                connector.setStroke(Color.BLACK);
                 connector.setStrokeWidth(4);
+                Text durationText = new Text(ExpiryBarUtils.getDurationString(organ));
+
+                // Redraws lines when organs or donor pane is moved
                 deceasedDonorPane.localToParentTransformProperty().addListener((observable, oldValue, newValue) -> {
                     Bounds bounds = deceasedDonorPane.getBoundsInParent();
-                    connector.setStartX(bounds.getMinX() + bounds.getWidth()/2);
-                    connector.setStartY(bounds.getMinY() + bounds.getHeight()/2);
+                    connector.setStartX(bounds.getMinX() + bounds.getWidth() / 2);
+                    connector.setStartY(bounds.getMinY() + bounds.getHeight() / 2);
+                    updateConnector(organ, connector, durationText);
                 });
                 organPane.localToParentTransformProperty().addListener((observable, oldValue, newValue) -> {
                     Bounds bounds = organPane.getBoundsInParent();
-                    connector.setEndX(bounds.getMinX() + bounds.getWidth()/2);
-                    connector.setEndY(bounds.getMinY() + bounds.getHeight()/2);
+                    connector.setEndX(bounds.getMinX() + bounds.getWidth() / 2);
+                    connector.setEndY(bounds.getMinY() + bounds.getHeight() / 2);
+                    updateConnector(organ, connector, durationText);
                 });
-                canvas.getChildren().add( 0, connector);
-                Bounds bounds = deceasedDonorPane.getBoundsInParent();
-                connector.setStartX(bounds.getMinX() + bounds.getWidth()/2);
-                connector.setStartY(bounds.getMinY() + bounds.getHeight()/2);
 
-                // Attach timer to update table each second (for time until expiration)
+                canvas.getChildren().add(0, connector);
+                canvas.getChildren().add(0, durationText);
+
+                Bounds bounds = deceasedDonorPane.getBoundsInParent();
+                connector.setStartX(bounds.getMinX() + bounds.getWidth() / 2);
+                connector.setStartY(bounds.getMinY() + bounds.getHeight() / 2);
+                updateConnector(organ, connector, durationText);
+
+                // Attach timer to update connector each second (for time until expiration)
                 final Timeline clock = new Timeline(new KeyFrame(
-                        javafx.util.Duration.millis(1000),
-                        event -> updateConnector(organ, connector, organPane)));
+                        javafx.util.Duration.seconds(1),
+                        event -> updateConnector(organ, connector, durationText)));
                 clock.setCycleCount(Animation.INDEFINITE);
                 clock.play();
+
             }
         }
         layoutOrganNodes(300);
     }
 
-    private void updateConnector(DonatedOrgan donatedOrgan, Line line, Pane organPane) {
+    private void updateConnector(DonatedOrgan donatedOrgan, Line line, Text durationText) {
         Duration duration = donatedOrgan.getDurationUntilExpiry();
-        if (duration == null || duration.isZero() || duration.isNegative() || duration.equals(Duration.ZERO) ||
-                duration.minusSeconds(1).isNegative()) {
-            line.setStyle("-fx-background-color: #202020");
-
-            StackPane stackPane = (StackPane) organPane.getChildren().get(0);
-            stackPane.setStyle("-fx-background-color: rgba(0,15,128,0.8)");
-
+        if (ExpiryBarUtils.durationIsZero(duration)) {
+            line.setStroke(ExpiryBarUtils.greyColour);
         } else {
             // Progress as a decimal. starts at 0 (at time of death) and goes to 1.
             double progressDecimal = donatedOrgan.getProgressDecimal();
             double fullMarker = donatedOrgan.getFullMarker();
 
-            // Calculate colour
-            String style = DurationUntilExpiryCell.getStyleForProgress(progressDecimal, fullMarker);
+            LinearGradient linearGradient = ExpiryBarUtils.getLinearGradient(progressDecimal, fullMarker,
+                    line.getStartX(), line.getStartY(), line.getEndX(), line.getEndY());
 
-            style = style.replace("-fx-background-color", "-fx-stroke");
-            style = style.replace("to right", "from 0% 0% to 100% 100%");
-            line.setStyle(style);
+            line.setStroke(linearGradient);
         }
+
+        durationText.setText(ExpiryBarUtils.getDurationString(donatedOrgan));
+
+        double xWidth = line.getStartX() - line.getEndX();
+        double yWidth = line.getStartY() - line.getEndY();
+        double x = line.getEndX() + xWidth * .1;
+        double y = line.getEndY() + yWidth * .1;
+        double angle = (getAngle(line.getStartX(), line.getStartY(), line.getEndX(), line.getEndY()));
+        durationText.getTransforms().removeIf(transform -> transform instanceof Affine);
+        Affine trans = new Affine();
+        trans.prepend(new Translate(0, -5));
+        trans.prepend(new Rotate(angle));
+        durationText.getTransforms().add(trans);
+        durationText.setTranslateX(x);
+        durationText.setTranslateY(y);
+//        durationText.setRotate(angle);
+    }
+
+    private double getAngle(double x1, double y1, double x2, double y2) {
+        double angle = Math.toDegrees(Math.atan2(y1 - y2, x1 - x2));
+        if (angle < 0) {
+            angle += 360;
+        }
+        return angle;
     }
 
     private void addOrganNode(DonatedOrgan organ) {
 
+    }
+
+    private void displayDonatingClient() {
+        MainController newMain = PageNavigator.openNewWindow(200, 400);
+        PageNavigator.loadPage(Page.RECEIVER_OVERVIEW, newMain);
+        deceasedDonorPane = newMain.getPane();
+        ((FocusArea) deceasedDonorPane.getUserData()).setTranslatable(false);
+
+        int centerX = (int) Screen.getPrimary().getVisualBounds().getWidth() / 2;
+        int centerY = (int) Screen.getPrimary().getVisualBounds().getHeight() / 2;
+        setPositionUsingTransform(deceasedDonorPane, centerX, centerY, 0);
     }
 
     private void layoutOrganNodes(double radius) {
@@ -170,17 +229,8 @@ public class SpiderWebController {
         for (int i = 0; i < numNodes; i++) {
             setPositionUsingTransform(organNodes.get(i),
                     deceasedDonorPane.getLocalToParentTransform().getTx() + radius * Math.sin(angleSize * i),
-                    deceasedDonorPane.getLocalToParentTransform().getTy() + radius * Math.cos(angleSize * i));
+                    deceasedDonorPane.getLocalToParentTransform().getTy() + radius * Math.cos(angleSize * i),
+                    360 - Math.toDegrees(angleSize * i));
         }
-    }
-
-    /**
-     * Sets a node's position using an {@link Affine} transform. The node must have an {@link FocusArea} for its
-     * {@link Node#getUserData()}.
-     * @param node A node with a FocusArea.
-     */
-    private static void setPositionUsingTransform(Node node, double x, double y) {
-        FocusArea focusArea = (FocusArea) node.getUserData();
-        focusArea.setTransform(new Affine(new Translate(x, y)));
     }
 }
