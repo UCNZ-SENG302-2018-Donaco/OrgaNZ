@@ -61,12 +61,15 @@ public class RequestOrgan implements Runnable {
         } else {
             boolean organCurrentlyRequested = false;
 
+            // Iterate through each transplant request for the client,
+            // checking if they have already requested this organ
             for (TransplantRequest tr : client.get().getTransplantRequests()) {
                 if (tr.getRequestedOrgan() == organType && tr.getStatus() == TransplantRequestStatus.WAITING) {
                     organCurrentlyRequested = true;
                     break;
                 }
             }
+
             if (organCurrentlyRequested) {
                 outputStream.println("This organ is already requested.");
             } else {

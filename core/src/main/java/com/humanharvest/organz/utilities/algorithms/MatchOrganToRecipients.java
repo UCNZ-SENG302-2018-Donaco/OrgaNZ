@@ -12,7 +12,17 @@ import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Region;
 
-public class MatchOrganToRecipients {
+/**
+ * Provides static helper methods to match organs to recipients
+ */
+public abstract class MatchOrganToRecipients {
+
+    /**
+     * Private constructor to prevent instantiation of utility class
+     */
+    private MatchOrganToRecipients() {
+        throw new IllegalStateException("Utility class");
+    }
 
     private static boolean agesMatch(int donorAge, int recipientAge) {
         // If one is under 12, they must both be under 12
@@ -30,7 +40,7 @@ public class MatchOrganToRecipients {
     }
 
     private static double distanceBetween(Region region1, Region region2) {
-        if (region1.equals(Region.UNSPECIFIED) || region2.equals(Region.UNSPECIFIED)) {
+        if (region1 == Region.UNSPECIFIED || region2 == Region.UNSPECIFIED) {
             // For at least one region, we don't know where it is
             return Double.MAX_VALUE;
         }
@@ -260,9 +270,10 @@ public class MatchOrganToRecipients {
         for (TransplantRequest transplantRequest : transplantRequests) {
             Client recipient = transplantRequest.getClient();
 
-            if (donatedOrgan.getOrganType().equals(transplantRequest.getRequestedOrgan())
+            // Check they are requesting the organ, have the same blood type, and are the right age
+            if ((donatedOrgan.getOrganType() == transplantRequest.getRequestedOrgan())
                     && donor.getBloodType() != null && recipient.getBloodType() != null
-                    && donor.getBloodType().equals(recipient.getBloodType())
+                    && (donor.getBloodType() == recipient.getBloodType())
                     && agesMatch(donor.getAge(), recipient.getAge())) {
                 potentialTransplantRequests.add(transplantRequest);
             }

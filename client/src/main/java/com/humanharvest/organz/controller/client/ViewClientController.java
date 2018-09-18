@@ -58,6 +58,7 @@ import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
+import com.humanharvest.organz.utilities.validators.NotEmptyStringValidator;
 import com.humanharvest.organz.utilities.validators.client.ClientBornAndDiedDatesValidator;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
@@ -540,20 +541,15 @@ public class ViewClientController extends ViewBaseController {
             }
 
             // Validate region of death
-            if (deathCountry.getValue() == Country.NZ) {
-                if (deathRegionCB.getValue() == null) {
-                    regionOfDeathLabel.setTextFill(Color.RED);
-                    allValid = false;
-                } else {
-                    regionOfDeathLabel.setTextFill(Color.BLACK);
-                }
+            // If they are in NZ and the combobox is null,
+            // or they aren't in NZ and the textbox is empty, then the region is invalid.
+            if ((deathCountry.getValue() == Country.NZ && deathRegionCB.getValue() == null)
+                    || (deathCountry.getValue() != Country.NZ
+                    && NotEmptyStringValidator.isInvalidString(deathRegionTF.getText()))) {
+                regionOfDeathLabel.setTextFill(Color.RED);
+                allValid = false;
             } else {
-                if (deathRegionTF.getText() == null || deathRegionTF.getText().isEmpty()) {
-                    regionOfDeathLabel.setTextFill(Color.RED);
-                    allValid = false;
-                } else {
-                    regionOfDeathLabel.setTextFill(Color.BLACK);
-                }
+                regionOfDeathLabel.setTextFill(Color.BLACK);
             }
 
             // Validate city of death

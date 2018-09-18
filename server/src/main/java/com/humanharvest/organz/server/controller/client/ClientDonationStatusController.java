@@ -51,6 +51,7 @@ public class ClientDonationStatusController {
         }
     }
 
+    //todo why is this method empty?
     @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "One of the organs is already set to the value you gave")
     @ExceptionHandler(OrganAlreadyRegisteredException.class)
     public void ifMatchRequired() {
