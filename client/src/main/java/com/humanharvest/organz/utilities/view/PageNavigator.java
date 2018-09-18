@@ -24,6 +24,13 @@ public final class PageNavigator {
     }
 
     /**
+     * Private constructor to prevent instantiation of utility class
+     */
+    private PageNavigator() {
+        throw new IllegalStateException("Utility class");
+    }
+
+    /**
      * Loads the given page in the given MainController.
      *
      * @param page the Page (enum including path to fxml file) to be loaded.

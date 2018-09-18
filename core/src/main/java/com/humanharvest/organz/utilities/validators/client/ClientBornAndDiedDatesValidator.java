@@ -9,7 +9,19 @@ import java.util.List;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.views.client.ModifyClientObject;
 
-public class ClientBornAndDiedDatesValidator {
+/**
+ * Class to ensure that all Client dates are valid
+ * Class is abstract as it only contains static methods and should not be instantiated
+ */
+public abstract class ClientBornAndDiedDatesValidator {
+
+    /**
+     * Private constructor to prevent instantiation of utility class
+     */
+    private ClientBornAndDiedDatesValidator() {
+        throw new IllegalStateException("Utility class");
+    }
+
 
     /**
      * Returns true if the date of birth is not null and is not in the future
@@ -61,6 +73,13 @@ public class ClientBornAndDiedDatesValidator {
         return !dateTimeOfDeath.isAfter(LocalDateTime.now().plusMinutes(1)) && !dateOfDeath.isBefore(dateOfBirth);
     }
 
+    /**
+     * Given a ModifyClientObject, ensure that and changed dates are valid
+     *
+     * @param clientView The modifyClientView to check
+     * @param client The Client to compare dates to
+     * @return True if all validity checks pass
+     */
     public static boolean isValid(ModifyClientObject clientView, Client client) {
         //Get a list of unmodified fields so we don't check fields that haven't changed
         List<String> unmodifiedFields = Arrays.asList(clientView.getUnmodifiedFields());

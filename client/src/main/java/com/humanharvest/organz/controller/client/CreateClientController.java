@@ -90,7 +90,6 @@ public class CreateClientController extends SubController {
                     "Invalid Date of Birth",
                     "The date of birth cannot be after today.", mainController.getStage());
         } else {
-            //Duplicate user warning alert
             if (manager.doesClientExist(firstNameFld.getText(), lastNamefld.getText(), dobFld.getValue())) {
                 PageNavigator.showAlert(AlertType.CONFIRMATION,
                         "Duplicate Client Warning",

@@ -25,6 +25,13 @@ public final class ClientValidator {
     private static final Logger LOGGER = Logger.getLogger(ClientValidator.class.getName());
     private static final double DELTA = 1.0e-6;
 
+    /**
+     * Private constructor to prevent instantiation of utility class
+     */
+    private ClientValidator() {
+        throw new IllegalStateException("Utility class");
+    }
+
     private ClientValidator() {
     }
 
@@ -124,11 +131,11 @@ public final class ClientValidator {
     }
 
     private static boolean firstNameValid(Client client) {
-        return client.getFirstName() != null && !client.getFirstName().equals("");
+        return !NotEmptyStringValidator.isInvalidString(client.getFirstName());
     }
 
     private static boolean lastNameValid(Client client) {
-        return client.getLastName() != null && !client.getLastName().equals("");
+        return !NotEmptyStringValidator.isInvalidString(client.getLastName());
     }
 
     private static boolean dateOfBirthValid(Client client) {

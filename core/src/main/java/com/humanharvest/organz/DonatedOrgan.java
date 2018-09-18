@@ -1,8 +1,11 @@
 package com.humanharvest.organz;
 
+import static com.humanharvest.organz.utilities.enums.DonatedOrganSortOptionsEnum.TIME_UNTIL_EXPIRY;
+
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.Comparator;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -12,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.humanharvest.organz.utilities.enums.DonatedOrganSortOptionsEnum;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.views.client.Views;
 
@@ -93,6 +97,9 @@ public class DonatedOrgan {
         this.dateTimeOfDonation = dateTimeOfDonation;
     }
 
+    /**
+     * @return the {@link Duration} between the datetime of donation and the current datetime
+     */
     private Duration getTimeSinceDonation() {
         return Duration.between(dateTimeOfDonation, LocalDateTime.now());
     }
@@ -153,14 +160,51 @@ public class DonatedOrgan {
         return overrideReason;
     }
 
+    /**
+     * Sets the override reason for this donated organ and tells the donor that one of its organs overridden status
+     * has changed.
+     *
+     * @param overrideReason the reason for overriding the organ,
+     */
     public void manuallyOverride(String overrideReason) {
         this.overrideReason = overrideReason;
         donor.updateHasOverriddenOrgans();
     }
 
+    /**
+     * Removes the override reason for this donated organ and tells the donor that one of its organs is no
+     * longer overridden.
+     */
     public void cancelManualOverride() {
         this.overrideReason = null;
         donor.updateHasOverriddenOrgans();
+    }
+
+    /**
+     * Returns the comparator that matches the sort option
+     *
+     * @param sortOption the sort option
+     * @return the comparator that matches the sort option
+     */
+    public static Comparator<DonatedOrgan> getComparator(DonatedOrganSortOptionsEnum sortOption) {
+        if (sortOption == null) {
+            sortOption = TIME_UNTIL_EXPIRY;
+        }
+
+        switch (sortOption) {
+            case CLIENT:
+                return Comparator.comparing(organ -> organ.getDonor().getFullName());
+            case ORGAN_TYPE:
+                return Comparator.comparing(organ -> organ.getOrganType().toString());
+            case REGION_OF_DEATH:
+                return Comparator.comparing(organ -> organ.getDonor().getRegionOfDeath());
+            case TIME_OF_DEATH:
+                return Comparator.comparing(organ -> organ.getDonor().getDateOfDeath());
+            default:
+            case TIME_UNTIL_EXPIRY:
+                return Comparator.comparing(DonatedOrgan::getDurationUntilExpiry,
+                        Comparator.nullsLast(Comparator.naturalOrder()));
+        }
     }
 
     public boolean isAvailable() {

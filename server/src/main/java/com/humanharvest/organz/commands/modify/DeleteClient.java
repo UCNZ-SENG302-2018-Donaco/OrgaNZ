@@ -50,6 +50,7 @@ public class DeleteClient implements Runnable {
                             client.get().getFullName(),
                             client.get().getDateOfBirth()));
         } else {
+            // Successful deletion
             Action action = new DeleteClientAction(client.get(), manager);
 
             outputStream.println(invoker.execute(action));

@@ -50,41 +50,6 @@ public class ClientManagerMemory implements ClientManager {
     }
 
     /**
-     * Returns the comparator that matches the sort option
-     *
-     * @param sortOption the sort option
-     * @return the comparator that matches the sort option
-     */
-    private static Comparator<DonatedOrgan> getComparator(DonatedOrganSortOptionsEnum sortOption) {
-        Comparator<DonatedOrgan> comparator;
-        if (sortOption == null) {
-            comparator = Comparator.comparing(DonatedOrgan::getDurationUntilExpiry,
-                    Comparator.nullsLast(Comparator.naturalOrder()));
-        } else {
-            switch (sortOption) {
-                case CLIENT:
-                    comparator = Comparator.comparing(organ -> organ.getDonor().getFullName());
-                    break;
-                case ORGAN_TYPE:
-                    comparator = Comparator.comparing(organ -> organ.getOrganType().toString());
-                    break;
-                case REGION_OF_DEATH:
-                    comparator = Comparator.comparing(organ -> organ.getDonor().getRegionOfDeath());
-                    break;
-                case TIME_OF_DEATH:
-                    comparator = Comparator.comparing(organ -> organ.getDonor().getDateOfDeath());
-                    break;
-                default:
-                case TIME_UNTIL_EXPIRY:
-                    comparator = Comparator.comparing(DonatedOrgan::getDurationUntilExpiry,
-                            Comparator.nullsLast(Comparator.naturalOrder()));
-                    break;
-            }
-        }
-        return comparator;
-    }
-
-    /**
      * Add a client
      *
      * @param client Client to be added
@@ -420,7 +385,7 @@ public class ClientManagerMemory implements ClientManager {
             DonatedOrganSortOptionsEnum sortOption,
             Boolean reversed) {
 
-        Comparator<DonatedOrgan> comparator = getComparator(sortOption);
+        Comparator<DonatedOrgan> comparator = DonatedOrgan.getComparator(sortOption);
 
         if (reversed != null && reversed) {
             comparator = comparator.reversed();

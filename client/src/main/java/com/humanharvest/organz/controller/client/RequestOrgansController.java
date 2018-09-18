@@ -25,6 +25,7 @@ import javafx.scene.layout.Pane;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.TransplantRequest;
+import com.humanharvest.organz.controller.AlertHelper;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.resolvers.client.ClientResolver;
@@ -305,25 +306,13 @@ public class RequestOrgansController extends SubController {
             try {
                 resolver.createTransplantRequest(client, newRequest);
             } catch (ServerRestException e) { //500
-                LOGGER.log(Level.SEVERE, e.getMessage(), e);
-                PageNavigator.showAlert(AlertType.ERROR,
-                        "Server Error",
-                        "An error occurred on the server while trying to create the transplant request.\n"
-                                + "Please try again later.", mainController.getStage());
+                AlertHelper.showRestAlert(LOGGER, e, mainController);
                 return;
             } catch (IfMatchFailedException e) { //412
-                LOGGER.log(Level.INFO, e.getMessage(), e);
-                PageNavigator.showAlert(
-                        AlertType.WARNING,
-                        "Outdated Data",
-                        "The client has been modified since you retrieved the data.\n"
-                                + "If you would still like to apply these changes please submit again, "
-                                + "otherwise refresh the page to update the data.", mainController.getStage());
+                AlertHelper.showIfMatchAlert(LOGGER, e, mainController);
                 return;
             } catch (NotFoundException e) { //404
-                LOGGER.log(Level.WARNING, "Client not found", e);
-                PageNavigator.showAlert(AlertType.WARNING, "Client not found", "The client could not be found on the "
-                        + "server, it may have been deleted", mainController.getStage());
+                AlertHelper.showNotFoundAlert(LOGGER, e, mainController);
                 return;
             }
             // Not caught, as they should not happen:
@@ -386,25 +375,13 @@ public class RequestOrgansController extends SubController {
                         selectedRequest,
                         request);
             } catch (ServerRestException e) { //500
-                LOGGER.log(Level.SEVERE, e.getMessage(), e);
-                PageNavigator.showAlert(AlertType.ERROR,
-                        "Server Error",
-                        "An error occurred on the server while trying to create the transplant request.\n"
-                                + "Please try again later.", mainController.getStage());
+                AlertHelper.showRestAlert(LOGGER, e, mainController);
                 return;
             } catch (IfMatchFailedException e) { //412
-                LOGGER.log(Level.INFO, e.getMessage(), e);
-                PageNavigator.showAlert(
-                        AlertType.WARNING,
-                        "Outdated Data",
-                        "The client has been modified since you retrieved the data.\n"
-                                + "If you would still like to apply these changes please submit again, "
-                                + "otherwise refresh the page to update the data.", mainController.getStage());
+                AlertHelper.showIfMatchAlert(LOGGER, e, mainController);
                 return;
             } catch (NotFoundException e) { //404
-                LOGGER.log(Level.WARNING, "Client not found", e);
-                PageNavigator.showAlert(AlertType.WARNING, "Client not found", "The client could not be found on the "
-                        + "server, it may have been deleted", mainController.getStage());
+                AlertHelper.showNotFoundAlert(LOGGER, e, mainController);
                 return;
             }
             // Not caught, as they should not happen:

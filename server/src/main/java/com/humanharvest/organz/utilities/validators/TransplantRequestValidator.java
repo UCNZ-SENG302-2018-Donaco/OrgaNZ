@@ -16,6 +16,13 @@ import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 public abstract class TransplantRequestValidator {
 
     /**
+     * Private constructor to prevent instantiation of utility class
+     */
+    private TransplantRequestValidator() {
+        throw new IllegalStateException("Utility class");
+    }
+
+    /**
      * Validates a {@link TransplantRequest} and returns a string explaining the errors within it.
      *
      * @param request The request to validate.

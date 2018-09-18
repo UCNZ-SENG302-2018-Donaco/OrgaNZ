@@ -12,22 +12,20 @@ public class ModifyIllnessRecordByObjectAction extends ClientAction {
     private IllnessRecord oldRecord;
     private IllnessRecord record;
     private ModifyIllnessObject oldIllnessDetails;
-    private ModifyIllnessObject newIllnessDetails;
 
     public ModifyIllnessRecordByObjectAction(IllnessRecord oldRecord, ClientManager manager,
             ModifyIllnessObject oldIllnessDetails,
             ModifyIllnessObject newIllnessDetails) {
         super(oldRecord.getClient(), manager);
         this.oldIllnessDetails = oldIllnessDetails;
-        this.newIllnessDetails = newIllnessDetails;
         this.oldRecord = oldRecord;
+        record = new IllnessRecord(newIllnessDetails.getIllnessName(),
+                newIllnessDetails.getDiagnosisDate(), newIllnessDetails.getCuredDate(), newIllnessDetails.isChronic());
     }
 
     @Override
     protected void execute() {
         super.execute();
-        IllnessRecord record = new IllnessRecord(newIllnessDetails.getIllnessName(),
-                newIllnessDetails.getDiagnosisDate(), newIllnessDetails.getCuredDate(), newIllnessDetails.isChronic());
         BeanUtils.copyProperties(oldIllnessDetails.getUnmodifiedFields(), record);
         client.addIllnessRecord(record);
         client.deleteIllnessRecord(oldRecord);
@@ -37,8 +35,6 @@ public class ModifyIllnessRecordByObjectAction extends ClientAction {
     @Override
     protected void unExecute() {
         super.unExecute();
-        IllnessRecord record = new IllnessRecord(newIllnessDetails.getIllnessName(),
-                newIllnessDetails.getDiagnosisDate(), newIllnessDetails.getCuredDate(), newIllnessDetails.isChronic());
         BeanUtils.copyProperties(oldIllnessDetails.getUnmodifiedFields(), record);
         client.addIllnessRecord(oldRecord);
         client.deleteIllnessRecord(record);

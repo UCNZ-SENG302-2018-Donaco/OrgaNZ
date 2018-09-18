@@ -58,7 +58,7 @@ public class ClientResolverRest implements ClientResolver {
         ResponseEntity<T> responseEntity = State.getRestTemplate().exchange
                 (url, method, entity, typeReference, uriVariables);
 
-        if (!method.equals(HttpMethod.GET) && !method.equals(HttpMethod.HEAD)) { // if the method isn't safe
+        if (isUnsafe(method)) {
             State.setClientEtag(responseEntity.getHeaders().getETag());
         }
         return responseEntity;
@@ -72,7 +72,7 @@ public class ClientResolverRest implements ClientResolver {
         ResponseEntity<T> responseEntity = State.getRestTemplate().exchange
                 (url, method, entity, typeReference, uriVariables);
 
-        if (!method.equals(HttpMethod.GET) && !method.equals(HttpMethod.HEAD)) { // if the method isn't safe
+        if (isUnsafe(method)) {
             State.setClientEtag(responseEntity.getHeaders().getETag());
         }
         return responseEntity;
@@ -87,7 +87,7 @@ public class ClientResolverRest implements ClientResolver {
         ResponseEntity<T> responseEntity = State.getRestTemplate().exchange
                 (url, method, entity, typeReference, uriVariables);
 
-        if (!method.equals(HttpMethod.GET) && !method.equals(HttpMethod.HEAD)) { // if the method isn't safe
+        if (isUnsafe(method)) {
             State.setClientEtag(responseEntity.getHeaders().getETag());
         }
         return responseEntity;
@@ -101,10 +101,14 @@ public class ClientResolverRest implements ClientResolver {
         ResponseEntity<T> responseEntity = State.getRestTemplate().exchange
                 (url, method, entity, typeReference, uriVariables);
 
-        if (!method.equals(HttpMethod.GET) && !method.equals(HttpMethod.HEAD)) { // if the method isn't safe
+        if (isUnsafe(method)) {
             State.setClientEtag(responseEntity.getHeaders().getETag());
         }
         return responseEntity;
+    }
+
+    private static boolean isUnsafe(HttpMethod method) {
+        return !(method == HttpMethod.GET || method == HttpMethod.HEAD);
     }
 
     //------------GETs----------------

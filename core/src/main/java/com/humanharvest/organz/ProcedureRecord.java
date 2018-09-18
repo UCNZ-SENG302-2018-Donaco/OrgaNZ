@@ -76,6 +76,8 @@ public class ProcedureRecord {
 
     /**
      * This method should be called only when this record is added to/removed from a client's collection.
+     * Therefore it is package-private so it may only be called from Client.
+     * TODO no it's not??
      *
      * @param client The client to set this record as belonging to.
      */
@@ -107,6 +109,9 @@ public class ProcedureRecord {
         this.date = date;
     }
 
+    /**
+     * @return an unmodifiable set of the affected organs
+     */
     public Set<Organ> getAffectedOrgans() {
         return Collections.unmodifiableSet(affectedOrgans);
     }

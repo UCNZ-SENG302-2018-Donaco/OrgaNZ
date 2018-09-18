@@ -56,6 +56,7 @@ public class DeleteClinician implements Runnable {
                             clinician.get().getFullName(),
                             clinician.get().getStaffId()));
         } else {
+            // Successful deletion
             Action action = new DeleteClinicianAction(clinician.get(), manager);
 
             outputStream.println(invoker.execute(action));

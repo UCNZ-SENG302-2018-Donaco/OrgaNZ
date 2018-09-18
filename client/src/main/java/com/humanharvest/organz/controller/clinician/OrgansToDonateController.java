@@ -226,10 +226,9 @@ public class OrgansToDonateController extends SubController {
     /**
      * Upon pagination, update the table to show the correct items
      *
-     * @param pageIndex The page we're now on (starts at 0)
      * @return An empty pane as pagination requires a non null return. Not used.
      */
-    private Node createPage(int pageIndex) {
+    private Node createPage(int ignored) {
         updateOrgansToDonateList();
         return new Pane();
     }
@@ -331,16 +330,8 @@ public class OrgansToDonateController extends SubController {
         clock.setCycleCount(Animation.INDEFINITE);
         clock.play();
 
-        // Sets the comparator for sorting by organ column.
-        organCol.setComparator(new Comparator<Organ>() {
-            /**
-             * Alphabetical order of the organ name.
-             */
-            @Override
-            public int compare(Organ o1, Organ o2) {
-                return o1.toString().compareTo(o2.toString());
-            }
-        });
+        // Sets the comparator for sorting by organ column to alphabetical order of the organ name.
+        organCol.setComparator(Comparator.comparing(Organ::toString));
 
         // Sets the comparator for sorting by duration column.
         timeUntilExpiryCol.setComparator((o1, o2) -> {
