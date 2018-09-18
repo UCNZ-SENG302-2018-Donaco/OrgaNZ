@@ -19,10 +19,13 @@ import javafx.scene.paint.Stop;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.utilities.DurationFormatter.Format;
 
-public class ExpiryBarUtils {
+public final class ExpiryBarUtils {
 
     public static final Color greyColour = Color.rgb(170, 170, 170);
     private static final Color maroonColour = Color.rgb(170, 0, 0);
+
+    private ExpiryBarUtils() {
+    }
 
     /**
      * Generates a stylesheet instruction for setting the background colour of a cell.
@@ -32,22 +35,20 @@ public class ExpiryBarUtils {
      * @return A list of stops that will result in the correct display of the progress bar
      */
     public static List<Stop> getStops(double progress, double lowerBound) {
-        List<Stop> stops = new ArrayList<>();
 
         if (progress < 0.0001) {
             progress = 0;
         }
-
-        double lowerPercent;
-        double higherPercent;
-        double progressForColour;
-        Color middleColour;
 
         if (progress < 0.0001) {
             progress = 0;
         }
 
         // Calculate percentages and the middle colour (white if it's not reached lower bound, maroon if it has)
+        double lowerPercent;
+        double higherPercent;
+        double progressForColour;
+        Color middleColour;
         if (progress < lowerBound) { // Hasn't reached lower bound yet
             progressForColour = progress / lowerBound;
             lowerPercent = progress;
@@ -70,6 +71,7 @@ public class ExpiryBarUtils {
             primaryColour = Color.color(1, greenValue, 0);
         }
 
+        List<Stop> stops = new ArrayList<>();
         stops.add(new Stop(0, primaryColour));
         stops.add(new Stop(lowerPercent, primaryColour));
         stops.add(new Stop(lowerPercent, middleColour));
@@ -135,7 +137,7 @@ public class ExpiryBarUtils {
                     LocalDateTime.now());
             return "N/A (" + getFormattedDuration(timeSinceDeath, Format.X_HOURS_Y_MINUTES_SECONDS) + " since death)";
 
-        } else if (durationIsZero(durationUntilExpiry)) {
+        } else if (isDurationZero(durationUntilExpiry)) {
             if (donatedOrgan.getOverrideReason() == null) {
                 Duration timeSinceExpiry = Duration.between(
                         donatedOrgan.getDateTimeOfDonation()
@@ -152,7 +154,7 @@ public class ExpiryBarUtils {
         }
     }
 
-    public static boolean durationIsZero(Duration duration) {
+    public static boolean isDurationZero(Duration duration) {
         return duration == null ||
                 duration.isZero() ||
                 duration.isNegative() ||

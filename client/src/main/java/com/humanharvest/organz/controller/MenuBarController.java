@@ -120,6 +120,7 @@ public class MenuBarController extends SubController {
      */
     private static void exit() {
         Platform.exit();
+        System.exit(0);
     }
 
     @Override

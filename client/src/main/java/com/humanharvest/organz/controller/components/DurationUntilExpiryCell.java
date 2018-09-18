@@ -39,7 +39,7 @@ public class DurationUntilExpiryCell extends TableCell<DonatedOrgan, Duration> {
             setStyle(null);
             setTextFill(Color.BLACK);
 
-        } else if (ExpiryBarUtils.durationIsZero(item)) {
+        } else if (ExpiryBarUtils.isDurationZero(item)) {
             // Duration is essentially zero, or is zero, or the organ was overridden
             setText(ExpiryBarUtils.getDurationString(donatedOrgan));
             Color darkGrey = Color.rgb(32, 32, 32);

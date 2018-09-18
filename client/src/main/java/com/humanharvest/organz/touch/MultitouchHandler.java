@@ -2,6 +2,7 @@ package com.humanharvest.organz.touch;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -40,7 +41,7 @@ import org.tuiofx.widgets.skin.OnScreenKeyboard;
 
 public final class MultitouchHandler {
 
-    static final Collection<FocusArea> focusAreas = new ArrayList<>();
+    private static final Collection<FocusArea> focusAreas = new ArrayList<>();
     private static final List<CurrentTouch> touches = new ArrayList<>();
     private static Pane rootPane;
 
@@ -354,7 +355,9 @@ public final class MultitouchHandler {
     public static void addPane(Pane pane) {
         pane.getProperties().put("focusArea", "true");
         FocusArea focusArea = new FocusArea(pane);
+
         focusAreas.add(focusArea);
+        pane.getScene().getWindow();
         pane.setUserData(focusArea);
 
         addPaneListenerChildren(focusArea, pane);
@@ -424,6 +427,13 @@ public final class MultitouchHandler {
      */
     public static void stageClosing() {
         PhysicsHelper.stop();
+    }
+
+    /**
+     * Retrieves a readonly collection of the current focus areas.
+     */
+    public static Collection<FocusArea> getFocusAreas() {
+        return Collections.unmodifiableCollection(focusAreas);
     }
 }
 

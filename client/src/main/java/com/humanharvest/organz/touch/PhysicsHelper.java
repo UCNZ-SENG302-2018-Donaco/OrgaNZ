@@ -5,6 +5,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import javafx.application.Platform;
+import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.layout.Pane;
 import javafx.scene.transform.Translate;
@@ -40,22 +41,41 @@ public final class PhysicsHelper {
      */
     private static void processPhysics() {
 
-        for (FocusArea focusArea : MultitouchHandler.focusAreas) {
+        for (FocusArea focusArea : MultitouchHandler.getFocusAreas()) {
             boolean paneNotTouched = MultitouchHandler.findPaneTouches(focusArea.getPane()).isEmpty();
             boolean hasVelocity = focusArea.getVelocity().getX() != 0 || focusArea.getVelocity().getY() != 0;
             if (paneNotTouched && hasVelocity && focusArea.isTranslatable()) {
                 processPhysics(focusArea);
+            }
+
+            if (paneNotTouched && focusArea.isTranslatable()) {
+                Bounds bounds = focusArea.getPane().getBoundsInParent();
+
+                for (FocusArea otherFocusArea : MultitouchHandler.getFocusAreas()) {
+
+                    if (Objects.equals(focusArea, otherFocusArea)) {
+                        continue;
+                    }
+
+                    Bounds otherBounds = otherFocusArea.getPane().getBoundsInParent();
+
+                    if (bounds.contains(otherBounds)) {
+                        System.out.println("COLLISION");
+                    }
+
+                    boolean otherNotTouched = MultitouchHandler.findPaneTouches(otherFocusArea.getPane()).isEmpty();
+                }
             }
         }
     }
 
     private static void processGravity() {
 
-        for (FocusArea focusArea : MultitouchHandler.focusAreas) {
+        for (FocusArea focusArea : MultitouchHandler.getFocusAreas()) {
             double mass1 = focusArea.isTranslatable() ? 10 : 1000;
             Point2D point1 = PointUtils.getCentreOfPane(focusArea.getPane());
 
-            for (FocusArea otherFocusArea : MultitouchHandler.focusAreas) {
+            for (FocusArea otherFocusArea : MultitouchHandler.getFocusAreas()) {
                 if (Objects.equals(otherFocusArea, focusArea)) {
                     continue;
                 }

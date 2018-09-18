@@ -169,7 +169,7 @@ public class SpiderWebController extends SubController {
 
     private void updateConnector(DonatedOrgan donatedOrgan, Line line, Text durationText) {
         Duration duration = donatedOrgan.getDurationUntilExpiry();
-        if (ExpiryBarUtils.durationIsZero(duration)) {
+        if (ExpiryBarUtils.isDurationZero(duration)) {
             line.setStroke(ExpiryBarUtils.greyColour);
         } else {
             // Progress as a decimal. starts at 0 (at time of death) and goes to 1.
