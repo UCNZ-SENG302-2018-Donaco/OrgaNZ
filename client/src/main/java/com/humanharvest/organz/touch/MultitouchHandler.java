@@ -6,7 +6,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Timer;
+import java.util.TimerTask;
 
+import javafx.application.Platform;
 import javafx.event.Event;
 import javafx.geometry.Point2D;
 import javafx.scene.CacheHint;
@@ -43,7 +46,11 @@ public final class MultitouchHandler {
 
     private static final Collection<FocusArea> focusAreas = new ArrayList<>();
     private static final List<CurrentTouch> touches = new ArrayList<>();
+    private static final Timer physicsTimer = new Timer();
+
     private static Pane rootPane;
+    private static Pane canvas;
+    private static PhysicsHandler physicsHandler;
 
     private MultitouchHandler() {
     }
@@ -53,6 +60,7 @@ public final class MultitouchHandler {
      */
     public static void initialise(Pane root) {
         rootPane = root;
+        canvas = (Pane) rootPane.getChildren().get(0);
 
         root.addEventFilter(TouchEvent.ANY, MultitouchHandler::handleTouchEvent);
 
@@ -62,7 +70,18 @@ public final class MultitouchHandler {
 
 //        HackyMouseTouch.initialise(root);
 
-        PhysicsHelper.initialise(rootPane);
+        physicsHandler = new PhysicsHandler(rootPane);
+
+        physicsTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                Platform.runLater(MultitouchHandler::processPhysics);
+            }
+        }, 0, PhysicsHandler.PHYSICS_MILLISECOND_PERIOD);
+    }
+
+    private static void processPhysics() {
+        physicsHandler.processPhysics();
     }
 
     /**
@@ -217,7 +236,7 @@ public final class MultitouchHandler {
     /**
      * Find all touches this pane owns.
      */
-    static List<CurrentTouch> findPaneTouches(Pane pane) {
+    public static List<CurrentTouch> findPaneTouches(Pane pane) {
         List<CurrentTouch> results = new ArrayList<>();
         for (CurrentTouch currentTouch : touches) {
             if (currentTouch != null) {
@@ -346,7 +365,9 @@ public final class MultitouchHandler {
      */
     public static Optional<FocusArea> getFocusAreaHandler(Node node) {
         Optional<Pane> pane = findPane(node);
-        return pane.map(pane1 -> (FocusArea) pane1.getUserData());
+        return pane.map(pane1 -> {
+            return (FocusArea) pane1.getUserData();
+        });
     }
 
     /**
@@ -426,7 +447,7 @@ public final class MultitouchHandler {
      * Cleans up all resources.
      */
     public static void stageClosing() {
-        PhysicsHelper.stop();
+        physicsTimer.cancel();
     }
 
     /**
@@ -434,6 +455,18 @@ public final class MultitouchHandler {
      */
     public static Collection<FocusArea> getFocusAreas() {
         return Collections.unmodifiableCollection(focusAreas);
+    }
+
+    public static Pane getCanvas() {
+        return canvas;
+    }
+
+    public static Pane getRootPane() {
+        return rootPane;
+    }
+
+    public static void setPhysicsHandler(PhysicsHandler physicsHandler) {
+        MultitouchHandler.physicsHandler = physicsHandler;
     }
 }
 

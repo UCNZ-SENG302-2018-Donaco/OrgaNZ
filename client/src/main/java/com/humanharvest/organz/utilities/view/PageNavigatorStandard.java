@@ -1,8 +1,6 @@
 package com.humanharvest.organz.utilities.view;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -83,7 +81,9 @@ public class PageNavigatorStandard implements IPageNavigator {
             mainController.setStage(newStage);
             mainController.setPane(mainPane);
             State.addMainController(mainController);
-            newStage.setOnCloseRequest(e -> State.deleteMainController(mainController));
+            newStage.setOnCloseRequest(e -> {
+                State.deleteMainController(mainController);
+            });
 
             Scene scene = new Scene(mainPane);
             newStage.setScene(scene);
@@ -137,8 +137,9 @@ public class PageNavigatorStandard implements IPageNavigator {
         popup.setHeaderText(bodyText);
         popup.setContentText("Reason:");
         popup.getDialogPane().lookupButton(ButtonType.OK).setDisable(true);
-        popup.getEditor().textProperty().addListener((observable, oldValue, newValue) ->
-                popup.getDialogPane().lookupButton(ButtonType.OK).setDisable(newValue.isEmpty()));
+        popup.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
+            popup.getDialogPane().lookupButton(ButtonType.OK).setDisable(newValue.isEmpty());
+        });
 
         String response = popup.showAndWait().orElse("");
         return new TouchAlertTextController(!response.isEmpty(), response);

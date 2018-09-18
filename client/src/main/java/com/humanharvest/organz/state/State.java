@@ -236,7 +236,7 @@ public final class State {
         clientEtag = etag;
     }
 
-public static Stage getPrimaryStage() {
+    public static Stage getPrimaryStage() {
         return primaryStage;
     }
 

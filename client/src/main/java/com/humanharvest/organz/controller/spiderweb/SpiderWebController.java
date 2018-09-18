@@ -1,20 +1,16 @@
 package com.humanharvest.organz.controller.spiderweb;
 
-import java.io.IOException;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.shape.Line;
@@ -23,7 +19,6 @@ import javafx.scene.transform.Affine;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 import javafx.stage.Screen;
-import javafx.stage.Stage;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
@@ -35,9 +30,6 @@ import com.humanharvest.organz.touch.FocusArea;
 import com.humanharvest.organz.touch.MultitouchHandler;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
-import com.humanharvest.organz.utilities.view.PageNavigatorTouch;
-
-import org.tuiofx.internal.base.TuioFXCanvas;
 
 /**
  * The Spider web controller which handles everything to do with displaying panes in the spider web stage.
@@ -48,13 +40,18 @@ public class SpiderWebController extends SubController {
 
     private final Client client;
 
-    private Pane canvas;
+    private final Pane canvas;
     private Pane deceasedDonorPane;
     private final List<Pane> organNodes = new ArrayList<>();
 
     public SpiderWebController(Client client) {
         this.client = client;
-        setupNewStage();
+
+        canvas = MultitouchHandler.getCanvas();
+        MultitouchHandler.setPhysicsHandler(new SpiderPhysicsHandler(MultitouchHandler.getRootPane()));
+        for (MainController mainController : State.getMainControllers()) {
+            mainController.closeWindow();
+        }
         displayDonatingClient();
         displayOrgans();
     }
@@ -80,31 +77,31 @@ public class SpiderWebController extends SubController {
     /**
      * Create a new stage to display all of the pane in.
      */
-    private void setupNewStage() {
-        Stage stage = new Stage();
-        stage.setTitle("Organ Spider Web");
-        canvas = new TuioFXCanvas();
-        Scene scene = new Scene(canvas);
-
-        FXMLLoader loader = new FXMLLoader();
-
-        try {
-            Pane backPane = loader.load(PageNavigatorTouch.class.getResourceAsStream(Page.BACKDROP.getPath()));
-
-            canvas.getChildren().add(backPane);
-            MultitouchHandler.initialise(canvas);
-
-        } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "Exception when setting up stage", e);
-        }
-
-        stage.setScene(scene);
-        stage.setFullScreen(true);
-        stage.setOnCloseRequest(event -> {
-            MultitouchHandler.stageClosing();
-        });
-        stage.show();
-    }
+//    private void setupNewStage() {
+//        Stage stage = new Stage();
+//        stage.setTitle("Organ Spider Web");
+//        canvas = new TuioFXCanvas();
+//        Scene scene = new Scene(canvas);
+//
+//        FXMLLoader loader = new FXMLLoader();
+//
+//        try {
+//            Pane backPane = loader.load(PageNavigatorTouch.class.getResourceAsStream(Page.BACKDROP.getPath()));
+//
+//            canvas.getChildren().add(backPane);
+//            MultitouchHandler.initialise(canvas);
+//
+//        } catch (IOException e) {
+//            LOGGER.log(Level.SEVERE, "Exception when setting up stage", e);
+//        }
+//
+//        stage.setScene(scene);
+//        stage.setFullScreen(true);
+//        stage.setOnCloseRequest(event -> {
+//            MultitouchHandler.stageClosing();
+//        });
+//        stage.show();
+//    }
 
     /**
      * Loads a window for each non expired organ.
