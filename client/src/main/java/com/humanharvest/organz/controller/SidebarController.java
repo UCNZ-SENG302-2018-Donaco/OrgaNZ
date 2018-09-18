@@ -1,8 +1,14 @@
 package com.humanharvest.organz.controller;
 
+import java.io.IOException;
+
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
+import javafx.scene.layout.VBox;
 import org.controlsfx.control.Notifications;
+import com.jfoenix.controls.JFXHamburger;
+import com.jfoenix.controls.JFXDrawer;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.state.Session;
@@ -24,6 +30,11 @@ public class SidebarController extends SubController {
             commandLineButton;
 
     private Session session;
+
+    @FXML
+    private JFXHamburger hamburger;
+    @FXML
+    private JFXDrawer drawer;
 
     /**
      * Gets the ActionInvoker from the current state.
@@ -69,6 +80,7 @@ public class SidebarController extends SubController {
         // Set undo and redo button depending on if they're able to be pressed
         refresh();
     }
+
 
     /**
      * Evaluates if the request organs button should be displayed for the current user.

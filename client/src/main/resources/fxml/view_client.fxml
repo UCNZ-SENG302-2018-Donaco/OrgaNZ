@@ -21,11 +21,12 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
+<?import com.jfoenix.controls.JFXHamburger?>
 <VBox prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.client.ViewClientController">
   <SplitPane dividerPositions="0.5" orientation="VERTICAL" VBox.vgrow="ALWAYS">
     <HBox fx:id="menuBarPane" maxHeight="-Infinity" />
     <SplitPane dividerPositions="0.29797979797979796" VBox.vgrow="ALWAYS">
-      <HBox fx:id="sidebarPane" maxWidth="-Infinity" />
+      <JFXHamburger fx:id="sidebarPane" maxWidth="-Infinity" />
       <VBox prefHeight="600.0" prefWidth="800.0">
         <BorderPane VBox.vgrow="ALWAYS">
           <bottom>

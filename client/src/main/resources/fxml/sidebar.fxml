@@ -4,10 +4,13 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import com.jfoenix.controls.JFXHamburger?>
+<?import com.jfoenix.controls.JFXDrawer?>
 <VBox xmlns:fx="http://javafx.com/fxml/1" prefHeight="600.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/8"
   fx:controller="com.humanharvest.organz.controller.SidebarController">
   <children>
     <VBox VBox.vgrow="ALWAYS">
+
       <children>
         <HBox VBox.vgrow="ALWAYS" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
           <children>
@@ -128,6 +131,7 @@
           </font>
         </Button>
       </children>
+
     </VBox>
   </children>
 </VBox>

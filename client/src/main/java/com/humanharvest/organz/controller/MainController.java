@@ -18,6 +18,9 @@ import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
 
+import com.jfoenix.controls.JFXDrawer;
+import com.jfoenix.controls.JFXHamburger;
+
 /**
  * Main controller class for the application window.
  */
@@ -33,6 +36,10 @@ public class MainController {
     private SidebarController sidebarController;
     private MenuBarController menuBarController;
     private SubController subController;
+    @FXML
+    private JFXDrawer drawer;
+    @FXML
+    private JFXHamburger hamburger;
 
     /**
      * Holder of a switchable page.
@@ -99,6 +106,17 @@ public class MainController {
         }
     }
 
+
+    @FXML
+    private void triggerDrawer() {
+
+        if (drawer.isShown()) {
+            drawer.close();
+        } else {
+            drawer.open();
+        }
+    }
+
     /**
      * Method that can be called from other controllers to load the sidebar into that page.
      * Will set the sidebar as the child of the pane given.
@@ -109,6 +127,7 @@ public class MainController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(Page.SIDEBAR.getPath()));
             VBox sidebar = loader.load();
+            drawer.setSidePane(sidebar);
             sidebarController = loader.getController();
             sidebarController.setup(this);
             sidebarPane.getChildren().setAll(sidebar);
@@ -134,6 +153,7 @@ public class MainController {
             LOGGER.log(Level.SEVERE, "Couldn't load sidebar from fxml file.", e);
         }
     }
+
 
     public void setSubController(SubController subController) {
         this.subController = subController;
