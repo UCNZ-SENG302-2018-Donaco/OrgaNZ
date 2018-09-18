@@ -18,14 +18,14 @@ import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
  */
 public abstract class ClientValidator {
 
+    private static final double DELTA = 1e-6;
+
     /**
      * Private constructor to prevent instantiation of utility class
      */
     private ClientValidator() {
         throw new IllegalStateException("Utility class");
     }
-
-    private static final double DELTA = 1e-6;
 
     /**
      * Checks that the given ETag matches the current ETag for the client,

@@ -371,7 +371,7 @@ public class OrgansToDonateController extends SubController {
      */
     private DonatedOrganSortPolicy getSortPolicy() {
         ObservableList<TableColumn<DonatedOrgan, ?>> sortOrder = tableView.getSortOrder();
-        if (sortOrder.size() == 0) {
+        if (sortOrder.isEmpty()) {
             return new DonatedOrganSortPolicy(DonatedOrganSortOptionsEnum.TIME_UNTIL_EXPIRY, false);
         }
         TableColumn<DonatedOrgan, ?> sortColumn = tableView.getSortOrder().get(0);

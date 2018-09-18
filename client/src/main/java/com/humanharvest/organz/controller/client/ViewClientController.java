@@ -14,6 +14,7 @@ import java.time.format.DateTimeParseException;
 import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
@@ -723,7 +724,7 @@ public class ViewClientController extends ViewBaseController {
      * Displays the currently viewed clients BMI.
      */
     private void displayBMI() {
-        bmiLabel.setText(String.format("%.01f", viewedClient.getBMI()));
+        bmiLabel.setText(String.format(Locale.UK, "%.01f", viewedClient.getBMI()));
     }
 
     /**
