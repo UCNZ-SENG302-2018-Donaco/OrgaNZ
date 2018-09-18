@@ -103,7 +103,7 @@ public class DurationUntilExpiryCell extends TableCell<DonatedOrgan, Duration> {
             Duration timeSinceDeath = Duration.between(
                     getDonatedOrganForRow().getDateTimeOfDonation(),
                     LocalDateTime.now());
-            setText("N/A (" + getFormattedDuration(timeSinceDeath, Format.XHoursYMinutesSeconds) + " since death)");
+            setText("N/A (" + getFormattedDuration(timeSinceDeath, Format.X_HOURS_Y_MINUTES_SECONDS) + " since death)");
             setStyle(null);
             setTextFill(Color.BLACK);
 
@@ -116,7 +116,7 @@ public class DurationUntilExpiryCell extends TableCell<DonatedOrgan, Duration> {
                                 .plus(getDonatedOrganForRow().getOrganType().getMaxExpiration()),
                         LocalDateTime.now());
                 setText(String.format("Expired (%s ago)",
-                        getFormattedDuration(timeSinceExpiry, Format.XHoursYMinutesSeconds)));
+                        getFormattedDuration(timeSinceExpiry, Format.X_HOURS_Y_MINUTES_SECONDS)));
             } else {
                 setText("Overridden");
             }
@@ -124,7 +124,7 @@ public class DurationUntilExpiryCell extends TableCell<DonatedOrgan, Duration> {
             setTextFill(Color.WHITE);
 
         } else {
-            String displayedDuration = getFormattedDuration(item, Format.XHoursYMinutesSeconds);
+            String displayedDuration = getFormattedDuration(item, Format.X_HOURS_Y_MINUTES_SECONDS);
 
             // Progress as a decimal. starts at 0 (at time of death) and goes to 1.
             double progressDecimal = getDonatedOrganForRow().getProgressDecimal();

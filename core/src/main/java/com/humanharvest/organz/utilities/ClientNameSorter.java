@@ -72,7 +72,7 @@ public class ClientNameSorter implements Comparator<Client> {
      * @param searchTerm The search term to consider
      * @return -1 if client1 is higher priority. 1 if client1 is lower priority. 0 only if they have the same user ID.
      */
-    private int compareNames(Client client1, Client client2, String searchTerm) {
+    private static int compareNames(Client client1, Client client2, String searchTerm) {
         //Last name -> Pref name -> First name -> Middle name -> Client ID
         int result;
 
