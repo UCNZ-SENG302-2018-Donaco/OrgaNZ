@@ -184,9 +184,19 @@ public class SpiderWebController extends SubController {
 
         durationText.setText(ExpiryBarUtils.getDurationString(donatedOrgan));
 
-        durationText.setX((line.getStartX() + line.getEndX()) / 2);
-        durationText.setY((line.getStartY() + line.getEndY()) / 2);
-        durationText.setRotate(getAngle(line.getStartX(), line.getStartY(), line.getEndX(), line.getEndY()));
+        double xWidth = line.getStartX() - line.getEndX();
+        double yWidth = line.getStartY() - line.getEndY();
+        double x = line.getEndX() + xWidth * .1;
+        double y = line.getEndY() + yWidth * .1;
+        double angle = (getAngle(line.getStartX(), line.getStartY(), line.getEndX(), line.getEndY()));
+        durationText.getTransforms().removeIf(transform -> transform instanceof Affine);
+        Affine trans = new Affine();
+        trans.prepend(new Translate(0, -5));
+        trans.prepend(new Rotate(angle));
+        durationText.getTransforms().add(trans);
+        durationText.setTranslateX(x);
+        durationText.setTranslateY(y);
+//        durationText.setRotate(angle);
     }
 
     private double getAngle(double x1, double y1, double x2, double y2) {
