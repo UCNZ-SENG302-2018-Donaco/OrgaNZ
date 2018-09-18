@@ -115,7 +115,8 @@ public class DurationUntilExpiryCell extends TableCell<DonatedOrgan, Duration> {
                         getDonatedOrganForRow().getDateTimeOfDonation()
                                 .plus(getDonatedOrganForRow().getOrganType().getMaxExpiration()),
                         LocalDateTime.now());
-                setText(String.format("Expired (%s ago)", getFormattedDuration(timeSinceExpiry, Format.XHoursYMinutesSeconds)));
+                setText(String.format("Expired (%s ago)",
+                        getFormattedDuration(timeSinceExpiry, Format.XHoursYMinutesSeconds)));
             } else {
                 setText("Overridden");
             }
