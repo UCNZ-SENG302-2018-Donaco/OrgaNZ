@@ -32,9 +32,6 @@ public final class ClientValidator {
         throw new IllegalStateException("Utility class");
     }
 
-    private ClientValidator() {
-    }
-
     /**
      * Checks that the given etag matches the current etag for the client,
      * and exception is thrown if the etag is missing or does not match
