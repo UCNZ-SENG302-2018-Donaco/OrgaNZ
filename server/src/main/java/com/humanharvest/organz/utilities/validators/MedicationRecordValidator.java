@@ -12,6 +12,13 @@ import com.humanharvest.organz.MedicationRecord;
 public abstract class MedicationRecordValidator {
 
     /**
+     * Private constructor to prevent instantiation of utility class
+     */
+    private MedicationRecordValidator() {
+        throw new IllegalStateException("Utility class");
+    }
+
+    /**
      * Validates a {@link MedicationRecord} and returns a string explaining the errors within it.
      *
      * @param record The record to validate.
@@ -40,8 +47,7 @@ public abstract class MedicationRecordValidator {
     // FIELD VALIDATORS
 
     private static boolean medicationNameValid(MedicationRecord record) {
-        return record.getMedicationName() != null &&
-                !record.getMedicationName().equals("");
+        return !NotEmptyStringValidator.isInvalidString(record.getMedicationName());
     }
 
     private static boolean startedDateValid(MedicationRecord record) {

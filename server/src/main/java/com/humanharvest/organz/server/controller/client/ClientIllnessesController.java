@@ -63,7 +63,7 @@ public class ClientIllnessesController {
             @PathVariable int uid,
             @PathVariable int id,
             @RequestBody ModifyIllnessObject modifyIllnessObject,
-            @RequestHeader(value = "If-Match", required = false) String ETag,
+            @RequestHeader(value = "If-Match", required = false) String eTag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
             throws IfMatchRequiredException, IfMatchFailedException, InvalidRequestException {
 
@@ -79,7 +79,7 @@ public class ClientIllnessesController {
         State.getAuthenticationManager().verifyClientAccess(authToken, client);
 
         //Check ETag
-        checkClientETag(client, ETag);
+        checkClientETag(client, eTag);
 
         IllnessRecord record = client.getIllnessById(id);
 

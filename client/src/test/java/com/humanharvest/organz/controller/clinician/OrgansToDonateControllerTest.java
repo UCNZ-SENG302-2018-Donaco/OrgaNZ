@@ -41,7 +41,7 @@ public class OrgansToDonateControllerTest extends ControllerTest {
     }
 
     @Override
-    protected void initState() {
+    protected void initState() throws OrganAlreadyRegisteredException {
         State.reset();
         State.login(testAdmin);
         mainController.setWindowContext(WindowContext.defaultContext());
@@ -55,15 +55,11 @@ public class OrgansToDonateControllerTest extends ControllerTest {
         clients.add(client3);
 
         // Register organs to donate
-        try {
-            client1.setOrganDonationStatus(Organ.LIVER, true);
-            client2.setOrganDonationStatus(Organ.LIVER, true);
-            client3.setOrganDonationStatus(Organ.LIVER, true);
-            client1.setOrganDonationStatus(Organ.LUNG, true);
-            numberOfOrgansBeingDonated = 4;
-        } catch (OrganAlreadyRegisteredException e) {
-            fail("OrganAlreadyRegisteredException thrown when setting up the clients");
-        }
+        client1.setOrganDonationStatus(Organ.LIVER, true);
+        client2.setOrganDonationStatus(Organ.LIVER, true);
+        client3.setOrganDonationStatus(Organ.LIVER, true);
+        client1.setOrganDonationStatus(Organ.LUNG, true);
+        numberOfOrgansBeingDonated = 4;
 
         // Mark them as dead
         for (Client client : clients) {

@@ -99,7 +99,7 @@ public class ModifyClinician implements Runnable {
             }
             try {
                 action.addChange(entry.getKey(), entry.getValue()[0], entry.getValue()[1]);
-            } catch (NoSuchMethodException | NoSuchFieldException e) {
+            } catch (ReflectiveOperationException e) {
                 LOGGER.log(Level.WARNING, e.getMessage(), e);
             }
         }

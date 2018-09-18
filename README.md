@@ -53,4 +53,3 @@ For more information on the design decisions that were made, please refer to the
 
 To see an example of a JSON file that loads in the user data, please direct your attention to
 `doc/examples/savefile.JSON`.
-

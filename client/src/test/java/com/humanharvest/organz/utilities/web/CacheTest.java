@@ -2,6 +2,7 @@ package com.humanharvest.organz.utilities.web;
 
 import static org.junit.Assert.*;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
@@ -22,7 +23,7 @@ import org.junit.Test;
 public class CacheTest extends BaseTest {
 
     @Test
-    public void testCachingInteractions() {
+    public void testCachingInteractions() throws Exception {
         MockCacheManager mockCacheManager = MockCacheManager.Create();
         String EXPECTED_RESPONSE_BODY = "{\"age_interaction\":{\"0-1\":[\"foetal exposure during pregnancy\","
                 + "\"congenital arterial malformation\",\"premature baby\",\"ventricular septal defect\","
@@ -77,17 +78,13 @@ public class CacheTest extends BaseTest {
 
         Assert.assertTrue(mockCacheManager.isEmpty());
 
-        try {
-            handler.getInteractions(client, "leflunomide", "prednisone");
-        } catch (IOException | BadDrugNameException | BadGatewayException e) {
-            fail(e.getMessage());
-        }
+        handler.getInteractions(client, "leflunomide", "prednisone");
 
         Assert.assertTrue(!mockCacheManager.isEmpty());
     }
 
     @Test
-    public void testCachingInteractionsMultipleClients() {
+    public void testCachingInteractionsMultipleClients() throws Exception {
         MockCacheManager mockCacheManager = MockCacheManager.Create();
 
         MockHttpTransport mockTransport =
@@ -102,21 +99,17 @@ public class CacheTest extends BaseTest {
 
         assertTrue(mockCacheManager.isEmpty());
 
-        try {
-            List<String> client1Interactions = handler.getInteractions(client1, DrugInteractionsHandlerTest.DRUG1,
-                    DrugInteractionsHandlerTest.DRUG2);
-            List<String> client2Interactions = handler.getInteractions(client2, DrugInteractionsHandlerTest.DRUG1,
-                    DrugInteractionsHandlerTest.DRUG2);
-            assertNotEquals(client1Interactions, client2Interactions);
-        } catch (IOException | BadDrugNameException | BadGatewayException e) {
-            fail(e.getMessage());
-        }
+        List<String> client1Interactions = handler.getInteractions(client1, DrugInteractionsHandlerTest.DRUG1,
+                DrugInteractionsHandlerTest.DRUG2);
+        List<String> client2Interactions = handler.getInteractions(client2, DrugInteractionsHandlerTest.DRUG1,
+                DrugInteractionsHandlerTest.DRUG2);
+        assertNotEquals(client1Interactions, client2Interactions);
 
         assertTrue(!mockCacheManager.isEmpty());
     }
 
     @Test
-    public void testCachingIngredients() {
+    public void testCachingIngredients() throws IOException {
         MockCacheManager mockCacheManager = MockCacheManager.Create();
         String EXPECTED_RESPONSE_BODY = "[\"Hydralazine hydrochloride; hydrochlorothiazide; reserpine\","
                 + "\"Hydrochlorothiazide; reserpine\",\"Hydroflumethiazide; reserpine\",\"Reserpine\"]";
@@ -126,11 +119,7 @@ public class CacheTest extends BaseTest {
 
         Assert.assertTrue(mockCacheManager.isEmpty());
 
-        try {
-            handler.getActiveIngredients("reserpine");
-        } catch (IOException e) {
-            fail(e.getMessage());
-        }
+        handler.getActiveIngredients("reserpine");
 
         Assert.assertTrue(!mockCacheManager.isEmpty());
     }

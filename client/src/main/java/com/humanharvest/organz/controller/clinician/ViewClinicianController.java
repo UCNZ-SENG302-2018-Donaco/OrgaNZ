@@ -86,17 +86,25 @@ public class ViewClinicianController extends ViewBaseController {
     @FXML
     private Button loadClinicianButton;
 
+    /**
+     * @return the clinician that the admin should view by default
+     */
+    private Clinician getClinicianForAdminToView() {
+        if (State.getViewedClinician() != null) {
+            Clinician clinician = State.getViewedClinician();
+            State.setViewedClinician(null);
+            return clinician;
+        } else {
+            return State.getClinicianManager().getDefaultClinician();
+        }
+    }
+
     public ViewClinicianController() {
         session = State.getSession();
 
         switch (session.getLoggedInUserType()) {
             case ADMINISTRATOR:
-                if (State.getViewedClinician() != null) {
-                    viewedClinician = State.getViewedClinician();
-                    State.setViewedClinician(null);
-                } else {
-                    viewedClinician = State.getClinicianManager().getDefaultClinician();
-                }
+                viewedClinician = getClinicianForAdminToView();
                 break;
             case CLINICIAN:
                 viewedClinician = session.getLoggedInClinician();
