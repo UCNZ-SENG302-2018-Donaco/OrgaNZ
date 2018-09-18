@@ -86,19 +86,6 @@ public class ViewClinicianController extends ViewBaseController {
     @FXML
     private Button loadClinicianButton;
 
-    /**
-     * @return the clinician that the admin should view by default
-     */
-    private Clinician getClinicianForAdminToView() {
-        if (State.getViewedClinician() != null) {
-            Clinician clinician = State.getViewedClinician();
-            State.setViewedClinician(null);
-            return clinician;
-        } else {
-            return State.getClinicianManager().getDefaultClinician();
-        }
-    }
-
     public ViewClinicianController() {
         session = State.getSession();
 
@@ -111,6 +98,19 @@ public class ViewClinicianController extends ViewBaseController {
                 break;
             default:
                 throw new IllegalStateException("Should not get to this page without being logged in.");
+        }
+    }
+
+    /**
+     * @return the clinician that the admin should view by default
+     */
+    private static Clinician getClinicianForAdminToView() {
+        if (State.getViewedClinician() != null) {
+            Clinician clinician = State.getViewedClinician();
+            State.setViewedClinician(null);
+            return clinician;
+        } else {
+            return State.getClinicianManager().getDefaultClinician();
         }
     }
 

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -55,7 +56,7 @@ public class Load implements Runnable {
     private static String getFileExtension(String fileName) {
         int lastIndex = fileName.lastIndexOf('.');
         if (lastIndex >= 0) {
-            return fileName.substring(lastIndex + 1).toLowerCase();
+            return fileName.substring(lastIndex + 1).toLowerCase(Locale.UK);
         } else {
             return "";
         }

@@ -16,19 +16,19 @@ public abstract class DurationFormatter {
      *
      * The options are:
      *
-     * XHoursYMinutesSeconds: x hours, y minutes (or x hours, y seconds if there are less than 60 seconds).
+     * X_HOURS_Y_MINUTES_SECONDS: x hours, y minutes (or x hours, y seconds if there are less than 60 seconds).
      * E.g. "5 hours 20 minutes", "102 hours 30 seconds".
      *
-     * Biggest: the biggest unit of time. E.g. "4 days", "3 hours", "59 seconds".
+     * BIGGEST: the biggest unit of time. E.g. "4 days", "3 hours", "59 seconds".
      *
      * @param duration the duration to format
      * @return the formatted string
      */
     public static String getFormattedDuration(Duration duration, Format format) {
         switch (format) {
-            case XHoursYMinutesSeconds:
+            case X_HOURS_Y_MINUTES_SECONDS:
                 return getDurationFormattedXHoursYMinutesSeconds(duration);
-            case Biggest:
+            case BIGGEST:
                 return getDurationFormattedBiggest(duration);
             default:
                 throw new UnsupportedOperationException("Unknown format for duration.");
@@ -104,7 +104,7 @@ public abstract class DurationFormatter {
     }
 
     public enum Format {
-        XHoursYMinutesSeconds, Biggest
+        X_HOURS_Y_MINUTES_SECONDS, BIGGEST
     }
 
 }

@@ -1,6 +1,7 @@
 package com.humanharvest.organz.utilities;
 
 import java.util.Comparator;
+import java.util.Locale;
 
 import com.humanharvest.organz.Client;
 
@@ -33,8 +34,8 @@ public class ClientNameSorter implements Comparator<Client> {
      * @return The resulting sort integer
      */
     private static int compareName(String searchTerm, String name1, String name2) {
-        boolean name1Matches = name1 != null && name1.toLowerCase().startsWith(searchTerm);
-        boolean name2Matches = name2 != null && name2.toLowerCase().startsWith(searchTerm);
+        boolean name1Matches = name1 != null && name1.toLowerCase(Locale.UK).startsWith(searchTerm);
+        boolean name2Matches = name2 != null && name2.toLowerCase(Locale.UK).startsWith(searchTerm);
 
         if (name1Matches && name2Matches) {
             return name1.compareTo(name2);
@@ -72,7 +73,7 @@ public class ClientNameSorter implements Comparator<Client> {
      * @param searchTerm The search term to consider
      * @return -1 if client1 is higher priority. 1 if client1 is lower priority. 0 only if they have the same user ID.
      */
-    private int compareNames(Client client1, Client client2, String searchTerm) {
+    private static int compareNames(Client client1, Client client2, String searchTerm) {
         //Last name -> Pref name -> First name -> Middle name -> Client ID
         int result;
 

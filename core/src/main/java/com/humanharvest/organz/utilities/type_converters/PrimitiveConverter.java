@@ -24,7 +24,7 @@ public class PrimitiveConverter {
         }
     }
 
-    private void createMap() {
+    private static void createMap() {
         PRIMITIVES_TO_WRAPPERS = new HashMap<>();
         PRIMITIVES_TO_WRAPPERS.put(boolean.class, Boolean.class);
         PRIMITIVES_TO_WRAPPERS.put(byte.class, Byte.class);
