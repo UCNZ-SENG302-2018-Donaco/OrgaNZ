@@ -194,6 +194,11 @@ public class ClientManagerDBPure implements ClientManager {
             // LIMIT 1 is an efficiency increase as we do not need to keep looking once we have a result (boolean true)
             if (clientType != null) {
                 switch (clientType) {
+                    case BOTH:
+                        whereJoiner.add(isDonor);
+                        whereJoiner.add(isRequesting);
+                        break;
+
                     case NEITHER:
                         whereJoiner.add(notIsDonor);
                         whereJoiner.add(notIsRequesting);
@@ -208,10 +213,9 @@ public class ClientManagerDBPure implements ClientManager {
                         whereJoiner.add(notIsDonor);
                         whereJoiner.add(isRequesting);
                         break;
-
-                    default: // both
-                        whereJoiner.add(isDonor);
-                        whereJoiner.add(isRequesting);
+                    case ANY:
+                    default:
+                        // Do nothing because we do not want to apply any filters in this case
                 }
             }
 
