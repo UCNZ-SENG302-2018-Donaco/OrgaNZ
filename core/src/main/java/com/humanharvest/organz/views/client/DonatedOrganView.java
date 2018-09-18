@@ -20,9 +20,9 @@ public class DonatedOrganView {
     DonatedOrganView() {
     }
 
-    public DonatedOrganView(DonatedOrgan DonatedOrgan) {
-        this.donatedOrgan = DonatedOrgan;
-        this.donor = DonatedOrgan.getDonor();
+    public DonatedOrganView(DonatedOrgan donatedOrgan) {
+        this.donatedOrgan = donatedOrgan;
+        this.donor = donatedOrgan.getDonor();
     }
 
     public DonatedOrgan getDonatedOrgan() {

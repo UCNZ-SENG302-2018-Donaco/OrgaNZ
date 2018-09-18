@@ -40,6 +40,7 @@ import com.humanharvest.organz.utilities.exceptions.BadRequestException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
+import com.humanharvest.organz.utilities.validators.NotEmptyStringValidator;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.views.client.CreateProcedureView;
 import com.humanharvest.organz.views.client.ModifyProcedureObject;
@@ -119,7 +120,7 @@ public class ViewProceduresController extends SubController {
      */
     private void editSummaryCell(CellEditEvent<ProcedureRecord, String> event) {
         String summary = event.getNewValue();
-        if (summary == null || summary.equals("")) {
+        if (NotEmptyStringValidator.isInvalidString(summary)) {
             PageNavigator.showAlert(AlertType.ERROR,
                     "Invalid summary",
                     "New procedure summary must not be blank.", mainController.getStage());
@@ -183,6 +184,11 @@ public class ViewProceduresController extends SubController {
         PageNavigator.refreshAllWindows();
     }
 
+    /**
+     * Sends modifications to server, and alerts the user if there is an error.
+     * @param procedureRecord the procedure record to modify
+     * @param modification the modification(s) to make
+     */
     private void sendModification(ProcedureRecord procedureRecord, ModifyProcedureObject modification) {
         try {
             State.getClientResolver().modifyProcedureRecord(client, procedureRecord, modification);
@@ -278,6 +284,8 @@ public class ViewProceduresController extends SubController {
     public void setup(MainController mainController) {
         super.setup(mainController);
 
+        // Setup the client, load the appropriate nav device (sidebar or menubar), and disallows clients from editing
+        // fields they're not allowed to.
         if (session.getLoggedInUserType() == UserType.CLIENT) {
             client = session.getLoggedInClient();
             mainController.loadSidebar(sidebarPane);
@@ -412,7 +420,7 @@ public class ViewProceduresController extends SubController {
         String summary = summaryField.getText();
         LocalDate date = dateField.getValue();
 
-        if (summary == null || summary.equals("")) {
+        if (NotEmptyStringValidator.isInvalidString(summary)) {
             errorMessage.setText("Procedure summary must not be blank.");
         } else if (date == null || date.isBefore(client.getDateOfBirth())) {
             errorMessage.setText("Procedure date cannot be before client was born.");

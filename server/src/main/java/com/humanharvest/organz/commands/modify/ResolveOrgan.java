@@ -62,26 +62,49 @@ public class ResolveOrgan implements Runnable {
     @Override
     public void run() {
         //resolveorgan -u 1 -o liver -r "input error"
-        Optional<Client> client = manager.getClientByID(uid);
-        if (!client.isPresent()) {
+        Optional<Client> optionalClient = manager.getClientByID(uid);
+        Client client;
+        if (!optionalClient.isPresent()) {
             outputStream.println("No client exists with that user ID");
             return;
+        } else {
+            client = optionalClient.get();
         }
 
-        boolean organCurrentlyRequested = false;
-        TransplantRequest selectedTransplantRequest = new TransplantRequest(client.get(), Organ.LIVER);
+        TransplantRequest selectedTransplantRequest = null;
 
-        for (TransplantRequest tr : client.get().getTransplantRequests()) {
+        // Iterate through each transplant request for the client,
+        // checking if the client has requested that organ.
+        // If they have, the request is stored in selectedTransplantRequest.
+        // Otherwise, it will remain null.
+        for (TransplantRequest tr : client.getTransplantRequests()) {
             if (tr.getRequestedOrgan() == organType && tr.getStatus() == TransplantRequestStatus.WAITING) {
-                organCurrentlyRequested = true;
                 selectedTransplantRequest = tr;
                 break;
             }
         }
-        if (organCurrentlyRequested) {
-            resolveRequest(selectedTransplantRequest);
+
+        if (selectedTransplantRequest == null) {
+            outputStream.println(client.getFullName() + " is not currently requesting this organ.");
         } else {
-            outputStream.println(client.get().getFullName() + " is not currently requesting this organ.");
+            resolveRequest(selectedTransplantRequest);
+        }
+    }
+
+    /**
+     * Helper function to generate a custom completed transplant request action (or not, if the message is null).
+     *
+     * @param selectedTransplantRequest the transplant request to generate a 'completed' action for
+     */
+    private Action generateCustomCompletedTranplantRequestAction(TransplantRequest selectedTransplantRequest) {
+        if (message != null) {
+            return new ResolveTransplantRequestAction(selectedTransplantRequest,
+                    TransplantRequestStatus.CANCELLED, message,
+                    selectedTransplantRequest.getResolvedDateTime(), manager);
+        } else {
+            outputStream.println("Custom resolve reason must have a message specified for why "
+                    + "the organ has been resolved. The request is still active.");
+            return null;
         }
     }
 
@@ -97,48 +120,34 @@ public class ResolveOrgan implements Runnable {
                 action = new ResolveTransplantRequestAction(selectedTransplantRequest,
                         TransplantRequestStatus.COMPLETED,
                         "Transplant took place.",
-                        selectedTransplantRequest.getResolvedDateTime(),
-                        manager);
+                        selectedTransplantRequest.getResolvedDateTime(), manager);
 
                 break;
             case DECEASED:
                 action = new ResolveTransplantRequestAction(selectedTransplantRequest,
                         TransplantRequestStatus.CANCELLED,
                         "The client has deceased.",
-                        selectedTransplantRequest.getResolvedDateTime(),
-                        manager);
+                        selectedTransplantRequest.getResolvedDateTime(), manager);
 
                 break;
             case CURED:
                 action = new ResolveTransplantRequestAction(selectedTransplantRequest,
                         TransplantRequestStatus.CANCELLED,
                         "The disease was cured.",
-                        selectedTransplantRequest.getResolvedDateTime(),
-                        manager);
+                        selectedTransplantRequest.getResolvedDateTime(), manager);
 
                 break;
             case ERROR:
                 action = new ResolveTransplantRequestAction(selectedTransplantRequest,
                         TransplantRequestStatus.CANCELLED,
                         "Request was a mistake.",
-                        selectedTransplantRequest.getResolvedDateTime(),
-                        manager);
+                        selectedTransplantRequest.getResolvedDateTime(), manager);
 
                 break;
             case CUSTOM:
-                if (message != null) {
-                    action = new ResolveTransplantRequestAction(selectedTransplantRequest,
-                            TransplantRequestStatus.CANCELLED,
-                            message,
-                            selectedTransplantRequest.getResolvedDateTime(),
-                            manager);
-                } else {
-                    outputStream
-                            .println("Custom resolve reason must have a message specified for why the organ has been "
-                                    + "resolved. The request is still active.");
-                }
-                break;
+                action = generateCustomCompletedTranplantRequestAction(selectedTransplantRequest);
         }
+
         if (action != null) {
             outputStream.println(invoker.execute(action));
         }
