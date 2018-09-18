@@ -83,6 +83,8 @@ public class CommandLineController extends SubController {
                     onEnter();
                     event.consume();
                     break;
+                default:
+                    // don't worry about other keypresses
             }
         });
 

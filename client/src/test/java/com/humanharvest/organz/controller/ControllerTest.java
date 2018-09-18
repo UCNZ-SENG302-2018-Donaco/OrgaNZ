@@ -77,7 +77,7 @@ public abstract class ControllerTest extends ApplicationTest {
     }
 
     @Override
-    public void start(Stage stage) throws IOException {
+    public void start(Stage stage) throws Exception {
         // Load main pane and controller
         FXMLLoader mainLoader = new FXMLLoader(getClass().getResource(Page.MAIN.getPath()));
         Pane mainPane = mainLoader.load();
@@ -118,5 +118,5 @@ public abstract class ControllerTest extends ApplicationTest {
 
     protected abstract Page getPage();
 
-    protected abstract void initState();
+    protected abstract void initState() throws Exception;
 }

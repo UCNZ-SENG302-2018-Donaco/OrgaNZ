@@ -13,11 +13,18 @@ import com.humanharvest.organz.actions.ActionInvoker;
 import picocli.CommandLine;
 import picocli.CommandLine.Help.Ansi;
 
-public final class CommandsHelper {
+/**
+ * Utility class that provides helper functions for executing PicoCLI commands
+ */
+public abstract class CommandsHelper {
 
     private static final Logger LOGGER = Logger.getLogger(CommandsHelper.class.getName());
 
+    /**
+     * Private constructor to prevent instantiation of utility class
+     */
     private CommandsHelper() {
+        throw new IllegalStateException("Utility class");
     }
 
     /**

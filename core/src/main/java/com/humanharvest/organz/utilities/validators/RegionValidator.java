@@ -6,11 +6,15 @@ import java.util.logging.Logger;
 import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Region;
 
-public final class RegionValidator {
+public abstract class RegionValidator {
 
     private static final Logger LOGGER = Logger.getLogger(RegionValidator.class.getName());
 
+    /**
+     * Private constructor to prevent instantiation of utility class
+     */
     private RegionValidator() {
+        throw new IllegalStateException("Utility class");
     }
 
     public static boolean isValid(Country country, String region) {

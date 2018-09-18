@@ -37,10 +37,10 @@ public class SidebarController extends SubController {
         super.setup(controller);
         UserType userType = session.getLoggedInUserType();
 
-        Button staffButtons[] = {viewClinicianButton, searchButton, transplantsButton};
-        Button adminButtons[] = {createAdminButton, createClinicianButton, staffListButton, commandLineButton};
-        Button clinicianButtons[] = {};
-        Button clientButtons[] = {viewClientButton, registerOrganDonationButton, viewMedicationsButton,
+        Button[] staffButtons = {viewClinicianButton, searchButton, transplantsButton};
+        Button[] adminButtons = {createAdminButton, createClinicianButton, staffListButton, commandLineButton};
+        Button[] clinicianButtons = {};
+        Button[] clientButtons = {viewClientButton, registerOrganDonationButton, viewMedicationsButton,
                 illnessHistoryButton, viewProceduresButton};
 
         // Hide buttons depending on the type of user logged in/the view window type
@@ -90,7 +90,7 @@ public class SidebarController extends SubController {
      *
      * @param buttons The buttons to hide
      */
-    private void hideButtons(Button buttons[]) {
+    private void hideButtons(Button[] buttons) {
         for (Button button : buttons) {
             hideButton(button);
         }

@@ -109,10 +109,13 @@ public class ModifyProcedureRecordAction extends ClientAction {
         manager.applyChangesTo(record.getClient());
     }
 
-    @Override
-    public String getExecuteText() {
+    /**
+     * Returns a string describing the changes.
+     *
+     * @return a string describing the changes.
+     */
+    private String getChangesText() {
         StringBuilder builder = new StringBuilder();
-        builder.append(String.format("Changed procedure record for '%s':", record.getSummary()));
 
         if (!Objects.equals(newSummary, oldSummary)) {
             builder.append(String.format("%nProcedure summary changed from '%s' to '%s'", oldSummary, newSummary));
@@ -131,29 +134,17 @@ public class ModifyProcedureRecordAction extends ClientAction {
         }
 
         return builder.toString();
+    }
+
+    @Override
+    public String getExecuteText() {
+        return String.format("Changed procedure record for '%s':%s", record.getSummary(), getChangesText());
     }
 
     @Override
     public String getUnexecuteText() {
-        StringBuilder builder = new StringBuilder();
-        builder.append(String.format("Reversed these changes to procedure record for '%s':", record.getSummary()));
-
-        if (!Objects.equals(newSummary, oldSummary)) {
-            builder.append(String.format("%nProcedure summary changed from '%s' to '%s'", oldSummary, newSummary));
-        }
-        if (!Objects.equals(newDescription, oldDescription)) {
-            builder.append(String.format("%nProcedure description changed from '%s' to '%s'",
-                    oldDescription, newDescription));
-        }
-        if (!Objects.equals(newDate, oldDate)) {
-            builder.append(String.format("%nProcedure date changed from %s to %s", oldDate, newDate));
-        }
-        if (!Objects.equals(newAffectedOrgans, oldAffectedOrgans)) {
-            builder.append(String.format("%nAffected organs changed from '%s' to '%s'",
-                    oldAffectedOrgans.stream().map(Organ::toString).collect(Collectors.joining(", ")),
-                    newAffectedOrgans.stream().map(Organ::toString).collect(Collectors.joining(", "))));
-        }
-
-        return builder.toString();
+        return String.format("Reversed these changes to procedure record for '%s':%s", record.getSummary(),
+                getChangesText());
     }
+
 }

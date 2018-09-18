@@ -18,6 +18,13 @@ import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
  */
 public abstract class ClientValidator {
 
+    /**
+     * Private constructor to prevent instantiation of utility class
+     */
+    private ClientValidator() {
+        throw new IllegalStateException("Utility class");
+    }
+
     private static final double DELTA = 1e-6;
 
     /**
@@ -115,11 +122,11 @@ public abstract class ClientValidator {
     }
 
     private static boolean firstNameValid(Client client) {
-        return client.getFirstName() != null && !client.getFirstName().equals("");
+        return !NotEmptyStringValidator.isInvalidString(client.getFirstName());
     }
 
     private static boolean lastNameValid(Client client) {
-        return client.getLastName() != null && !client.getLastName().equals("");
+        return !NotEmptyStringValidator.isInvalidString(client.getLastName());
     }
 
     private static boolean dateOfBirthValid(Client client) {

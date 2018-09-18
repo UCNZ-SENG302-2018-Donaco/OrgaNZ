@@ -12,6 +12,13 @@ import com.humanharvest.organz.ProcedureRecord;
 public abstract class ProcedureRecordValidator {
 
     /**
+     * Private constructor to prevent instantiation of utility class
+     */
+    private ProcedureRecordValidator() {
+        throw new IllegalStateException("Utility class");
+    }
+
+    /**
      * Validates a {@link ProcedureRecord} and returns a string explaining the errors within it.
      *
      * @param record The record to validate.
@@ -38,8 +45,7 @@ public abstract class ProcedureRecordValidator {
     // FIELD VALIDATORS
 
     private static boolean summaryValid(ProcedureRecord record) {
-        return record.getSummary() != null &&
-                !record.getSummary().equals("");
+        return !NotEmptyStringValidator.isInvalidString(record.getSummary());
     }
 
     private static boolean dateValid(ProcedureRecord record) {

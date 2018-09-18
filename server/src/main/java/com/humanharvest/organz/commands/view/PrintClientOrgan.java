@@ -50,7 +50,7 @@ public class PrintClientOrgan implements Runnable {
             outputStream.println("No client exists with that user ID");
             return;
         }
-        if (type.equals("requests") || type.equals("donations")) {
+        if ("requests".equals(type) || "donations".equals(type)) {
             outputStream.println(client.get().getClientOrganStatusString(type));
         } else {
             outputStream.println("Define if organs to print are donations or requests e.g. 'printuserorgan "

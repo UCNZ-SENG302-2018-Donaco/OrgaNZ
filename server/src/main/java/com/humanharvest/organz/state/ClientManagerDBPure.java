@@ -190,11 +190,6 @@ public class ClientManagerDBPure implements ClientManager {
             // LIMIT 1 is an efficiency increase as we do not need to keep looking once we have a result (boolean true)
             if (clientType != null) {
                 switch (clientType) {
-                    case BOTH:
-                        whereJoiner.add(isDonor);
-                        whereJoiner.add(isRequesting);
-                        break;
-
                     case NEITHER:
                         whereJoiner.add(notIsDonor);
                         whereJoiner.add(notIsRequesting);
@@ -209,6 +204,10 @@ public class ClientManagerDBPure implements ClientManager {
                         whereJoiner.add(notIsDonor);
                         whereJoiner.add(isRequesting);
                         break;
+
+                    default: // both
+                        whereJoiner.add(isDonor);
+                        whereJoiner.add(isRequesting);
                 }
             }
 
@@ -529,31 +528,7 @@ public class ClientManagerDBPure implements ClientManager {
 
         // TODO implement using Hibernate queries instead of in-memory filtering/sorting
 
-        Comparator<DonatedOrgan> comparator;
-        if (sortOption == null) {
-            comparator = Comparator.comparing(DonatedOrgan::getDurationUntilExpiry,
-                    Comparator.nullsLast(Comparator.naturalOrder()));
-        } else {
-            switch (sortOption) {
-                case CLIENT:
-                    comparator = Comparator.comparing(organ -> organ.getDonor().getFullName());
-                    break;
-                case ORGAN_TYPE:
-                    comparator = Comparator.comparing(organ -> organ.getOrganType().toString());
-                    break;
-                case REGION_OF_DEATH:
-                    comparator = Comparator.comparing(organ -> organ.getDonor().getRegionOfDeath());
-                    break;
-                case TIME_OF_DEATH:
-                    comparator = Comparator.comparing(organ -> organ.getDonor().getDateOfDeath());
-                    break;
-                default:
-                case TIME_UNTIL_EXPIRY:
-                    comparator = Comparator.comparing(DonatedOrgan::getDurationUntilExpiry,
-                            Comparator.nullsLast(Comparator.naturalOrder()));
-                    break;
-            }
-        }
+        Comparator<DonatedOrgan> comparator = DonatedOrgan.getComparator(sortOption);
 
         if (reversed != null && reversed) {
             comparator = comparator.reversed();

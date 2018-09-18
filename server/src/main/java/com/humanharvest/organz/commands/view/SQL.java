@@ -16,8 +16,6 @@ import com.humanharvest.organz.state.State.DataStorageType;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Parameters;
 
-//import com.humanharvest.organz.database.DBManager;
-
 /**
  * Command line to print the result of any SQL SELECT statement the user executes
  */

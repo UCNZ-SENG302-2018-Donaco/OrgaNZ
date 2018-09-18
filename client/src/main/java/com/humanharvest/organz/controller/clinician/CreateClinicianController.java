@@ -20,6 +20,7 @@ import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.JSONConverter;
 import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Region;
+import com.humanharvest.organz.utilities.validators.NotEmptyStringValidator;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 
@@ -30,7 +31,7 @@ import com.humanharvest.organz.utilities.view.PageNavigator;
 public class CreateClinicianController extends SubController {
 
     @FXML
-    private TextField id, fname, lname, mname, staffId, workAddress;
+    private TextField fname, lname, mname, staffId, workAddress;
     @FXML
     private PasswordField password;
     @FXML
@@ -73,14 +74,14 @@ public class CreateClinicianController extends SubController {
      */
     private boolean checkMandatoryFields() {
         boolean update = true;
-        if (fname.getText().equals("")) {   // First name
+        if (NotEmptyStringValidator.isInvalidString(fname.getText())) {   // First name
             fnameLabel.setTextFill(Color.RED);
             update = false;
         } else {
             fnameLabel.setTextFill(Color.BLACK);
         }
 
-        if (lname.getText().equals("")) {   // Last name
+        if (NotEmptyStringValidator.isInvalidString(lname.getText())) {   // Last name
             lnameLabel.setTextFill(Color.RED);
             update = false;
         } else {
@@ -109,7 +110,7 @@ public class CreateClinicianController extends SubController {
             update = false;
         }
 
-        if (password.getText().equals("")) { // Password
+        if (NotEmptyStringValidator.isInvalidString(password.getText())) { // Password
             passwordLabel.setTextFill(Color.RED);
             update = false;
         } else {
