@@ -1,12 +1,5 @@
 package com.humanharvest.organz.utilities.validators;
 
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
-import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.ConcurrencyControlledEntity;
 import com.humanharvest.organz.IllnessRecord;
@@ -16,6 +9,13 @@ import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * A static validator class used to check the integrity of a Client object
  * Class is abstract as it only contains static methods and should not be instantiated
@@ -24,8 +24,6 @@ public final class ClientValidator {
 
     private static final Logger LOGGER = Logger.getLogger(ClientValidator.class.getName());
     private static final double DELTA = 1.0e-6;
-
-    private static final double DELTA = 1e-6;
 
     /**
      * Private constructor to prevent instantiation of utility class
@@ -39,9 +37,9 @@ public final class ClientValidator {
      * and exception is thrown if the etag is missing or does not match
      *
      * @param controlledEntity entity to validate the etag for
-     * @param etag The corresponding If-Match header to check for concurrent update handling
+     * @param etag             The corresponding If-Match header to check for concurrent update handling
      * @throws IfMatchRequiredException Thrown if the etag header is missing
-     * @throws IfMatchFailedException Thrown if the etag does not match the clients current etag
+     * @throws IfMatchFailedException   Thrown if the etag does not match the clients current etag
      */
     public static void checkETag(ConcurrencyControlledEntity controlledEntity, String etag)
             throws IfMatchRequiredException, IfMatchFailedException {
