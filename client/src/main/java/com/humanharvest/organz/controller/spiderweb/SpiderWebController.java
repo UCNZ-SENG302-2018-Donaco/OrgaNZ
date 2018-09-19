@@ -10,7 +10,6 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.Bounds;
 import javafx.geometry.Orientation;
 import javafx.scene.Node;
@@ -48,6 +47,7 @@ public class SpiderWebController extends SubController {
     private final Pane canvas;
     private Pane deceasedDonorPane;
     private final List<Pane> organNodes = new ArrayList<>();
+    private final List<ListView<Client>> matchesLists = new ArrayList<>();
 
     public SpiderWebController(Client client) {
         this.client = client;
@@ -135,28 +135,22 @@ public class SpiderWebController extends SubController {
                 connector.setStrokeWidth(4);
                 Text durationText = new Text(ExpiryBarUtils.getDurationString(organ));
 
+                ListView<Client> matchesList = createMatchesList(organ);
+
+
                 // Redraws lines when organs or donor pane is moved
                 deceasedDonorPane.localToParentTransformProperty().addListener((observable, oldValue, newValue) -> {
                     Bounds bounds = deceasedDonorPane.getBoundsInParent();
                     connector.setStartX(bounds.getMinX() + bounds.getWidth() / 2);
                     connector.setStartY(bounds.getMinY() + bounds.getHeight() / 2);
-                    updateConnector(organ, connector, durationText);
+                    updateConnector(organ, connector, durationText, matchesList);
                 });
                 organPane.localToParentTransformProperty().addListener((observable, oldValue, newValue) -> {
                     Bounds bounds = organPane.getBoundsInParent();
                     connector.setEndX(bounds.getMinX() + bounds.getWidth() / 2);
                     connector.setEndY(bounds.getMinY() + bounds.getHeight() / 2);
-                    updateConnector(organ, connector, durationText);
+                    updateConnector(organ, connector, durationText, matchesList);
                 });
-
-                // Setup the ListView
-                ObservableList<Client> potentialMatches = FXCollections.observableArrayList(
-                        State.getClientManager().getOrganMatches(organ));
-                final ListView<Client> matchesList = new ListView<>();
-                matchesList.setCellFactory(param -> new PotentialRecipientCell());
-                matchesList.setItems(potentialMatches);
-                matchesList.setOrientation(Orientation.VERTICAL);
-
 
 
                 canvas.getChildren().add(0, connector);
@@ -166,12 +160,12 @@ public class SpiderWebController extends SubController {
                 Bounds bounds = deceasedDonorPane.getBoundsInParent();
                 connector.setStartX(bounds.getMinX() + bounds.getWidth() / 2);
                 connector.setStartY(bounds.getMinY() + bounds.getHeight() / 2);
-                updateConnector(organ, connector, durationText);
+                updateConnector(organ, connector, durationText, matchesList);
 
                 // Attach timer to update connector each second (for time until expiration)
                 final Timeline clock = new Timeline(new KeyFrame(
                         javafx.util.Duration.seconds(1),
-                        event -> updateConnector(organ, connector, durationText)));
+                        event -> updateConnector(organ, connector, durationText, matchesList)));
                 clock.setCycleCount(Animation.INDEFINITE);
                 clock.play();
 
@@ -180,7 +174,24 @@ public class SpiderWebController extends SubController {
         layoutOrganNodes(300);
     }
 
-    private void updateConnector(DonatedOrgan donatedOrgan, Line line, Text durationText) {
+    private ListView<Client> createMatchesList(DonatedOrgan organ) {
+        // Setup the ListView
+        final ListView<Client> matchesList = new ListView<>();
+
+        List<Client> potentialMatches = State.getClientManager().getOrganMatches(organ);
+        matchesList.setItems(FXCollections.observableArrayList(potentialMatches));
+
+        matchesList.setCellFactory(param -> new PotentialRecipientCell());
+
+        matchesList.setOrientation(Orientation.HORIZONTAL);
+
+        matchesLists.add(matchesList);
+
+        return matchesList;
+    }
+
+    private void updateConnector(DonatedOrgan donatedOrgan, Line line, Text durationText,
+            ListView<Client> matchesList) {
         Duration duration = donatedOrgan.getDurationUntilExpiry();
         if (ExpiryBarUtils.isDurationZero(duration)) {
             line.setStroke(ExpiryBarUtils.greyColour);
@@ -209,6 +220,13 @@ public class SpiderWebController extends SubController {
         durationText.getTransforms().add(trans);
         durationText.setTranslateX(x);
         durationText.setTranslateY(y);
+
+//        matchesList.getTransforms().removeIf(transform -> transform instanceof Affine);
+//        Affine matchTrans = new Affine();
+//        trans.prepend(new Translate(0, -5));
+//        trans.prepend(new Rotate(angle));
+
+
 //        durationText.setRotate(angle);
     }
 
@@ -244,6 +262,15 @@ public class SpiderWebController extends SubController {
                     deceasedDonorPane.getLocalToParentTransform().getTx() + radius * Math.sin(angleSize * i),
                     deceasedDonorPane.getLocalToParentTransform().getTy() + radius * Math.cos(angleSize * i),
                     360 - Math.toDegrees(angleSize * i));
+
+            Affine transform = new Affine();
+            double x = deceasedDonorPane.getLocalToParentTransform().getTx() + radius * Math.sin(angleSize * i);
+            double y = deceasedDonorPane.getLocalToParentTransform().getTy() + radius * Math.cos(angleSize * i);
+            double angle = 360 - Math.toDegrees(angleSize * i);
+            transform.prepend(new Translate(x, y));
+            transform.prepend(new Rotate(angle, x, y));
+            matchesLists.get(i).getTransforms().add(transform);
+
         }
     }
 }
