@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -20,6 +21,8 @@ import com.humanharvest.organz.utilities.view.WindowContext;
 
 import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXHamburger;
+import com.jfoenix.transitions.hamburger.HamburgerBackArrowBasicTransition;
+import com.jfoenix.transitions.hamburger.HamburgerSlideCloseTransition;
 
 /**
  * Main controller class for the application window.
@@ -37,7 +40,7 @@ public class MainController {
     private MenuBarController menuBarController;
     private SubController subController;
     @FXML
-    private JFXDrawer drawer;
+    private JFXDrawer drawer = new JFXDrawer();
     @FXML
     private JFXHamburger hamburger;
 
@@ -50,6 +53,7 @@ public class MainController {
     @FXML
     public void initialize() {
         pageHolder.getStyleClass().add("window");
+        initHamburger();
     }
 
     public Stage getStage() {
@@ -107,15 +111,18 @@ public class MainController {
     }
 
 
-    @FXML
-    private void triggerDrawer() {
+    private void initHamburger() {
 
-        if (drawer.isShown()) {
-            drawer.close();
-        } else {
-            drawer.open();
-        }
+        hamburger.addEventHandler(MouseEvent.MOUSE_CLICKED, (e) -> {
+
+            if (drawer.isShown()) {
+                drawer.close();
+            } else {
+                drawer.open();
+            }
+        });
     }
+
 
     /**
      * Method that can be called from other controllers to load the sidebar into that page.
@@ -127,10 +134,16 @@ public class MainController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(Page.SIDEBAR.getPath()));
             VBox sidebar = loader.load();
-            drawer.setSidePane(sidebar);
+
             sidebarController = loader.getController();
             sidebarController.setup(this);
-            sidebarPane.getChildren().setAll(sidebar);
+            drawer.setSidePane(sidebar);
+
+            drawer.setBoundedNode(sidebarPane);
+            sidebarPane.getChildren().setAll(drawer);
+            // bind side pane size to the drawer size
+
+
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Couldn't load sidebar from fxml file.", e);
         }

@@ -31,10 +31,6 @@ public class SidebarController extends SubController {
 
     private Session session;
 
-    @FXML
-    private JFXHamburger hamburger;
-    @FXML
-    private JFXDrawer drawer;
 
     /**
      * Gets the ActionInvoker from the current state.
