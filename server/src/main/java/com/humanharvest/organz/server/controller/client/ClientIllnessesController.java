@@ -10,8 +10,6 @@ import com.humanharvest.organz.actions.client.DeleteIllnessRecordAction;
 import com.humanharvest.organz.actions.client.ModifyIllnessRecordByObjectAction;
 import com.humanharvest.organz.server.exceptions.GlobalControllerExceptionHandler.InvalidRequestException;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
-import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
 import com.humanharvest.organz.utilities.validators.client.ModifyIllnessValidator;
 import com.humanharvest.organz.views.client.CreateIllnessView;
 import com.humanharvest.organz.views.client.ModifyIllnessObject;
@@ -60,9 +58,8 @@ public class ClientIllnessesController {
             @PathVariable int uid,
             @PathVariable int id,
             @RequestBody ModifyIllnessObject modifyIllnessObject,
-            @RequestHeader(value = "If-Match", required = false) String eTag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
-            throws IfMatchRequiredException, IfMatchFailedException, InvalidRequestException {
+            throws InvalidRequestException {
 
         //Fetch the client given by ID
         Optional<Client> optionalClient = State.getClientManager().getClientByID(uid);

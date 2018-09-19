@@ -14,8 +14,6 @@ import com.humanharvest.organz.server.exceptions.GlobalControllerExceptionHandle
 import com.humanharvest.organz.state.AdministratorManager;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
-import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
-import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
 import com.humanharvest.organz.utilities.validators.administrator.CreateAdministratorValidator;
 import com.humanharvest.organz.utilities.validators.administrator.ModifyAdministratorValidator;
 import com.humanharvest.organz.views.administrator.CommandView;
@@ -90,7 +88,6 @@ public class AdministratorController {
         ActionInvoker invoker = State.getActionInvoker(authentication);
         invoker.execute(action);
 
-        //Add the new ETag to the headers
         HttpHeaders headers = new HttpHeaders();
 
         return new ResponseEntity<>(administrator, headers, HttpStatus.CREATED);
@@ -124,10 +121,7 @@ public class AdministratorController {
      *
      * @param username The administrator username to update
      * @param modifyAdministratorObject The POJO object of the modifications
-     * @param etag The corresponding If-Match header to check for concurrent update handling
-     * @return Returns an Administrator overview. Also contains an ETag header for updates
-     * @throws IfMatchRequiredException Thrown if there is no If-Match header, will result in a 428 error
-     * @throws IfMatchFailedException Thrown if the If-Match header does not match the ETag. 412 error
+     * @return Returns an Administrator overview.
      * @throws InvalidRequestException Generic 400 exception if fields are malformed or inconsistent
      */
     @PatchMapping("/administrators/{username}")
@@ -135,12 +129,12 @@ public class AdministratorController {
     public ResponseEntity<Administrator> updateAdministrator(
             @PathVariable String username,
             @RequestBody ModifyAdministratorObject modifyAdministratorObject,
-            @RequestHeader(value = "If-Match", required = false) String etag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
-            throws IfMatchRequiredException, IfMatchFailedException, InvalidRequestException, AuthenticationException {
+            throws InvalidRequestException, AuthenticationException {
 
         //Logical steps for a PATCH
-        //We set If-Match to false so we can return a better error code than 400 which happens if a required
+        //We set If-Match [NOTE: etags removed] to false so we can return a better error code than 400 which happens
+        // if a required
         // @RequestHeader is missing, I think this can be improved with an @ExceptionHandler or similar so we don't
         // duplicate code in tons of places but need to work it out
 
@@ -183,18 +177,14 @@ public class AdministratorController {
      * The DELETE endpoint for removing a single administrator
      *
      * @param username The administrator username to delete
-     * @param etag The corresponding If-Match header to check for concurrent update handling
      * @return Returns an empty body with a simple response code
-     * @throws IfMatchRequiredException Thrown if there is no If-Match header, will result in a 428 error
-     * @throws IfMatchFailedException Thrown if the If-Match header does not match the Administrators ETag. 412 error
      * @throws InvalidRequestException Generic 400 exception if fields are malformed or inconsistent
      */
     @DeleteMapping("/administrators/{username}")
     public ResponseEntity<?> deleteAdministrator(
             @PathVariable String username,
-            @RequestHeader(value = "If-Match", required = false) String etag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authentication)
-            throws IfMatchRequiredException, IfMatchFailedException, InvalidRequestException {
+            throws InvalidRequestException {
 
         State.getAuthenticationManager().verifyAdminAccess(authentication);
 

@@ -30,8 +30,6 @@ import com.humanharvest.organz.utilities.enums.ClientType;
 import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
-import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
-import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
 import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.validators.client.ClientBornAndDiedDatesValidator;
 import com.humanharvest.organz.utilities.validators.client.CreateClientValidator;
@@ -118,7 +116,7 @@ public class ClientController {
      * The POST endpoint for creating a new client
      *
      * @param createClientView The POJO representation of the create client view
-     * @return Returns a Client overview. Also contains an ETag header for updates
+     * @return Returns a Client overview.
      * @throws InvalidRequestException Generic 400 exception if fields are malformed or inconsistent
      */
     @PostMapping("/clients")
@@ -152,7 +150,7 @@ public class ClientController {
      * The single client GET endpoint
      *
      * @param uid The client UID to return
-     * @return Returns a Client details object. Also contains an ETag header for updates
+     * @return Returns a Client details object.
      */
     @GetMapping("/clients/{uid:\\d+}")
     @JsonView(Views.Details.class)
@@ -177,10 +175,7 @@ public class ClientController {
      *
      * @param uid The client UID to update
      * @param modifyClientObject The POJO object of the modifications
-     * @param etag The corresponding If-Match header to check for concurrent update handling
-     * @return Returns a Client overview. Also contains an ETag header for updates
-     * @throws IfMatchRequiredException Thrown if there is no If-Match header, will result in a 428 error
-     * @throws IfMatchFailedException Thrown if the If-Match header does not match the Clients ETag. 412 error
+     * @return Returns a Client overview.
      * @throws InvalidRequestException Generic 400 exception if fields are malformed or inconsistent
      */
     @PatchMapping("/clients/{uid}")
@@ -188,12 +183,12 @@ public class ClientController {
     public ResponseEntity<Client> updateClient(
             @PathVariable int uid,
             @RequestBody ModifyClientObject modifyClientObject,
-            @RequestHeader(value = "If-Match", required = false) String etag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
-            throws IfMatchRequiredException, IfMatchFailedException, InvalidRequestException, AuthenticationException {
+            throws InvalidRequestException, AuthenticationException {
 
         //Logical steps for a PATCH
         //We set If-Match to false so we can return a better error code than 400 which happens if a required
+        // [UPDATE: etags removed]
         // @RequestHeader is missing, I think this can be improved with an @ExceptionHandler or similar so we don't
         // duplicate code in tons of places but need to work it out
 
@@ -270,18 +265,14 @@ public class ClientController {
      * The DELETE endpoint for removing a single client
      *
      * @param uid The client UID to delete
-     * @param etag The corresponding If-Match header to check for concurrent update handling
      * @return Returns an empty body with a simple response code
-     * @throws IfMatchRequiredException Thrown if there is no If-Match header, will result in a 428 error
-     * @throws IfMatchFailedException Thrown if the If-Match header does not match the Clients ETag. 412 error
      * @throws InvalidRequestException Generic 400 exception if fields are malformed or inconsistent
      */
     @DeleteMapping("/clients/{uid}")
     public ResponseEntity deleteClient(
             @PathVariable int uid,
-            @RequestHeader(value = "If-Match", required = false) String etag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
-            throws IfMatchRequiredException, IfMatchFailedException, InvalidRequestException {
+            throws InvalidRequestException {
 
         //Fetch the client given by ID
         Optional<Client> optionalClient = State.getClientManager().getClientByID(uid);
@@ -312,7 +303,7 @@ public class ClientController {
     public ResponseEntity<List<HistoryItem>> getHistory(
             @PathVariable int uid,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
-            throws IfMatchRequiredException, IfMatchFailedException, InvalidRequestException {
+            throws InvalidRequestException {
 
         Optional<Client> client = State.getClientManager().getClientByID(uid);
         if (client.isPresent()) {
@@ -331,7 +322,7 @@ public class ClientController {
     public ResponseEntity<byte[]> getClientImage(
             @PathVariable int uid,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
-            throws InvalidRequestException, IfMatchFailedException, IfMatchRequiredException {
+            throws InvalidRequestException {
 
         // Check if the directory exists. If not, then clearly the image doesn't
         File directory = new File(State.getImageDirectory());
@@ -368,7 +359,6 @@ public class ClientController {
     public ResponseEntity<?> postClientImage(
             @PathVariable int uid,
             @RequestBody byte[] image,
-            @RequestHeader(value = "If-Match", required = false) String etag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken) {
 
         // Create the directory if it doesn't exist
@@ -402,7 +392,6 @@ public class ClientController {
     @DeleteMapping("clients/{uid}/image")
     public ResponseEntity<?> deleteClientImage(
             @PathVariable int uid,
-            @RequestHeader(value = "If-Match", required = false) String etag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken) throws InvalidRequestException {
 
         // Check if the directory exists. If not, then clearly the image doesn't

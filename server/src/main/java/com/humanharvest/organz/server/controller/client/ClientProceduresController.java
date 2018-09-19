@@ -13,8 +13,6 @@ import com.humanharvest.organz.actions.client.DeleteProcedureRecordAction;
 import com.humanharvest.organz.actions.client.ModifyProcedureRecordAction;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
-import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
-import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
 import com.humanharvest.organz.views.client.ModifyProcedureObject;
 import com.humanharvest.organz.views.client.Views;
 
@@ -47,7 +45,7 @@ public class ClientProceduresController {
     public ResponseEntity<Collection<ProcedureRecord>> getProceduresForClient(
             @PathVariable int uid,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
-            throws AuthenticationException, IfMatchFailedException, IfMatchRequiredException {
+            throws AuthenticationException {
 
         Optional<Client> client = State.getClientManager().getClientByID(uid);
         if (client.isPresent()) {
@@ -68,9 +66,8 @@ public class ClientProceduresController {
     public ResponseEntity<Collection<ProcedureRecord>> createProcedureRecord(
             @RequestBody ProcedureRecord procedureRecord,
             @PathVariable int uid,
-            @RequestHeader(value = "If-Match", required = false) String eTag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
-            throws AuthenticationException, IfMatchFailedException, IfMatchRequiredException {
+            throws AuthenticationException {
 
         // Check request has authorization to create a procedure
         State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
@@ -98,7 +95,6 @@ public class ClientProceduresController {
             @RequestBody ModifyProcedureObject modifyProcedureObject,
             @PathVariable int uid,
             @PathVariable int id,
-            @RequestHeader(value = "If-Match", required = false) String eTag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken) throws AuthenticationException {
 
         // Check request has authorization to patch a procedure
@@ -159,9 +155,8 @@ public class ClientProceduresController {
     public ResponseEntity deleteProcedureRecord(
             @PathVariable int uid,
             @PathVariable int id,
-            @RequestHeader(value = "If-Match", required = false) String eTag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
-            throws AuthenticationException, IfMatchFailedException, IfMatchRequiredException {
+            throws AuthenticationException {
 
         // Check request has authorization to delete a procedure
         State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);

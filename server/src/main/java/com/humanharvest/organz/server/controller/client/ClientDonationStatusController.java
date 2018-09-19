@@ -8,8 +8,6 @@ import com.humanharvest.organz.Client;
 import com.humanharvest.organz.actions.client.ModifyClientOrgansAction;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
-import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
-import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
 import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
 
 import org.springframework.http.HttpHeaders;
@@ -57,12 +55,12 @@ public class ClientDonationStatusController {
     public ResponseEntity<Map<Organ, Boolean>> updateClientDonationStatus(
             @PathVariable int id,
             @RequestBody Map<Organ, Boolean> updatedValues,
-            @RequestHeader(value = "If-Match", required = false) String ETag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
-            throws IfMatchRequiredException, IfMatchFailedException, OrganAlreadyRegisteredException {
+            throws OrganAlreadyRegisteredException {
 
         //Logical steps for a PATCH
         //We set If-Match to false so we can return a better error code than 400 which happens if a required
+        // [UPDATE:etags removed]
         // @RequestHeader is missing, I think this can be improved with an @ExceptionHandler or similar so we don't
         // duplicate code in tons of places but need to work it out
 

@@ -146,14 +146,12 @@ public class ClientTransplantRequestsController {
      *
      * @param transplantRequest the transplant request to add
      * @param id the client's ID
-     * @param eTag A hashed value of the object used for optimistic concurrency control
      * @return list of all transplant requests for that client
      */
     @PostMapping("/clients/{id}/transplantRequests")
     public ResponseEntity<Collection<TransplantRequest>> postTransplantRequest(
             @RequestBody TransplantRequest transplantRequest,
             @PathVariable int id,
-            @RequestHeader(value = "If-Match", required = false) String eTag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken) {
 
         // Check authentication
@@ -192,7 +190,6 @@ public class ClientTransplantRequestsController {
      * @param resolveRequestObject the resolve request object
      * @param uid the client's ID
      * @param id the transplant request's ID
-     * @param eTag A hashed value of the object used for optimistic concurrency control
      * @return list of all transplant requests for that client
      */
     @PatchMapping("/clients/{uid}/transplantRequests/{id}")
@@ -201,7 +198,6 @@ public class ClientTransplantRequestsController {
             @RequestBody ResolveTransplantRequestObject resolveRequestObject,
             @PathVariable int uid,
             @PathVariable int id,
-            @RequestHeader(value = "If-Match", required = false) String eTag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken) {
 
         // Check authentication
