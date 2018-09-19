@@ -40,9 +40,13 @@ public final class PointUtils {
     }
 
     public static Point2D getCentreOfPane(Pane pane) {
-        Bounds paneBounds = pane.getBoundsInParent();
-        Point2D min = new Point2D(paneBounds.getMinX(), paneBounds.getMinY());
-        Point2D max = new Point2D(paneBounds.getMaxX(), paneBounds.getMaxY());
+        return getCentreOfBounds(pane.getBoundsInParent());
+    }
+
+
+    public static Point2D getCentreOfBounds(Bounds bounds) {
+        Point2D min = new Point2D(bounds.getMinX(), bounds.getMinY());
+        Point2D max = new Point2D(bounds.getMaxX(), bounds.getMaxY());
         return min.add(max.subtract(min).multiply(0.5));
     }
 
