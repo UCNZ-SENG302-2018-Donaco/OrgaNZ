@@ -279,17 +279,16 @@ public class OrgansToDonateController extends SubController {
             }
         });
 
+        tableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            // Showing potential matches for the donated organ
+            potentialRecipients.getItems().clear();
+            if (newValue != null) {
+                displayMatches(newValue);
+            }
+        });
+
         // Register the mouse event for double-clicking on a record to open the client profile.
         tableView.setOnMouseClicked(mouseEvent -> {
-
-            // Showing potential matches for the donated organ
-            if (mouseEvent.getButton() == MouseButton.PRIMARY && mouseEvent.getClickCount() == 1) {
-                DonatedOrgan donatedOrgan = tableView.getSelectionModel().getSelectedItem();
-                if (donatedOrgan != null) {
-                    potentialRecipients.getItems().clear();
-                    displayMatches(donatedOrgan);
-                }
-            }
 
             // Double clicking brings up the profile of the client who has donated the organ
             if (mouseEvent.getButton() == MouseButton.PRIMARY && mouseEvent.getClickCount() == 2) {
