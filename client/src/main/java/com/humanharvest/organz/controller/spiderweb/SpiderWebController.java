@@ -9,12 +9,8 @@ import java.util.logging.Logger;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.geometry.Bounds;
-import javafx.geometry.Orientation;
 import javafx.scene.Node;
-import javafx.scene.control.ListView;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.shape.Line;
@@ -29,7 +25,6 @@ import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.controller.components.ExpiryBarUtils;
-import com.humanharvest.organz.controller.components.PotentialRecipientCell;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.touch.FocusArea;
 import com.humanharvest.organz.touch.MultitouchHandler;
@@ -149,19 +144,8 @@ public class SpiderWebController extends SubController {
                     updateConnector(organ, connector, durationText);
                 });
 
-                // Setup the ListView
-                ObservableList<Client> potentialMatches = FXCollections.observableArrayList(
-                        State.getClientManager().getOrganMatches(organ));
-                final ListView<Client> matchesList = new ListView<>();
-                matchesList.setCellFactory(param -> new PotentialRecipientCell());
-                matchesList.setItems(potentialMatches);
-                matchesList.setOrientation(Orientation.VERTICAL);
-
-
-
                 canvas.getChildren().add(0, connector);
                 canvas.getChildren().add(0, durationText);
-                canvas.getChildren().add(matchesList);
 
                 Bounds bounds = deceasedDonorPane.getBoundsInParent();
                 connector.setStartX(bounds.getMinX() + bounds.getWidth() / 2);

@@ -47,7 +47,7 @@ public class SpiderPhysicsHandler extends PhysicsHandler {
                 Bounds otherBounds = otherFocusArea.getPane().getBoundsInParent();
 
                 if (bounds.intersects(otherBounds)) {
-//                    System.out.println("COLLISION between " + focusArea + " and " + otherFocusArea);
+                    System.out.println("COLLISION between " + focusArea + " and " + otherFocusArea);
                 }
             }
         }

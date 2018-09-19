@@ -149,11 +149,6 @@ public class ReceiverOverviewController extends ViewBaseController {
         }
     }
 
-    public void setup(Client client) {
-        viewedClient = client;
-        refresh();
-    }
-
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
