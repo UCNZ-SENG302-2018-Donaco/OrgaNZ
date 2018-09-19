@@ -283,25 +283,6 @@ public class ClientTransplantRequestsControllerTest {
     }
 
     @Test
-    public void createTransplantRequestInvalidNoEtag() throws Exception {
-        mockMvc.perform(post("/clients/" + testClient.getUid() + "/transplantRequests")
-                .header("X-Auth-Token", VALID_AUTH)
-                .contentType(contentType)
-                .content(validTransplantRequestJson))
-                .andExpect(status().is(428));
-    }
-
-    @Test
-    public void createTransplantRequestInvalidEtag() throws Exception {
-        mockMvc.perform(post("/clients/" + testClient.getUid() + "/transplantRequests")
-                .header("If-Match", testClient.getETag() + "X")
-                .header("X-Auth-Token", VALID_AUTH)
-                .contentType(contentType)
-                .content(validTransplantRequestJson))
-                .andExpect(status().is(412));
-    }
-
-    @Test
     public void createTransplantRequestInvalidNoAuth() throws Exception {
         mockMvc.perform(post("/clients/" + testClient.getUid() + "/transplantRequests")
                 .header("If-Match", testClient.getETag())
@@ -396,22 +377,6 @@ public class ClientTransplantRequestsControllerTest {
                         + "  \"resolvedReason\": \"it was a mistake\"\n"
                         + "}"))
                 .andExpect(status().isUnauthorized());
-    }
-
-    @Test
-    public void patchInvalidTransplantRequestBadEtagTest() throws Exception {
-
-        // Perform patch
-        mockMvc.perform(patch("/clients/" + testClient.getUid() + "/transplantRequests/" + id)
-                .header("If-Match", testClient.getETag() + "X")
-                .header("X-Auth-Token", VALID_AUTH)
-                .contentType(contentType)
-                .content("{\n"
-                        + "  \"resolvedDateTime\": \"2019-07-19T14:11:20.202\",\n"
-                        + "  \"status\": \"CANCELLED\",\n"
-                        + "  \"resolvedReason\": \"it was a mistake\"\n"
-                        + "}"))
-                .andExpect(status().is(412));
     }
 
     /**
