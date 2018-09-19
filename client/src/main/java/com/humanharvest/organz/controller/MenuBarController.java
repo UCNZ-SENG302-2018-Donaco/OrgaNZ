@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -107,7 +108,7 @@ public class MenuBarController extends SubController {
     private static String getFileExtension(String fileName) {
         int lastIndex = fileName.lastIndexOf('.');
         if (lastIndex >= 0) {
-            return fileName.substring(lastIndex + 1).toLowerCase();
+            return fileName.substring(lastIndex + 1).toLowerCase(Locale.UK);
         } else {
             return "";
         }

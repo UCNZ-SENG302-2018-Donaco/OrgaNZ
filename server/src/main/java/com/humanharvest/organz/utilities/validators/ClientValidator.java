@@ -25,6 +25,8 @@ public final class ClientValidator {
     private static final Logger LOGGER = Logger.getLogger(ClientValidator.class.getName());
     private static final double DELTA = 1.0e-6;
 
+    private static final double DELTA = 1e-6;
+
     /**
      * Private constructor to prevent instantiation of utility class
      */

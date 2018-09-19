@@ -1,5 +1,6 @@
 package com.humanharvest.organz.utilities.type_converters;
 
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 /**
@@ -24,7 +25,7 @@ public abstract class StringFormatter {
      */
     public static String unCamelCase(String inCamelCase) {
         String unCamelCased = CAMEL_CASE.matcher(inCamelCase).replaceAll("$1 $2");
-        return unCamelCased.substring(0, 1).toUpperCase() + unCamelCased.substring(1);
+        return unCamelCased.substring(0, 1).toUpperCase(Locale.UK) + unCamelCased.substring(1);
     }
 
 }

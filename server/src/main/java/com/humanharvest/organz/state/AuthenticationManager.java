@@ -185,7 +185,7 @@ public class AuthenticationManager {
         return generateToken("admin:" + username);
     }
 
-    private String generateToken(String id) {
+    private static String generateToken(String id) {
         return Jwts.builder()
                 .setId(id)
                 .setIssuedAt(Date.from(Instant.now()))
