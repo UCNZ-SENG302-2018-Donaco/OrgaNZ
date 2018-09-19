@@ -1,7 +1,5 @@
 package com.humanharvest.organz.server.controller.client;
 
-import static com.humanharvest.organz.utilities.validators.ClientValidator.checkClientETag;
-
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -169,9 +167,6 @@ public class ClientTransplantRequestsController {
         }
         Client client = optionalClient.get();
 
-        //Check ETag
-        checkClientETag(client, eTag);
-
         // Validate the transplant request
         try {
             transplantRequest.setClient(client); //required for validation
@@ -186,9 +181,7 @@ public class ClientTransplantRequestsController {
         State.getActionInvoker(authToken).execute(action);
         Collection<TransplantRequest> transplantRequests = client.getTransplantRequests();
 
-        //Add the new ETag to the headers
         HttpHeaders headers = new HttpHeaders();
-        headers.setETag(client.getETag());
 
         return new ResponseEntity<>(transplantRequests, headers, HttpStatus.CREATED);
     }
@@ -222,9 +215,6 @@ public class ClientTransplantRequestsController {
         }
         Client client = optionalClient.get();
 
-        //Check ETag
-        checkClientETag(client, eTag);
-
         // Get the original transplant request given by the ID
         Optional<TransplantRequest> optionalRequest = client.getTransplantRequestById(id);
         if (!optionalRequest.isPresent()) {
@@ -252,9 +242,7 @@ public class ClientTransplantRequestsController {
                 State.getClientManager());
         State.getActionInvoker(authToken).execute(action);
 
-        //Add the new ETag to the headers
         HttpHeaders headers = new HttpHeaders();
-        headers.setETag(client.getETag());
 
         return new ResponseEntity<>(originalTransplantRequest, headers, HttpStatus.CREATED);
 

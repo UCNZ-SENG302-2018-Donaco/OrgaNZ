@@ -1,7 +1,5 @@
 package com.humanharvest.organz.server.controller.client;
 
-import static com.humanharvest.organz.utilities.validators.ClientValidator.checkClientETag;
-
 import java.util.Collection;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -56,9 +54,7 @@ public class ClientProceduresController {
             // Check request has authorization to view client's procedures
             State.getAuthenticationManager().verifyClientAccess(authToken, client.get());
 
-            // Add the ETag to the headers
             HttpHeaders headers = new HttpHeaders();
-            headers.setETag(client.get().getETag());
 
             // Returns the pending procedures for the client
             return new ResponseEntity<>(client.get().getProcedures(), headers, HttpStatus.OK);
@@ -86,16 +82,11 @@ public class ClientProceduresController {
         }
         Client client = optionalClient.get();
 
-        //Check ETag
-        checkClientETag(client, eTag);
-
         // Execute add procedure action
         Action action = new AddProcedureRecordAction(client, procedureRecord, State.getClientManager());
         State.getActionInvoker(authToken).execute(action);
 
-        // Add the new ETag to the headers
         HttpHeaders headers = new HttpHeaders();
-        headers.setETag(client.getETag());
 
         // Return response containing list of client's procedures
         return new ResponseEntity<>(client.getProcedures(), headers, HttpStatus.CREATED);
@@ -120,9 +111,6 @@ public class ClientProceduresController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         Client client = optionalClient.get();
-
-        //Check ETag
-        checkClientETag(client, eTag);
 
         // Try to find a procedure record with matching id
         Optional<ProcedureRecord> optionalRecord = client.getProcedures().stream()
@@ -161,9 +149,7 @@ public class ClientProceduresController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        // Add the new ETag to the headers
         HttpHeaders headers = new HttpHeaders();
-        headers.setETag(client.getETag());
 
         // Return OK response
         return new ResponseEntity<>(toModify, headers, HttpStatus.CREATED);
@@ -188,9 +174,6 @@ public class ClientProceduresController {
         }
         Client client = optionalClient.get();
 
-        //Check ETag
-        checkClientETag(client, eTag);
-
         // Try to find a procedure record with matching id
         Optional<ProcedureRecord> optionalRecord = client.getProcedures().stream()
                 .filter(procedure -> procedure.getId() != null && procedure.getId() == id)
@@ -205,9 +188,7 @@ public class ClientProceduresController {
         Action action = new DeleteProcedureRecordAction(client, toDelete, State.getClientManager());
         State.getActionInvoker(authToken).execute(action);
 
-        // Add the new ETag to the headers
         HttpHeaders headers = new HttpHeaders();
-        headers.setETag(client.getETag());
 
         // Return OK response
         return new ResponseEntity<>(headers, HttpStatus.OK);

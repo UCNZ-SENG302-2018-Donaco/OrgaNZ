@@ -1,7 +1,5 @@
 package com.humanharvest.organz.server.controller.client;
 
-import static com.humanharvest.organz.utilities.validators.ClientValidator.checkClientETag;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -50,7 +48,6 @@ public class ClientIllnessesController {
             Client client = optionalClient.get();
             //State.getAuthenticationManager().verifyClientAccess(authToken, client);
             HttpHeaders headers = new HttpHeaders();
-            headers.setETag(client.getETag());
 
             return new ResponseEntity<>(client.getIllnesses(), headers, HttpStatus.OK);
         } else {
@@ -77,9 +74,6 @@ public class ClientIllnessesController {
 
         //Auth check
         State.getAuthenticationManager().verifyClientAccess(authToken, client);
-
-        //Check ETag
-        checkClientETag(client, eTag);
 
         IllnessRecord record = client.getIllnessById(id);
 
@@ -113,9 +107,7 @@ public class ClientIllnessesController {
         //Execute action, this would correspond to a specific users invoker in full version
         State.getActionInvoker(authToken).execute(action);
 
-        //Add the new ETag to the headers
         HttpHeaders headers = new HttpHeaders();
-        headers.setETag(client.getETag());
         return new ResponseEntity<>(record, headers, HttpStatus.OK);
 
     }
@@ -144,7 +136,6 @@ public class ClientIllnessesController {
 
         State.getActionInvoker(authToken).execute(addIllnessRecordAction);
         HttpHeaders headers = new HttpHeaders();
-        headers.setETag(client.getETag());
         return new ResponseEntity<>(client.getIllnesses(), headers, HttpStatus.CREATED);
     }
 
@@ -176,7 +167,6 @@ public class ClientIllnessesController {
                 .orElseThrow(IllegalStateException::new);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.setETag(client1.getETag());
 
         return new ResponseEntity<>(removeRecord, headers, HttpStatus.OK);
 

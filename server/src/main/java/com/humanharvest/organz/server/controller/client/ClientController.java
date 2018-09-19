@@ -1,7 +1,5 @@
 package com.humanharvest.organz.server.controller.client;
 
-import static com.humanharvest.organz.utilities.validators.ClientValidator.checkClientETag;
-
 import java.awt.image.ImagingOpException;
 import java.io.File;
 import java.io.FileInputStream;
@@ -145,9 +143,7 @@ public class ClientController {
         ActionInvoker invoker = State.getActionInvoker(authToken);
         invoker.execute(action);
 
-        //Add the new ETag to the headers
         HttpHeaders headers = new HttpHeaders();
-        headers.setETag(client.getETag());
 
         return new ResponseEntity<>(client, headers, HttpStatus.CREATED);
     }
@@ -168,10 +164,8 @@ public class ClientController {
         if (client.isPresent()) {
             //Authenticate
             State.getAuthenticationManager().verifyClientAccess(authToken, client.get());
-            //Add the new ETag to the headers
-            HttpHeaders headers = new HttpHeaders();
-            headers.setETag(client.get().getETag());
 
+            HttpHeaders headers = new HttpHeaders();
             return new ResponseEntity<>(client.get(), headers, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -213,9 +207,6 @@ public class ClientController {
 
         //Check authentication
         State.getAuthenticationManager().verifyClientAccess(authToken, client);
-
-        //Check ETag
-        checkClientETag(client, etag);
 
         //Validate the request, if there are any errors an exception will be thrown.
         if (!ModifyClientValidator.isValid(client, modifyClientObject)) {
@@ -269,9 +260,7 @@ public class ClientController {
             State.getActionInvoker(authToken).execute(markClientAsDeadAction);
         }
 
-        //Add the new ETag to the headers
         HttpHeaders headers = new HttpHeaders();
-        headers.setETag(client.getETag());
 
         //Respond, apparently updates should be 200 not 201 unlike 365 and our spec
         return new ResponseEntity<>(client, headers, HttpStatus.OK);
@@ -305,9 +294,6 @@ public class ClientController {
 
         State.getAuthenticationManager().verifyClientAccess(authToken, client);
 
-        //Check ETag
-        checkClientETag(client, etag);
-
         DeleteClientAction action = new DeleteClientAction(client, State.getClientManager());
         State.getActionInvoker(authToken).execute(action);
 
@@ -332,10 +318,8 @@ public class ClientController {
         if (client.isPresent()) {
             //Authenticate
             State.getAuthenticationManager().verifyClientAccess(authToken, client.get());
-            //Add the new ETag to the headers
-            HttpHeaders headers = new HttpHeaders();
-            headers.setETag(client.get().getETag());
 
+            HttpHeaders headers = new HttpHeaders();
             return new ResponseEntity<>(client.get().getChangesHistory(), headers, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -403,9 +387,6 @@ public class ClientController {
         // Verify they are authenticated to access this client
         State.getAuthenticationManager().verifyClientAccess(authToken, client);
 
-        //Check ETag
-        checkClientETag(client, etag);
-
         AddImageAction action = new AddImageAction(client, image, State.getImageDirectory());
 
         // Write the file
@@ -439,9 +420,6 @@ public class ClientController {
 
         // Verify they are authenticated to access this client
         State.getAuthenticationManager().verifyClientAccess(authToken, client);
-
-        //Check ETag
-        checkClientETag(client, etag);
 
         try {
             DeleteImageAction action = new DeleteImageAction(client, State.getImageDirectory());

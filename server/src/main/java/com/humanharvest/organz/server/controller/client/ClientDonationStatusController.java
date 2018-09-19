@@ -1,7 +1,5 @@
 package com.humanharvest.organz.server.controller.client;
 
-import static com.humanharvest.organz.utilities.validators.ClientValidator.checkClientETag;
-
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -41,9 +39,7 @@ public class ClientDonationStatusController {
             //Auth check
             State.getAuthenticationManager().verifyClientAccess(authToken, client);
 
-            //Add the ETag to the headers
             HttpHeaders headers = new HttpHeaders();
-            headers.add("ETag", client.getETag());
 
             return new ResponseEntity<>(client.getOrganDonationStatus(), headers, HttpStatus.OK);
         } else {
@@ -81,9 +77,6 @@ public class ClientDonationStatusController {
         //Auth check
         State.getAuthenticationManager().verifyClientAccess(authToken, client);
 
-        //Check ETag
-        checkClientETag(client, ETag);
-
         //Create the action
         ModifyClientOrgansAction action = new ModifyClientOrgansAction(client, State.getClientManager());
         //Add all the changes. This can throw an OrganAlreadyRegisteredException but we throw it and handle with the
@@ -95,9 +88,7 @@ public class ClientDonationStatusController {
         //Execute action, this would correspond to a specific users invoker in full version
         State.getActionInvoker(authToken).execute(action);
 
-        //Add the new ETag to the headers
         HttpHeaders headers = new HttpHeaders();
-        headers.add("ETag", client.getETag());
 
         //Respond, apparently updates should be 200 not 201 unlike 365 and our spec
         return new ResponseEntity<>(client.getOrganDonationStatus(), headers, HttpStatus.OK);

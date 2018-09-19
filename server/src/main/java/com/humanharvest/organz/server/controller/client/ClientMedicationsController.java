@@ -1,7 +1,5 @@
 package com.humanharvest.organz.server.controller.client;
 
-import static com.humanharvest.organz.utilities.validators.ClientValidator.checkClientETag;
-
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -50,7 +48,6 @@ public class ClientMedicationsController {
             State.getAuthenticationManager().verifyClientAccess(authToken, client.get());
 
             HttpHeaders headers = new HttpHeaders();
-            headers.setETag(client.get().getETag());
 
             return new ResponseEntity<>(client.get().getMedications(), headers, HttpStatus.OK);
 
@@ -92,8 +89,6 @@ public class ClientMedicationsController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        checkClientETag(client.get(), eTag);
-
         MedicationRecord record = new MedicationRecord(medicationRecordView.getName(),
                 medicationRecordView.getStarted(),
                 null);
@@ -108,7 +103,6 @@ public class ClientMedicationsController {
                 .orElseThrow(IllegalStateException::new);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.setETag(client1.getETag());
 
         return new ResponseEntity<>(client1.getMedications(), headers, HttpStatus.CREATED);
     }
@@ -140,8 +134,6 @@ public class ClientMedicationsController {
         // Check authentication
         State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
 
-        checkClientETag(client.get(), eTag);
-
         MedicationRecord record = client.get().getMedicationRecord(id);
 
         if (record == null) {
@@ -157,7 +149,6 @@ public class ClientMedicationsController {
                     .orElseThrow(IllegalStateException::new);
 
             HttpHeaders httpHeaders = new HttpHeaders();
-            httpHeaders.setETag(client1.getETag());
 
             return new ResponseEntity<>(httpHeaders, HttpStatus.OK);
         }
@@ -190,8 +181,6 @@ public class ClientMedicationsController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        checkClientETag(client.get(), eTag);
-
         MedicationRecord record = client.get().getMedicationRecord(id);
 
         if (record == null) {
@@ -204,7 +193,6 @@ public class ClientMedicationsController {
         State.getActionInvoker(authToken).execute(action);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.setETag(client.get().getETag());
 
         return new ResponseEntity<>(record, headers, HttpStatus.OK);
     }
@@ -236,8 +224,6 @@ public class ClientMedicationsController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        checkClientETag(client.get(), eTag);
-
         MedicationRecord record = client.get().getMedicationRecord(id);
 
         if (record == null) {
@@ -249,7 +235,6 @@ public class ClientMedicationsController {
         State.getActionInvoker(authToken).execute(action);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.setETag(client.get().getETag());
 
         return new ResponseEntity<>(record, headers, HttpStatus.OK);
     }

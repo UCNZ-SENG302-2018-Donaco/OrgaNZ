@@ -92,8 +92,6 @@ public class AdministratorController {
 
         //Add the new ETag to the headers
         HttpHeaders headers = new HttpHeaders();
-        headers.setETag(administrator.getETag());
-        System.out.println(administrator.getETag());
 
         return new ResponseEntity<>(administrator, headers, HttpStatus.CREATED);
     }
@@ -114,10 +112,7 @@ public class AdministratorController {
         AdministratorManager administratorManager = State.getAdministratorManager();
         Optional<Administrator> administrator = administratorManager.getAdministratorByUsername(username);
         if (administrator.isPresent()) {
-            //Add the new ETag to the headers
             HttpHeaders headers = new HttpHeaders();
-            headers.setETag(administrator.get().getETag());
-
             return new ResponseEntity<>(administrator.get(), headers, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -166,15 +161,6 @@ public class AdministratorController {
             throw new InvalidRequestException();
         }
 
-        //Check the ETag. These are handled in the exceptions class.
-        if (etag == null) {
-            throw new IfMatchRequiredException();
-        }
-
-        if (!administrator.getETag().equals(etag)) {
-            throw new IfMatchFailedException();
-        }
-
         //Create the old details to allow undoable action
         ModifyAdministratorObject oldClient = new ModifyAdministratorObject();
         //Copy the values from the current client to our oldClient
@@ -187,9 +173,7 @@ public class AdministratorController {
         //Execute action, this would correspond to a specific users invoker in full version
         State.getActionInvoker(authToken).execute(action);
 
-        //Add the new ETag to the headers
         HttpHeaders headers = new HttpHeaders();
-        headers.setETag(administrator.getETag());
 
         //Respond, apparently updates should be 200 not 201 unlike 365 and our spec
         return new ResponseEntity<>(administrator, headers, HttpStatus.OK);
@@ -227,14 +211,6 @@ public class AdministratorController {
 
         if (administrator.equals(State.getAdministratorManager().getDefaultAdministrator())) {
             return new ResponseEntity<>("Unable to delete the default administrator.", HttpStatus.BAD_REQUEST);
-        }
-
-        //Check the ETag. These are handled in the exceptions class.
-        if (etag == null) {
-            throw new IfMatchRequiredException("Etag does not exist");
-        }
-        if (!administrator.getETag().equals(etag)) {
-            throw new IfMatchFailedException("Etag is not valid for this administrator");
         }
 
         DeleteAdministratorAction action = new DeleteAdministratorAction(
