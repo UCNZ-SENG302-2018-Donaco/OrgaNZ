@@ -214,8 +214,9 @@ public class SpiderWebController extends SubController {
         deceasedDonorPane = newMain.getPane();
         ((FocusArea) deceasedDonorPane.getUserData()).setTranslatable(false);
 
-        int centerX = (int) Screen.getPrimary().getVisualBounds().getWidth() / 2;
-        int centerY = (int) Screen.getPrimary().getVisualBounds().getHeight() / 2;
+        Bounds bounds = deceasedDonorPane.getBoundsInParent();
+        int centerX = (int) ((Screen.getPrimary().getVisualBounds().getWidth() - bounds.getWidth()) / 2);
+        int centerY = (int) ((Screen.getPrimary().getVisualBounds().getHeight() - bounds.getHeight()) / 2);
         setPositionUsingTransform(deceasedDonorPane, centerX, centerY, 0);
     }
 
