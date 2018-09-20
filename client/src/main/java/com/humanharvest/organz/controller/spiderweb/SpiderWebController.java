@@ -2,7 +2,6 @@ package com.humanharvest.organz.controller.spiderweb;
 
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -14,9 +13,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.CacheHint;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import javafx.scene.paint.LinearGradient;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Affine;
@@ -62,6 +59,7 @@ public class SpiderWebController extends SubController {
             mainController.closeWindow();
         }
 
+        client.setDonatedOrgans(State.getClientResolver().getDonatedOrgans(client));
         displayDonatingClient();
         displayOrgans();
     }
@@ -91,8 +89,7 @@ public class SpiderWebController extends SubController {
      * Loads a window for each non expired organ.
      */
     private void displayOrgans() {
-        Collection<DonatedOrgan> donatedOrgans = State.getClientResolver().getDonatedOrgans(client);
-        for (DonatedOrgan organ : donatedOrgans) {
+        for (DonatedOrgan organ : client.getDonatedOrgans()) {
             if (!organ.hasExpired()) {
                 addOrganNode(organ);
             }
@@ -206,33 +203,30 @@ public class SpiderWebController extends SubController {
     }
 
     private void displayDonatingClient() {
-        MainController newMain = PageNavigator.openNewWindow(200, 400);
-        PageNavigator.loadPage(Page.RECEIVER_OVERVIEW, newMain);
+        MainController newMain = PageNavigator.openNewWindow(200, 320);
+        PageNavigator.loadPage(Page.DECEASED_DONOR_OVERVIEW, newMain);
         deceasedDonorPane = newMain.getPane();
         FocusArea deceasedDonorFocus = (FocusArea) deceasedDonorPane.getUserData();
         deceasedDonorFocus.setTranslatable(false);
-//        deceasedDonorFocus.setCollidable(true);
+//        deceasedDonorFocus.setCollidable(true); TODO does this need to be here?
 
         Bounds bounds = deceasedDonorPane.getBoundsInParent();
-        // TODO: Any reason why an int rather then double? Matthew
-        int centerX = (int) ((Screen.getPrimary().getVisualBounds().getWidth() - bounds.getWidth()) / 2);
-        int centerY = (int) ((Screen.getPrimary().getVisualBounds().getHeight() - bounds.getHeight()) / 2);
+        double centerX = (Screen.getPrimary().getVisualBounds().getWidth() - bounds.getWidth()) / 2;
+        double centerY = (Screen.getPrimary().getVisualBounds().getHeight() - bounds.getHeight()) / 2;
         setPositionUsingTransform(deceasedDonorPane, centerX, centerY, 0);
-
-        ((Pane)canvas.getParent()).getChildren().add(new Circle(Screen.getPrimary().getVisualBounds().getWidth() / 2,
-                Screen.getPrimary().getVisualBounds().getHeight() / 2,
-                10,
-                Color.color(1, 0 ,0)));
     }
 
     private void layoutOrganNodes(double radius) {
         final int numNodes = organNodes.size();
         final double angleSize = (Math.PI * 2) / numNodes;
 
+        Bounds bounds = deceasedDonorPane.getBoundsInParent();
+        double centreX = bounds.getMinX() + bounds.getWidth() / 2;
+        double centreY = bounds.getMinY() + bounds.getHeight() / 2;
         for (int i = 0; i < numNodes; i++) {
             setPositionUsingTransform(organNodes.get(i),
-                    deceasedDonorPane.getLocalToParentTransform().getTx() + radius * Math.sin(angleSize * i),
-                    deceasedDonorPane.getLocalToParentTransform().getTy() + radius * Math.cos(angleSize * i),
+                    centreX + radius * Math.sin(angleSize * i),
+                    centreY + radius * Math.cos(angleSize * i),
                     360 - Math.toDegrees(angleSize * i));
         }
     }
