@@ -10,6 +10,8 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.geometry.Bounds;
+import javafx.geometry.Point2D;
+import javafx.scene.CacheHint;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.LinearGradient;
@@ -28,6 +30,7 @@ import com.humanharvest.organz.controller.components.ExpiryBarUtils;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.touch.FocusArea;
 import com.humanharvest.organz.touch.MultitouchHandler;
+import com.humanharvest.organz.touch.PointUtils;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 
@@ -73,10 +76,13 @@ public class SpiderWebController extends SubController {
     private static void setPositionUsingTransform(Node node, double x, double y, double angle) {
         FocusArea focusArea = (FocusArea) node.getUserData();
 
+        Point2D centre = PointUtils.getCentreOfNode(node).multiply(0.5);
+
         Affine transform = new Affine();
-        transform.prepend(new Translate(x, y));
-        transform.prepend(new Rotate(angle, x, y));
+        transform.append(new Translate(x, y));
+        transform.append(new Rotate(angle, centre.getX(), centre.getY()));
         focusArea.setTransform(transform);
+        node.setCacheHint(CacheHint.QUALITY);
     }
 
     /**

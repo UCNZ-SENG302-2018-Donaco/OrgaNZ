@@ -2,8 +2,8 @@ package com.humanharvest.organz.touch;
 
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
+import javafx.scene.Node;
 import javafx.scene.input.TouchPoint;
-import javafx.scene.layout.Pane;
 
 public final class PointUtils {
 
@@ -39,8 +39,8 @@ public final class PointUtils {
         return newAngle - oldAngle;
     }
 
-    public static Point2D getCentreOfPane(Pane pane) {
-        return getCentreOfBounds(pane.getBoundsInParent());
+    public static Point2D getCentreOfNode(Node node) {
+        return getCentreOfBounds(node.getBoundsInParent());
     }
 
 

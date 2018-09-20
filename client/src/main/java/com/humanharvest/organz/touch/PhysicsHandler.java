@@ -40,7 +40,7 @@ public class PhysicsHandler {
         Point2D velocity = focusArea.getVelocity();
         Point2D delta = velocity.multiply(0.001 * PHYSICS_MILLISECOND_PERIOD);
 
-        Point2D centre = PointUtils.getCentreOfPane(focusArea.getPane());
+        Point2D centre = PointUtils.getCentreOfNode(focusArea.getPane());
 
         if (centre.getX() + delta.getX() < 0) {
             delta = new Point2D(-centre.getX(), delta.getY());
