@@ -1,7 +1,5 @@
 package com.humanharvest.organz.server.controller.client;
 
-import static com.humanharvest.organz.utilities.validators.ClientValidator.checkClientETag;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -12,8 +10,6 @@ import com.humanharvest.organz.actions.client.DeleteIllnessRecordAction;
 import com.humanharvest.organz.actions.client.ModifyIllnessRecordByObjectAction;
 import com.humanharvest.organz.server.exceptions.GlobalControllerExceptionHandler.InvalidRequestException;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
-import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
 import com.humanharvest.organz.utilities.validators.client.ModifyIllnessValidator;
 import com.humanharvest.organz.views.client.CreateIllnessView;
 import com.humanharvest.organz.views.client.ModifyIllnessObject;
@@ -50,7 +46,6 @@ public class ClientIllnessesController {
             Client client = optionalClient.get();
             //State.getAuthenticationManager().verifyClientAccess(authToken, client);
             HttpHeaders headers = new HttpHeaders();
-            headers.setETag(client.getETag());
 
             return new ResponseEntity<>(client.getIllnesses(), headers, HttpStatus.OK);
         } else {
@@ -63,9 +58,8 @@ public class ClientIllnessesController {
             @PathVariable int uid,
             @PathVariable int id,
             @RequestBody ModifyIllnessObject modifyIllnessObject,
-            @RequestHeader(value = "If-Match", required = false) String eTag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
-            throws IfMatchRequiredException, IfMatchFailedException, InvalidRequestException {
+            throws InvalidRequestException {
 
         //Fetch the client given by ID
         Optional<Client> optionalClient = State.getClientManager().getClientByID(uid);
@@ -77,9 +71,6 @@ public class ClientIllnessesController {
 
         //Auth check
         State.getAuthenticationManager().verifyClientAccess(authToken, client);
-
-        //Check ETag
-        checkClientETag(client, eTag);
 
         IllnessRecord record = client.getIllnessById(id);
 
@@ -113,9 +104,7 @@ public class ClientIllnessesController {
         //Execute action, this would correspond to a specific users invoker in full version
         State.getActionInvoker(authToken).execute(action);
 
-        //Add the new ETag to the headers
         HttpHeaders headers = new HttpHeaders();
-        headers.setETag(client.getETag());
         return new ResponseEntity<>(record, headers, HttpStatus.OK);
 
     }
@@ -144,7 +133,6 @@ public class ClientIllnessesController {
 
         State.getActionInvoker(authToken).execute(addIllnessRecordAction);
         HttpHeaders headers = new HttpHeaders();
-        headers.setETag(client.getETag());
         return new ResponseEntity<>(client.getIllnesses(), headers, HttpStatus.CREATED);
     }
 
@@ -176,7 +164,6 @@ public class ClientIllnessesController {
                 .orElseThrow(IllegalStateException::new);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.setETag(client1.getETag());
 
         return new ResponseEntity<>(removeRecord, headers, HttpStatus.OK);
 

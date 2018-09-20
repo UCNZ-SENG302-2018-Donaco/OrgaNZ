@@ -1,7 +1,5 @@
 package com.humanharvest.organz.server.controller.client;
 
-import static com.humanharvest.organz.utilities.validators.ClientValidator.checkClientETag;
-
 import java.util.Collection;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -15,8 +13,6 @@ import com.humanharvest.organz.actions.client.DeleteProcedureRecordAction;
 import com.humanharvest.organz.actions.client.ModifyProcedureRecordAction;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
-import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
-import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
 import com.humanharvest.organz.views.client.ModifyProcedureObject;
 import com.humanharvest.organz.views.client.Views;
 
@@ -49,16 +45,14 @@ public class ClientProceduresController {
     public ResponseEntity<Collection<ProcedureRecord>> getProceduresForClient(
             @PathVariable int uid,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
-            throws AuthenticationException, IfMatchFailedException, IfMatchRequiredException {
+            throws AuthenticationException {
 
         Optional<Client> client = State.getClientManager().getClientByID(uid);
         if (client.isPresent()) {
             // Check request has authorization to view client's procedures
             State.getAuthenticationManager().verifyClientAccess(authToken, client.get());
 
-            // Add the ETag to the headers
             HttpHeaders headers = new HttpHeaders();
-            headers.setETag(client.get().getETag());
 
             // Returns the pending procedures for the client
             return new ResponseEntity<>(client.get().getProcedures(), headers, HttpStatus.OK);
@@ -72,9 +66,8 @@ public class ClientProceduresController {
     public ResponseEntity<Collection<ProcedureRecord>> createProcedureRecord(
             @RequestBody ProcedureRecord procedureRecord,
             @PathVariable int uid,
-            @RequestHeader(value = "If-Match", required = false) String eTag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
-            throws AuthenticationException, IfMatchFailedException, IfMatchRequiredException {
+            throws AuthenticationException {
 
         // Check request has authorization to create a procedure
         State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
@@ -86,16 +79,11 @@ public class ClientProceduresController {
         }
         Client client = optionalClient.get();
 
-        //Check ETag
-        checkClientETag(client, eTag);
-
         // Execute add procedure action
         Action action = new AddProcedureRecordAction(client, procedureRecord, State.getClientManager());
         State.getActionInvoker(authToken).execute(action);
 
-        // Add the new ETag to the headers
         HttpHeaders headers = new HttpHeaders();
-        headers.setETag(client.getETag());
 
         // Return response containing list of client's procedures
         return new ResponseEntity<>(client.getProcedures(), headers, HttpStatus.CREATED);
@@ -107,7 +95,6 @@ public class ClientProceduresController {
             @RequestBody ModifyProcedureObject modifyProcedureObject,
             @PathVariable int uid,
             @PathVariable int id,
-            @RequestHeader(value = "If-Match", required = false) String eTag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken) throws AuthenticationException {
 
         // Check request has authorization to patch a procedure
@@ -120,9 +107,6 @@ public class ClientProceduresController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         Client client = optionalClient.get();
-
-        //Check ETag
-        checkClientETag(client, eTag);
 
         // Try to find a procedure record with matching id
         Optional<ProcedureRecord> optionalRecord = client.getProcedures().stream()
@@ -161,9 +145,7 @@ public class ClientProceduresController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        // Add the new ETag to the headers
         HttpHeaders headers = new HttpHeaders();
-        headers.setETag(client.getETag());
 
         // Return OK response
         return new ResponseEntity<>(toModify, headers, HttpStatus.CREATED);
@@ -173,9 +155,8 @@ public class ClientProceduresController {
     public ResponseEntity deleteProcedureRecord(
             @PathVariable int uid,
             @PathVariable int id,
-            @RequestHeader(value = "If-Match", required = false) String eTag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
-            throws AuthenticationException, IfMatchFailedException, IfMatchRequiredException {
+            throws AuthenticationException {
 
         // Check request has authorization to delete a procedure
         State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
@@ -187,9 +168,6 @@ public class ClientProceduresController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         Client client = optionalClient.get();
-
-        //Check ETag
-        checkClientETag(client, eTag);
 
         // Try to find a procedure record with matching id
         Optional<ProcedureRecord> optionalRecord = client.getProcedures().stream()
@@ -205,9 +183,7 @@ public class ClientProceduresController {
         Action action = new DeleteProcedureRecordAction(client, toDelete, State.getClientManager());
         State.getActionInvoker(authToken).execute(action);
 
-        // Add the new ETag to the headers
         HttpHeaders headers = new HttpHeaders();
-        headers.setETag(client.getETag());
 
         // Return OK response
         return new ResponseEntity<>(headers, HttpStatus.OK);

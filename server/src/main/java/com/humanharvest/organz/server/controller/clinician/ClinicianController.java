@@ -74,7 +74,6 @@ public class ClinicianController {
         invoker.execute(action);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.setETag(clinician.getETag());
         return new ResponseEntity<>(clinician, headers, HttpStatus.CREATED);
     }
 
@@ -93,7 +92,6 @@ public class ClinicianController {
         if (clinician.isPresent()) {
             State.getAuthenticationManager().verifyClinicianAccess(authToken, clinician.get());
             HttpHeaders headers = new HttpHeaders();
-            headers.setETag(clinician.get().getETag());
             return new ResponseEntity<>(clinician.get(), headers, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -131,7 +129,6 @@ public class ClinicianController {
 
                 State.getClinicianManager().applyChangesTo(clinician);
                 HttpHeaders headers = new HttpHeaders();
-                headers.setETag(clinician.getETag());
                 return new ResponseEntity<>(clinician, headers, HttpStatus.OK);
             } else {
                 throw new GlobalControllerExceptionHandler.InvalidRequestException();
@@ -186,7 +183,6 @@ public class ClinicianController {
         if (clinician.isPresent()) {
             State.getAuthenticationManager().verifyClinicianAccess(authToken, clinician.get());
             HttpHeaders headers = new HttpHeaders();
-            headers.setETag(clinician.get().getETag());
             return new ResponseEntity<>(clinician.get().getChangesHistory(), headers, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

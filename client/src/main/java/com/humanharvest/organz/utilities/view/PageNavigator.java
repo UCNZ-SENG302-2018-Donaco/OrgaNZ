@@ -15,15 +15,15 @@ public class PageNavigator {
 
     private static IPageNavigator pageNavigator = new PageNavigatorStandard();
 
-    public static void setPageNavigator(IPageNavigator navigator) {
-        pageNavigator = navigator;
-    }
-
     /**
      * Private constructor to prevent instantiation of utility class
      */
     private PageNavigator() {
         throw new IllegalStateException("Utility class");
+    }
+
+    public static void setPageNavigator(IPageNavigator navigator) {
+        pageNavigator = navigator;
     }
 
     /**

@@ -38,7 +38,7 @@ public class PrintAllInfo implements Runnable {
     public void run() {
         List<Client> clients = manager.getClients();
 
-        if (clients.size() == 0) {
+        if (clients.isEmpty()) {
             outputStream.println("No clients exist");
         } else {
             for (Client client : clients) {
