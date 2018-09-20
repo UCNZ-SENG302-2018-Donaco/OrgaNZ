@@ -154,14 +154,17 @@ public class SpiderWebController extends SubController {
         organFocus.setScalable(false);
         organFocus.setCollidable(true);
         organNodes.add(organPane);
-        //TODO: Fix so organ stays expired once web is closed.
         organPane.setOnMouseClicked(click -> {
             if (click.getClickCount() == 3) {
+                if (organ.getOverrideReason() == null) {
+                    State.getClientResolver()
+                            .manuallyOverrideOrgan(organ, "Manually Overridden by Doctor using WebView");
+                    organ.manuallyOverride("Manually Overridden by Doctor using WebView");
 
-                State.getClientResolver()
-                        .manuallyOverrideOrgan(organ, "Manually Overridden by Doctor using WebView");
-                organ.manuallyOverride("Manually Overridden by Doctor using WebView");
-
+                } else {
+                    State.getClientResolver().cancelManualOverrideForOrgan(organ);
+                    organ.cancelManualOverride();
+                }
             }
         });
         // Create the line
