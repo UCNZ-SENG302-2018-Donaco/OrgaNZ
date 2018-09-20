@@ -7,6 +7,7 @@ import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.humanharvest.organz.utilities.algorithms.MatchOrganToRecipients;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -37,6 +38,7 @@ public class ReceiverOverviewController extends ViewBaseController {
 
     private static final Logger LOGGER = Logger.getLogger(ReceiverOverviewController.class.getName());
 
+
     private Client viewedClient;
     private Client donor;
     private Organ organ;
@@ -59,6 +61,9 @@ public class ReceiverOverviewController extends ViewBaseController {
 
     @FXML
     private Label age;
+
+    @FXML
+    private Label priority;
 
   @FXML
   private Label col1Label;
@@ -89,6 +94,9 @@ public class ReceiverOverviewController extends ViewBaseController {
             donor = dummyDonor;
             organ = Organ.LIVER;
         }
+
+        //Set client priority
+        priority.setText("1");
 
         // Set name and age
         name.setText(viewedClient.getFullName());
