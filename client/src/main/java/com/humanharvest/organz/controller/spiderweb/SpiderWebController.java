@@ -21,6 +21,7 @@ import javafx.scene.text.Text;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
+import javafx.scene.transform.Transform;
 import javafx.scene.transform.Translate;
 import javafx.stage.Screen;
 
@@ -151,6 +152,7 @@ public class SpiderWebController extends SubController {
                     connector.setEndX(bounds.getMinX() + bounds.getWidth() / 2);
                     connector.setEndY(bounds.getMinY() + bounds.getHeight() / 2);
                     updateConnector(organ, connector, durationText, matchesList);
+                    updateMatchesListPosition(matchesList, newValue, bounds);
                 });
 
 
@@ -178,7 +180,6 @@ public class SpiderWebController extends SubController {
     private ListView<Client> createMatchesList(DonatedOrgan organ) {
         // Setup the ListView
         final ListView<Client> matchesList = new ListView<>();
-//        final Pane pane = new Pane(matchesList);
 
         List<Client> potentialMatches = State.getClientManager().getOrganMatches(organ);
         matchesList.setItems(FXCollections.observableArrayList(potentialMatches));
@@ -224,14 +225,6 @@ public class SpiderWebController extends SubController {
         durationText.getTransforms().add(trans);
         durationText.setTranslateX(x);
         durationText.setTranslateY(y);
-
-//        matchesList.getTransforms().removeIf(transform -> transform instanceof Affine);
-//        Affine matchTrans = new Affine();
-//        trans.prepend(new Translate(0, -5));
-//        trans.prepend(new Rotate(angle));
-
-
-//        durationText.setRotate(angle);
     }
 
     private double getAngle(double x1, double y1, double x2, double y2) {
@@ -266,17 +259,26 @@ public class SpiderWebController extends SubController {
                     deceasedDonorPane.getLocalToParentTransform().getTx() + radius * Math.sin(angleSize * i),
                     deceasedDonorPane.getLocalToParentTransform().getTy() + radius * Math.cos(angleSize * i),
                     360 - Math.toDegrees(angleSize * i));
-
-            Affine transform = new Affine();
-            double x = deceasedDonorPane.getLocalToParentTransform().getTx() + radius * Math.sin(angleSize * i);
-            double y = deceasedDonorPane.getLocalToParentTransform().getTy() + radius * Math.cos(angleSize * i);
-            double angle = 360 - Math.toDegrees(angleSize * i);
-            transform.prepend(new Scale(0.5, 0.5));
-            transform.prepend(new Translate(0, 120));
-            transform.prepend(new Translate(x, y));
-            transform.prepend(new Rotate(angle, x, y));
-            matchesLists.get(i).getTransforms().add(transform);
-
         }
+    }
+
+    private void updateMatchesListPosition(ListView<Client> matchesList, Transform newTransform, Bounds bounds) {
+        matchesList.getTransforms().removeIf(transform -> transform instanceof Affine);
+
+        Affine transform = new Affine();
+        transform.prepend(new Scale(0.5, 0.5));
+        transform.prepend(new Translate(-50, 120));
+        transform.prepend(newTransform);
+
+        matchesList.getTransforms().add(transform);
+
+//        Affine transform = new Affine();
+//        double x = deceasedDonorPane.getLocalToParentTransform().getTx() + radius * Math.sin(angleSize * i);
+//        double y = deceasedDonorPane.getLocalToParentTransform().getTy() + radius * Math.cos(angleSize * i);
+//        double angle = 360 - Math.toDegrees(angleSize * i);
+//        transform.prepend(new Translate(x, y));
+//        transform.prepend(new Rotate(angle, x, y));
+//        matchesLists.get(i).getTransforms().add(transform);
+
     }
 }
