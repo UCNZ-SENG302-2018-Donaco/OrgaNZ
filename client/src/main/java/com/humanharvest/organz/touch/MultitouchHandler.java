@@ -378,7 +378,6 @@ public final class MultitouchHandler {
         FocusArea focusArea = new FocusArea(pane);
 
         focusAreas.add(focusArea);
-        pane.getScene().getWindow();
         pane.setUserData(focusArea);
 
         addPaneListenerChildren(focusArea, pane);
