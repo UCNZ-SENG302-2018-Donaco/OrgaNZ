@@ -8,8 +8,3 @@ Feature: Does GET /config/hospitals work?
     When I get /config/hospitals
     Then the result is ok
     Then the content type is json
-
-  Scenario: Fail to get a list of hospitals without authorisation
-    Given authentication is required
-    When I get /config/hospitals
-    Then the result is unauthenticated
