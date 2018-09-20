@@ -14,7 +14,9 @@ import javafx.geometry.Point2D;
 import javafx.scene.CacheHint;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.LinearGradient;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Affine;
@@ -76,7 +78,7 @@ public class SpiderWebController extends SubController {
     private static void setPositionUsingTransform(Node node, double x, double y, double angle) {
         FocusArea focusArea = (FocusArea) node.getUserData();
 
-        Point2D centre = PointUtils.getCentreOfNode(node).multiply(0.5);
+        Point2D centre = PointUtils.getCentreOfNode(node);
 
         Affine transform = new Affine();
         transform.append(new Translate(x, y));
@@ -84,35 +86,6 @@ public class SpiderWebController extends SubController {
         focusArea.setTransform(transform);
         node.setCacheHint(CacheHint.QUALITY);
     }
-
-    /**
-     * Create a new stage to display all of the pane in.
-     */
-//    private void setupNewStage() {
-//        Stage stage = new Stage();
-//        stage.setTitle("Organ Spider Web");
-//        canvas = new TuioFXCanvas();
-//        Scene scene = new Scene(canvas);
-//
-//        FXMLLoader loader = new FXMLLoader();
-//
-//        try {
-//            Pane backPane = loader.load(PageNavigatorTouch.class.getResourceAsStream(Page.BACKDROP.getPath()));
-//
-//            canvas.getChildren().add(backPane);
-//            MultitouchHandler.initialise(canvas);
-//
-//        } catch (IOException e) {
-//            LOGGER.log(Level.SEVERE, "Exception when setting up stage", e);
-//        }
-//
-//        stage.setScene(scene);
-//        stage.setFullScreen(true);
-//        stage.setOnCloseRequest(event -> {
-//            MultitouchHandler.stageClosing();
-//        });
-//        stage.show();
-//    }
 
     /**
      * Loads a window for each non expired organ.
@@ -127,7 +100,7 @@ public class SpiderWebController extends SubController {
         layoutOrganNodes(300);
     }
 
-    private void updateConnector(DonatedOrgan donatedOrgan, Line line, Text durationText) {
+    private static void updateConnector(DonatedOrgan donatedOrgan, Line line, Text durationText) {
         Duration duration = donatedOrgan.getDurationUntilExpiry();
         if (ExpiryBarUtils.isDurationZero(duration)) {
             line.setStroke(ExpiryBarUtils.greyColour);
@@ -144,23 +117,29 @@ public class SpiderWebController extends SubController {
 
         durationText.setText(ExpiryBarUtils.getDurationString(donatedOrgan));
 
+        durationText.getTransforms().removeIf(transform -> {
+            return transform instanceof Affine;
+        });
+
+        Affine trans = new Affine();
+
         double xWidth = line.getStartX() - line.getEndX();
         double yWidth = line.getStartY() - line.getEndY();
         double lineWidth = Math.sqrt(Math.pow(xWidth, 2) + Math.pow(yWidth, 2));
-        double x = line.getEndX();
-        double y = line.getEndY();
-        double angle = (getAngle(line.getStartX(), line.getStartY(), line.getEndX(), line.getEndY()));
-        durationText.getTransforms().removeIf(transform -> transform instanceof Affine);
-        Affine trans = new Affine();
         trans.prepend(new Translate(Math.max(LABEL_OFFSET, lineWidth * 0.2), -5));
+
+        double angle = getAngle(line.getStartX(), line.getStartY(), line.getEndX(), line.getEndY());
         trans.prepend(new Rotate(angle));
         durationText.getTransforms().add(trans);
+
+        double x = line.getEndX();
         durationText.setTranslateX(x);
+
+        double y = line.getEndY();
         durationText.setTranslateY(y);
-//        durationText.setRotate(angle);
     }
 
-    private double getAngle(double x1, double y1, double x2, double y2) {
+    private static double getAngle(double x1, double y1, double x2, double y2) {
         double angle = Math.toDegrees(Math.atan2(y1 - y2, x1 - x2));
         if (angle < 0) {
             angle += 360;
@@ -218,7 +197,9 @@ public class SpiderWebController extends SubController {
         // Attach timer to update connector each second (for time until expiration)
         final Timeline clock = new Timeline(new KeyFrame(
                 javafx.util.Duration.seconds(1),
-                event -> updateConnector(organ, connector, durationText)));
+                event -> {
+                    updateConnector(organ, connector, durationText);
+                }));
         clock.setCycleCount(Animation.INDEFINITE);
         clock.play();
 
@@ -228,15 +209,20 @@ public class SpiderWebController extends SubController {
         MainController newMain = PageNavigator.openNewWindow(200, 400);
         PageNavigator.loadPage(Page.RECEIVER_OVERVIEW, newMain);
         deceasedDonorPane = newMain.getPane();
-        FocusArea deceasedDonorFocusArea = (FocusArea) deceasedDonorPane.getUserData();
-        deceasedDonorFocusArea.setTranslatable(false);
-//        deceasedDonorFocusArea.setCollidable(true);
+        FocusArea deceasedDonorFocus = (FocusArea) deceasedDonorPane.getUserData();
+        deceasedDonorFocus.setTranslatable(false);
+//        deceasedDonorFocus.setCollidable(true);
 
         Bounds bounds = deceasedDonorPane.getBoundsInParent();
         // TODO: Any reason why an int rather then double? Matthew
         int centerX = (int) ((Screen.getPrimary().getVisualBounds().getWidth() - bounds.getWidth()) / 2);
         int centerY = (int) ((Screen.getPrimary().getVisualBounds().getHeight() - bounds.getHeight()) / 2);
         setPositionUsingTransform(deceasedDonorPane, centerX, centerY, 0);
+
+        ((Pane)canvas.getParent()).getChildren().add(new Circle(Screen.getPrimary().getVisualBounds().getWidth() / 2,
+                Screen.getPrimary().getVisualBounds().getHeight() / 2,
+                10,
+                Color.color(1, 0 ,0)));
     }
 
     private void layoutOrganNodes(double radius) {
