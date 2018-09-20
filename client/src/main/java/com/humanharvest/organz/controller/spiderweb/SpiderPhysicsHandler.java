@@ -14,7 +14,7 @@ import com.humanharvest.organz.touch.PointUtils;
 public class SpiderPhysicsHandler extends PhysicsHandler {
 
     private static final double MOVE_ASIDE_VELOCITY_PER_TICK = 2;
-    private static final double MAX_MOVE_ASIDE_VELOCITY = 100;
+    private static final double MAX_MOVE_ASIDE_VELOCITY = 200;
     private static final double MOVE_ASIDE_DAMPING = 0.95;
 
     public SpiderPhysicsHandler(Pane rootPane) {
@@ -30,7 +30,7 @@ public class SpiderPhysicsHandler extends PhysicsHandler {
             boolean paneTouched = !MultitouchHandler.findPaneTouches(focusArea.getPane()).isEmpty();
 
             // Skip if touched or not moveable
-            if (paneTouched || !focusArea.isTranslatable()) {
+            if (paneTouched || !focusArea.isTranslatable() || !focusArea.isCollidable()) {
                 continue;
             }
 
@@ -39,14 +39,12 @@ public class SpiderPhysicsHandler extends PhysicsHandler {
 
             for (FocusArea otherFocusArea : MultitouchHandler.getFocusAreas()) {
 
-                // Skip if the same object
-                if (Objects.equals(focusArea, otherFocusArea)) {
-                    continue;
-                }
+                // If the other pane isn't moveable due to being touched or not collidable
+                boolean otherNotMoveable = !MultitouchHandler.findPaneTouches(otherFocusArea.getPane()).isEmpty()
+                        || !otherFocusArea.isCollidable();
 
-                // If the other pane isn't moveable due to being touched
-                boolean otherNotMoveable = !MultitouchHandler.findPaneTouches(otherFocusArea.getPane()).isEmpty();
-                if (otherNotMoveable){
+                // Skip if the same object or not moveable
+                if (Objects.equals(focusArea, otherFocusArea) || otherNotMoveable) {
                     continue;
                 }
 

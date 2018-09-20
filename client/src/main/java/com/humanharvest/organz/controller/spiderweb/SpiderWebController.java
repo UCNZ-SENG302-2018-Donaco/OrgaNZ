@@ -49,10 +49,13 @@ public class SpiderWebController extends SubController {
         this.client = client;
 
         canvas = MultitouchHandler.getCanvas();
+
+        // Close existing windows
         MultitouchHandler.setPhysicsHandler(new SpiderPhysicsHandler(MultitouchHandler.getRootPane()));
         for (MainController mainController : State.getMainControllers()) {
             mainController.closeWindow();
         }
+
         displayDonatingClient();
         displayOrgans();
     }
@@ -111,57 +114,7 @@ public class SpiderWebController extends SubController {
         Collection<DonatedOrgan> donatedOrgans = State.getClientResolver().getDonatedOrgans(client);
         for (DonatedOrgan organ : donatedOrgans) {
             if (!organ.hasExpired()) {
-                State.setOrganToDisplay(organ);
-                MainController newMain = PageNavigator.openNewWindow(80, 80);
-                PageNavigator.loadPage(Page.ORGAN_IMAGE, newMain);
-                newMain.getStyles().clear();
-                Pane organPane = newMain.getPane();
-                ((FocusArea) organPane.getUserData()).setScalable(false);
-                organNodes.add(organPane);
-                //TODO: Fix so organ stays expired once web is closed.
-                organPane.setOnMouseClicked(click -> {
-                    if (click.getClickCount() == 3) {
-
-                        State.getClientResolver()
-                                .manuallyOverrideOrgan(organ, "Manually Overridden by Doctor using WebView");
-                        organ.manuallyOverride("Manually Overridden by Doctor using WebView");
-
-                    }
-                });
-                // Create the line
-                Line connector = new Line();
-                connector.setStrokeWidth(4);
-                Text durationText = new Text(ExpiryBarUtils.getDurationString(organ));
-
-                // Redraws lines when organs or donor pane is moved
-                deceasedDonorPane.localToParentTransformProperty().addListener((observable, oldValue, newValue) -> {
-                    Bounds bounds = deceasedDonorPane.getBoundsInParent();
-                    connector.setStartX(bounds.getMinX() + bounds.getWidth() / 2);
-                    connector.setStartY(bounds.getMinY() + bounds.getHeight() / 2);
-                    updateConnector(organ, connector, durationText);
-                });
-                organPane.localToParentTransformProperty().addListener((observable, oldValue, newValue) -> {
-                    Bounds bounds = organPane.getBoundsInParent();
-                    connector.setEndX(bounds.getMinX() + bounds.getWidth() / 2);
-                    connector.setEndY(bounds.getMinY() + bounds.getHeight() / 2);
-                    updateConnector(organ, connector, durationText);
-                });
-
-                canvas.getChildren().add(0, connector);
-                canvas.getChildren().add(0, durationText);
-
-                Bounds bounds = deceasedDonorPane.getBoundsInParent();
-                connector.setStartX(bounds.getMinX() + bounds.getWidth() / 2);
-                connector.setStartY(bounds.getMinY() + bounds.getHeight() / 2);
-                updateConnector(organ, connector, durationText);
-
-                // Attach timer to update connector each second (for time until expiration)
-                final Timeline clock = new Timeline(new KeyFrame(
-                        javafx.util.Duration.seconds(1),
-                        event -> updateConnector(organ, connector, durationText)));
-                clock.setCycleCount(Animation.INDEFINITE);
-                clock.play();
-
+                addOrganNode(organ);
             }
         }
         layoutOrganNodes(300);
@@ -209,6 +162,58 @@ public class SpiderWebController extends SubController {
     }
 
     private void addOrganNode(DonatedOrgan organ) {
+        State.setOrganToDisplay(organ);
+        MainController newMain = PageNavigator.openNewWindow(80, 80);
+        PageNavigator.loadPage(Page.ORGAN_IMAGE, newMain);
+        newMain.getStyles().clear();
+        Pane organPane = newMain.getPane();
+        FocusArea organFocus = (FocusArea) organPane.getUserData();
+        organFocus.setScalable(false);
+        organFocus.setCollidable(true);
+        organNodes.add(organPane);
+        //TODO: Fix so organ stays expired once web is closed.
+        organPane.setOnMouseClicked(click -> {
+            if (click.getClickCount() == 3) {
+
+                State.getClientResolver()
+                        .manuallyOverrideOrgan(organ, "Manually Overridden by Doctor using WebView");
+                organ.manuallyOverride("Manually Overridden by Doctor using WebView");
+
+            }
+        });
+        // Create the line
+        Line connector = new Line();
+        connector.setStrokeWidth(4);
+        Text durationText = new Text(ExpiryBarUtils.getDurationString(organ));
+
+        // Redraws lines when organs or donor pane is moved
+        deceasedDonorPane.localToParentTransformProperty().addListener((observable, oldValue, newValue) -> {
+            Bounds bounds = deceasedDonorPane.getBoundsInParent();
+            connector.setStartX(bounds.getMinX() + bounds.getWidth() / 2);
+            connector.setStartY(bounds.getMinY() + bounds.getHeight() / 2);
+            updateConnector(organ, connector, durationText);
+        });
+        organPane.localToParentTransformProperty().addListener((observable, oldValue, newValue) -> {
+            Bounds bounds = organPane.getBoundsInParent();
+            connector.setEndX(bounds.getMinX() + bounds.getWidth() / 2);
+            connector.setEndY(bounds.getMinY() + bounds.getHeight() / 2);
+            updateConnector(organ, connector, durationText);
+        });
+
+        canvas.getChildren().add(0, connector);
+        canvas.getChildren().add(0, durationText);
+
+        Bounds bounds = deceasedDonorPane.getBoundsInParent();
+        connector.setStartX(bounds.getMinX() + bounds.getWidth() / 2);
+        connector.setStartY(bounds.getMinY() + bounds.getHeight() / 2);
+        updateConnector(organ, connector, durationText);
+
+        // Attach timer to update connector each second (for time until expiration)
+        final Timeline clock = new Timeline(new KeyFrame(
+                javafx.util.Duration.seconds(1),
+                event -> updateConnector(organ, connector, durationText)));
+        clock.setCycleCount(Animation.INDEFINITE);
+        clock.play();
 
     }
 
@@ -216,9 +221,12 @@ public class SpiderWebController extends SubController {
         MainController newMain = PageNavigator.openNewWindow(200, 400);
         PageNavigator.loadPage(Page.RECEIVER_OVERVIEW, newMain);
         deceasedDonorPane = newMain.getPane();
-        ((FocusArea) deceasedDonorPane.getUserData()).setTranslatable(false);
+        FocusArea deceasedDonorFocusArea = (FocusArea) deceasedDonorPane.getUserData();
+        deceasedDonorFocusArea.setTranslatable(false);
+//        deceasedDonorFocusArea.setCollidable(true);
 
         Bounds bounds = deceasedDonorPane.getBoundsInParent();
+        // TODO: Any reason why an int rather then double? Matthew
         int centerX = (int) ((Screen.getPrimary().getVisualBounds().getWidth() - bounds.getWidth()) / 2);
         int centerY = (int) ((Screen.getPrimary().getVisualBounds().getHeight() - bounds.getHeight()) / 2);
         setPositionUsingTransform(deceasedDonorPane, centerX, centerY, 0);
