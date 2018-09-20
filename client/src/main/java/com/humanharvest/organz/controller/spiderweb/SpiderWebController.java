@@ -37,6 +37,7 @@ import com.humanharvest.organz.utilities.view.PageNavigator;
 public class SpiderWebController extends SubController {
 
     private static final Logger LOGGER = Logger.getLogger(SpiderWebController.class.getName());
+    private static final double LABEL_OFFSET = 50.0;
 
     private final Client client;
 
@@ -185,12 +186,13 @@ public class SpiderWebController extends SubController {
 
         double xWidth = line.getStartX() - line.getEndX();
         double yWidth = line.getStartY() - line.getEndY();
-        double x = line.getEndX() + xWidth * .1;
-        double y = line.getEndY() + yWidth * .1;
+        double lineWidth = Math.sqrt(Math.pow(xWidth, 2) + Math.pow(yWidth, 2));
+        double x = line.getEndX();
+        double y = line.getEndY();
         double angle = (getAngle(line.getStartX(), line.getStartY(), line.getEndX(), line.getEndY()));
         durationText.getTransforms().removeIf(transform -> transform instanceof Affine);
         Affine trans = new Affine();
-        trans.prepend(new Translate(0, -5));
+        trans.prepend(new Translate(Math.max(LABEL_OFFSET, lineWidth * 0.2), -5));
         trans.prepend(new Rotate(angle));
         durationText.getTransforms().add(trans);
         durationText.setTranslateX(x);
