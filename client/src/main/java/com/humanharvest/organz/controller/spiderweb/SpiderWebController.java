@@ -178,6 +178,7 @@ public class SpiderWebController extends SubController {
     private ListView<Client> createMatchesList(DonatedOrgan organ) {
         // Setup the ListView
         final ListView<Client> matchesList = new ListView<>();
+//        final Pane pane = new Pane(matchesList);
 
         List<Client> potentialMatches = State.getClientManager().getOrganMatches(organ);
         matchesList.setItems(FXCollections.observableArrayList(potentialMatches));
@@ -185,6 +186,8 @@ public class SpiderWebController extends SubController {
         matchesList.setCellFactory(param -> new PotentialRecipientCell());
 
         matchesList.setOrientation(Orientation.HORIZONTAL);
+        matchesList.setMinWidth(400);
+        matchesList.setFixedCellSize(200);
 
         matchesLists.add(matchesList);
 
