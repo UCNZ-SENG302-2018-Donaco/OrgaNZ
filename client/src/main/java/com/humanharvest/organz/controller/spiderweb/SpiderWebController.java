@@ -49,6 +49,7 @@ public class SpiderWebController extends SubController {
         this.client = client;
 
         canvas = MultitouchHandler.getCanvas();
+        canvas.getChildren().clear();
 
         // Close existing windows
         MultitouchHandler.setPhysicsHandler(new SpiderPhysicsHandler(MultitouchHandler.getRootPane()));
