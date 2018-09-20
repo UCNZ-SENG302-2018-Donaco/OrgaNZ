@@ -1,7 +1,5 @@
 package com.humanharvest.organz.server.controller.client;
 
-import static com.humanharvest.organz.utilities.validators.ClientValidator.checkClientETag;
-
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -12,8 +10,7 @@ import com.humanharvest.organz.actions.client.AddMedicationRecordAction;
 import com.humanharvest.organz.actions.client.DeleteMedicationRecordAction;
 import com.humanharvest.organz.actions.client.ModifyMedicationRecordAction;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
-import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
+import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
 import com.humanharvest.organz.views.client.CreateMedicationRecordView;
 
 import org.springframework.http.HttpHeaders;
@@ -50,7 +47,6 @@ public class ClientMedicationsController {
             State.getAuthenticationManager().verifyClientAccess(authToken, client.get());
 
             HttpHeaders headers = new HttpHeaders();
-            headers.setETag(client.get().getETag());
 
             return new ResponseEntity<>(client.get().getMedications(), headers, HttpStatus.OK);
 
@@ -65,19 +61,15 @@ public class ClientMedicationsController {
      *
      * @param uid the uid of the client
      * @param medicationRecordView view to create MedicationRecord
-     * @param eTag The corresponding If-Match header to check for concurrent update handling
      * @return If successful, a ResponseEntity containing all the clients past and current MedicationRecords is
      * returned
-     * @throws IfMatchRequiredException Thrown if the Etag header is missing
-     * @throws IfMatchFailedException Thrown if the Etag does not match the client's current Etag
      */
     @PostMapping("/clients/{uid}/medications")
     public ResponseEntity<List<MedicationRecord>> postMedication(
             @PathVariable int uid,
             @RequestBody CreateMedicationRecordView medicationRecordView,
-            @RequestHeader(value = "If-Match", required = false) String eTag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
-            throws IfMatchRequiredException, IfMatchFailedException {
+            throws AuthenticationException{
 
         Optional<Client> client = State.getClientManager().getClientByID(uid);
 
@@ -91,8 +83,6 @@ public class ClientMedicationsController {
         if (medicationRecordView.getName() == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-
-        checkClientETag(client.get(), eTag);
 
         MedicationRecord record = new MedicationRecord(medicationRecordView.getName(),
                 medicationRecordView.getStarted(),
@@ -108,7 +98,6 @@ public class ClientMedicationsController {
                 .orElseThrow(IllegalStateException::new);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.setETag(client1.getETag());
 
         return new ResponseEntity<>(client1.getMedications(), headers, HttpStatus.CREATED);
     }
@@ -118,18 +107,14 @@ public class ClientMedicationsController {
      *
      * @param uid The uid of the client
      * @param id The id of the medication to delete
-     * @param eTag The corresponding If-Match header to check for concurrent update handling
      * @return If successful, a ResponseEntity with status CREATED (DELETED) is returned
-     * @throws IfMatchRequiredException Thrown if the Etag header is missing
-     * @throws IfMatchFailedException Thrown if the Etag does not match the client's current Etag
      */
     @DeleteMapping("/clients/{uid}/medications/{id}")
     public ResponseEntity deleteMedication(
             @PathVariable int uid,
             @PathVariable int id,
-            @RequestHeader(value = "If-Match", required = false) String eTag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
-            throws IfMatchRequiredException, IfMatchFailedException {
+            throws AuthenticationException {
 
         Optional<Client> client = State.getClientManager().getClientByID(uid);
 
@@ -139,8 +124,6 @@ public class ClientMedicationsController {
 
         // Check authentication
         State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
-
-        checkClientETag(client.get(), eTag);
 
         MedicationRecord record = client.get().getMedicationRecord(id);
 
@@ -157,7 +140,6 @@ public class ClientMedicationsController {
                     .orElseThrow(IllegalStateException::new);
 
             HttpHeaders httpHeaders = new HttpHeaders();
-            httpHeaders.setETag(client1.getETag());
 
             return new ResponseEntity<>(httpHeaders, HttpStatus.OK);
         }
@@ -168,18 +150,14 @@ public class ClientMedicationsController {
      *
      * @param uid The uid of the client
      * @param id The id of the medication to delete
-     * @param eTag The corresponding If-Match header to check for concurrent update handling
      * @return If successful, a ResponseEntity with the altered record is returned
-     * @throws IfMatchRequiredException Thrown if the Etag header is missing
-     * @throws IfMatchFailedException Thrown if the Etag does not match the clients current Etag
      */
     @PostMapping("/clients/{uid}/medications/{id}/start")
     public ResponseEntity<MedicationRecord> postMedicationStart(
             @PathVariable int uid,
             @PathVariable int id,
-            @RequestHeader(value = "If-Match", required = false) String eTag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
-            throws IfMatchFailedException, IfMatchRequiredException {
+            throws AuthenticationException {
 
         Optional<Client> client = State.getClientManager().getClientByID(uid);
 
@@ -189,8 +167,6 @@ public class ClientMedicationsController {
         if (!client.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-
-        checkClientETag(client.get(), eTag);
 
         MedicationRecord record = client.get().getMedicationRecord(id);
 
@@ -204,7 +180,6 @@ public class ClientMedicationsController {
         State.getActionInvoker(authToken).execute(action);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.setETag(client.get().getETag());
 
         return new ResponseEntity<>(record, headers, HttpStatus.OK);
     }
@@ -214,18 +189,14 @@ public class ClientMedicationsController {
      *
      * @param uid The uid of the client
      * @param id The id of the medication to delete
-     * @param eTag The corresponding If-Match header to check for concurrent update handling
      * @return If successful, a ResponseEntity with the altered record is returned
-     * @throws IfMatchRequiredException Thrown if the Etag header is missing
-     * @throws IfMatchFailedException Thrown if the Etag does not match the clients current Etag
      */
     @PostMapping("/clients/{uid}/medications/{id}/stop")
     public ResponseEntity<MedicationRecord> postMedicationStop(
             @PathVariable int uid,
             @PathVariable int id,
-            @RequestHeader(value = "If-Match", required = false) String eTag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
-            throws IfMatchFailedException, IfMatchRequiredException {
+            throws AuthenticationException {
 
         // Check authentication
         State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
@@ -235,8 +206,6 @@ public class ClientMedicationsController {
         if (!client.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-
-        checkClientETag(client.get(), eTag);
 
         MedicationRecord record = client.get().getMedicationRecord(id);
 
@@ -249,7 +218,6 @@ public class ClientMedicationsController {
         State.getActionInvoker(authToken).execute(action);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.setETag(client.get().getETag());
 
         return new ResponseEntity<>(record, headers, HttpStatus.OK);
     }

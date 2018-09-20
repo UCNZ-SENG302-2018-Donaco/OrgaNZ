@@ -139,8 +139,6 @@ paths:
         - AdministratorAccess: []
       summary: Change some information about a client
       description: Only those properties included in the request body will be changed.
-      parameters:
-        - $ref: '#/components/parameters/ETag'
 
       requestBody:
         content:
@@ -162,10 +160,6 @@ paths:
           $ref: '#/components/responses/403Forbidden'
         404:
           $ref: '#/components/responses/404NotFound'
-        412:
-          $ref: '#/components/responses/412PreconditionFailed'
-        428:
-          $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
     delete:
@@ -176,8 +170,6 @@ paths:
         - ClinicianAccess: []
         - AdministratorAccess: []
       summary: Delete a client
-      parameters:
-        - $ref: '#/components/parameters/ETag'
 
       responses:
         200:
@@ -190,10 +182,6 @@ paths:
           $ref: '#/components/responses/403Forbidden'
         404:
           $ref: '#/components/responses/404NotFound'
-        412:
-          $ref: '#/components/responses/412PreconditionFailed'
-        428:
-          $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
 
@@ -234,10 +222,6 @@ paths:
           $ref: '#/components/responses/403Forbidden'
         404:
           $ref: '#/components/responses/404NotFound'
-        412:
-          $ref: '#/components/responses/412PreconditionFailed'
-        428:
-          $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
 
@@ -347,10 +331,6 @@ paths:
           $ref: '#/components/responses/403Forbidden'
         404:
           $ref: '#/components/responses/404NotFound'
-        412:
-          $ref: '#/components/responses/412PreconditionFailed'
-        428:
-          $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
 
@@ -373,10 +353,6 @@ paths:
           $ref: '#/components/responses/403Forbidden'
         404:
           $ref: '#/components/responses/404NotFound'
-        412:
-          $ref: '#/components/responses/412PreconditionFailed'
-        428:
-          $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
 
@@ -484,8 +460,6 @@ paths:
         - AdministratorAccess: []
       summary: Change a clients organ donation status
       description: Only those organs included in the request body will be changed.
-      parameters:
-        - $ref: '#/components/parameters/ETag'
 
       requestBody:
         content:
@@ -507,10 +481,6 @@ paths:
           $ref: '#/components/responses/403Forbidden'
         404:
           $ref: '#/components/responses/404NotFound'
-        412:
-          $ref: '#/components/responses/412PreconditionFailed'
-        428:
-          $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
 
@@ -717,8 +687,6 @@ paths:
         - AdministratorAccess: []
       summary: Create a new medication record
       description: Returns the full list of medication records in response upon success.
-      parameters:
-        - $ref: '#/components/parameters/ETag'
 
       requestBody:
         content:
@@ -742,10 +710,6 @@ paths:
           $ref: '#/components/responses/403Forbidden'
         404:
           $ref: '#/components/responses/404NotFound'
-        412:
-          $ref: '#/components/responses/412PreconditionFailed'
-        428:
-          $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
 
@@ -771,8 +735,6 @@ paths:
         - ClinicianAccess: []
         - AdministratorAccess: []
       summary: Delete a medication record
-      parameters:
-        - $ref: '#/components/parameters/ETag'
       responses:
         201:
           description: Deleted
@@ -784,10 +746,6 @@ paths:
           $ref: '#/components/responses/403Forbidden'
         404:
           $ref: '#/components/responses/404NotFound'
-        412:
-          $ref: '#/components/responses/412PreconditionFailed'
-        428:
-          $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
 
@@ -814,8 +772,6 @@ paths:
         - AdministratorAccess: []
       summary: Move a medication to current medications
       description: Returns the medication record in response upon success.
-      parameters:
-        - $ref: '#/components/parameters/ETag'
 
       responses:
         200:
@@ -832,10 +788,6 @@ paths:
           $ref: '#/components/responses/403Forbidden'
         404:
           $ref: '#/components/responses/404NotFound'
-        412:
-          $ref: '#/components/responses/412PreconditionFailed'
-        428:
-          $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
 
@@ -862,8 +814,6 @@ paths:
         - AdministratorAccess: []
       summary: Move a medication to past medications
       description: Returns the medication record in response upon success.
-      parameters:
-        - $ref: '#/components/parameters/ETag'
 
       responses:
         200:
@@ -880,10 +830,6 @@ paths:
           $ref: '#/components/responses/403Forbidden'
         404:
           $ref: '#/components/responses/404NotFound'
-        412:
-          $ref: '#/components/responses/412PreconditionFailed'
-        428:
-          $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
 
@@ -931,8 +877,6 @@ paths:
         - AdministratorAccess: []
       summary: Create a new illness record
       description: Returns the full list of illness records in response upon success. The chronic flag cannot be set to true and have the cured date set. Cured date is nullable
-      parameters:
-        - $ref: '#/components/parameters/ETag'
 
       requestBody:
         content:
@@ -956,10 +900,6 @@ paths:
           $ref: '#/components/responses/403Forbidden'
         404:
           $ref: '#/components/responses/404NotFound'
-        412:
-          $ref: '#/components/responses/412PreconditionFailed'
-        428:
-          $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
 
@@ -986,8 +926,6 @@ paths:
         - AdministratorAccess: []
       summary: Update an illness record
       description: Only those properties included in the request body will be changed. An illness cannot have it's curedDate set if the chronic flag is currently true.
-      parameters:
-        - $ref: '#/components/parameters/ETag'
 
       requestBody:
         content:
@@ -1009,10 +947,6 @@ paths:
           $ref: '#/components/responses/403Forbidden'
         404:
           $ref: '#/components/responses/404NotFound'
-        412:
-          $ref: '#/components/responses/412PreconditionFailed'
-        428:
-          $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
 
@@ -1024,8 +958,6 @@ paths:
         - AdministratorAccess: []
       summary: Delete an illness
       description: Returns the illness record after success
-      parameters:
-        - $ref: '#/components/parameters/ETag'
 
       responses:
         201:
@@ -1042,10 +974,6 @@ paths:
           $ref: '#/components/responses/403Forbidden'
         404:
           $ref: '#/components/responses/404NotFound'
-        412:
-          $ref: '#/components/responses/412PreconditionFailed'
-        428:
-          $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
 
@@ -1093,8 +1021,6 @@ paths:
         - AdministratorAccess: []
       summary: Create a new procedure record
       description: Returns the full list of procedure records in response upon success.
-      parameters:
-        - $ref: '#/components/parameters/ETag'
 
       requestBody:
         content:
@@ -1118,10 +1044,6 @@ paths:
           $ref: '#/components/responses/403Forbidden'
         404:
           $ref: '#/components/responses/404NotFound'
-        412:
-          $ref: '#/components/responses/412PreconditionFailed'
-        428:
-          $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
 
@@ -1148,8 +1070,6 @@ paths:
         - AdministratorAccess: []
       summary: Update a procedure record
       description: Only those properties included in the request body will be changed.
-      parameters:
-        - $ref: '#/components/parameters/ETag'
 
       requestBody:
         content:
@@ -1171,10 +1091,6 @@ paths:
           $ref: '#/components/responses/403Forbidden'
         404:
           $ref: '#/components/responses/404NotFound'
-        412:
-          $ref: '#/components/responses/412PreconditionFailed'
-        428:
-          $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
     delete:
@@ -1184,8 +1100,6 @@ paths:
         - ClinicianAccess: []
         - AdministratorAccess: []
       summary: Delete a procedure record
-      parameters:
-        - $ref: '#/components/parameters/ETag'
 
       responses:
         201:
@@ -1198,10 +1112,6 @@ paths:
           $ref: '#/components/responses/403Forbidden'
         404:
           $ref: '#/components/responses/404NotFound'
-        412:
-          $ref: '#/components/responses/412PreconditionFailed'
-        428:
-          $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
 
@@ -1287,8 +1197,6 @@ paths:
         - AdministratorAccess: []
       summary: Create a new transplant request
       description: Returns the full list of transplant requests in response upon success.
-      parameters:
-        - $ref: '#/components/parameters/ETag'
 
       requestBody:
         content:
@@ -1312,10 +1220,6 @@ paths:
           $ref: '#/components/responses/403Forbidden'
         404:
           $ref: '#/components/responses/404NotFound'
-        412:
-          $ref: '#/components/responses/412PreconditionFailed'
-        428:
-          $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
 
@@ -1342,8 +1246,6 @@ paths:
         - AdministratorAccess: []
       summary: Update a transpant request
       description: Only those properties included in the request body will be changed.
-      parameters:
-        - $ref: '#/components/parameters/ETag'
 
       requestBody:
         content:
@@ -1365,10 +1267,6 @@ paths:
           $ref: '#/components/responses/403Forbidden'
         404:
           $ref: '#/components/responses/404NotFound'
-        412:
-          $ref: '#/components/responses/412PreconditionFailed'
-        428:
-          $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
 
@@ -1498,8 +1396,6 @@ paths:
         - AdministratorAccess: []
       summary: Change some information about a clinician
       description: Only those properties included in the request body will be changed.
-      parameters:
-        - $ref: '#/components/parameters/ETag'
 
       requestBody:
         content:
@@ -1521,10 +1417,6 @@ paths:
           $ref: '#/components/responses/403Forbidden'
         404:
           $ref: '#/components/responses/404NotFound'
-        412:
-          $ref: '#/components/responses/412PreconditionFailed'
-        428:
-          $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
     delete:
@@ -1534,8 +1426,6 @@ paths:
         - ClinicianAccess: []
         - AdministratorAccess: []
       summary: Delete a clinician
-      parameters:
-        - $ref: '#/components/parameters/ETag'
 
       responses:
         201:
@@ -1548,10 +1438,6 @@ paths:
           $ref: '#/components/responses/403Forbidden'
         404:
           $ref: '#/components/responses/404NotFound'
-        412:
-          $ref: '#/components/responses/412PreconditionFailed'
-        428:
-          $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
 
@@ -1688,8 +1574,6 @@ paths:
         - AdministratorAccess: []
       summary: Change some information about an administrator
       description: Only those properties included in the request body will be changed.
-      parameters:
-        - $ref: '#/components/parameters/ETag'
 
       requestBody:
         content:
@@ -1711,10 +1595,6 @@ paths:
           $ref: '#/components/responses/403Forbidden'
         404:
           $ref: '#/components/responses/404NotFound'
-        412:
-          $ref: '#/components/responses/412PreconditionFailed'
-        428:
-          $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
     delete:
@@ -1723,8 +1603,6 @@ paths:
       security:
         - AdministratorAccess: []
       summary: Delete an administrator
-      parameters:
-        - $ref: '#/components/parameters/ETag'
 
       responses:
         201:
@@ -1737,10 +1615,6 @@ paths:
           $ref: '#/components/responses/403Forbidden'
         404:
           $ref: '#/components/responses/404NotFound'
-        412:
-          $ref: '#/components/responses/412PreconditionFailed'
-        428:
-          $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
 
@@ -1984,9 +1858,7 @@ paths:
         - ClinicianAccess: []
         - AdministratorAccess: []
       summary: Undo the last executed action
-      description: Returns the string text of the undo action. Requires an ETag of the object being modified
-      parameters:
-        - $ref: '#/components/parameters/ETag'
+      description: Returns the string text of the undo action
       responses:
         201:
           description: Undone
@@ -2000,10 +1872,6 @@ paths:
           $ref: '#/components/responses/401Unauthorized'
         403:
           $ref: '#/components/responses/403Forbidden'
-        412:
-          $ref: '#/components/responses/412PreconditionFailed'
-        428:
-          $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
 
@@ -2039,9 +1907,7 @@ paths:
         - ClinicianAccess: []
         - AdministratorAccess: []
       summary: Redo the last undone action
-      description: Returns the string text of the redo action. Requires an ETag of the object being modified
-      parameters:
-        - $ref: '#/components/parameters/ETag'
+      description: Returns the string text of the redo action.
       responses:
         201:
           description: Redone
@@ -2055,10 +1921,6 @@ paths:
           $ref: '#/components/responses/401Unauthorized'
         403:
           $ref: '#/components/responses/403Forbidden'
-        412:
-          $ref: '#/components/responses/412PreconditionFailed'
-        428:
-          $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
 
@@ -2176,15 +2038,6 @@ components:
       description: "If the sort order should be reversed"
       schema:
         type: boolean
-
-
-    ETag:
-      name: ETag
-      in: header
-      description: A hashed value of the object used for optimistic concurrency control
-      required: true
-      schema:
-        $ref: '#/components/schemas/ETag'
 
   examples:
     clientDetailsExample:
@@ -2791,10 +2644,6 @@ components:
         command:
           type: string
           example: help
-    
-    ETag:
-      type: string
-      description: A hashed value of the object used for optimistic concurrency control
 
   responses:
     400BadRequest:
@@ -2805,10 +2654,6 @@ components:
       description: You do not have permission to perform that action
     404NotFound:
       description: The specified resource was not found
-    412PreconditionFailed:
-      description: That resource has already been modified or the ETag header is invalid
-    428PreconditionRequired:
-      description: ETag header was missing and is required to modify a resource
     500InternalServerError:
       description: Internal server error
       

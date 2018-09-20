@@ -10,17 +10,6 @@ Feature: Does PATCH /clients/ work?
     When I patch to /clients/1 using notvalidjson
     Then the result is bad request
 
-  Scenario: Update a client without an etag
-    Given there is a test client
-    When I patch to /clients/1 using { "middleName": "New" }
-    Then the result is precondition required
-
-  Scenario: Update the client with a bad etag
-    Given there is a test client
-    Given I have an etag of value x
-    When I patch to /clients/1 using { "middleName": "New" }
-    Then the result is precondition failed
-
   Scenario: Update a client using valid data
     Given there is a test client
     Given I have an etag from client 1
