@@ -113,7 +113,9 @@ public class SpiderWebController extends SubController {
                 State.setOrganToDisplay(organ);
                 MainController newMain = PageNavigator.openNewWindow(80, 80);
                 PageNavigator.loadPage(Page.ORGAN_IMAGE, newMain);
+                newMain.getStyles().clear();
                 Pane organPane = newMain.getPane();
+                ((FocusArea) organPane.getUserData()).setScalable(false);
                 organNodes.add(organPane);
                 //TODO: Fix so organ stays expired once web is closed.
                 organPane.setOnMouseClicked(click -> {
