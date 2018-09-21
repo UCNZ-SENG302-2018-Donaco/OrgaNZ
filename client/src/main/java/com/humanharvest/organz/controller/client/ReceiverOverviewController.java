@@ -7,7 +7,6 @@ import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.humanharvest.organz.utilities.algorithms.MatchOrganToRecipients;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -155,6 +154,11 @@ public class ReceiverOverviewController extends ViewBaseController {
             Duration waitTime = viewedTransplantRequest.getTimeSinceRequest();
             requestedTime.setText(DurationFormatter.getFormattedDuration(waitTime, Format.BIGGEST));
         }
+    }
+
+    public void setup(Client client) {
+        viewedClient = client;
+        refresh();
     }
 
     @Override

@@ -44,19 +44,19 @@ public class DeceasedDonorOverviewController extends SubController {
     private static String formatTimeOfDeath(LocalDateTime dateTimeOfDeath) {
         if (dateTimeOfDeath.toLocalDate().equals(LocalDate.now().minusDays(1))) {
             // Yesterday
-            return String.format("Died at %s yesterday." ,
+            return String.format("Died at %s yesterday.",
                     dateTimeOfDeath.toLocalTime().format(TIME_FORMAT));
         } else if (dateTimeOfDeath.toLocalDate().equals(LocalDate.now())) {
             // Today
-            return String.format("Died at %s today." ,
+            return String.format("Died at %s today.",
                     dateTimeOfDeath.toLocalTime().format(TIME_FORMAT));
         } else if (dateTimeOfDeath.getYear() == LocalDate.now().getYear()) {
             // This year
-            return String.format("Died at %s, %s." , dateTimeOfDeath.toLocalTime().format(TIME_FORMAT),
+            return String.format("Died at %s, %s.", dateTimeOfDeath.toLocalTime().format(TIME_FORMAT),
                     dateTimeOfDeath.toLocalDate().format(DateTimeFormatter.ofPattern("d MMM")));
         } else {
             // Another year
-            return String.format("Died at %s, %s." , dateTimeOfDeath.toLocalTime().format(TIME_FORMAT),
+            return String.format("Died at %s, %s.", dateTimeOfDeath.toLocalTime().format(TIME_FORMAT),
                     dateTimeOfDeath.toLocalDate().format(DateTimeFormatter.ofPattern("d/M/y")));
         }
     }

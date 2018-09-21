@@ -10,9 +10,11 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
 import javafx.geometry.Bounds;
+import javafx.geometry.Orientation;
 import javafx.geometry.Point2D;
 import javafx.scene.CacheHint;
 import javafx.scene.Node;
+import javafx.scene.control.ListView;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.shape.Line;
@@ -29,6 +31,7 @@ import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.controller.components.ExpiryBarUtils;
+import com.humanharvest.organz.controller.components.PotentialRecipientCell;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.touch.FocusArea;
 import com.humanharvest.organz.touch.MultitouchHandler;
@@ -89,18 +92,6 @@ public class SpiderWebController extends SubController {
         node.setCacheHint(CacheHint.QUALITY);
     }
 
-    /**
-     * Loads a window for each non expired organ.
-     */
-    private void displayOrgans() {
-        for (DonatedOrgan organ : client.getDonatedOrgans()) {
-            if (!organ.hasExpired()) {
-                addOrganNode(organ);
-            }
-        }
-        layoutOrganNodes(300);
-    }
-
     private static void updateConnector(DonatedOrgan donatedOrgan, Line line, Text durationText) {
         Duration duration = donatedOrgan.getDurationUntilExpiry();
         if (ExpiryBarUtils.isDurationZero(duration)) {
@@ -118,9 +109,7 @@ public class SpiderWebController extends SubController {
 
         durationText.setText(ExpiryBarUtils.getDurationString(donatedOrgan));
 
-        durationText.getTransforms().removeIf(transform -> {
-            return transform instanceof Affine;
-        });
+        durationText.getTransforms().removeIf(transform -> transform instanceof Affine);
 
         Affine trans = new Affine();
 
@@ -133,11 +122,8 @@ public class SpiderWebController extends SubController {
         trans.prepend(new Rotate(angle));
         durationText.getTransforms().add(trans);
 
-        double x = line.getEndX();
-        durationText.setTranslateX(x);
-
-        double y = line.getEndY();
-        durationText.setTranslateY(y);
+        durationText.setTranslateX(line.getEndX());
+        durationText.setTranslateY(line.getEndY());
     }
 
     private static double getAngle(double x1, double y1, double x2, double y2) {
@@ -146,6 +132,18 @@ public class SpiderWebController extends SubController {
             angle += 360;
         }
         return angle;
+    }
+
+    /**
+     * Loads a window for each non expired organ.
+     */
+    private void displayOrgans() {
+        for (DonatedOrgan organ : client.getDonatedOrgans()) {
+            if (!organ.hasExpired()) {
+                addOrganNode(organ);
+            }
+        }
+        layoutOrganNodes(300);
     }
 
     private void addOrganNode(DonatedOrgan organ) {
@@ -176,6 +174,9 @@ public class SpiderWebController extends SubController {
         connector.setStrokeWidth(4);
         Text durationText = new Text(ExpiryBarUtils.getDurationString(organ));
 
+        // Create matches list
+        ListView<Client> matchesList = createMatchesList(organ);
+
         // Redraws lines when organs or donor pane is moved
         deceasedDonorPane.localToParentTransformProperty().addListener((observable, oldValue, newValue) -> {
             Bounds bounds = deceasedDonorPane.getBoundsInParent();
@@ -188,10 +189,12 @@ public class SpiderWebController extends SubController {
             connector.setEndX(bounds.getMinX() + bounds.getWidth() / 2);
             connector.setEndY(bounds.getMinY() + bounds.getHeight() / 2);
             updateConnector(organ, connector, durationText);
+            updateMatchesListPosition(matchesList, newValue, bounds);
         });
 
         canvas.getChildren().add(0, connector);
         canvas.getChildren().add(0, durationText);
+        canvas.getChildren().add(matchesList);
 
         Bounds bounds = deceasedDonorPane.getBoundsInParent();
         connector.setStartX(bounds.getMinX() + bounds.getWidth() / 2);
