@@ -1,6 +1,7 @@
 package com.humanharvest.organz.controller;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -182,5 +183,9 @@ public class MainController {
         } else {
             stage.setTitle(title);
         }
+    }
+
+    public List<String> getStyles() {
+        return pageHolder.getStyleClass();
     }
 }

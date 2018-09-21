@@ -98,7 +98,7 @@ public final class MultitouchHandler {
         }
 
         FocusArea focusArea = (FocusArea) pane.getUserData();
-        focusArea.setLastPosition(System.nanoTime(), PointUtils.getCentreOfPane(pane));
+        focusArea.setLastPosition(System.nanoTime(), PointUtils.getCentreOfNode(pane));
 
         // Find other touches belonging to this pane.
         List<CurrentTouch> paneTouches = findPaneTouches(pane);
@@ -136,7 +136,7 @@ public final class MultitouchHandler {
      * @return The new bounds to apply.
      */
     private static Point2D handleBoundsCheck(Point2D delta, Pane pane) {
-        Point2D centre = PointUtils.getCentreOfPane(pane);
+        Point2D centre = PointUtils.getCentreOfNode(pane);
 
         if (centre.getX() + delta.getX() < 0) {
             delta = new Point2D(-centre.getX(), delta.getY());
@@ -180,7 +180,7 @@ public final class MultitouchHandler {
                             .subtract(otherTouch.getCurrentScreenPoint()))
                             .multiply(0.5));
         } else {
-            centre = PointUtils.getCentreOfPane(pane);
+            centre = PointUtils.getCentreOfNode(pane);
         }
 
         // Only process if we have touch history (ie, not a new touch)
@@ -378,7 +378,6 @@ public final class MultitouchHandler {
         FocusArea focusArea = new FocusArea(pane);
 
         focusAreas.add(focusArea);
-        pane.getScene().getWindow();
         pane.setUserData(focusArea);
 
         addPaneListenerChildren(focusArea, pane);
@@ -413,7 +412,7 @@ public final class MultitouchHandler {
                 if (findPaneTouches(pane).size() == 1) {
                     // Informs the focus area nodes of a touch event
                     FocusArea focusArea = (FocusArea) pane.getUserData();
-                    focusArea.setLastPosition(System.nanoTime(), PointUtils.getCentreOfPane(pane));
+                    focusArea.setLastPosition(System.nanoTime(), PointUtils.getCentreOfNode(pane));
                     focusArea.propagateEvent(event.getTarget());
                 }
             });
@@ -430,7 +429,7 @@ public final class MultitouchHandler {
                 if (findPaneTouches(pane).isEmpty()) {
                     pane.setCacheHint(CacheHint.QUALITY);
                     FocusArea focusArea = (FocusArea) pane.getUserData();
-                    focusArea.setupVelocity(System.nanoTime(), PointUtils.getCentreOfPane(pane));
+                    focusArea.setupVelocity(System.nanoTime(), PointUtils.getCentreOfNode(pane));
                 }
             });
         } else {

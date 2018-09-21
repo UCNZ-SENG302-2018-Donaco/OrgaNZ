@@ -34,7 +34,8 @@ public enum Page {
     TOUCH_ALERT("/fxml/touch_alert.fxml"),
     TOUCH_ALERT_TEXT("/fxml/touch_alert_text.fxml"),
     ORGAN_IMAGE("/fxml/organ_image.fxml"),
-    RECEIVER_OVERVIEW("/fxml/receiver_overview.fxml");
+    RECEIVER_OVERVIEW("/fxml/receiver_overview.fxml"),
+    DECEASED_DONOR_OVERVIEW("/fxml/deceased_donor_overview.fxml");
 
     private final String path;
 

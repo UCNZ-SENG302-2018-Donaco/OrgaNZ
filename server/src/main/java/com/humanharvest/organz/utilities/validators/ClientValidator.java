@@ -9,8 +9,6 @@ import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.ProcedureRecord;
 import com.humanharvest.organz.TransplantRequest;
-import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
-import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
 
 /**
  * A static validator class used to check the integrity of a Client object
@@ -25,25 +23,6 @@ public abstract class ClientValidator {
      */
     private ClientValidator() {
         throw new IllegalStateException("Utility class");
-    }
-
-    /**
-     * Checks that the given ETag matches the current ETag for the client,
-     * and exception is thrown if the ETag is missing or does not match
-     *
-     * @param client client to validate the ETag for
-     * @param ETag The corresponding If-Match header to check for concurrent update handling
-     * @throws IfMatchRequiredException Thrown if the ETag header is missing
-     * @throws IfMatchFailedException Thrown if the ETag does not match the clients current ETag
-     */
-    public static void checkClientETag(Client client, String ETag)
-            throws IfMatchRequiredException, IfMatchFailedException {
-
-        if (ETag == null) {
-            throw new IfMatchRequiredException();
-        } else if (!client.getETag().equals(ETag)) {
-            throw new IfMatchFailedException();
-        }
     }
 
     /**

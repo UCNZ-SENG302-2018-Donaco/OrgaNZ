@@ -92,25 +92,6 @@ public class ClientMedicationsControllerTest {
      * }
      **/
 
-    @Test
-    public void createMedicationMissingEtag() throws Exception {
-        String json = "{ \"name\": \"testmed1\" }";
-        mockMvc.perform(post("/clients/1/medications")
-                .contentType(contentType)
-                .content(json))
-                .andExpect(status().isPreconditionRequired());
-    }
-
-    @Test
-    public void createMedicationInvalidEtag() throws Exception {
-        String json = "{ \"name\": \"testmed1\" }";
-        mockMvc.perform(post("/clients/1/medications")
-                .contentType(contentType)
-                .content(json)
-                .header("If-Match", "invalidEtag"))
-                .andExpect(status().isPreconditionFailed());
-    }
-
     /**
      * public void testCreateMedicationInvalid() throws Exception {
      * String json = "{ \"invalid\": \"testmed\" }";
