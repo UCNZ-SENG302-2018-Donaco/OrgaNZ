@@ -95,9 +95,7 @@ public class OrgansController {
             //Auth check
             State.getAuthenticationManager().verifyClientAccess(authToken, client);
 
-            //Add the ETag to the headers
             HttpHeaders headers = new HttpHeaders();
-            headers.add("ETag", client.getETag());
 
             Collection<DonatedOrganView> donatedOrgans = client.getDonatedOrgans().stream()
                     .map(DonatedOrganView::new)
@@ -160,9 +158,8 @@ public class OrgansController {
                 .getClientByID(client.getUid())
                 .orElseThrow(IllegalStateException::new);
 
-        // Return the now overriden version of the donated organ along with the client's new ETag.
+        // Return the now overridden version of the donated organ
         HttpHeaders headers = new HttpHeaders();
-        headers.setETag(client.getETag());
         return new ResponseEntity<>(donatedOrgan, headers, HttpStatus.OK);
     }
 
@@ -212,9 +209,8 @@ public class OrgansController {
                 .getClientByID(client.getUid())
                 .orElseThrow(IllegalStateException::new);
 
-        // Return the no longer overriden version of the donated organ along with the client's new ETag.
+        // Return the no longer overridden version of the donated organ
         HttpHeaders headers = new HttpHeaders();
-        headers.setETag(client.getETag());
         return new ResponseEntity<>(donatedOrgan, headers, HttpStatus.OK);
     }
 
@@ -268,9 +264,8 @@ public class OrgansController {
                 .getClientByID(client.getUid())
                 .orElseThrow(IllegalStateException::new);
 
-        // Return the new version of the overriden donated organ along with the client's new ETag.
+        // Return the new version of the overridden donated organ
         HttpHeaders headers = new HttpHeaders();
-        headers.setETag(client.getETag());
         return new ResponseEntity<>(donatedOrgan, headers, HttpStatus.OK);
     }
 }

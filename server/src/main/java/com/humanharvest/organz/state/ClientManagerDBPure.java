@@ -139,14 +139,18 @@ public class ClientManagerDBPure implements ClientManager {
             //Setup minimum age filter
             if (minimumAge != null) {
                 //Use the TIMESTAMPDIFF (MySQL only) function to calculate age
-                whereJoiner.add("TIMESTAMPDIFF(YEAR, c.dateOfBirth, NOW()) >= :minimumAge");
+                whereJoiner.add(
+                        "CASE WHEN dateOfDeath IS NULL THEN TIMESTAMPDIFF(YEAR, c.dateOfBirth, NOW()) >= :minimumAge "
+                        + "ELSE TIMESTAMPDIFF(YEAR, c.dateOfBirth, c.dateOfDeath) >= :minimumAge END");
                 params.put("minimumAge", minimumAge);
             }
 
             //Setup maximum age filter
             if (maximumAge != null) {
                 //Use the TIMESTAMPDIFF (MySQL only) function to calculate age
-                whereJoiner.add("TIMESTAMPDIFF(YEAR, c.dateOfBirth, NOW()) <= :maximumAge");
+                whereJoiner.add(
+                        "CASE WHEN dateOfDeath IS NULL THEN TIMESTAMPDIFF(YEAR, c.dateOfBirth, NOW()) <= :maximumAge "
+                                + "ELSE TIMESTAMPDIFF(YEAR, c.dateOfBirth, c.dateOfDeath) <= :maximumAge END");
                 params.put("maximumAge", maximumAge);
             }
 

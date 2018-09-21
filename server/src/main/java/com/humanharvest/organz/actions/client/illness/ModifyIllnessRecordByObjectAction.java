@@ -43,12 +43,14 @@ public class ModifyIllnessRecordByObjectAction extends ClientAction {
 
     @Override
     public String getExecuteText() {
-        return "Todo";
+        return String.format("Modified record for illness '%s' for client %d: %s.",
+                record.getIllnessName(), client.getUid(), client.getFullName());
     }
 
     @Override
     public String getUnexecuteText() {
-        return "Todo";
+        return String.format("Reversed the modifications of the record for illness '%s' for client %d: %s.",
+                record.getIllnessName(), client.getUid(), client.getFullName());
     }
 }
 
