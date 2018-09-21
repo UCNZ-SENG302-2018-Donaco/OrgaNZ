@@ -87,12 +87,6 @@ public class ClientIllnessesController {
             //Cured date is trying to be set while disease is chronic.
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        if (modifyIllnessObject.getIllnessName() == null) {
-            modifyIllnessObject.setIllnessName(record.getIllnessName());
-        }
-        if (modifyIllnessObject.getDiagnosisDate() == null) {
-            modifyIllnessObject.setDiagnosisDate(record.getDiagnosisDate());
-        }
 
         //Create the old details to allow undoable action
         ModifyIllnessObject oldIllnessRecord = new ModifyIllnessObject();

@@ -16,7 +16,7 @@ import com.humanharvest.organz.utilities.view.WindowContext;
 import org.junit.Before;
 import org.junit.Test;
 
-public class ViewIllnessHistoryClientTest extends ControllerTest {
+public class ViewMedicalHistoryClientTest extends ControllerTest {
 
     private final IllnessRecord[] testPastIllnessRecords = {
             new IllnessRecord(

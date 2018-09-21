@@ -25,7 +25,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.testfx.util.NodeQueryUtils;
 
-public class ViewIllnessHistoryClinicianTest extends ControllerTest {
+public class ViewMedicalHistoryClinicianTest extends ControllerTest {
 
     private final IllnessRecord[] testPastIllnessRecords = {
             new IllnessRecord(

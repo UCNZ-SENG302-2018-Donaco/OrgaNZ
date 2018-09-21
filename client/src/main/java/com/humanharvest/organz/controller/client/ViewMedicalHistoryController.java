@@ -41,10 +41,10 @@ import com.humanharvest.organz.views.client.ModifyIllnessObject;
 /**
  * Controller for the medical history page, which shows a list of all current and past illnesses for the client.
  */
-public class ClientMedicalHistoryController extends SubController {
+public class ViewMedicalHistoryController extends SubController {
 
     private static final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("d MMM yyyy");
-    private static final Logger LOGGER = Logger.getLogger(ClientMedicalHistoryController.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ViewMedicalHistoryController.class.getName());
 
     private final Session session;
     private final ClientResolver resolver;
@@ -96,7 +96,7 @@ public class ClientMedicalHistoryController extends SubController {
     /**
      * Gets the current session and resolver from the global state.
      */
-    public ClientMedicalHistoryController() {
+    public ViewMedicalHistoryController() {
         session = State.getSession();
         resolver = State.getClientResolver();
     }
@@ -206,8 +206,8 @@ public class ClientMedicalHistoryController extends SubController {
                     enableAppropriateButtons();
                 });
 
-        currentIllnessView.setSortPolicy(ClientMedicalHistoryController::getChronicFirstSortPolicy);
-        pastIllnessView.setSortPolicy(ClientMedicalHistoryController::getChronicFirstSortPolicy);
+        currentIllnessView.setSortPolicy(ViewMedicalHistoryController::getChronicFirstSortPolicy);
+        pastIllnessView.setSortPolicy(ViewMedicalHistoryController::getChronicFirstSortPolicy);
 
         dateDiagnosedPicker.setValue(LocalDate.now());
     }
@@ -391,14 +391,14 @@ public class ClientMedicalHistoryController extends SubController {
 
             if (record.isChronic()) {
                 // Current, chronic illness -> Current illness
-                modifyIllnessObject.setChronic(false);
+                modifyIllnessObject.setIsChronic(false);
             } else {
                 if (record.getCuredDate() != null) {
                     // Past illness -> Current, chronic illness
                     modifyIllnessObject.setCuredDate(null);
                 }
                 // Illness -> chronic illness
-                modifyIllnessObject.setChronic(true);
+                modifyIllnessObject.setIsChronic(true);
             }
             try {
                 State.getClientResolver().modifyIllnessRecord(client, record, modifyIllnessObject);

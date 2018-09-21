@@ -18,6 +18,17 @@ public class ModifyIllnessRecordByObjectAction extends ClientAction {
         super(oldRecord.getClient(), manager);
         this.oldIllnessDetails = oldIllnessDetails;
         this.oldRecord = oldRecord;
+
+        if (newIllnessDetails.getIllnessName() == null) {
+            newIllnessDetails.setIllnessName(record.getIllnessName());
+        }
+        if (newIllnessDetails.getDiagnosisDate() == null) {
+            newIllnessDetails.setDiagnosisDate(record.getDiagnosisDate());
+        }
+        if (newIllnessDetails.isChronic() == null) {
+            newIllnessDetails.setIsChronic(record.isChronic());
+        }
+
         record = new IllnessRecord(newIllnessDetails.getIllnessName(),
                 newIllnessDetails.getDiagnosisDate(), newIllnessDetails.getCuredDate(), newIllnessDetails.isChronic());
     }
