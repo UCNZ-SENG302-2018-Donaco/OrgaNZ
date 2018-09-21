@@ -170,7 +170,7 @@ public class ViewMedicalHistoryController extends SubController {
     }
 
     /**
-     * Initializes the page, setting cell value/represntation factories for all the columns, setting up selection
+     * Initializes the page, setting cell value/representation factories for all the columns, setting up selection
      * listeners, setting the sort policy for each table and setting the initial value for the date diagnosed picker.
      */
     @FXML

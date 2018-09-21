@@ -88,6 +88,16 @@ public class ClientIllnessesController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
+        if (modifyIllnessObject.getIllnessName() == null) {
+            modifyIllnessObject.setIllnessName(record.getIllnessName());
+        }
+        if (modifyIllnessObject.getDiagnosisDate() == null) {
+            modifyIllnessObject.setDiagnosisDate(record.getDiagnosisDate());
+        }
+        if (modifyIllnessObject.isChronic() == null) {
+            modifyIllnessObject.setIsChronic(record.isChronic());
+        }
+
         //Create the old details to allow undoable action
         ModifyIllnessObject oldIllnessRecord = new ModifyIllnessObject();
         //Copy the values from the current record to our old record
