@@ -12,9 +12,13 @@ public interface IPageNavigator {
 
     /**
      * Sets the alert window at the right size so that all the text can be read.
+     * If the alert, its dialog pane, or its dialog pane's scene is null, it does nothing. (This will happen
+     * if the alert has been closed by the user, so we don't need to resize it anyway).
      */
     static void resizeAlert(Alert alert) {
-        alert.getDialogPane().getScene().getWindow().sizeToScene();
+        if (alert != null && alert.getDialogPane() != null && alert.getDialogPane().getScene() != null) {
+            alert.getDialogPane().getScene().getWindow().sizeToScene();
+        }
     }
 
     /**
