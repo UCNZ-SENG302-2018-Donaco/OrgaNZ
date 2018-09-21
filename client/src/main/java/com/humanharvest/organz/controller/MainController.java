@@ -39,16 +39,15 @@ public class MainController {
     private SidebarController sidebarController;
     private MenuBarController menuBarController;
     private SubController subController;
-    @FXML
-    private JFXDrawer drawer = new JFXDrawer();
-    @FXML
-    private JFXHamburger hamburger;
-
     /**
      * Holder of a switchable page.
      */
     @FXML
     private StackPane pageHolder;
+    @FXML
+    private JFXDrawer drawer; // = new JFXDrawer();
+    @FXML
+    private JFXHamburger hamburger; // = new JFXHamburger();
 
     @FXML
     public void initialize() {
@@ -111,14 +110,16 @@ public class MainController {
     }
 
 
-    private void initHamburger() {
+    public void initHamburger() {
 
         hamburger.addEventHandler(MouseEvent.MOUSE_CLICKED, (e) -> {
 
             if (drawer.isShown()) {
                 drawer.close();
+                drawer.setDisable(true);
             } else {
                 drawer.open();
+                drawer.setDisable(false);
             }
         });
     }
@@ -138,9 +139,15 @@ public class MainController {
             sidebarController = loader.getController();
             sidebarController.setup(this);
             drawer.setSidePane(sidebar);
+            drawer.setOverLayVisible(false);
+//            drawer.setContent();
 
-            drawer.setBoundedNode(sidebarPane);
-            sidebarPane.getChildren().setAll(drawer);
+//            drawer.setSidePane(sidebar);
+//            drawer.setBoundedNode(sidebarPane);
+//            sidebarPane.getChildren().setAll(drawer);
+
+//            this.getPane().getChildren().addAll(drawer);
+//            this.getPane().getChildren().addAll(hamburger);
             // bind side pane size to the drawer size
 
 
@@ -150,7 +157,8 @@ public class MainController {
     }
 
     /**
-     * Method that can be called from other controllers to load the sidebar into that page.
+     * Method that can be
+            this.getPane().getChildren().addAll(hamburger);called from other controllers to load the sidebar into that page.
      * Will set the sidebar as the child of the pane given.
      *
      * @param menuBarPane The container pane for the menu bar, given by the importer.

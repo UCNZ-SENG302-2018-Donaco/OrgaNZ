@@ -84,7 +84,7 @@ public class ViewClientController extends ViewBaseController {
     private Client viewedClient;
 
     @FXML
-    private Pane sidebarPane, menuBarPane, deathDetailsPane;
+    private Pane menuBarPane, deathDetailsPane;
     @FXML
     private Label creationDate, lastModified, legalNameLabel, dobLabel, heightLabel, weightLabel, ageDisplayLabel,
             ageLabel, bmiLabel, fullName, dodLabel, timeOfDeathLabel, countryOfDeathLabel, regionOfDeathLabel,
@@ -174,10 +174,10 @@ public class ViewClientController extends ViewBaseController {
         gender.setItems(FXCollections.observableArrayList(Gender.values()));
         genderIdentity.setItems(FXCollections.observableArrayList(Gender.values()));
         btype.setItems(FXCollections.observableArrayList(BloodType.values()));
-        Set<Hospital> hospitalSet = State.getConfigManager().getHospitals();
-        ObservableList<Hospital> hospitals = FXCollections.observableArrayList(new ArrayList<>(hospitalSet));
-        hospital.setItems(hospitals);
-        hospital.getItems().sort(Comparator.comparing(Hospital::getName));
+//        Set<Hospital> hospitalSet = State.getConfigManager().getHospitals();
+//        ObservableList<Hospital> hospitals = FXCollections.observableArrayList(new ArrayList<>(hospitalSet));
+//        hospital.setItems(hospitals);
+//        hospital.getItems().sort(Comparator.comparing(Hospital::getName));
         regionCB.setItems(FXCollections.observableArrayList(Region.values()));
         deathRegionCB.setItems(FXCollections.observableArrayList(Region.values()));
         setEnabledCountries();
@@ -217,7 +217,7 @@ public class ViewClientController extends ViewBaseController {
         super.setup(mainController);
         if (session.getLoggedInUserType() == Session.UserType.CLIENT) {
             viewedClient = session.getLoggedInClient();
-            mainController.loadSidebar(sidebarPane);
+            mainController.loadSidebar(null);
         } else if (windowContext.isClinViewClientWindow()) {
             viewedClient = windowContext.getViewClient();
             mainController.loadMenuBar(menuBarPane);
