@@ -150,6 +150,16 @@ public class ViewMedicationsController extends SubController {
         configureCellFactory(currentMedicationsView);
         configureCellFactory(pastMedicationsView);
 
+        pastMedicationsView.getSelectionModel().selectedItemProperty().addListener(
+                observable -> {
+                    selectedListView = pastMedicationsView;
+                });
+
+        currentMedicationsView.getSelectionModel().selectedItemProperty().addListener(
+                observable -> {
+                    selectedListView = currentMedicationsView;
+                });
+
         pastMedicationsView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         currentMedicationsView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     }
