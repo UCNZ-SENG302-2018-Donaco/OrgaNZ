@@ -141,6 +141,7 @@ public class ConfigController extends SubController {
         if (!modifiedHospitalPrograms.isEmpty()) {
             for (Map.Entry<Hospital, Set<Organ>> entry : modifiedHospitalPrograms.entrySet()) {
                 State.getConfigResolver().setTransplantProgramsForHospital(entry.getKey(), entry.getValue());
+                entry.getKey().setTransplantPrograms(entry.getValue());
             }
             Notifications.create()
                     .title("Updated Transplant Programs")
