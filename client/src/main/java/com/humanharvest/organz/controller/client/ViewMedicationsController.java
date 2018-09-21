@@ -117,10 +117,12 @@ public class ViewMedicationsController extends SubController {
                     int index = cell.getIndex();
 
                     if (listView.getSelectionModel().getSelectedIndices().contains(index)) {
+                        // Already selected, so deselect it
                         listView.getSelectionModel().clearSelection(index);
                     } else if (numSelected < 2) {  // Only select if there are less than two currently selected
                         listView.getSelectionModel().select(index);
                     }
+                    updateMedicationInformation(); // display either interactions, ingredients, or neither
                     event.consume();
                 }
             });
@@ -147,18 +149,6 @@ public class ViewMedicationsController extends SubController {
 
         configureCellFactory(currentMedicationsView);
         configureCellFactory(pastMedicationsView);
-
-        pastMedicationsView.getSelectionModel().selectedItemProperty().addListener(
-                observable -> {
-                    selectedListView = pastMedicationsView;
-                    updateMedicationInformation();
-                });
-
-        currentMedicationsView.getSelectionModel().selectedItemProperty().addListener(
-                observable -> {
-                    selectedListView = currentMedicationsView;
-                    updateMedicationInformation();
-                });
 
         pastMedicationsView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         currentMedicationsView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
@@ -429,10 +419,7 @@ public class ViewMedicationsController extends SubController {
                 } else {
                     // Build list of active ingredients into a string, each ingredient on a new line
                     String sb = String.join("\n", activeIngredients);
-                    String formattedIngredients =
-                            String.format("Active ingredients in %s: %n%s",
-                                    medicationName,
-                                    sb);
+                    String formattedIngredients = String.format("Active ingredients in %s: %n%s", medicationName, sb);
                     medicationIngredients.setText(formattedIngredients);
                 }
             });
