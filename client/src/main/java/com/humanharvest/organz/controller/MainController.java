@@ -38,6 +38,7 @@ public class MainController {
     private String title;
     private SidebarController sidebarController;
     private MenuBarController menuBarController;
+    private TouchActionsBarController touchActionsBarController;
     private SubController subController;
     /**
      * Holder of a switchable page.
@@ -52,7 +53,12 @@ public class MainController {
     @FXML
     public void initialize() {
         pageHolder.getStyleClass().add("window");
-        initHamburger();
+        drawer.setDisable(true);
+//        initHamburger();
+    }
+
+    public JFXDrawer getDrawer() {
+        return drawer;
     }
 
     public Stage getStage() {
@@ -140,16 +146,6 @@ public class MainController {
             sidebarController.setup(this);
             drawer.setSidePane(sidebar);
             drawer.setOverLayVisible(false);
-//            drawer.setContent();
-
-//            drawer.setSidePane(sidebar);
-//            drawer.setBoundedNode(sidebarPane);
-//            sidebarPane.getChildren().setAll(drawer);
-
-//            this.getPane().getChildren().addAll(drawer);
-//            this.getPane().getChildren().addAll(hamburger);
-            // bind side pane size to the drawer size
-
 
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Couldn't load sidebar from fxml file.", e);
@@ -172,6 +168,19 @@ public class MainController {
             menuBarPane.getChildren().setAll(menuBar);
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Couldn't load sidebar from fxml file.", e);
+        }
+    }
+
+    public void loadTouchActionsBar(Pane pane) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(Page.TOUCH_ACTIONS_BAR.getPath()));
+            HBox touch_action_bar = loader.load();
+            touchActionsBarController = loader.getController();
+            touchActionsBarController.setup(this);
+            pane.getChildren().setAll(touch_action_bar);
+            loadSidebar(null);
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Couldn't load touch actions bar from fxml file.", e);
         }
     }
 

@@ -156,6 +156,7 @@ public class OrgansToDonateController extends SubController {
     public void setup(MainController mainController) {
         super.setup(mainController);
         mainController.setTitle("Organs to Donate");
+
         mainController.loadMenuBar(menuBarPane);
         refresh();
     }
