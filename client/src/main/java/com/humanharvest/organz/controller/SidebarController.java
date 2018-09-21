@@ -2,6 +2,7 @@ package com.humanharvest.organz.controller;
 
 import java.io.IOException;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
@@ -14,6 +15,7 @@ import com.humanharvest.organz.Client;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.state.State.UiType;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.views.ActionResponseView;
@@ -24,10 +26,9 @@ import com.humanharvest.organz.views.ActionResponseView;
 public class SidebarController extends SubController {
 
     @FXML
-    private Button viewClientButton, registerOrganDonationButton, viewMedicationsButton, viewClinicianButton,
-            searchButton, transplantsButton, logoutButton, requestOrganDonationButton, illnessHistoryButton,
-            viewProceduresButton, createAdminButton, createClinicianButton, undoButton, redoButton, staffListButton,
-            commandLineButton;
+    private Button undoButton, redoButton, viewClientButton, registerOrganDonationButton, requestOrganDonationButton,
+    viewMedicationsButton, illnessHistoryButton, viewProceduresButton, searchButton, createClientButton,
+            organsToDonateButton, transplantsButton, actionHistory, logoutButton;
 
     private Session session;
 
@@ -44,36 +45,31 @@ public class SidebarController extends SubController {
         super.setup(controller);
         UserType userType = session.getLoggedInUserType();
 
-        Button[] staffButtons = {viewClinicianButton, searchButton, transplantsButton};
-        Button[] adminButtons = {createAdminButton, createClinicianButton, staffListButton, commandLineButton};
-        Button[] clinicianButtons = {};
-        Button[] clientButtons = {viewClientButton, registerOrganDonationButton, viewMedicationsButton,
-                illnessHistoryButton, viewProceduresButton};
+        Button[] allButtons = {undoButton, redoButton, viewClientButton, registerOrganDonationButton, requestOrganDonationButton,
+                viewMedicationsButton, illnessHistoryButton, viewProceduresButton, searchButton, createClientButton,
+                organsToDonateButton, transplantsButton, actionHistory, logoutButton};
 
-        // Hide buttons depending on the type of user logged in/the view window type
-        if (userType == UserType.CLIENT || windowContext.isClinViewClientWindow()) {
-            hideButtons(staffButtons);
-            hideButtons(adminButtons);
-            hideButtons(clinicianButtons);
-        } else if (userType == UserType.CLINICIAN) {
-            hideButtons(adminButtons);
-            hideButtons(clientButtons);
-        } else if (userType == UserType.ADMINISTRATOR) {
-            hideButtons(clinicianButtons);
-            hideButtons(clientButtons);
+        Button[] clientButtons = {viewProceduresButton, illnessHistoryButton, transplantsButton,
+                registerOrganDonationButton, undoButton, redoButton, logoutButton};
+
+        Button[] clinicianButtons = {searchButton, createClientButton, organsToDonateButton, transplantsButton, actionHistory};
+
+        Button[] clinicianViewClientButtons = {registerOrganDonationButton, requestOrganDonationButton,
+                viewMedicationsButton, illnessHistoryButton, viewProceduresButton};
+
+
+        // Hide all buttons then only show buttons relevant to that user type.
+        hideButtons(allButtons);
+
+        if (userType == UserType.CLIENT) {
+            showButtons(clientButtons);
+        } else {
+            if (windowContext.isClinViewClientWindow()) {
+                showButtons(clinicianViewClientButtons);
+            } else {
+                showButtons(clinicianButtons);
+            }
         }
-
-        // Staff viewing a client shouldn't see the logout button
-        if (windowContext.isClinViewClientWindow()) {
-            hideButton(logoutButton);
-        }
-
-        // Non-receivers shouldn't see the receiver tab
-        if (!shouldShowRequestOrgans(userType)) {
-            hideButton(requestOrganDonationButton);
-        }
-
-        // Set undo and redo button depending on if they're able to be pressed
         refresh();
     }
 
@@ -90,6 +86,17 @@ public class SidebarController extends SubController {
             return currentClient.isReceiver();
         } else {
             return windowContext.isClinViewClientWindow();
+        }
+    }
+
+    private void showButton(Button button) {
+        button.setVisible(true);
+        button.setManaged(true);
+    }
+
+    private void showButtons(Button[] buttons) {
+        for (Button button: buttons) {
+            showButton(button);
         }
     }
 
@@ -274,5 +281,11 @@ public class SidebarController extends SubController {
         ActionResponseView responseView = State.getActionResolver().executeRedo(State.getClientEtag());
         Notifications.create().title("Redo").text(responseView.getResultText()).showInformation();
         PageNavigator.refreshAllWindows();
+    }
+
+    public void goToCreateClient(ActionEvent actionEvent) {
+    }
+
+    public void goToOrgansToDonate(ActionEvent actionEvent) {
     }
 }
