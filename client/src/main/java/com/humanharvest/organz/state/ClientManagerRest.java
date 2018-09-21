@@ -81,7 +81,7 @@ public class ClientManagerRest implements ClientManager {
                 .queryParam("maximumAge", maximumAge)
                 .queryParam("regions", String.join(",", regions))
                 .queryParam("birthGenders", EnumSetToString.convert(birthGenders))
-                .queryParam("clientType", clientType)
+                .queryParam("clientType", clientType.name())
                 .queryParam("donating", EnumSetToString.convert(donating))
                 .queryParam("requesting", EnumSetToString.convert(requesting))
                 .queryParam("sortOption", sortOption)
