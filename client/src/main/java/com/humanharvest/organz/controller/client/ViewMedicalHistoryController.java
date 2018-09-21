@@ -151,7 +151,7 @@ public class ViewMedicalHistoryController extends SubController {
      */
     private static Boolean getChronicFirstSortPolicy(TableView<IllnessRecord> table) {
         Comparator<IllnessRecord> comparator = (r1, r2) -> {
-            if (r1.isChronic() == r2.isChronic()) {
+            if (r1.getIsChronic() == r2.getIsChronic()) {
                 Comparator<IllnessRecord> tableComparator = table.getComparator();
                 if (tableComparator != null) {
                     return table.getComparator().compare(r1, r2);
@@ -159,7 +159,7 @@ public class ViewMedicalHistoryController extends SubController {
                     // negative because sorting DESC
                     return -Integer.signum(r1.getDiagnosisDate().compareTo(r2.getDiagnosisDate()));
                 }
-            } else if (r1.isChronic()) {
+            } else if (r1.getIsChronic()) {
                 return -1;
             } else {
                 return 1;
@@ -177,7 +177,7 @@ public class ViewMedicalHistoryController extends SubController {
     public void initialize() {
         illnessCurrCol.setCellValueFactory(new PropertyValueFactory<>("illnessName"));
         diagnosisDateCurrCol.setCellValueFactory(new PropertyValueFactory<>("diagnosisDate"));
-        chronicCurrCol.setCellValueFactory(new PropertyValueFactory<>("chronic"));
+        chronicCurrCol.setCellValueFactory(new PropertyValueFactory<>("isChronic"));
 
         illnessPastCol.setCellValueFactory(new PropertyValueFactory<>("illnessName"));
         diagnosisDatePastCol.setCellValueFactory(new PropertyValueFactory<>("diagnosisDate"));
@@ -297,7 +297,7 @@ public class ViewMedicalHistoryController extends SubController {
                 toggleChronicButton.setDisable(false);
                 deleteButton.setDisable(false);
                 toggleCuredButton.setText("Mark as Cured");
-                if (selectedRecord.isChronic()) {
+                if (selectedRecord.getIsChronic()) {
                     toggleChronicButton.setText("Mark as not Chronic");
                 } else {
                     toggleChronicButton.setText("Mark as Chronic");
@@ -338,7 +338,7 @@ public class ViewMedicalHistoryController extends SubController {
         IllnessRecord record = getSelectedRecord();
         ModifyIllnessObject modifyIllnessObject = new ModifyIllnessObject();
         if (record != null) {
-            if (record.isChronic()) {
+            if (record.getIsChronic()) {
                 PageNavigator.showAlert(AlertType.ERROR,
                         "Can't move a chronic illness to past illnesses.",
                         "An illness can't be cured if it is chronic. If the illness has been cured, first mark it as"
@@ -389,7 +389,7 @@ public class ViewMedicalHistoryController extends SubController {
         ModifyIllnessObject modifyIllnessObject = new ModifyIllnessObject();
         if (record != null) {
 
-            if (record.isChronic()) {
+            if (record.getIsChronic()) {
                 // Current, chronic illness -> Current illness
                 modifyIllnessObject.setIsChronic(false);
             } else {

@@ -44,7 +44,7 @@ public class ModifyIllnessObject extends ModifyBaseObject {
         this.curedDate = curedDate;
     }
 
-    public Boolean isChronic() {
+    public Boolean getIsChronic() {
         return isChronic;
     }
 

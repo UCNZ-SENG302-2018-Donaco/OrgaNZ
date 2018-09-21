@@ -110,7 +110,7 @@ public class ClientResolverMemory implements ClientResolver {
     public List<IllnessRecord> addIllnessRecord(Client client, CreateIllnessView createIllnessView) {
         IllnessRecord illnessRecord = new IllnessRecord(createIllnessView.getIllnessName(),
                 createIllnessView.getDiagnosisDate(),
-                createIllnessView.isChronic());
+                createIllnessView.getIsChronic());
         client.addIllnessRecord(illnessRecord);
         State.getClientManager().applyChangesTo(client);
         return client.getIllnesses();
@@ -187,6 +187,9 @@ public class ClientResolverMemory implements ClientResolver {
     public IllnessRecord modifyIllnessRecord(Client client, IllnessRecord toModify,
             ModifyIllnessObject modifyIllnessObject) {
         BeanUtils.copyProperties(modifyIllnessObject, toModify, modifyIllnessObject.getUnmodifiedFields());
+        if (modifyIllnessObject.getIsChronic() != null) { //quick and dirty fix for chronic not being set
+            toModify.setChronic(modifyIllnessObject.getIsChronic());
+        }
         return toModify;
     }
 

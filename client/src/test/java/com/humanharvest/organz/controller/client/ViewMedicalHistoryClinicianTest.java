@@ -146,16 +146,16 @@ public class ViewMedicalHistoryClinicianTest extends ControllerTest {
     @Test
     public void addChronicTagTest() {
         IllnessRecord addChronicTag = testCurrentIllnessRecords[0];
-        assertFalse(addChronicTag.isChronic());
+        assertFalse(addChronicTag.getIsChronic());
         clickOn((Node) lookup(NodeQueryUtils.hasText(addChronicTag.getIllnessName())).query());
         clickOn("#toggleChronicButton");
-        assertTrue(addChronicTag.isChronic());
+        assertTrue(addChronicTag.getIsChronic());
     }
 
     @Test
     public void addChronicTagToPastIllnessTest() {
         IllnessRecord addChronicTag = testPastIllnessRecords[0];
-        assertFalse(addChronicTag.isChronic());
+        assertFalse(addChronicTag.getIsChronic());
         clickOn((Node) lookup(NodeQueryUtils.hasText(addChronicTag.getIllnessName())).query());
         clickOn("#toggleChronicButton");
 
@@ -167,26 +167,26 @@ public class ViewMedicalHistoryClinicianTest extends ControllerTest {
         verifyThat("#currentIllnessView", containsRow(
                 addChronicTag.getIllnessName(),
                 addChronicTag.getDiagnosisDate(),
-                addChronicTag.isChronic()));
+                addChronicTag.getIsChronic()));
 
         assertNull(addChronicTag.getCuredDate());
-        assertTrue(addChronicTag.isChronic());
+        assertTrue(addChronicTag.getIsChronic());
     }
 
     @Test
     public void removeChronicTagTest() {
         IllnessRecord removeChronicTag = testCurrentIllnessRecords[1];
-        assertTrue(removeChronicTag.isChronic());
+        assertTrue(removeChronicTag.getIsChronic());
         clickOn((Node) lookup(NodeQueryUtils.hasText(removeChronicTag.getIllnessName())).query());
         clickOn("#toggleChronicButton");
-        assertFalse(removeChronicTag.isChronic());
+        assertFalse(removeChronicTag.getIsChronic());
     }
 
     @Test
     public void tryToMovetoPastIllnessesWithChronicTagTest() {
         IllnessRecord chronicIllness = testCurrentIllnessRecords[1];
         clickOn((Node) lookup(NodeQueryUtils.hasText(chronicIllness.getIllnessName())).query());
-        assertTrue(chronicIllness.isChronic());
+        assertTrue(chronicIllness.getIsChronic());
         clickOn("#toggleCuredButton");
         press(KeyCode.ENTER); //close dialog box
 
@@ -197,9 +197,9 @@ public class ViewMedicalHistoryClinicianTest extends ControllerTest {
         verifyThat("#currentIllnessView", containsRow(
                 chronicIllness.getIllnessName(),
                 chronicIllness.getDiagnosisDate(),
-                chronicIllness.isChronic()));
+                chronicIllness.getIsChronic()));
         assertNull(chronicIllness.getCuredDate());
-        assertTrue(chronicIllness.isChronic());
+        assertTrue(chronicIllness.getIsChronic());
     }
 
     @Test
@@ -207,7 +207,7 @@ public class ViewMedicalHistoryClinicianTest extends ControllerTest {
         IllnessRecord removeChronicTag = testCurrentIllnessRecords[1];
         clickOn((Node) lookup(NodeQueryUtils.hasText(removeChronicTag.getIllnessName())).query());
         clickOn("#toggleChronicButton");
-        assertFalse(removeChronicTag.isChronic());
+        assertFalse(removeChronicTag.getIsChronic());
 
         clickOn((Node) lookup(NodeQueryUtils.hasText(removeChronicTag.getIllnessName())).query());
         clickOn("#toggleCuredButton");
@@ -219,7 +219,7 @@ public class ViewMedicalHistoryClinicianTest extends ControllerTest {
         verifyThat("#currentIllnessView", not(containsRow(
                 removeChronicTag.getIllnessName(),
                 removeChronicTag.getDiagnosisDate(),
-                removeChronicTag.isChronic())));
+                removeChronicTag.getIsChronic())));
         assertEquals(LocalDate.now(), removeChronicTag.getCuredDate());
     }
 
@@ -239,7 +239,7 @@ public class ViewMedicalHistoryClinicianTest extends ControllerTest {
             verifyThat("#currentIllnessView", containsRow(
                     record.getIllnessName(),
                     record.getDiagnosisDate(),
-                    record.isChronic()));
+                    record.getIsChronic()));
         }
     }
 
@@ -257,7 +257,7 @@ public class ViewMedicalHistoryClinicianTest extends ControllerTest {
         verifyThat("#currentIllnessView", not(containsRow(
                 toBeMoved.getIllnessName(),
                 toBeMoved.getDiagnosisDate(),
-                toBeMoved.isChronic())));
+                toBeMoved.getIsChronic())));
         assertEquals(LocalDate.now(), toBeMoved.getCuredDate());
     }
 
@@ -271,7 +271,7 @@ public class ViewMedicalHistoryClinicianTest extends ControllerTest {
         verifyThat("#currentIllnessView", containsRow(
                 toBeMoved.getIllnessName(),
                 toBeMoved.getDiagnosisDate(),
-                toBeMoved.isChronic()));
+                toBeMoved.getIsChronic()));
         verifyThat("#pastIllnessView", not(containsRow(
                 toBeMoved.getIllnessName(),
                 toBeMoved.getDiagnosisDate(),
@@ -289,7 +289,7 @@ public class ViewMedicalHistoryClinicianTest extends ControllerTest {
         verifyThat("#currentIllnessView", not(containsRow(
                 toBeDeleted.getIllnessName(),
                 toBeDeleted.getDiagnosisDate(),
-                toBeDeleted.isChronic())));
+                toBeDeleted.getIsChronic())));
         verifyThat("#pastIllnessView", not(containsRow(
                 toBeDeleted.getIllnessName(),
                 toBeDeleted.getDiagnosisDate(),

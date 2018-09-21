@@ -106,7 +106,7 @@ public class ViewMedicalHistoryClientTest extends ControllerTest {
             verifyThat("#currentIllnessView", containsRow(
                     record.getIllnessName(),
                     record.getDiagnosisDate(),
-                    record.isChronic()));
+                    record.getIsChronic()));
         }
     }
 }

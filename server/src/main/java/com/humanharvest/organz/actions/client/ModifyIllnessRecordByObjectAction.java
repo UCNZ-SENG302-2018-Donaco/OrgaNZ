@@ -20,7 +20,7 @@ public class ModifyIllnessRecordByObjectAction extends ClientAction {
         this.oldRecord = oldRecord;
 
         record = new IllnessRecord(newIllnessDetails.getIllnessName(),
-                newIllnessDetails.getDiagnosisDate(), newIllnessDetails.getCuredDate(), newIllnessDetails.isChronic());
+                newIllnessDetails.getDiagnosisDate(), newIllnessDetails.getCuredDate(), newIllnessDetails.getIsChronic());
     }
 
     @Override

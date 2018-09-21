@@ -83,7 +83,7 @@ public class ClientIllnessesController {
             throw new InvalidRequestException();
         }
 
-        if (record.isChronic() && modifyIllnessObject.getCuredDate() != null) {
+        if (record.getIsChronic() && modifyIllnessObject.getCuredDate() != null) {
             //Cured date is trying to be set while disease is chronic.
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -94,8 +94,8 @@ public class ClientIllnessesController {
         if (modifyIllnessObject.getDiagnosisDate() == null) {
             modifyIllnessObject.setDiagnosisDate(record.getDiagnosisDate());
         }
-        if (modifyIllnessObject.isChronic() == null) {
-            modifyIllnessObject.setIsChronic(record.isChronic());
+        if (modifyIllnessObject.getIsChronic() == null) {
+            modifyIllnessObject.setIsChronic(record.getIsChronic());
         }
 
         //Create the old details to allow undoable action
@@ -130,7 +130,7 @@ public class ClientIllnessesController {
         State.getAuthenticationManager().verifyClientAccess(authToken, client);
 
         IllnessRecord record = new IllnessRecord(illnessView.getIllnessName(),
-                illnessView.getDiagnosisDate(), illnessView.isChronic());
+                illnessView.getDiagnosisDate(), illnessView.getIsChronic());
 
         AddIllnessRecordAction addIllnessRecordAction = new AddIllnessRecordAction(client, record,
                 State.getClientManager());
