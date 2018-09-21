@@ -227,17 +227,19 @@ public class ClientManagerDBPure implements ClientManager {
             //Checks any portion of any name
             String[] qParts = q.split("%20");
             if (q != null && !q.isEmpty()) {
-                StringJoiner qOrJoiner = new StringJoiner(" OR ");
+                StringJoiner qAndJoiner = new StringJoiner(" AND ");
                 int i = 0;
                 for (String qPart : qParts) {
+                    StringJoiner qOrJoiner = new StringJoiner(" OR ");
                     qOrJoiner.add("UPPER(c.firstName) LIKE UPPER(:q" + i + ")");
                     qOrJoiner.add("UPPER(c.middleName) LIKE UPPER(:q" + i + ")");
                     qOrJoiner.add("UPPER(c.preferredName) LIKE UPPER(:q" + i + ")");
                     qOrJoiner.add("UPPER(c.lastName) LIKE UPPER(:q" + i + ")");
                     params.put("q" + i, "%" + qPart + "%");
+                    qAndJoiner.add("(" + qOrJoiner + ")");
                     i++;
                 }
-                whereJoiner.add("(" + qOrJoiner + ")");
+                whereJoiner.add("(" + qAndJoiner + ")");
             }
 
             //Set offset to zero if not given

@@ -62,7 +62,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 @Access(AccessType.FIELD)
 public class Client implements ConcurrencyControlledEntity {
 
-    private static final Pattern whiteSpace = Pattern.compile("\\s+");
+    private static final Pattern whiteSpace = Pattern.compile("%20|\\s+");
 
     @JsonView(Views.Details.class)
     private final Instant createdTimestamp;
@@ -903,7 +903,9 @@ public class Client implements ConcurrencyControlledEntity {
     }
 
     /**
-     * Takes a string and checks if each space separated string section matches one of the names
+     * Takes a string and checks if each space separated string section matches one of the names.
+     * For example, the search term "Ollie Chick" will match "Ollie Nicholas Chick" but not "Ollie Murs",
+     * and the search term "O Chick" will match "Ollie Chick" and "Oscar Chick" and "Chick O'Sullivan".
      *
      * @param searchParam The string to be checked
      * @return True if all sections of the passed string match any of the names of the client
