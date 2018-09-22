@@ -19,7 +19,7 @@ public class MedActiveIngredientsHandlerTest extends BaseTest {
     private MedActiveIngredientsHandler handler;
 
     @Test
-    public void getActiveIngredients1() {
+    public void getActiveIngredients1() throws Exception {
         MockCacheManager.Create();
 
         final String EXPECTED_RESPONSE_BODY = "[\"Hydralazine hydrochloride; hydrochlorothiazide; reserpine\",\"Hydroch"
@@ -33,11 +33,7 @@ public class MedActiveIngredientsHandlerTest extends BaseTest {
                         "Hydroflumethiazide; reserpine", "Reserpine");
 
         List<String> actual = Collections.emptyList();
-        try {
-            actual = handler.getActiveIngredients("reserpine");
-        } catch (IOException e) {
-            fail(e.getMessage());
-        }
+        actual = handler.getActiveIngredients("reserpine");
 
         assertEquals(expected, actual);
     }

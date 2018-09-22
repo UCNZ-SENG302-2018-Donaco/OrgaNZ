@@ -9,8 +9,6 @@ import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.ProcedureRecord;
 import com.humanharvest.organz.TransplantRequest;
-import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
-import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
 
 /**
  * A static validator class used to check the integrity of a Client object
@@ -21,22 +19,10 @@ public abstract class ClientValidator {
     private static final double DELTA = 1e-6;
 
     /**
-     * Checks that the given ETag matches the current ETag for the client,
-     * and exception is thrown if the ETag is missing or does not match
-     *
-     * @param client client to validate the ETag for
-     * @param ETag The corresponding If-Match header to check for concurrent update handling
-     * @throws IfMatchRequiredException Thrown if the ETag header is missing
-     * @throws IfMatchFailedException Thrown if the ETag does not match the clients current ETag
+     * Private constructor to prevent instantiation of utility class
      */
-    public static void checkClientETag(Client client, String ETag)
-            throws IfMatchRequiredException, IfMatchFailedException {
-
-        if (ETag == null) {
-            throw new IfMatchRequiredException();
-        } else if (!client.getETag().equals(ETag)) {
-            throw new IfMatchFailedException();
-        }
+    private ClientValidator() {
+        throw new IllegalStateException("Utility class");
     }
 
     /**
@@ -115,11 +101,11 @@ public abstract class ClientValidator {
     }
 
     private static boolean firstNameValid(Client client) {
-        return client.getFirstName() != null && !client.getFirstName().equals("");
+        return !NotEmptyStringValidator.isInvalidString(client.getFirstName());
     }
 
     private static boolean lastNameValid(Client client) {
-        return client.getLastName() != null && !client.getLastName().equals("");
+        return !NotEmptyStringValidator.isInvalidString(client.getLastName());
     }
 
     private static boolean dateOfBirthValid(Client client) {

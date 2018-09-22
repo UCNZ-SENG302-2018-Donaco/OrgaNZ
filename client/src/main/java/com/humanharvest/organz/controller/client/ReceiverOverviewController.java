@@ -3,6 +3,8 @@ package com.humanharvest.organz.controller.client;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.time.Duration;
+import java.util.List;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -102,8 +104,8 @@ public class ReceiverOverviewController extends ViewBaseController {
             if (timeBetweenHospitals.isZero()) {
                 travelTime.setText("None");
             } else {
-                travelTime.setText(DurationFormatter.getFormattedDuration(timeBetweenHospitals, Format.Biggest)
-                        + String.format("%n(%.0f km)",
+                travelTime.setText(DurationFormatter.getFormattedDuration(timeBetweenHospitals, Format.BIGGEST)
+                        + String.format(Locale.UK, "%n(%.0f km)",
                         viewedClient.getHospital().calculateDistanceTo(donor.getHospital())));
             }
         } else {
@@ -140,7 +142,7 @@ public class ReceiverOverviewController extends ViewBaseController {
             requestedTime.setText("Error: no request");
         } else {
             Duration waitTime = viewedTransplantRequest.getTimeSinceRequest();
-            requestedTime.setText(DurationFormatter.getFormattedDuration(waitTime, Format.Biggest));
+            requestedTime.setText(DurationFormatter.getFormattedDuration(waitTime, Format.BIGGEST));
         }
     }
 

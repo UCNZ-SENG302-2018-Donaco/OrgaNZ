@@ -5,6 +5,7 @@ package com.humanharvest.organz.utilities.enums;
  */
 public enum TransplantRequestStatus {
     WAITING,
+    SCHEDULED,
     CANCELLED,
     COMPLETED;
 

@@ -84,7 +84,7 @@ public class Client implements ConcurrencyControlledEntity {
     private String currentAddress;
 
     @ManyToOne
-    @JoinColumn(name="Hospital_id")
+    @JoinColumn(name = "Hospital_id")
     @JsonView(Views.Details.class)
     private Hospital hospital;
 
@@ -1168,9 +1168,9 @@ public class Client implements ConcurrencyControlledEntity {
     @Override
     public String getETag() {
         if (modifiedTimestamp == null) {
-            return String.format("\"%d\"", createdTimestamp.hashCode());
+            return String.format(Locale.UK, "\"%d\"", createdTimestamp.hashCode());
         } else {
-            return String.format("\"%d\"", modifiedTimestamp.hashCode());
+            return String.format(Locale.UK, "\"%d\"", modifiedTimestamp.hashCode());
         }
     }
 
@@ -1205,7 +1205,6 @@ public class Client implements ConcurrencyControlledEntity {
     public Country getCountry() {
         return country;
     }
-
 
     public void setCountry(Country country) {
         this.country = country;

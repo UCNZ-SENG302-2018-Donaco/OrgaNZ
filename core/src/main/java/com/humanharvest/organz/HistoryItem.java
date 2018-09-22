@@ -74,6 +74,9 @@ public class HistoryItem {
         return Long.hashCode(id);
     }
 
+    /**
+     * @return a deep copy of this HistoryItem
+     */
     public HistoryItem copy() {
         return new HistoryItem(type, details, timestamp);
     }

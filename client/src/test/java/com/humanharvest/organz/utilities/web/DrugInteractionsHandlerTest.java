@@ -15,6 +15,7 @@ import com.humanharvest.organz.utilities.exceptions.BadDrugNameException;
 import com.humanharvest.organz.utilities.exceptions.BadGatewayException;
 
 import com.google.api.client.testing.http.MockHttpTransport;
+import com.sun.jna.platform.win32.OaIdl.EXCEPINFO;
 import org.junit.Test;
 
 public class DrugInteractionsHandlerTest extends BaseTest {
@@ -68,7 +69,7 @@ public class DrugInteractionsHandlerTest extends BaseTest {
     public static final String DRUG2 = "prednisone";
 
     @Test
-    public void testValidDrugInteractions() {
+    public void testValidDrugInteractions() throws Exception {
         MockCacheManager.Create();
 
         MockHttpTransport mockTransport = MockHelper.makeMockHttpTransport(EXPECTED_RESPONSE_BODY);
@@ -78,11 +79,8 @@ public class DrugInteractionsHandlerTest extends BaseTest {
         client.setGender(Gender.FEMALE);
 
         List<String> interactions = Collections.emptyList();
-        try {
-            interactions = handler.getInteractions(client, DRUG1, DRUG2);
-        } catch (IOException | BadDrugNameException | BadGatewayException e) {
-            fail(e.getMessage());
-        }
+        interactions = handler.getInteractions(client, DRUG1, DRUG2);
+
         assertEquals(7, interactions.size());
         assertEquals("pain (1 - 6 months, 2 - 5 years)", interactions.get(0));
         assertEquals("fatigue", interactions.get(1));

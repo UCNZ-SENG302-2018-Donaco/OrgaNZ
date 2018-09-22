@@ -10,11 +10,26 @@ import com.humanharvest.organz.utilities.validators.NotEmptyStringValidator;
 import com.humanharvest.organz.utilities.validators.RegionValidator;
 import com.humanharvest.organz.views.client.ModifyClientObject;
 
-public final class ModifyClientValidator {
+/**
+ * Class to ensure that a modified client is valid
+ * Class is abstract as it only contains static methods and should not be instantiated
+ */
+public abstract class ModifyClientValidator {
 
+    /**
+     * Private constructor to prevent instantiation of utility class
+     */
     private ModifyClientValidator() {
+        throw new IllegalStateException("Utility class");
     }
 
+    /**
+     * Check all modified fields and ensure they are valid
+     *
+     * @param client The client being modified
+     * @param clientView The ModifyClientObject making the changes
+     * @return True if all changes are valid
+     */
     public static boolean isValid(Client client, ModifyClientObject clientView) {
         // Get a list of unmodified fields so we don't check fields that haven't changed
         List<String> unmodifiedFields = Arrays.asList(clientView.getUnmodifiedFields());

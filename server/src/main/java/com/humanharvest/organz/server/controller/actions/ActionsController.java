@@ -43,12 +43,9 @@ public class ActionsController {
 
     @PostMapping("/undo")
     public ResponseEntity<ActionResponseView> undoAction(
-            @RequestHeader(value = "If-Match", required = false) String ETag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken) {
 
         ActionInvoker actionInvoker = State.getActionInvoker(authToken);
-
-        //Currently removed concurrency control for undo redo
 
         //Execute the action
         String resultText = actionInvoker.undo();
@@ -82,12 +79,9 @@ public class ActionsController {
 
     @PostMapping("/redo")
     public ResponseEntity<ActionResponseView> redoAction(
-            @RequestHeader(value = "If-Match", required = false) String ETag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken) {
 
         ActionInvoker actionInvoker = State.getActionInvoker(authToken);
-
-        //Currently removed concurrency control from undo redo
 
         //Execute the action
         String resultText = actionInvoker.redo();

@@ -182,7 +182,7 @@ public class ClientManagerRest implements ClientManager {
                     .map(Organ::name)
                     .collect(Collectors.toList()).toString()
                     .substring(1, organs.toString().length() - 1)
-                    .replaceAll(" ", ""));
+                    .replace(" ", ""));
         }
 
         ResponseEntity<PaginatedTransplantList> response = State.getRestTemplate().exchange(

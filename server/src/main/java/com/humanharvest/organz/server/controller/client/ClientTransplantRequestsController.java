@@ -1,7 +1,5 @@
 package com.humanharvest.organz.server.controller.client;
 
-import static com.humanharvest.organz.utilities.validators.ClientValidator.checkClientETag;
-
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -20,6 +18,7 @@ import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
+import com.humanharvest.organz.utilities.validators.NotEmptyStringValidator;
 import com.humanharvest.organz.utilities.validators.client.TransplantRequestValidator;
 import com.humanharvest.organz.views.client.PaginatedTransplantList;
 import com.humanharvest.organz.views.client.ResolveTransplantRequestObject;
@@ -147,14 +146,12 @@ public class ClientTransplantRequestsController {
      *
      * @param transplantRequest the transplant request to add
      * @param id the client's ID
-     * @param ETag A hashed value of the object used for optimistic concurrency control
      * @return list of all transplant requests for that client
      */
     @PostMapping("/clients/{id}/transplantRequests")
     public ResponseEntity<Collection<TransplantRequest>> postTransplantRequest(
             @RequestBody TransplantRequest transplantRequest,
             @PathVariable int id,
-            @RequestHeader(value = "If-Match", required = false) String ETag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken) {
 
         // Check authentication
@@ -167,9 +164,6 @@ public class ClientTransplantRequestsController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         Client client = optionalClient.get();
-
-        //Check ETag
-        checkClientETag(client, ETag);
 
         // Validate the transplant request
         try {
@@ -185,9 +179,7 @@ public class ClientTransplantRequestsController {
         State.getActionInvoker(authToken).execute(action);
         Collection<TransplantRequest> transplantRequests = client.getTransplantRequests();
 
-        //Add the new ETag to the headers
         HttpHeaders headers = new HttpHeaders();
-        headers.setETag(client.getETag());
 
         return new ResponseEntity<>(transplantRequests, headers, HttpStatus.CREATED);
     }
@@ -198,7 +190,6 @@ public class ClientTransplantRequestsController {
      * @param resolveRequestObject the resolve request object
      * @param uid the client's ID
      * @param id the transplant request's ID
-     * @param ETag A hashed value of the object used for optimistic concurrency control
      * @return list of all transplant requests for that client
      */
     @PatchMapping("/clients/{uid}/transplantRequests/{id}")
@@ -207,7 +198,6 @@ public class ClientTransplantRequestsController {
             @RequestBody ResolveTransplantRequestObject resolveRequestObject,
             @PathVariable int uid,
             @PathVariable int id,
-            @RequestHeader(value = "If-Match", required = false) String ETag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken) {
 
         // Check authentication
@@ -220,9 +210,6 @@ public class ClientTransplantRequestsController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         Client client = optionalClient.get();
-
-        //Check ETag
-        checkClientETag(client, ETag);
 
         // Get the original transplant request given by the ID
         Optional<TransplantRequest> optionalRequest = client.getTransplantRequestById(id);
@@ -237,8 +224,7 @@ public class ClientTransplantRequestsController {
         // The client, organ, and request date (and time) must stay the same.
         // If anything has illegally changed, it will return a 400.
         if (resolveRequestObject.getResolvedDateTime() == null ||
-                resolveRequestObject.getResolvedReason() == null ||
-                resolveRequestObject.getResolvedReason().equals("") ||
+                NotEmptyStringValidator.isInvalidString(resolveRequestObject.getResolvedReason()) ||
                 resolveRequestObject.getResolvedDateTime().isBefore(originalTransplantRequest.getRequestDateTime())) {
             // illegal changes
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -252,9 +238,7 @@ public class ClientTransplantRequestsController {
                 State.getClientManager());
         State.getActionInvoker(authToken).execute(action);
 
-        //Add the new ETag to the headers
         HttpHeaders headers = new HttpHeaders();
-        headers.setETag(client.getETag());
 
         return new ResponseEntity<>(originalTransplantRequest, headers, HttpStatus.CREATED);
 

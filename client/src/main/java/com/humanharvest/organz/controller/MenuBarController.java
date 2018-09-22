@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -108,7 +109,7 @@ public class MenuBarController extends SubController {
     private static String getFileExtension(String fileName) {
         int lastIndex = fileName.lastIndexOf('.');
         if (lastIndex >= 0) {
-            return fileName.substring(lastIndex + 1).toLowerCase();
+            return fileName.substring(lastIndex + 1).toLowerCase(Locale.UK);
         } else {
             return "";
         }
@@ -129,25 +130,25 @@ public class MenuBarController extends SubController {
         // Define what menus and menu items should be hidden
 
         // Menus/Menu items to hide from admins
-        Menu menusHideFromAdmins[] = {medicationsPrimaryItem};
-        MenuItem menuItemsHideFromAdmins[] = {viewClientItem, donateOrganItem, requestOrganItem, viewMedicationsItem,
+        Menu[] menusHideFromAdmins = {medicationsPrimaryItem};
+        MenuItem[] menuItemsHideFromAdmins = {viewClientItem, donateOrganItem, requestOrganItem, viewMedicationsItem,
                 medicalHistoryItem, proceduresItem, viewClinicianItem};
 
         // Menus/Menu items to hide from clinicians
-        Menu menusHideFromClinicians[] = {medicationsPrimaryItem, staffPrimaryItem};
-        MenuItem menuItemsHideFromClinicians[] = {viewClientItem, donateOrganItem, requestOrganItem,
+        Menu[] menusHideFromClinicians = {medicationsPrimaryItem, staffPrimaryItem};
+        MenuItem[] menuItemsHideFromClinicians = {viewClientItem, donateOrganItem, requestOrganItem,
                 viewMedicationsItem, medicalHistoryItem, proceduresItem, saveClientsItem, saveCliniciansItem,
                 loadItem, settingsItem, staffListItem, createAdministratorItem, createClinicianItem, cliItem};
 
         // Menus/Menu items to hide from clinicians (or admins) viewing a client
-        Menu menusHideFromClinViewClients[] = {staffPrimaryItem, profilePrimaryItem};
-        MenuItem menuItemsHideFromClinViewClients[] = {saveClientsItem, saveCliniciansItem, loadItem, settingsItem,
+        Menu[] menusHideFromClinViewClients = {staffPrimaryItem, profilePrimaryItem};
+        MenuItem[] menuItemsHideFromClinViewClients = {saveClientsItem, saveCliniciansItem, loadItem, settingsItem,
                 logOutItem, searchClientItem, createClientItem, transplantRequestsItem, organsToDonateItem,
                 staffListItem, createAdministratorItem, createClinicianItem,
                 viewClinicianItem, historyItem, cliItem, quitItem, topSeparator};
 
         // Menus to hide from clients (aka all menus)
-        Menu allMenus[] = {filePrimaryItem, editPrimaryItem, clientPrimaryItem, organPrimaryItem,
+        Menu[] allMenus = {filePrimaryItem, editPrimaryItem, clientPrimaryItem, organPrimaryItem,
                 medicationsPrimaryItem, staffPrimaryItem, profilePrimaryItem};
 
         organWeb.setVisible(windowContext.isClinViewClientWindow());
@@ -195,7 +196,7 @@ public class MenuBarController extends SubController {
      *
      * @param items The menu items to hide
      */
-    private void hideMenuItems(MenuItem items[]) {
+    private void hideMenuItems(MenuItem[] items) {
         for (MenuItem menuItem : items) {
             hideMenuItem(menuItem);
         }
@@ -208,7 +209,6 @@ public class MenuBarController extends SubController {
      */
     private void hideMenuItem(MenuItem menuItem) {
         menuItem.setVisible(false);
-        //menuItem.setManaged(false);
     }
 
     /**
@@ -216,7 +216,7 @@ public class MenuBarController extends SubController {
      *
      * @param menus The menus to hide
      */
-    private void hideMenus(Menu menus[]) {
+    private void hideMenus(Menu[] menus) {
         for (Menu menu : menus) {
             hideMenu(menu);
         }
@@ -229,7 +229,6 @@ public class MenuBarController extends SubController {
      */
     private void hideMenu(Menu menu) {
         menu.setVisible(false);
-        //menu.setManaged(false);
     }
 
     /**
