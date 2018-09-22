@@ -93,7 +93,7 @@ public class SpiderWebController extends SubController {
 
         Affine transform = new Affine();
         transform.append(new Translate(x, y));
-        transform.prepend(new Scale(scale, scale));
+        transform.append(new Scale(scale, scale));
         transform.append(new Rotate(angle, centre.getX(), centre.getY()));
         focusArea.setTransform(transform);
         node.setCacheHint(CacheHint.QUALITY);
