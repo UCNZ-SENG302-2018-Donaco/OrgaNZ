@@ -192,9 +192,9 @@ public class SpiderWebController extends SubController {
         organPane.setOnMouseClicked(click -> {
             if (click.getClickCount() == 2) {
                 if (organ.getOverrideReason() == null) {
-                    State.getClientResolver()
-                            .manuallyOverrideOrgan(organ, "Manually Overridden by Doctor using WebView");
-                    organ.manuallyOverride("Manually Overridden by Doctor using WebView");
+                    final String reason = "Manually Overridden by Doctor using WebView";
+                    State.getClientResolver().manuallyOverrideOrgan(organ, reason);
+                    organ.manuallyOverride(reason);
 
                 } else {
                     State.getClientResolver().cancelManualOverrideForOrgan(organ);
