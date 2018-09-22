@@ -1,6 +1,8 @@
 package com.humanharvest.organz.utilities.view;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -14,6 +16,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Transform;
 import javafx.stage.Stage;
@@ -118,6 +121,18 @@ public class PageNavigatorTouch implements IPageNavigator {
                 State.deleteMainController(mainController);
                 MultitouchHandler.removePane(mainPane);
             });
+
+            newStage.setWidth(width);
+            newStage.setHeight(height);
+            newStage.setMinWidth(width);
+            newStage.setMinHeight(height);
+
+            mainPane.setPrefWidth(width);
+            mainPane.setPrefHeight(height);
+
+            StackPane stackPane = (StackPane) mainPane.getChildren().get(0);
+            stackPane.setPrefWidth(width);
+            stackPane.setPrefHeight(height);
 
             MultitouchHandler.addPane(mainPane);
 

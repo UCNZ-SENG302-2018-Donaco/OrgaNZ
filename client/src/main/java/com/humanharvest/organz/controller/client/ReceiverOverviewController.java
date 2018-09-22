@@ -61,8 +61,20 @@ public class ReceiverOverviewController extends ViewBaseController {
     @FXML
     private Label age;
 
-    @FXML
-    private VBox receiverVBox;
+  @FXML
+  private Label col1Label;
+
+  @FXML
+  private Label col2Label;
+
+  @FXML
+  private Label col3Label;
+
+  @FXML
+  private Label col4Label;
+
+  @FXML
+  private VBox receiverVBox;
 
     /**
      * Initializes the UI for this page.
@@ -101,12 +113,8 @@ public class ReceiverOverviewController extends ViewBaseController {
         }
 
         // Set wait time
-        List<TransplantRequest> transplantRequests = State.getClientResolver().getTransplantRequests(viewedClient);
-        for (TransplantRequest transplantRequest : transplantRequests) {
-            if (transplantRequest.getRequestedOrgan() == organ) {
-                viewedTransplantRequest = transplantRequest;
-            }
-        }
+        viewedClient.setTransplantRequests(State.getClientResolver().getTransplantRequests(viewedClient));
+        viewedTransplantRequest = viewedClient.getTransplantRequest(organ);
         updateWaitTime();
 
         // Set image
@@ -126,7 +134,8 @@ public class ReceiverOverviewController extends ViewBaseController {
             }
         });
 
-    }
+      }
+
 
     private void updateWaitTime() {
         if (viewedTransplantRequest == null) {
@@ -140,7 +149,11 @@ public class ReceiverOverviewController extends ViewBaseController {
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
-        viewedClient = windowContext.getViewClient();
+        if (windowContext == null) {
+            viewedClient = State.getSpiderwebDonor();
+        } else {
+            viewedClient = windowContext.getViewClient();
+        }
         refresh();
     }
 

@@ -1,6 +1,8 @@
 package com.humanharvest.organz.utilities.view;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -91,6 +93,11 @@ public class PageNavigatorStandard implements IPageNavigator {
             newStage.setMinHeight(height);
             newStage.setWidth(width);
             newStage.setHeight(height);
+
+            mainPane.setPrefWidth(width);
+            mainPane.setPrefHeight(height);
+
+
 
             return mainController;
         } catch (IOException e) {

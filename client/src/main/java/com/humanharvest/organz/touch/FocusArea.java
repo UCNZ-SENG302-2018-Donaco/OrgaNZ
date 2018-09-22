@@ -180,7 +180,7 @@ public class FocusArea implements InvalidationListener {
         Point2D positionDelta = centre.subtract(timedPoint.getPosition());
         velocity = new Point2D(positionDelta.getX() / timeDelta, positionDelta.getY() / timeDelta);
 
-        if (PointUtils.distance(Point2D.ZERO, velocity) < 1) {
+        if (PointUtils.distance(Point2D.ZERO, velocity) < MultitouchHandler.MIN_VELOCITY_THRESHOLD) {
             velocity = Point2D.ZERO;
         }
 
