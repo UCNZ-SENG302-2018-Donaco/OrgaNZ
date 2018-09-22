@@ -301,7 +301,7 @@ public class ViewProceduresController extends SubController {
             affectedPastCol.setEditable(false);
         } else if (windowContext.isClinViewClientWindow()) {
             client = windowContext.getViewClient();
-            mainController.loadMenuBar(menuBarPane);
+            mainController.loadTouchActionsBar(menuBarPane);
         }
 
         mainController.setTitle("Procedures: " + client.getPreferredNameFormatted());

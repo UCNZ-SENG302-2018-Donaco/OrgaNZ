@@ -284,9 +284,11 @@ public class SidebarController extends SubController  {
         PageNavigator.refreshAllWindows();
     }
 
-    public void goToCreateClient(ActionEvent actionEvent) {
+    public void goToCreateClient() {
+        PageNavigator.loadPage(Page.CREATE_CLIENT, mainController);
     }
 
-    public void goToOrgansToDonate(ActionEvent actionEvent) {
+    public void goToOrgansToDonate() {
+        PageNavigator.loadPage(Page.ORGANS_TO_DONATE, mainController);
     }
 }

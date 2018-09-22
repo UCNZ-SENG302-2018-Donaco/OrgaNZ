@@ -11,8 +11,7 @@
 <?import javafx.scene.text.Text?>
 <VBox xmlns:fx="http://javafx.com/fxml/1" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.121"
   fx:controller="com.humanharvest.organz.controller.HistoryController">
-  <SplitPane VBox.vgrow="ALWAYS" dividerPositions="0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="200.0">
-    <HBox maxHeight="-Infinity" minHeight="-Infinity" fx:id="menuBarPane"/>
+  <VBox fx:id="menuBarPane" maxWidth="1.7976931348623157E308" />
     <SplitPane VBox.vgrow="ALWAYS" dividerPositions="0.5">
       <HBox maxWidth="-Infinity" fx:id="sidebarPane"/>
       <VBox prefHeight="600.0" prefWidth="800.0">
@@ -47,5 +46,4 @@
         </BorderPane>
       </VBox>
     </SplitPane>
-  </SplitPane>
 </VBox>

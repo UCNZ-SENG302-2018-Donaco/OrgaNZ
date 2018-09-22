@@ -83,7 +83,7 @@ public class HistoryController extends SubController {
             mainController.loadSidebar(sidebarPane);
         } else {
             mainController.setTitle("System History");
-            mainController.loadMenuBar(menuBarPane);
+            mainController.loadTouchActionsBar(menuBarPane);
         }
 
         refresh();

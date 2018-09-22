@@ -186,7 +186,7 @@ public class ViewMedicationsController extends SubController {
             deleteButton.setDisable(true);
         } else if (windowContext.isClinViewClientWindow()) {
             client = windowContext.getViewClient();
-            mainController.loadMenuBar(menuBarPane);
+            mainController.loadTouchActionsBar(menuBarPane);
         }
 
         refreshMedicationLists();

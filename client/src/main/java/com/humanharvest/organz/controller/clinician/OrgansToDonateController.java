@@ -73,7 +73,7 @@ public class OrgansToDonateController extends SubController {
     private static final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("d MMM yyyy hh:mm a");
 
     @FXML
-    private HBox menuBarPane;
+    private Pane menuBarPane;
 
     @FXML
     private TableView<DonatedOrgan> tableView;
@@ -157,7 +157,7 @@ public class OrgansToDonateController extends SubController {
         super.setup(mainController);
         mainController.setTitle("Organs to Donate");
 
-        mainController.loadMenuBar(menuBarPane);
+        mainController.loadTouchActionsBar(menuBarPane);
         refresh();
     }
 

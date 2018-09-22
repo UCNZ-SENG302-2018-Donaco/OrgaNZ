@@ -234,7 +234,7 @@ public class ClientMedicalHistoryController extends SubController {
             illnessButtonsPane.setManaged(false);
         } else if (windowContext.isClinViewClientWindow()) {
             client = windowContext.getViewClient();
-            mainController.loadMenuBar(menuBarPane);
+            mainController.loadTouchActionsBar(menuBarPane);
         }
 
         refresh();

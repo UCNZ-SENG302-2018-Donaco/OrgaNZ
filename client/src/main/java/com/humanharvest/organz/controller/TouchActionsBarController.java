@@ -27,7 +27,6 @@ public class TouchActionsBarController extends SubController {
                 controller.getDrawer().setDisable(false);
             }
         });
-
     }
 
 

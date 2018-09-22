@@ -142,7 +142,7 @@ public class RegisterOrganDonationController extends SubController {
             donatedOrgansPane.setVisible(false);
         } else if (windowContext.isClinViewClientWindow()) {
             client = windowContext.getViewClient();
-            mainController.loadMenuBar(menuBarPane);
+            mainController.loadTouchActionsBar(menuBarPane);
             donatedOrgansPane.setVisible(true);
         }
         refresh();

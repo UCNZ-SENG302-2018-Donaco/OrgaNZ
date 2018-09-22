@@ -84,7 +84,7 @@ public class SearchClientsController extends SubController {
     private HBox donatingFilterBox, requestingFilterBox;
 
     @FXML
-    private HBox menuBarPane;
+    private Pane menuBarPane;
 
     @FXML
     private TableView<Client> tableView;
