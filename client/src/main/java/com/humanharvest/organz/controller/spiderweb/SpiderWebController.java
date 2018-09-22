@@ -51,8 +51,10 @@ public class SpiderWebController extends SubController {
     private Pane deceasedDonorPane;
     private final List<Pane> organNodes = new ArrayList<>();
 
-    public SpiderWebController(Client client) {
-        this.client = client;
+    public SpiderWebController(Client viewedClient) {
+        client = viewedClient;
+        client.setDonatedOrgans(State.getClientResolver().getDonatedOrgans(client));
+        State.setSpiderwebDonor(client);
 
         canvas = MultitouchHandler.getCanvas();
         canvas.getChildren().clear();
@@ -68,7 +70,6 @@ public class SpiderWebController extends SubController {
         canvas.getChildren().add(exitButton);
         exitButton.setOnAction(event -> closeSpiderWeb());
 
-        client.setDonatedOrgans(State.getClientResolver().getDonatedOrgans(client));
         displayDonatingClient();
         displayOrgans();
     }
@@ -99,9 +100,7 @@ public class SpiderWebController extends SubController {
      */
     private void displayOrgans() {
         for (DonatedOrgan organ : client.getDonatedOrgans()) {
-            if (!organ.hasExpired()) {
-                addOrganNode(organ);
-            }
+            addOrganNode(organ);
         }
         layoutOrganNodes(300);
     }
