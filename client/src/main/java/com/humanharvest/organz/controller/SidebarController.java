@@ -23,7 +23,7 @@ import com.humanharvest.organz.views.ActionResponseView;
 /**
  * Controller for the sidebar pane imported into every page in the main part of the GUI.
  */
-public class SidebarController extends SubController {
+public class SidebarController extends SubController  {
 
     @FXML
     private Button undoButton, redoButton, viewClientButton, registerOrganDonationButton, requestOrganDonationButton,
@@ -50,7 +50,8 @@ public class SidebarController extends SubController {
                 organsToDonateButton, transplantsButton, actionHistory, logoutButton};
 
         Button[] clientButtons = {viewProceduresButton, illnessHistoryButton, transplantsButton,
-                registerOrganDonationButton, undoButton, redoButton, logoutButton};
+                registerOrganDonationButton, undoButton, redoButton, logoutButton, viewClientButton,
+                requestOrganDonationButton, viewMedicationsButton};
 
         Button[] clinicianButtons = {searchButton, createClientButton, organsToDonateButton, transplantsButton, actionHistory};
 
