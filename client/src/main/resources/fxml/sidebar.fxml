@@ -96,7 +96,10 @@
             <Font size="16.0" />
           </font>
                <graphic>
-                  <ImageView fitHeight="65.0" fitWidth="65.0" pickOnBounds="true" preserveRatio="true" />
+                  <ImageView fitHeight="65.0" fitWidth="65.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="/images/pages/search.png" />
+                     </image></ImageView>
                </graphic>
         </Button>
             <Button fx:id="createClientButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToCreateClient" style="-fx-alignment: CENTER_LEFT;" text="Create Client" wrapText="true" VBox.vgrow="ALWAYS">
@@ -116,7 +119,10 @@
             <Font size="16.0" />
           </font>
                <graphic>
-                  <ImageView fitHeight="65.0" fitWidth="65.0" pickOnBounds="true" preserveRatio="true" />
+                  <ImageView fitHeight="65.0" fitWidth="65.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="/images/pages/organs_to_donate.png" />
+                     </image></ImageView>
                </graphic>
         </Button>
         <Button fx:id="transplantsButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToTransplants" style="-fx-alignment: CENTER_LEFT;" text="Transplant Requests" wrapText="true" VBox.vgrow="ALWAYS">
