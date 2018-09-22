@@ -274,6 +274,7 @@ public class ViewClientController extends ViewBaseController {
     private void setEnabledCountries() {
         ObservableList<Country> enabledCountries = FXCollections.observableArrayList(
                 State.getConfigManager().getAllowedCountries());
+        FXCollections.sort(enabledCountries);
         country.setItems(enabledCountries);
         deathCountry.setItems(enabledCountries);
     }
