@@ -122,11 +122,7 @@ public class SearchClientsController extends SubController {
     public void setup(MainController mainController) {
         super.setup(mainController);
         mainController.setTitle("Client search");
-        if (State.getUiType() == UiType.TOUCH || State.getUiType() == UiType.STANDARD) {
-            mainController.loadTouchActionsBar(menuBarPane);
-        } else {
-            mainController.loadMenuBar(menuBarPane);
-        }
+        mainController.loadNavigation(menuBarPane);
     }
 
     @FXML

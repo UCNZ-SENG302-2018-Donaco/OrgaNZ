@@ -63,7 +63,7 @@ public class TouchActionsBarController extends SubController {
                 controller.getDrawer().setDisable(false);
             }
         });
-        refreshPage();
+        refresh();
     }
 
     @FXML
@@ -86,8 +86,8 @@ public class TouchActionsBarController extends SubController {
         PageNavigator.refreshAllWindows();
     }
 
-    @FXML
-    private void refreshPage() {
+    @Override
+    public void refresh() {
         ActionResponseView responseView = State.getActionResolver().getUndo();
         undoButton.setDisable(!responseView.isCanUndo());
         redoButton.setDisable(!responseView.isCanRedo());

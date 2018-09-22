@@ -178,7 +178,6 @@ public class ViewMedicationsController extends SubController {
         super.setup(mainController);
         if (session.getLoggedInUserType() == Session.UserType.CLIENT) {
             client = session.getLoggedInClient();
-            mainController.loadSidebar(sidebarPane);
             newMedicationPane.setVisible(false);
             newMedicationPane.setManaged(false);
             moveToHistoryButton.setDisable(true);
@@ -186,9 +185,9 @@ public class ViewMedicationsController extends SubController {
             deleteButton.setDisable(true);
         } else if (windowContext.isClinViewClientWindow()) {
             client = windowContext.getViewClient();
-            mainController.loadTouchActionsBar(menuBarPane);
         }
 
+        mainController.loadNavigation(menuBarPane);
         refreshMedicationLists();
 
         refresh();

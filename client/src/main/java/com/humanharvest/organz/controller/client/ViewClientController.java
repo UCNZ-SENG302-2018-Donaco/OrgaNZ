@@ -52,6 +52,7 @@ import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.state.State.UiType;
 import com.humanharvest.organz.utilities.enums.BloodType;
 import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Gender;
@@ -215,12 +216,11 @@ public class ViewClientController extends ViewBaseController {
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
+        mainController.loadNavigation(menuBarPane);
         if (session.getLoggedInUserType() == Session.UserType.CLIENT) {
             viewedClient = session.getLoggedInClient();
-            mainController.loadTouchActionsBar(menuBarPane);
         } else if (windowContext.isClinViewClientWindow()) {
             viewedClient = windowContext.getViewClient();
-            mainController.loadTouchActionsBar(menuBarPane);
         }
         refresh();
     }

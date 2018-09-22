@@ -2,6 +2,7 @@ package com.humanharvest.organz.controller;
 
 import static org.testfx.api.FxAssert.verifyThat;
 import static org.testfx.matcher.base.NodeMatchers.isInvisible;
+import static org.testfx.matcher.base.NodeMatchers.isVisible;
 
 import java.time.LocalDate;
 
@@ -42,17 +43,17 @@ public class SidebarControllerClinicianViewClientTest extends ControllerTest {
     }
 
     @Test
-    public void testCorrectHiddenButtonsForClinicianAndAdminViewClient() {
-        State.reset();
+    public void testCorrectButtonsForClinicianAndAdminViewClient() {
 
-        State.login(clinician);
-        mainController.setWindowContext(new WindowContext.WindowContextBuilder()
-                .setAsClinicianViewClientWindow()
-                .viewClient(client)
-                .build());
-        verifyThat("#undoButton", isInvisible());
-        verifyThat("#logoutButton", isInvisible());
-        verifyThat("#redoButton", isInvisible());
+        verifyThat("#viewClientButton", isVisible());
+        verifyThat("#registerOrganDonationButton", isVisible());
+        verifyThat("#requestOrganDonationButton", isVisible());
+        verifyThat("#viewMedicationsButton", isVisible());
+        verifyThat("#illnessHistoryButton", isVisible());
+        verifyThat("#viewProceduresButton", isVisible());
+        verifyThat("#spiderwebButton", isVisible());
+
+
         verifyThat("#searchButton", isInvisible());
         verifyThat("#createClientButton", isInvisible());
         verifyThat("#organsToDonateButton", isInvisible());

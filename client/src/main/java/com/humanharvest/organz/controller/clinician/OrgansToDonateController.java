@@ -157,7 +157,7 @@ public class OrgansToDonateController extends SubController {
         super.setup(mainController);
         mainController.setTitle("Organs to Donate");
 
-        mainController.loadTouchActionsBar(menuBarPane);
+        mainController.loadNavigation(menuBarPane);
         refresh();
     }
 

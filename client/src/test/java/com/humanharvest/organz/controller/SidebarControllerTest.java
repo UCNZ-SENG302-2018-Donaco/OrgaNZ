@@ -3,8 +3,11 @@ package com.humanharvest.organz.controller;
 import static org.junit.Assert.assertEquals;
 import static org.testfx.api.FxAssert.verifyThat;
 import static org.testfx.matcher.base.NodeMatchers.isInvisible;
+import static org.testfx.matcher.base.NodeMatchers.isVisible;
 
 import java.time.LocalDate;
+
+import javafx.scene.Node;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.Clinician;
@@ -40,16 +43,6 @@ public class SidebarControllerTest extends ControllerTest {
         mainController.setWindowContext(new WindowContextBuilder().build());
     }
 
-    // Test clicking on action buttons
-
-    @Test
-    public void testActionButtons() {
-        clickOn("#undoButton");
-        clickOn("#redoButton");
-    }
-
-    // Page navigation working correctly
-
     @Test
     public void testClickOnViewClient() {
         clickOn("#viewClientButton");
@@ -80,23 +73,29 @@ public class SidebarControllerTest extends ControllerTest {
         assertEquals(Page.VIEW_MEDICAL_HISTORY, mainController.getCurrentPage());
     }
 
-
     @Test
-    public void testClickOnLogout() {
-        clickOn("#logoutButton");
-        assertEquals(Page.LANDING, mainController.getCurrentPage());
+    public void testClickOnProcedures() {
+        clickOn("#viewProceduresButton");
+        assertEquals(Page.VIEW_PROCEDURES, mainController.getCurrentPage());
     }
+
 
     @Test
     public void testCorrectHiddenButtonsForClient() {
+        // Buttons that should be visible
+        verifyThat("#viewClientButton", isVisible());
+        verifyThat("#registerOrganDonationButton", isVisible());
+        verifyThat("#requestOrganDonationButton", isVisible());
+        verifyThat("#viewMedicationsButton", isVisible());
+        verifyThat("#illnessHistoryButton", isVisible());
+        verifyThat("#viewProceduresButton", isVisible());
+
+        // Buttons that shouldn't be visible
         verifyThat("#searchButton", isInvisible());
         verifyThat("#createClientButton", isInvisible());
         verifyThat("#organsToDonateButton", isInvisible());
+        verifyThat("#transplantsButton", isInvisible());
+        verifyThat("#actionHistory", isInvisible());
+        verifyThat("#spiderwebButton", isInvisible());
     }
-
-
-
-
-
-
 }

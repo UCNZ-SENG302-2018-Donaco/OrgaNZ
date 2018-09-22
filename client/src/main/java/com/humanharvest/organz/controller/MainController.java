@@ -17,6 +17,8 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import com.humanharvest.organz.state.Session.UserType;
+import com.humanharvest.organz.state.State.UiType;
 import com.humanharvest.organz.touch.MultitouchHandler;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.view.Page;
@@ -51,14 +53,11 @@ public class MainController {
     private StackPane pageHolder;
     @FXML
     private JFXDrawer drawer; // = new JFXDrawer();
-    @FXML
-    private JFXHamburger hamburger; // = new JFXHamburger();
 
     @FXML
     public void initialize() {
         pageHolder.getStyleClass().add("window");
         drawer.setDisable(true);
-//        initHamburger();
     }
 
     public JFXDrawer getDrawer() {
@@ -120,21 +119,6 @@ public class MainController {
     }
 
 
-    public void initHamburger() {
-
-        hamburger.addEventHandler(MouseEvent.MOUSE_CLICKED, (e) -> {
-
-            if (drawer.isShown()) {
-                drawer.close();
-                drawer.setDisable(true);
-            } else {
-                drawer.open();
-                drawer.setDisable(false);
-            }
-        });
-    }
-
-
     /**
      * Method that can be called from other controllers to load the sidebar into that page.
      * Will set the sidebar as the child of the pane given.
@@ -186,6 +170,15 @@ public class MainController {
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Couldn't load touch actions bar from fxml file.", e);
         }
+    }
+
+    public void loadNavigation(Pane pane) {
+        if (State.getUiType() == UiType.TOUCH || State.getSession().getLoggedInUserType() == UserType.CLIENT) {
+            loadTouchActionsBar(pane);
+        } else {
+            loadMenuBar(pane);
+        }
+
     }
 
 

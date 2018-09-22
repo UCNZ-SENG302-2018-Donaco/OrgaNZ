@@ -47,6 +47,18 @@
                   </ImageView>
                </graphic>
         </Button>
+            <Button fx:id="spiderwebButton" layoutX="10.0" layoutY="164.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToSpiderweb" style="-fx-alignment: CENTER_LEFT;" text="Spider Web" wrapText="true">
+               <font>
+                  <Font size="16.0" />
+               </font>
+               <graphic>
+                  <ImageView fitHeight="65.0" fitWidth="65.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="/images/pages/spiderweb.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </Button>
         <Button fx:id="viewMedicationsButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToViewMedications" style="-fx-alignment: CENTER_LEFT;" text="Medications" wrapText="true" VBox.vgrow="ALWAYS">
           <font>
             <Font size="16.0" />

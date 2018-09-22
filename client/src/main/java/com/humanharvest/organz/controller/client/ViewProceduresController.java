@@ -288,7 +288,6 @@ public class ViewProceduresController extends SubController {
         // fields they're not allowed to.
         if (session.getLoggedInUserType() == UserType.CLIENT) {
             client = session.getLoggedInClient();
-            mainController.loadSidebar(sidebarPane);
             newProcedurePane.setVisible(false);
             newProcedurePane.setManaged(false);
             procedureButtonsPane.setVisible(false);
@@ -301,9 +300,9 @@ public class ViewProceduresController extends SubController {
             affectedPastCol.setEditable(false);
         } else if (windowContext.isClinViewClientWindow()) {
             client = windowContext.getViewClient();
-            mainController.loadTouchActionsBar(menuBarPane);
         }
 
+        mainController.loadNavigation(menuBarPane);
         mainController.setTitle("Procedures: " + client.getPreferredNameFormatted());
         refresh();
         enableAppropriateButtons();

@@ -80,12 +80,11 @@ public class HistoryController extends SubController {
 
         if (session.getLoggedInUserType() == UserType.CLIENT || windowContext.isClinViewClientWindow()) {
             mainController.setTitle("Client History");
-            mainController.loadSidebar(sidebarPane);
         } else {
             mainController.setTitle("System History");
-            mainController.loadTouchActionsBar(menuBarPane);
         }
 
+        mainController.loadNavigation(menuBarPane);
         refresh();
     }
 

@@ -145,7 +145,7 @@ public class TransplantsController extends SubController {
     public void setup(MainController mainController) {
         super.setup(mainController);
         mainController.setTitle("Transplant requests");
-        mainController.loadTouchActionsBar(menuBarPane);
+        mainController.loadNavigation(menuBarPane);
         refresh();
     }
 

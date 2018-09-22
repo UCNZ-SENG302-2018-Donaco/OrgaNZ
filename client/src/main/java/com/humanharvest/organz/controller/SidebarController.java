@@ -1,36 +1,27 @@
 package com.humanharvest.organz.controller;
 
-import java.io.IOException;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
+
 import javafx.scene.control.Button;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import org.controlsfx.control.Notifications;
-import com.jfoenix.controls.JFXHamburger;
-import com.jfoenix.controls.JFXDrawer;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.controller.spiderweb.SpiderWebController;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.state.State.UiType;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
-import com.humanharvest.organz.views.ActionResponseView;
 
 /**
  * Controller for the sidebar pane imported into every page in the main part of the GUI.
  */
 public class SidebarController extends SubController  {
 
-
     @FXML
     private Button viewClientButton, registerOrganDonationButton, requestOrganDonationButton,
     viewMedicationsButton, illnessHistoryButton, viewProceduresButton, searchButton, createClientButton,
-            organsToDonateButton, transplantsButton, actionHistory;
+            organsToDonateButton, transplantsButton, actionHistory, spiderwebButton;
 
     private Session session;
 
@@ -49,16 +40,15 @@ public class SidebarController extends SubController  {
 
         Button[] allButtons = {viewClientButton, registerOrganDonationButton, requestOrganDonationButton,
                 viewMedicationsButton, illnessHistoryButton, viewProceduresButton, searchButton, createClientButton,
-                organsToDonateButton, transplantsButton, actionHistory};
+                organsToDonateButton, transplantsButton, actionHistory, spiderwebButton};
 
-        Button[] clientButtons = {viewProceduresButton, illnessHistoryButton, transplantsButton,
-                registerOrganDonationButton, viewClientButton,
+        Button[] clientButtons = {viewProceduresButton, illnessHistoryButton, registerOrganDonationButton, viewClientButton,
                 requestOrganDonationButton, viewMedicationsButton};
 
         Button[] clinicianButtons = {searchButton, createClientButton, organsToDonateButton, transplantsButton, actionHistory};
 
         Button[] clinicianViewClientButtons = {registerOrganDonationButton, requestOrganDonationButton,
-                viewMedicationsButton, illnessHistoryButton, viewProceduresButton, viewClientButton};
+                viewMedicationsButton, illnessHistoryButton, viewProceduresButton, viewClientButton, spiderwebButton};
 
 
         // Hide all buttons then only show buttons relevant to that user type.
@@ -84,7 +74,8 @@ public class SidebarController extends SubController  {
      * @param userType the type of current user
      * @return true if the button should be shown, false otherwise
      */
-    private boolean shouldShowRequestOrgans(Session.UserType userType) {
+    private boolean shouldShowRequestOrgans(Session.UserType userType) { //TODO Find out if we want this hidden if
+        // they haven't requested organs.
         if (userType == UserType.CLIENT) {
             Client currentClient = session.getLoggedInClient();
             return currentClient.isReceiver();
@@ -159,14 +150,6 @@ public class SidebarController extends SubController  {
     }
 
     /**
-     * Redirects the GUI to the View Client page.
-     */
-    @FXML
-    private void goToViewClinician() {
-        PageNavigator.loadPage(Page.VIEW_CLINICIAN, mainController);
-    }
-
-    /**
      * Redirects the GUI to the Search clients page.
      */
     @FXML
@@ -174,13 +157,6 @@ public class SidebarController extends SubController  {
         PageNavigator.loadPage(Page.SEARCH, mainController);
     }
 
-    /**
-     * Redirects the GUI to the Staff list page.
-     */
-    @FXML
-    private void goToStaffList() {
-        PageNavigator.loadPage(Page.STAFF_LIST, mainController);
-    }
 
     /**
      * Redirects the GUI to the Transplants page.
@@ -214,69 +190,6 @@ public class SidebarController extends SubController  {
         PageNavigator.loadPage(Page.VIEW_PROCEDURES, mainController);
     }
 
-    /**
-     * Redirects the GUI to the Create administrator page.
-     */
-    @FXML
-    private void goToCreateAdmin() {
-        PageNavigator.loadPage(Page.CREATE_ADMINISTRATOR, mainController);
-    }
-
-    /**
-     * Redirects the GUI to the Create clinician page.
-     */
-    @FXML
-    private void goToCreateClinician() {
-        PageNavigator.loadPage(Page.CREATE_CLINICIAN, mainController);
-    }
-
-    /**
-     * Redirects the GUI to the Admin command line page.
-     */
-    @FXML
-    private void goToCommandLine() {
-        PageNavigator.loadPage(Page.COMMAND_LINE, mainController);
-    }
-
-    /**
-     * Logs out the current user and sends them to the Landing page.
-     * TODO duplicated in menubarcontroller - code smell
-     */
-    @FXML
-    private void logout() {
-        State.logout();
-        for (MainController controller : State.getMainControllers()) {
-            if (controller != mainController) {
-                controller.closeWindow();
-            }
-        }
-        State.clearMainControllers();
-        State.addMainController(mainController);
-        mainController.resetWindowContext();
-        PageNavigator.loadPage(Page.LANDING, mainController);
-    }
-
-    /**
-     * Undoes the most recent action performed in the system, and refreshes the current page to reflect the change.
-     * TODO duplicated in menubarcontroller - code smell
-     */
-    @FXML
-    private void undo() {
-        ActionResponseView responseView = State.getActionResolver().executeUndo(State.getClientEtag());
-        Notifications.create().title("Undo").text(responseView.getResultText()).showInformation();
-        PageNavigator.refreshAllWindows();
-    }
-
-    /**
-     * Redoes the most recent action performed in the system, and refreshes the current page to reflect the change.
-     * TODO duplicated in menubarcontroller - code smell
-     */
-    @FXML
-    private void redo() {
-        ActionResponseView responseView = State.getActionResolver().executeRedo(State.getClientEtag());
-        Notifications.create().title("Redo").text(responseView.getResultText()).showInformation();
-        PageNavigator.refreshAllWindows();
-    }
 
     public void goToCreateClient() {
         PageNavigator.loadPage(Page.CREATE_CLIENT, mainController);
@@ -284,5 +197,10 @@ public class SidebarController extends SubController  {
 
     public void goToOrgansToDonate() {
         PageNavigator.loadPage(Page.ORGANS_TO_DONATE, mainController);
+    }
+
+    public void goToSpiderweb() {
+        State.setSpiderwebDonor(windowContext.getViewClient());
+        SpiderWebController spiderWebController = new SpiderWebController(windowContext.getViewClient());
     }
 }
