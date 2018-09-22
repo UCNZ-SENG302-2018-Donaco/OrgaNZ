@@ -1,18 +1,48 @@
 package com.humanharvest.organz.controller;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.Stage;
+
+import org.controlsfx.control.Notifications;
+
+import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.state.State.UiType;
+import com.humanharvest.organz.touch.MultitouchHandler;
+import com.humanharvest.organz.utilities.view.Page;
+import com.humanharvest.organz.utilities.view.PageNavigator;
+import com.humanharvest.organz.views.ActionResponseView;
 
 import com.jfoenix.controls.JFXHamburger;
+
 
 public class TouchActionsBarController extends SubController {
 
     @FXML
+    private Button undoButton;
+
+    @FXML
+    private Button redoButton;
+
+    @FXML
     private JFXHamburger hamburger;
-    private SidebarController sidebarController;
+
+    private static final Logger LOGGER = Logger.getLogger(TouchActionsBarController.class.getName());
 
     @Override
     public void setup(MainController controller) {
+        super.setup(controller);
 
         hamburger.addEventHandler(MouseEvent.MOUSE_CLICKED, (e) -> {
 
@@ -27,7 +57,68 @@ public class TouchActionsBarController extends SubController {
                 controller.getDrawer().setDisable(false);
             }
         });
+        refreshPage();
+    }
+
+    @FXML
+    private void navigateHome() {
+        // We need to navigate to our dashboard (for now we're just loading the search clients page).
+        PageNavigator.loadPage(Page.SEARCH, mainController);
+    }
+
+    @FXML
+    private void undoAction() {
+        ActionResponseView responseView = State.getActionResolver().executeUndo(null);
+        Notifications.create().title("Undo").text(responseView.getResultText()).showInformation();
+        PageNavigator.refreshAllWindows();
+    }
+
+    @FXML
+    private void redoAction() {
+        ActionResponseView responseView = State.getActionResolver().executeRedo(null);
+        Notifications.create().title("Redo").text(responseView.getResultText()).showInformation();
+        PageNavigator.refreshAllWindows();
+    }
+
+    @FXML
+    private void refreshPage() {
+        ActionResponseView responseView = State.getActionResolver().getUndo();
+        undoButton.setDisable(!responseView.isCanUndo());
+        redoButton.setDisable(!responseView.isCanRedo());
+    }
+
+    @FXML
+    private void duplicateWindow() {
+        MainController newMain = PageNavigator.openNewWindow();
+        if (newMain != null) {
+            newMain.setWindowContext(mainController.getWindowContext());
+            PageNavigator.loadPage(mainController.getCurrentPage(), newMain);
+        } else {
+            PageNavigator.showAlert(AlertType.ERROR, "Error duplicating page",
+                    "The new page could not be created", mainController.getStage());
+        }
+    }
+
+    public void logout() {
+        State.logout();
+        for (MainController controller : State.getMainControllers()) {
+            if (controller != mainController) {
+                controller.closeWindow();
+            }
+        }
+        State.clearMainControllers();
+        State.addMainController(mainController);
+        mainController.resetWindowContext();
+        PageNavigator.loadPage(Page.LANDING, mainController);
     }
 
 
+    public void exit() {
+        if (State.getUiType() == UiType.TOUCH) {
+            MultitouchHandler.removePane(mainController.getPane());
+        } else {
+            Stage stage = (Stage) mainController.getStage().getScene().getWindow();
+            stage.close();
+        }
+    }
 }
