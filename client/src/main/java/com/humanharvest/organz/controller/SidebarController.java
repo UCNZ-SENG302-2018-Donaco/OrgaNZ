@@ -6,6 +6,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.controlsfx.control.Notifications;
 import com.jfoenix.controls.JFXHamburger;
@@ -24,6 +25,9 @@ import com.humanharvest.organz.views.ActionResponseView;
  * Controller for the sidebar pane imported into every page in the main part of the GUI.
  */
 public class SidebarController extends SubController  {
+
+    @FXML
+    private HBox actionHbox;
 
     @FXML
     private Button undoButton, redoButton, viewClientButton, registerOrganDonationButton, requestOrganDonationButton,
@@ -65,6 +69,8 @@ public class SidebarController extends SubController  {
         if (userType == UserType.CLIENT) {
             showButtons(clientButtons);
         } else {
+            actionHbox.setManaged(false);
+            actionHbox.setVisible(false);
             if (windowContext.isClinViewClientWindow()) {
                 showButtons(clinicianViewClientButtons);
             } else {

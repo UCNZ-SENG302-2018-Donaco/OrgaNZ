@@ -36,42 +36,42 @@
                <graphic>
                   <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="/images/home.png" />
+                        <Image url="/images/actions/home.png" />
                      </image></ImageView>
                </graphic></Button>
             <Button fx:id="undoButton" mnemonicParsing="false" onAction="#undoAction" GridPane.columnIndex="2">
                <graphic>
                   <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="/images/undo.png" />
+                        <Image url="/images/actions/undo.png" />
                      </image></ImageView>
                </graphic></Button>
             <Button fx:id="redoButton" mnemonicParsing="false" onAction="#redoAction" GridPane.columnIndex="3">
                <graphic>
                   <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="/images/redo.png" />
+                        <Image url="/images/actions/redo.png" />
                      </image></ImageView>
                </graphic></Button>
             <Button mnemonicParsing="false" onAction="#refreshPage" GridPane.columnIndex="4">
                <graphic>
                   <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="/images/refresh.png" />
+                        <Image url="/images/actions/refresh.png" />
                      </image></ImageView>
                </graphic></Button>
             <Button mnemonicParsing="false" onAction="#duplicateWindow" GridPane.columnIndex="6">
                <graphic>
                   <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="/images/duplicate.png" />
+                        <Image url="/images/actions/duplicate.png" />
                      </image></ImageView>
                </graphic></Button>
             <Button mnemonicParsing="false" onAction="#logout" GridPane.columnIndex="7">
                <graphic>
                   <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="/images/logout.png" />
+                        <Image url="/images/actions/logout.png" />
                      </image>
                   </ImageView>
                </graphic></Button>
@@ -79,7 +79,7 @@
                <graphic>
                   <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="/images/exit.png" />
+                        <Image url="/images/actions/exit.png" />
                      </image></ImageView>
                </graphic></Button>
          </children>

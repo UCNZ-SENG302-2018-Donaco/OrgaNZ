@@ -12,10 +12,6 @@
         <StackPane fx:id="pageHolder" VBox.vgrow="ALWAYS" />
       </children>
     </VBox>
-    <JFXDrawer fx:id="drawer" defaultDrawerSize="230.0" layoutY="39.0" prefHeight="561.0" prefWidth="175.0">
-
-    </JFXDrawer>
-    <!--<JFXHamburger fx:id="hamburger">-->
-    <!--</JFXHamburger>-->
+    <JFXDrawer fx:id="drawer" defaultDrawerSize="230.0" layoutY="39.0" prefHeight="561.0" prefWidth="250.0" />
   </children>
 </AnchorPane>

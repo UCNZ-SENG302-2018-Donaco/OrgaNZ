@@ -1,88 +1,159 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="600.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.SidebarController">
+<VBox prefHeight="600.0" prefWidth="250.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.SidebarController">
   <children>
-    <VBox VBox.vgrow="ALWAYS">
+    <VBox prefHeight="911.0" prefWidth="221.0" VBox.vgrow="ALWAYS">
 
       <children>
-        <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+        <HBox fx:id="actionHbox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
           <children>
-            <Button fx:id="undoButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#undo" style="-fx-base: rgba(255, 220, 188, 0.8);" text="Undo" HBox.hgrow="ALWAYS">
+            <Button fx:id="undoButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#undo" style="-fx-base: rgb(80, 143, 244);" text="Undo" HBox.hgrow="ALWAYS">
               <font>
                 <Font size="16.0" />
               </font>
             </Button>
-            <Button fx:id="redoButton" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#redo" style="-fx-base: rgba(255, 220, 188, 0.8);" text="Redo" HBox.hgrow="ALWAYS">
+            <Button fx:id="redoButton" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#redo" style="-fx-base: rgb(80, 143, 244);" text="Redo" HBox.hgrow="ALWAYS">
               <font>
                 <Font size="16.0" />
               </font>
             </Button>
           </children>
         </HBox>
-        <Button fx:id="viewClientButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToViewClient" text="Client details" VBox.vgrow="ALWAYS">
+        <Button fx:id="viewClientButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToViewClient" style="-fx-alignment: CENTER_LEFT;" text="Client details" VBox.vgrow="ALWAYS">
           <font>
             <Font size="16.0" />
           </font>
         </Button>
-        <Button fx:id="registerOrganDonationButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToRegisterOrganDonation" text="Donate Organs" VBox.vgrow="ALWAYS">
+        <Button fx:id="registerOrganDonationButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToRegisterOrganDonation" style="-fx-alignment: CENTER_LEFT;" text="Donate Organs" wrapText="true" VBox.vgrow="ALWAYS">
           <font>
             <Font size="16.0" />
           </font>
+               <graphic>
+                  <ImageView fitHeight="65.0" fitWidth="65.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="/images/pages/donate_organs.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
         </Button>
-        <Button fx:id="requestOrganDonationButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToRequestOrganDonation" text="Request Organs" VBox.vgrow="ALWAYS">
+        <Button fx:id="requestOrganDonationButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToRequestOrganDonation" style="-fx-alignment: CENTER_LEFT;" text="Request Organs" wrapText="true" VBox.vgrow="ALWAYS">
           <font>
             <Font size="16.0" />
           </font>
+               <graphic>
+                  <ImageView fitHeight="65.0" fitWidth="65.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="/images/pages/request_organs.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
         </Button>
-        <Button fx:id="viewMedicationsButton" layoutX="10.0" layoutY="144.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToViewMedications" text="Medications" VBox.vgrow="ALWAYS">
+        <Button fx:id="viewMedicationsButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToViewMedications" style="-fx-alignment: CENTER_LEFT;" text="Medications" wrapText="true" VBox.vgrow="ALWAYS">
           <font>
             <Font size="16.0" />
           </font>
+               <graphic>
+                  <ImageView fitHeight="65.0" fitWidth="65.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="/images/pages/medications.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
         </Button>
-        <Button fx:id="illnessHistoryButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToIllnessHistory" text="Medical History" VBox.vgrow="ALWAYS">
+        <Button fx:id="illnessHistoryButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToIllnessHistory" style="-fx-alignment: CENTER_LEFT;" text="Medical History" wrapText="true" VBox.vgrow="ALWAYS">
           <font>
             <Font size="16.0" />
           </font>
+               <graphic>
+                  <ImageView fitHeight="65.0" fitWidth="65.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="/images/pages/medical_history.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
         </Button>
-        <Button fx:id="viewProceduresButton" layoutX="10.0" layoutY="242.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToViewProcedures" text="Procedures" VBox.vgrow="ALWAYS">
+        <Button fx:id="viewProceduresButton" layoutX="10.0" layoutY="242.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToViewProcedures" style="-fx-alignment: CENTER_LEFT;" text="Procedures" wrapText="true" VBox.vgrow="ALWAYS">
           <font>
             <Font size="16.0" />
           </font>
+               <graphic>
+                  <ImageView fitHeight="65.0" fitWidth="65.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="/images/pages/procedures.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
         </Button>
-        <Button fx:id="searchButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToSearch" text="Search Clients" VBox.vgrow="ALWAYS">
+        <Button fx:id="searchButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToSearch" style="-fx-alignment: CENTER_LEFT;" text="Search Clients" wrapText="true" VBox.vgrow="ALWAYS">
           <font>
             <Font size="16.0" />
           </font>
+               <graphic>
+                  <ImageView fitHeight="65.0" fitWidth="65.0" pickOnBounds="true" preserveRatio="true" />
+               </graphic>
         </Button>
-            <Button fx:id="createClientButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToCreateClient" text="Create Client" VBox.vgrow="ALWAYS">
+            <Button fx:id="createClientButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToCreateClient" style="-fx-alignment: CENTER_LEFT;" text="Create Client" wrapText="true" VBox.vgrow="ALWAYS">
                <font>
                   <Font size="16.0" />
                </font>
+               <graphic>
+                  <ImageView fitHeight="65.0" fitWidth="65.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="/images/pages/create_client.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
             </Button>
-        <Button fx:id="organsToDonateButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToOrgansToDonate" text="Organs To Donate" VBox.vgrow="ALWAYS">
+        <Button fx:id="organsToDonateButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToOrgansToDonate" style="-fx-alignment: CENTER_LEFT;" text="Organs To Donate" wrapText="true" VBox.vgrow="ALWAYS">
           <font>
             <Font size="16.0" />
           </font>
+               <graphic>
+                  <ImageView fitHeight="65.0" fitWidth="65.0" pickOnBounds="true" preserveRatio="true" />
+               </graphic>
         </Button>
-        <Button fx:id="transplantsButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToTransplants" text="Transplant Requests" VBox.vgrow="ALWAYS">
+        <Button fx:id="transplantsButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToTransplants" style="-fx-alignment: CENTER_LEFT;" text="Transplant Requests" wrapText="true" VBox.vgrow="ALWAYS">
           <font>
-            <Font size="16.0" />
+            <Font size="15.0" />
           </font>
+               <graphic>
+                  <ImageView fitHeight="65.0" fitWidth="65.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="/images/pages/transplant_requests.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
         </Button>
-        <Button fx:id="actionHistory" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToHistory" text="Action history" VBox.vgrow="ALWAYS">
+        <Button fx:id="actionHistory" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToHistory" style="-fx-alignment: CENTER_LEFT;" text="Action history" wrapText="true" VBox.vgrow="ALWAYS">
           <font>
             <Font size="16.0" />
           </font>
+               <graphic>
+                  <ImageView fitHeight="65.0" fitWidth="65.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="/images/pages/history.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
         </Button>
-        <Button fx:id="logoutButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#logout" style="-fx-base: rgba(255, 220, 188, 0.8);" text="Logout" VBox.vgrow="ALWAYS">
+        <Button fx:id="logoutButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#logout" style="-fx-base: rgb(80, 143, 244); -fx-alignment: CENTER_LEFT;" text="Logout" wrapText="true" VBox.vgrow="ALWAYS">
           <font>
             <Font size="16.0" />
           </font>
+               <graphic>
+                  <ImageView fitHeight="65.0" fitWidth="65.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="/images/pages/donate_organs.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
         </Button>
       </children>
 
