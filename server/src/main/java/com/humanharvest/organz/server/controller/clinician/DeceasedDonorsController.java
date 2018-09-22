@@ -5,7 +5,9 @@ import java.util.List;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
+import com.humanharvest.organz.views.client.Views;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,6 +30,7 @@ public class DeceasedDonorsController {
      * @throws AuthenticationException If the auth token does not belong to a clinician/admin.
      */
     @GetMapping("/viableDeceasedDonors")
+    @JsonView(Views.Overview.class)
     public ResponseEntity<List<Client>> getDeceasedDonors(
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
             throws AuthenticationException {

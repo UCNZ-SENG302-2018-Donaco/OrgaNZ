@@ -611,15 +611,28 @@ public class ClientManagerDBPure implements ClientManager {
     @Override
     public List<Client> getViableDeceasedDonors() {
 
-        List<Client> allClients = getClients();
-        List<Client> viableClients = new ArrayList<>();
+        Transaction trns = null;
 
-        for (Client client : allClients) {
-            if (isViableDonor(client)) {
-                viableClients.add(client);
+        try (Session session = dbManager.getDBSession()) {
+            trns = session.beginTransaction();
+
+            String queryString = "SELECT c.* FROM Client c \n"
+                    + "WHERE EXISTS (SELECT donating.Client_uid \n"
+                    + "              FROM Client_organsDonating AS donating\n"
+                    + "              WHERE donating.Client_uid=c.uid LIMIT 1)\n"
+                    + "      AND c.dateOfDeath IS NOT NULL\n"
+                    + "ORDER BY c.dateOfDeath DESC";
+
+            Query<Client> query = session.createNativeQuery(queryString, Client.class);
+
+            return query.getResultList();
+
+        }  catch (RollbackException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
+            if (trns != null) {
+                trns.rollback();
             }
+            return null;
         }
-
-        return viableClients;
     }
 }
