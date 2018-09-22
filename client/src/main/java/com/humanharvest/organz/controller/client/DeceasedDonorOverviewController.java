@@ -13,6 +13,8 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
+import javafx.scene.layout.Pane;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
@@ -21,13 +23,17 @@ import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
+import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
+import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
 
 public class DeceasedDonorOverviewController extends SubController {
 
     private static final Logger LOGGER = Logger.getLogger(DeceasedDonorOverviewController.class.getName());
     private static final DateTimeFormatter TIME_FORMAT = DateTimeFormatter.ofPattern("K:mma");
 
+    @FXML
+    private Pane deceasedDonorPane;
     @FXML
     private ImageView imageView;
     @FXML
@@ -69,6 +75,21 @@ public class DeceasedDonorOverviewController extends SubController {
         } else {
             deceasedDonor = windowContext.getViewClient();
         }
+
+        // Setup handling of double-click
+        deceasedDonorPane.setOnMouseClicked(mouseEvent -> {
+            if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 2) {
+                MainController newMain = PageNavigator.openNewWindow();
+                if (newMain != null) {
+                    newMain.setWindowContext(new WindowContextBuilder()
+                            .setAsClinicianViewClientWindow()
+                            .viewClient(deceasedDonor)
+                            .build());
+                    PageNavigator.loadPage(Page.VIEW_CLIENT, newMain);
+                }
+            }
+        });
+
         refresh();
     }
 
