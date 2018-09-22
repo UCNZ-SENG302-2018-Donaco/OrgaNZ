@@ -30,7 +30,7 @@ import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder
 public class DeceasedDonorOverviewController extends SubController {
 
     private static final Logger LOGGER = Logger.getLogger(DeceasedDonorOverviewController.class.getName());
-    private static final DateTimeFormatter TIME_FORMAT = DateTimeFormatter.ofPattern("K:mma");
+    private static final DateTimeFormatter TIME_FORMAT = DateTimeFormatter.ofPattern("HH:mm");
 
     @FXML
     private Pane deceasedDonorPane;
