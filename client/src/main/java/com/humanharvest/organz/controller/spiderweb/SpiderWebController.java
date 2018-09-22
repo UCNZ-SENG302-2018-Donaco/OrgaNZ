@@ -8,10 +8,12 @@ import java.util.logging.Logger;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.CacheHint;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.shape.Line;
@@ -29,6 +31,7 @@ import com.humanharvest.organz.controller.components.ExpiryBarUtils;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.touch.FocusArea;
 import com.humanharvest.organz.touch.MultitouchHandler;
+import com.humanharvest.organz.touch.PhysicsHandler;
 import com.humanharvest.organz.touch.PointUtils;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
@@ -43,6 +46,7 @@ public class SpiderWebController extends SubController {
 
     private final Client client;
 
+    private final List<MainController> previouslyOpenWindows = new ArrayList<>();
     private final Pane canvas;
     private Pane deceasedDonorPane;
     private final List<Pane> organNodes = new ArrayList<>();
@@ -53,11 +57,16 @@ public class SpiderWebController extends SubController {
         canvas = MultitouchHandler.getCanvas();
         canvas.getChildren().clear();
 
-        // Close existing windows
+        // Close existing windows, but save them for later
         MultitouchHandler.setPhysicsHandler(new SpiderPhysicsHandler(MultitouchHandler.getRootPane()));
         for (MainController mainController : State.getMainControllers()) {
             mainController.closeWindow();
+            previouslyOpenWindows.add(mainController);
         }
+
+        Button exitButton = new Button("Exit Spider Web");
+        canvas.getChildren().add(exitButton);
+        exitButton.setOnAction(event -> closeSpiderWeb());
 
         client.setDonatedOrgans(State.getClientResolver().getDonatedOrgans(client));
         displayDonatingClient();
@@ -231,6 +240,23 @@ public class SpiderWebController extends SubController {
                     centreX + radius * Math.sin(angleSize * i),
                     centreY + radius * Math.cos(angleSize * i),
                     360 - Math.toDegrees(angleSize * i));
+        }
+    }
+
+    @FXML
+    private void closeSpiderWeb() {
+        // Close existing windows, but save them for later
+        MultitouchHandler.setPhysicsHandler(new PhysicsHandler(MultitouchHandler.getRootPane()));
+
+        // Close all windows for the spider web and clear
+        for (MainController mainController : State.getMainControllers()) {
+            mainController.closeWindow();
+        }
+        canvas.getChildren().clear();
+
+        // Open all the previously open windows again
+        for (MainController mainController : previouslyOpenWindows) {
+            mainController.showWindow();
         }
     }
 }

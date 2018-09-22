@@ -101,6 +101,16 @@ public class MainController {
     }
 
     /**
+     * Shows the window.
+     */
+    public void showWindow() {
+        stage.show();
+        if (State.getUiType() == State.UiType.TOUCH) {
+            MultitouchHandler.addPane(pane);
+        }
+    }
+
+    /**
      * Method that can be called from other controllers to load the sidebar into that page.
      * Will set the sidebar as the child of the pane given.
      *
