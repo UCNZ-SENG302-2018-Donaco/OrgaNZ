@@ -283,6 +283,8 @@ public class ViewProceduresController extends SubController {
 
                 if (record != null && record.getDate().isBefore(LocalDate.now())) {
                     setStyle("-fx-text-fill: red;");
+                } else {
+                    setStyle("");
                 }
             }
         };
