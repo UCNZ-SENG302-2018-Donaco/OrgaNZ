@@ -25,7 +25,8 @@ import com.fasterxml.jackson.annotation.JsonView;
 
 @JsonAutoDetect(fieldVisibility = Visibility.ANY,
         getterVisibility = Visibility.NONE,
-        setterVisibility = Visibility.NONE)
+        setterVisibility = Visibility.NONE,
+        isGetterVisibility = Visibility.NONE)
 @Entity
 @Table
 public class DonatedOrgan {
