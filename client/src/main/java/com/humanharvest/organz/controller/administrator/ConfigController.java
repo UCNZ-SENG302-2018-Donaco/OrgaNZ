@@ -144,6 +144,7 @@ public class ConfigController extends SubController {
         if (!modifiedHospitalPrograms.isEmpty()) {
             for (Map.Entry<Hospital, Set<Organ>> entry : modifiedHospitalPrograms.entrySet()) {
                 State.getConfigResolver().setTransplantProgramsForHospital(entry.getKey(), entry.getValue());
+                entry.getKey().setTransplantPrograms(entry.getValue());
             }
             Notifications.create()
                     .title("Updated Transplant Programs")
@@ -234,10 +235,7 @@ public class ConfigController extends SubController {
      */
     @FXML
     private void selectAll() {
-        EnumSet<Country> newAllowedCountries = EnumSet.allOf(Country.class);
-        State.getConfigManager().setAllowedCountries(newAllowedCountries);
-
-        refresh();
+        allowedCountries.getCheckModel().checkAll();
     }
 
     /**
@@ -245,10 +243,7 @@ public class ConfigController extends SubController {
      */
     @FXML
     private void selectNone() {
-        EnumSet<Country> newAllowedCountries = EnumSet.noneOf(Country.class);
-        State.getConfigManager().setAllowedCountries(newAllowedCountries);
-
-        refresh();
+        allowedCountries.getCheckModel().clearChecks();
     }
 
     /**
