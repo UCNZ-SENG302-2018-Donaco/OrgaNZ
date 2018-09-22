@@ -152,7 +152,7 @@ public class MenuBarController extends SubController {
         Menu[] allMenus = {filePrimaryItem, editPrimaryItem, clientPrimaryItem, organPrimaryItem,
                 medicationsPrimaryItem, staffPrimaryItem, profilePrimaryItem};
 
-        organWeb.setVisible(windowContext.isClinViewClientWindow());
+        organWeb.setVisible(windowContext.isClinViewClientWindow() && windowContext.getViewClient().isDead());
 
         // Duplicate item is exclusively for the touch screen interface
         if (State.getUiType() == UiType.TOUCH) {
