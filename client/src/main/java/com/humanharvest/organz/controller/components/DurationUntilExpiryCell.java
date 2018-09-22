@@ -11,6 +11,7 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
 
 import com.humanharvest.organz.DonatedOrgan;
+import com.humanharvest.organz.DonatedOrgan.OrganState;
 import com.humanharvest.organz.utilities.DurationFormatter.DurationFormat;
 
 public class DurationUntilExpiryCell extends TableCell<DonatedOrgan, Duration> {
@@ -37,37 +38,32 @@ public class DurationUntilExpiryCell extends TableCell<DonatedOrgan, Duration> {
 
         DonatedOrgan donatedOrgan = getDonatedOrganForRow();
 
-        if (item == null) { // no expiration
-            setText(ExpiryBarUtils.getDurationString(donatedOrgan, format));
-            setStyle(null);
-            setTextFill(Color.BLACK);
+        setText(ExpiryBarUtils.getDurationString(donatedOrgan, format));
 
-        } else if (ExpiryBarUtils.isDurationZero(item)) {
-            // Duration is essentially zero, or is zero, or the organ was overridden
-            setText(ExpiryBarUtils.getDurationString(donatedOrgan, format));
-            Color darkGrey = Color.rgb(32, 32, 32);
-            setBackground(new Background(new BackgroundFill(darkGrey, CornerRadii.EMPTY, Insets.EMPTY)));
-            setTextFill(Color.WHITE);
-
-        } else {
-            // Progress as a decimal. starts at 0 (at time of death) and goes to 1.
-            double progressDecimal = donatedOrgan.getProgressDecimal();
-            double fullMarker = donatedOrgan.getFullMarker();
-
-            if (progressDecimal >= fullMarker) {
+        OrganState organState = donatedOrgan.getState();
+        switch (organState) {
+            case OVERRIDDEN:
+            case EXPIRED:
+                Color darkGrey = Color.rgb(32, 32, 32);
+                setBackground(new Background(new BackgroundFill(darkGrey, CornerRadii.EMPTY, Insets.EMPTY)));
                 setTextFill(Color.WHITE);
-                if (isSelected()) {
-                    setTextFill(Color.BLACK);
-                }
-            } else {
+                break;
+            case NO_EXPIRY:
+                setStyle(null);
                 setTextFill(Color.BLACK);
+                break;
+            case CURRENT:
+                double progressDecimal = donatedOrgan.getProgressDecimal();
+                double fullMarker = donatedOrgan.getFullMarker();
+                // Use white text if the progress has gone past the marker, otherwise black
+                boolean whiteText = progressDecimal >= fullMarker;
+                // Invert the text colour if it is selected
                 if (isSelected()) {
-                    setTextFill(Color.WHITE);
+                    whiteText = !whiteText;
                 }
-            }
-
-            setText(ExpiryBarUtils.getDurationString(donatedOrgan, format));
-            setBackground(ExpiryBarUtils.getBackground(progressDecimal, fullMarker));
+                setTextFill(whiteText ? Color.WHITE : Color.BLACK);
+                setBackground(ExpiryBarUtils.getBackground(progressDecimal, fullMarker));
+                break;
         }
     }
 }
