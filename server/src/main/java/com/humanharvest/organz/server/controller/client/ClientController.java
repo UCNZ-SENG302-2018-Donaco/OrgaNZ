@@ -373,7 +373,6 @@ public class ClientController {
      *
      * @param uid id of the client
      * @param image the image to save
-     * @param etag The corresponding If-Match header to check for concurrent update handling
      * @param authToken id token
      * @return the status of success/failure of the image posting
      */
@@ -415,7 +414,6 @@ public class ClientController {
      * Deletes an image that matches the client.
      *
      * @param uid id of the client
-     * @param etag The corresponding If-Match header to check for concurrent update handling
      * @param authToken id tokenn
      * @return the status on whether or not the image was successfully deleted
      * @throws InvalidRequestException Generic 400 exception if fields are malformed or inconsistent
