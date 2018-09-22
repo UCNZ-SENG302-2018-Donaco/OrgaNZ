@@ -20,6 +20,7 @@ import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Rotate;
+import javafx.scene.transform.Scale;
 import javafx.scene.transform.Translate;
 import javafx.stage.Screen;
 
@@ -33,6 +34,7 @@ import com.humanharvest.organz.touch.FocusArea;
 import com.humanharvest.organz.touch.MultitouchHandler;
 import com.humanharvest.organz.touch.PhysicsHandler;
 import com.humanharvest.organz.touch.PointUtils;
+import com.humanharvest.organz.utilities.DurationFormatter.DurationFormat;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 
@@ -42,6 +44,7 @@ import com.humanharvest.organz.utilities.view.PageNavigator;
 public class SpiderWebController extends SubController {
 
     private static final Logger LOGGER = Logger.getLogger(SpiderWebController.class.getName());
+    private static final DurationFormat durationFormat = DurationFormat.X_HRS_Y_MINS_SECS;
     private static final double LABEL_OFFSET = 50.0;
 
     private final Client client;
@@ -83,13 +86,14 @@ public class SpiderWebController extends SubController {
      * @param y The y translation
      * @param angle The angle to rotate (degrees)
      */
-    private static void setPositionUsingTransform(Node node, double x, double y, double angle) {
+    private static void setPositionUsingTransform(Node node, double x, double y, double angle, double scale) {
         FocusArea focusArea = (FocusArea) node.getUserData();
 
         Point2D centre = PointUtils.getCentreOfNode(node);
 
         Affine transform = new Affine();
         transform.append(new Translate(x, y));
+        transform.prepend(new Scale(scale, scale));
         transform.append(new Rotate(angle, centre.getX(), centre.getY()));
         focusArea.setTransform(transform);
         node.setCacheHint(CacheHint.QUALITY);
@@ -120,11 +124,9 @@ public class SpiderWebController extends SubController {
             line.setStroke(linearGradient);
         }
 
-        durationText.setText(ExpiryBarUtils.getDurationString(donatedOrgan));
+        durationText.setText(ExpiryBarUtils.getDurationString(donatedOrgan, durationFormat));
 
-        durationText.getTransforms().removeIf(transform -> {
-            return transform instanceof Affine;
-        });
+        durationText.getTransforms().removeIf(Affine.class::isInstance);
 
         Affine trans = new Affine();
 
@@ -178,7 +180,7 @@ public class SpiderWebController extends SubController {
         // Create the line
         Line connector = new Line();
         connector.setStrokeWidth(4);
-        Text durationText = new Text(ExpiryBarUtils.getDurationString(organ));
+        Text durationText = new Text(ExpiryBarUtils.getDurationString(organ, durationFormat));
 
         // Redraws lines when organs or donor pane is moved
         deceasedDonorPane.localToParentTransformProperty().addListener((observable, oldValue, newValue) -> {
@@ -219,12 +221,12 @@ public class SpiderWebController extends SubController {
         deceasedDonorPane = newMain.getPane();
         FocusArea deceasedDonorFocus = (FocusArea) deceasedDonorPane.getUserData();
         deceasedDonorFocus.setTranslatable(false);
-//        deceasedDonorFocus.setCollidable(true); TODO does this need to be here?
+        deceasedDonorFocus.setCollidable(true);
 
         Bounds bounds = deceasedDonorPane.getBoundsInParent();
         double centerX = (Screen.getPrimary().getVisualBounds().getWidth() - bounds.getWidth()) / 2;
         double centerY = (Screen.getPrimary().getVisualBounds().getHeight() - bounds.getHeight()) / 2;
-        setPositionUsingTransform(deceasedDonorPane, centerX, centerY, 0);
+        setPositionUsingTransform(deceasedDonorPane, centerX, centerY, 0, 0.6);
     }
 
     private void layoutOrganNodes(double radius) {
@@ -238,7 +240,7 @@ public class SpiderWebController extends SubController {
             setPositionUsingTransform(organNodes.get(i),
                     centreX + radius * Math.sin(angleSize * i),
                     centreY + radius * Math.cos(angleSize * i),
-                    360 - Math.toDegrees(angleSize * i));
+                    360 - Math.toDegrees(angleSize * i), 1);
         }
     }
 

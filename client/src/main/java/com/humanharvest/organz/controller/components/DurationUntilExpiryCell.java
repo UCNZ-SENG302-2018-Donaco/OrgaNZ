@@ -11,8 +11,11 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.paint.Color;
 
 import com.humanharvest.organz.DonatedOrgan;
+import com.humanharvest.organz.utilities.DurationFormatter.DurationFormat;
 
 public class DurationUntilExpiryCell extends TableCell<DonatedOrgan, Duration> {
+
+    private static final DurationFormat format = DurationFormat.X_HOURS_Y_MINUTES_SECONDS;
 
     public DurationUntilExpiryCell(TableColumn<DonatedOrgan, Duration> column) {
         super();
@@ -35,13 +38,13 @@ public class DurationUntilExpiryCell extends TableCell<DonatedOrgan, Duration> {
         DonatedOrgan donatedOrgan = getDonatedOrganForRow();
 
         if (item == null) { // no expiration
-            setText(ExpiryBarUtils.getDurationString(donatedOrgan));
+            setText(ExpiryBarUtils.getDurationString(donatedOrgan, format));
             setStyle(null);
             setTextFill(Color.BLACK);
 
         } else if (ExpiryBarUtils.isDurationZero(item)) {
             // Duration is essentially zero, or is zero, or the organ was overridden
-            setText(ExpiryBarUtils.getDurationString(donatedOrgan));
+            setText(ExpiryBarUtils.getDurationString(donatedOrgan, format));
             Color darkGrey = Color.rgb(32, 32, 32);
             setBackground(new Background(new BackgroundFill(darkGrey, CornerRadii.EMPTY, Insets.EMPTY)));
             setTextFill(Color.WHITE);
@@ -63,7 +66,7 @@ public class DurationUntilExpiryCell extends TableCell<DonatedOrgan, Duration> {
                 }
             }
 
-            setText(ExpiryBarUtils.getDurationString(donatedOrgan));
+            setText(ExpiryBarUtils.getDurationString(donatedOrgan, format));
             setBackground(ExpiryBarUtils.getBackground(progressDecimal, fullMarker));
         }
     }
