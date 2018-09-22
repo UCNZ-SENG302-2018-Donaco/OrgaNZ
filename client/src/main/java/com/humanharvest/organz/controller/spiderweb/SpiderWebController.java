@@ -14,8 +14,8 @@ import javafx.geometry.Orientation;
 import javafx.geometry.Point2D;
 import javafx.scene.CacheHint;
 import javafx.scene.Node;
-import javafx.scene.control.ListView;
 import javafx.scene.control.Button;
+import javafx.scene.control.ListView;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -26,7 +26,6 @@ import javafx.scene.transform.Affine;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
 import javafx.scene.transform.Transform;
-import javafx.scene.transform.Scale;
 import javafx.scene.transform.Translate;
 import javafx.stage.Screen;
 
@@ -112,16 +111,6 @@ public class SpiderWebController extends SubController {
         node.setCacheHint(CacheHint.QUALITY);
     }
 
-    /**
-     * Loads a window for each non expired organ.
-     */
-    private void displayOrgans() {
-        for (DonatedOrgan organ : client.getDonatedOrgans()) {
-            addOrganNode(organ);
-        }
-        layoutOrganNodes(300);
-    }
-
     private static void updateConnectorText(Text durationText, DonatedOrgan donatedOrgan, Line line) {
         // Set the text
         durationText.setText(ExpiryBarUtils.getDurationString(donatedOrgan, durationFormat));
@@ -190,9 +179,7 @@ public class SpiderWebController extends SubController {
      */
     private void displayOrgans() {
         for (DonatedOrgan organ : client.getDonatedOrgans()) {
-            if (!organ.hasExpired()) {
-                addOrganNode(organ);
-            }
+            addOrganNode(organ);
         }
         layoutOrganNodes(300);
     }
