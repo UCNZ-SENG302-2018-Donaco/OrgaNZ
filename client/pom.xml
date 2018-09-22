@@ -67,19 +67,15 @@
     </dependency>
 
     <dependency>
-      <groupId>TUIO</groupId>
-      <artifactId>main</artifactId>
-      <version>1.1</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/../lib/libTUIO.jar</systemPath>
+      <groupId>tuio</groupId>
+      <artifactId>tuio</artifactId>
+      <version>1.0.0</version>
     </dependency>
 
     <dependency>
-      <groupId>org.tuiofx</groupId>
-      <artifactId>all</artifactId>
-      <version>0.10.4</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/../lib/tuiofx-all-0.10.4.jar</systemPath>
+      <groupId>tuio</groupId>
+      <artifactId>tuiofx</artifactId>
+      <version>1.0.0</version>
     </dependency>
 
     <dependency>
@@ -170,6 +166,47 @@
             </configuration>
             <goals>
               <goal>shade</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-install-plugin</artifactId>
+        <version>2.4</version>
+
+        <executions>
+          <execution>
+            <id>install-external-tuio</id>
+            <phase>clean</phase>
+            <configuration>
+              <repositoryLayout>default</repositoryLayout>
+              <groupId>tuio</groupId>
+              <artifactId>tuio</artifactId>
+              <version>1.0.0</version>
+              <file>${project.basedir}/../lib/libTUIO.jar</file>
+              <packaging>jar</packaging>
+              <generatePom>true</generatePom>
+            </configuration>
+            <goals>
+              <goal>install-file</goal>
+            </goals>
+          </execution>
+
+          <execution>
+            <id>install-external-tuiofx</id>
+            <phase>clean</phase>
+            <configuration>
+              <repositoryLayout>default</repositoryLayout>
+              <groupId>tuio</groupId>
+              <artifactId>tuiofx</artifactId>
+              <version>1.0.0</version>
+              <file>${project.basedir}/../lib/tuiofx-all-0.10.4.jar</file>
+              <packaging>jar</packaging>
+              <generatePom>true</generatePom>
+            </configuration>
+            <goals>
+              <goal>install-file</goal>
             </goals>
           </execution>
         </executions>
