@@ -2,8 +2,10 @@ package com.humanharvest.organz.actions.client.procedure;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.ProcedureRecord;
+import com.humanharvest.organz.TransplantRecord;
 import com.humanharvest.organz.actions.client.ClientAction;
 import com.humanharvest.organz.state.ClientManager;
+import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 
 /**
  * A reversible action that will delete the given procedure record from the given client's medication history.
@@ -28,6 +30,18 @@ public class DeleteProcedureRecordAction extends ClientAction {
     protected void execute() {
         super.execute();
         client.deleteProcedureRecord(record);
+
+        if (record instanceof TransplantRecord) {
+            TransplantRecord transplant = (TransplantRecord) record;
+            // Set the request's status back to waiting
+            transplant.getRequest().setStatus(TransplantRequestStatus.WAITING);
+            // Make the organ available again
+            transplant.getOrgan().setReceiver(null);
+            transplant.getOrgan().setAvailable(true);
+            manager.applyChangesTo(transplant.getOrgan());
+            manager.applyChangesTo(transplant.getRequest());
+        }
+
         manager.applyChangesTo(client);
     }
 
@@ -35,6 +49,22 @@ public class DeleteProcedureRecordAction extends ClientAction {
     protected void unExecute() {
         super.unExecute();
         client.addProcedureRecord(record);
+
+        if (record instanceof TransplantRecord) {
+            TransplantRecord transplant = (TransplantRecord) record;
+            // Set the request's status back to what it was before
+            if (transplant.isCompleted()) {
+                transplant.getRequest().setStatus(TransplantRequestStatus.COMPLETED);
+                transplant.getOrgan().setReceiver(transplant.getRequest().getClient());
+            } else {
+                transplant.getRequest().setStatus(TransplantRequestStatus.SCHEDULED);
+            }
+            // Make the organ set unavailable again
+            transplant.getOrgan().setAvailable(false);
+            manager.applyChangesTo(transplant.getOrgan());
+            manager.applyChangesTo(transplant.getRequest());
+        }
+
         manager.applyChangesTo(client);
     }
 
