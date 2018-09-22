@@ -1961,7 +1961,7 @@ paths:
       security:
         - ClinicianAccess: []
         - AdministratorAccess: []
-      summary: "Returns a list of all viable deceased donors, those that are deceased and have available organs"
+      summary: "Returns a list of all viable deceased donors, those that are deceased and have available organs (not expired or overridden)"
       responses:
         200:
           description: List of viable deceased donors
