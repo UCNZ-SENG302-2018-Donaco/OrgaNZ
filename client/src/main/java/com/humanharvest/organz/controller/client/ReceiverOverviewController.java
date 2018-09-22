@@ -25,7 +25,7 @@ import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.clinician.ViewBaseController;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.DurationFormatter;
-import com.humanharvest.organz.utilities.DurationFormatter.Format;
+import com.humanharvest.organz.utilities.DurationFormatter.DurationFormat;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
@@ -107,7 +107,7 @@ public class ReceiverOverviewController extends ViewBaseController {
             if (timeBetweenHospitals.isZero()) {
                 travelTime.setText("None");
             } else {
-                travelTime.setText(DurationFormatter.getFormattedDuration(timeBetweenHospitals, Format.BIGGEST)
+                travelTime.setText(DurationFormatter.getFormattedDuration(timeBetweenHospitals, DurationFormat.BIGGEST)
                         + String.format(Locale.UK, "%n(%.0f km)",
                         viewedClient.getHospital().calculateDistanceTo(donor.getHospital())));
             }
@@ -145,7 +145,7 @@ public class ReceiverOverviewController extends ViewBaseController {
             requestedTime.setText("Error: no request");
         } else {
             Duration waitTime = viewedTransplantRequest.getTimeSinceRequest();
-            requestedTime.setText(DurationFormatter.getFormattedDuration(waitTime, Format.BIGGEST));
+            requestedTime.setText(DurationFormatter.getFormattedDuration(waitTime, DurationFormat.BIGGEST));
         }
     }
 
