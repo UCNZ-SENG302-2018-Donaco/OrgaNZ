@@ -11,17 +11,22 @@ import javafx.stage.Stage;
 
 import org.controlsfx.control.Notifications;
 
+import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.state.State.UiType;
 import com.humanharvest.organz.touch.MultitouchHandler;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
+import com.humanharvest.organz.utilities.view.WindowContext;
 import com.humanharvest.organz.views.ActionResponseView;
 
 import com.jfoenix.controls.JFXHamburger;
 
 
 public class TouchActionsBarController extends SubController {
+
+    @FXML
+    private Button homeButton;
 
     @FXML
     private Button undoButton;
@@ -37,6 +42,13 @@ public class TouchActionsBarController extends SubController {
     @Override
     public void setup(MainController controller) {
         super.setup(controller);
+        if (State.getSession().getLoggedInUserType() == UserType.CLIENT) {
+            homeButton.setVisible(false);
+        }
+
+        if (windowContext.isClinViewClientWindow()) {
+            homeButton.setDisable(true);
+        }
 
         hamburger.addEventHandler(MouseEvent.MOUSE_CLICKED, (e) -> {
 

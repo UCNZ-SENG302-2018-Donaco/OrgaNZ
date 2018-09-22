@@ -217,7 +217,7 @@ public class ViewClientController extends ViewBaseController {
         super.setup(mainController);
         if (session.getLoggedInUserType() == Session.UserType.CLIENT) {
             viewedClient = session.getLoggedInClient();
-            mainController.loadSidebar(sidebarPane);
+            mainController.loadTouchActionsBar(menuBarPane);
         } else if (windowContext.isClinViewClientWindow()) {
             viewedClient = windowContext.getViewClient();
             mainController.loadTouchActionsBar(menuBarPane);

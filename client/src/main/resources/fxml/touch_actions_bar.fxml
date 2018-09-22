@@ -32,7 +32,7 @@
                   <JFXHamburger fx:id="hamburger"> </JFXHamburger>
                </graphic>
             </Button>
-            <Button alignment="CENTER" maxWidth="1.7976931348623157E308" minWidth="-Infinity" mnemonicParsing="false" onAction="#navigateHome" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
+            <Button fx:id="homeButton" alignment="CENTER" maxWidth="1.7976931348623157E308" minWidth="-Infinity" mnemonicParsing="false" onAction="#navigateHome" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
                <graphic>
                   <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                      <image>

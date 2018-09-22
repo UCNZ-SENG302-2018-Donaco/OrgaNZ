@@ -26,13 +26,11 @@ import com.humanharvest.organz.views.ActionResponseView;
  */
 public class SidebarController extends SubController  {
 
-    @FXML
-    private HBox actionHbox;
 
     @FXML
-    private Button undoButton, redoButton, viewClientButton, registerOrganDonationButton, requestOrganDonationButton,
+    private Button viewClientButton, registerOrganDonationButton, requestOrganDonationButton,
     viewMedicationsButton, illnessHistoryButton, viewProceduresButton, searchButton, createClientButton,
-            organsToDonateButton, transplantsButton, actionHistory, logoutButton;
+            organsToDonateButton, transplantsButton, actionHistory;
 
     private Session session;
 
@@ -49,18 +47,18 @@ public class SidebarController extends SubController  {
         super.setup(controller);
         UserType userType = session.getLoggedInUserType();
 
-        Button[] allButtons = {undoButton, redoButton, viewClientButton, registerOrganDonationButton, requestOrganDonationButton,
+        Button[] allButtons = {viewClientButton, registerOrganDonationButton, requestOrganDonationButton,
                 viewMedicationsButton, illnessHistoryButton, viewProceduresButton, searchButton, createClientButton,
-                organsToDonateButton, transplantsButton, actionHistory, logoutButton};
+                organsToDonateButton, transplantsButton, actionHistory};
 
         Button[] clientButtons = {viewProceduresButton, illnessHistoryButton, transplantsButton,
-                registerOrganDonationButton, undoButton, redoButton, logoutButton, viewClientButton,
+                registerOrganDonationButton, viewClientButton,
                 requestOrganDonationButton, viewMedicationsButton};
 
         Button[] clinicianButtons = {searchButton, createClientButton, organsToDonateButton, transplantsButton, actionHistory};
 
         Button[] clinicianViewClientButtons = {registerOrganDonationButton, requestOrganDonationButton,
-                viewMedicationsButton, illnessHistoryButton, viewProceduresButton};
+                viewMedicationsButton, illnessHistoryButton, viewProceduresButton, viewClientButton};
 
 
         // Hide all buttons then only show buttons relevant to that user type.
@@ -69,8 +67,7 @@ public class SidebarController extends SubController  {
         if (userType == UserType.CLIENT) {
             showButtons(clientButtons);
         } else {
-            actionHbox.setManaged(false);
-            actionHbox.setVisible(false);
+
             if (windowContext.isClinViewClientWindow()) {
                 showButtons(clinicianViewClientButtons);
             } else {
@@ -128,15 +125,6 @@ public class SidebarController extends SubController  {
         button.setManaged(false);
     }
 
-    /**
-     * Refreshes the undo/redo buttons based on if there are changes to be made
-     */
-    @Override
-    public void refresh() {
-        ActionResponseView responseView = State.getActionResolver().getUndo();
-        undoButton.setDisable(!responseView.isCanUndo());
-        redoButton.setDisable(!responseView.isCanRedo());
-    }
 
     /**
      * Redirects the GUI to the View Client page.
