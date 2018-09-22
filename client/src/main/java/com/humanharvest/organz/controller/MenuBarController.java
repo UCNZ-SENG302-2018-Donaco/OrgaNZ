@@ -554,8 +554,7 @@ public class MenuBarController extends SubController {
 
     @FXML
     private void openOrganWeb() {
-        State.setSpiderwebDonor(windowContext.getViewClient());
-        SpiderWebController spiderWebController = new SpiderWebController(windowContext.getViewClient());
+        new SpiderWebController(windowContext.getViewClient());
     }
 
     /**
