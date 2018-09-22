@@ -219,7 +219,7 @@ public class SpiderWebController extends SubController {
         List<Client> potentialMatches = State.getClientManager().getOrganMatches(organ);
         matchesList.setItems(FXCollections.observableArrayList(potentialMatches));
 
-        matchesList.setCellFactory(param -> new PotentialRecipientCell());
+        matchesList.setCellFactory(param -> new PotentialRecipientCell(param.getItems()));
 
         matchesList.setOrientation(Orientation.HORIZONTAL);
         matchesList.setMinWidth(400);

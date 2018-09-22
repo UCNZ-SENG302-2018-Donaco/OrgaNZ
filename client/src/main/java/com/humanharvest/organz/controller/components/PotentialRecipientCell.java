@@ -1,6 +1,7 @@
 package com.humanharvest.organz.controller.components;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -16,7 +17,10 @@ public class PotentialRecipientCell extends ListCell<Client> {
 
     private static final Logger LOGGER = Logger.getLogger(PotentialRecipientCell.class.getName());
 
-    public PotentialRecipientCell() {
+    private final List<Client> potentialRecipientList;
+
+    public PotentialRecipientCell(List<Client> potentialRecipientList) {
+        this.potentialRecipientList = potentialRecipientList;
     }
 
     @Override
@@ -30,6 +34,7 @@ public class PotentialRecipientCell extends ListCell<Client> {
                 Node node = loader.load();
                 ReceiverOverviewController controller = loader.getController();
                 controller.setup(item);
+                controller.setPriority(potentialRecipientList.indexOf(item) + 1);
                 setGraphic(node);
 
             } catch (IOException e) {

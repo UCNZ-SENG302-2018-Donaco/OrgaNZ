@@ -37,7 +37,6 @@ public class ReceiverOverviewController extends ViewBaseController {
 
     private static final Logger LOGGER = Logger.getLogger(ReceiverOverviewController.class.getName());
 
-
     private Client viewedClient;
     private Client donor;
     private Organ organ;
@@ -64,20 +63,8 @@ public class ReceiverOverviewController extends ViewBaseController {
     @FXML
     private Label priority;
 
-  @FXML
-  private Label col1Label;
-
-  @FXML
-  private Label col2Label;
-
-  @FXML
-  private Label col3Label;
-
-  @FXML
-  private Label col4Label;
-
-  @FXML
-  private VBox receiverVBox;
+    @FXML
+    private VBox receiverVBox;
 
     /**
      * Initializes the UI for this page.
@@ -144,8 +131,7 @@ public class ReceiverOverviewController extends ViewBaseController {
             }
         });
 
-      }
-
+    }
 
     private void updateWaitTime() {
         if (viewedTransplantRequest == null) {
@@ -211,4 +197,7 @@ public class ReceiverOverviewController extends ViewBaseController {
 
     }
 
+    public void setPriority(int priority) {
+        this.priority.setText(Integer.toString(priority));
+    }
 }
