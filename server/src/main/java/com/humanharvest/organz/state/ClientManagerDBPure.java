@@ -596,7 +596,7 @@ public class ClientManagerDBPure implements ClientManager {
     private boolean isViableDonor(Client client) {
         if (client.isDead()) {
             for (DonatedOrgan organ : client.getDonatedOrgans()) {
-                if (!organ.hasExpired()) {
+                if (!organ.hasExpired() && organ.getOverrideReason() == null) {
                     return true;
                 }
             }
@@ -619,13 +619,21 @@ public class ClientManagerDBPure implements ClientManager {
             String queryString = "SELECT c.* FROM Client c \n"
                     + "WHERE EXISTS (SELECT donating.Client_uid \n"
                     + "              FROM Client_organsDonating AS donating\n"
-                    + "              WHERE donating.Client_uid=c.uid LIMIT 1)\n"
+                    + "              WHERE donating.Client_uid=c.uid "
+                    + "              LIMIT 1)\n"
                     + "      AND c.dateOfDeath IS NOT NULL\n"
                     + "ORDER BY c.dateOfDeath DESC";
 
             Query<Client> query = session.createNativeQuery(queryString, Client.class);
 
-            return query.getResultList();
+            List<Client> clients = new ArrayList<>();
+            for (Client client : query.getResultList()) {
+                if (isViableDonor(client)) {
+                    clients.add(client);
+                }
+            }
+
+            return clients;
 
         }  catch (RollbackException e) {
             LOGGER.log(Level.WARNING, e.getMessage(), e);
