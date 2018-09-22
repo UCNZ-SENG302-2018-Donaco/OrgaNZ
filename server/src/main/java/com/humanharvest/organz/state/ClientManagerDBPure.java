@@ -15,6 +15,7 @@ import java.util.Set;
 import java.util.StringJoiner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.persistence.OptimisticLockException;
 import javax.persistence.RollbackException;
@@ -49,6 +50,7 @@ import org.hibernate.query.Query;
 public class ClientManagerDBPure implements ClientManager {
 
     private static final Logger LOGGER = Logger.getLogger(ClientController.class.getName());
+    private static final Pattern WHITE_SPACE = Pattern.compile("(%20|\\s)+");
 
     private final DBManager dbManager;
 
@@ -225,9 +227,11 @@ public class ClientManagerDBPure implements ClientManager {
 
             //Setup the name filter. For this we make a series of OR checks on the names, if any is true it's true.
             //Checks any portion of any name
-            String[] qParts = q.split("%20");
             if (q != null && !q.isEmpty()) {
+                String[] qParts = WHITE_SPACE.split(q);
                 StringJoiner qAndJoiner = new StringJoiner(" AND ");
+
+                //For every substring, make sure that it matches any of the names
                 int i = 0;
                 for (String qPart : qParts) {
                     StringJoiner qOrJoiner = new StringJoiner(" OR ");
