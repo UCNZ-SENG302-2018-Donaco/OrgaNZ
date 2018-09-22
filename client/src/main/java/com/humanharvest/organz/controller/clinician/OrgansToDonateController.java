@@ -190,9 +190,9 @@ public class OrgansToDonateController extends SubController {
         placeholder.setTextFill(Color.GREY);
         potentialRecipients.setPlaceholder(placeholder);
 
-        potentialRecipients.getSelectionModel().getSelectedItems().addListener(
-                (ListChangeListener<? super Client>) change -> updateScheduleTransplantControls());
-        updateScheduleTransplantControls();
+        potentialRecipients.getSelectionModel().getSelectedItems().addListener((ListChangeListener<? super Client>)
+                change -> handlePotentialRecipientChange());
+        handlePotentialRecipientChange();
 
         tableView.setOnSort(event -> updateOrgansToDonateList());
 
@@ -254,7 +254,7 @@ public class OrgansToDonateController extends SubController {
             @Override
             public void updateItem(Client item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty) {
+                if (empty || item == null) {
                     setText(null);
                 } else {
                     setText(item.getFullName());
@@ -390,16 +390,23 @@ public class OrgansToDonateController extends SubController {
         setupDisplayingXToYOfZText(newOrgansToDonate.getTotalResults());
     }
 
-    private void updateScheduleTransplantControls() {
+    private void handlePotentialRecipientChange() {
         List<Client> selectedClients = potentialRecipients.getSelectionModel().getSelectedItems();
         if (selectedClients.size() != 1) {
             scheduleTransplantBtn.setDisable(true);
             transplantDatePicker.setDisable(true);
             transplantHospitalChoice.setDisable(true);
+
+            transplantHospitalChoice.setValue(null);
+            transplantDatePicker.setValue(null);
         } else {
+            Client selected = potentialRecipients.getSelectionModel().getSelectedItem();
             scheduleTransplantBtn.setDisable(false);
             transplantDatePicker.setDisable(false);
             transplantHospitalChoice.setDisable(false);
+
+            transplantHospitalChoice.setValue(selected.getHospital()); // TODO change this when nearest hospital impl'd
+            transplantDatePicker.setValue(LocalDate.now()); // TODO change this when travel time implemented
         }
     }
 
