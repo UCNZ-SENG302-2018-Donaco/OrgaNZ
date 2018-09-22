@@ -2,6 +2,7 @@ package com.humanharvest.organz.touch;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -32,6 +33,7 @@ import javafx.scene.transform.Affine;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
 import javafx.scene.transform.Translate;
+import javafx.stage.Stage;
 
 import com.humanharvest.organz.utilities.ReflectionUtils;
 
@@ -42,6 +44,7 @@ import org.tuiofx.widgets.skin.OnScreenKeyboard;
 
 public final class MultitouchHandler {
 
+    public static final double MIN_VELOCITY_THRESHOLD = 10;
     private static final double COLLISION_VELOCITY_LOSS = 0.5;
     private static final double SURFACE_TENSION = 0.2;
     private static final long PHYSICS_MILLISECOND_PERIOD = 16;
@@ -51,7 +54,13 @@ public final class MultitouchHandler {
     private static Pane rootPane;
     private static Timer physicsTimer;
 
+    public static Collection<Pane> paneCollection = new ArrayList<>();
+
     private MultitouchHandler() {
+    }
+
+    public static Collection<Pane> getPaneCollection() {
+        return paneCollection;
     }
 
     /**
@@ -358,12 +367,14 @@ public final class MultitouchHandler {
         addPaneListenerChildren(focusArea, pane);
 
         rootPane.getChildren().add(pane);
+        paneCollection.add(pane);
     }
 
     public static void removePane(Pane pane) {
         rootPane.getChildren().remove(pane);
         FocusArea focusArea = (FocusArea) pane.getUserData();
         focusAreas.remove(focusArea);
+        paneCollection.remove(pane);
     }
 
     private static void handleTouchEvent(TouchEvent event) {

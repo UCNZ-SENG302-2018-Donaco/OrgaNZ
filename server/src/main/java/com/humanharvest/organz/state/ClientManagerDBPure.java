@@ -139,14 +139,18 @@ public class ClientManagerDBPure implements ClientManager {
             //Setup minimum age filter
             if (minimumAge != null) {
                 //Use the TIMESTAMPDIFF (MySQL only) function to calculate age
-                whereJoiner.add("TIMESTAMPDIFF(YEAR, c.dateOfBirth, NOW()) >= :minimumAge");
+                whereJoiner.add(
+                        "CASE WHEN dateOfDeath IS NULL THEN TIMESTAMPDIFF(YEAR, c.dateOfBirth, NOW()) >= :minimumAge "
+                        + "ELSE TIMESTAMPDIFF(YEAR, c.dateOfBirth, c.dateOfDeath) >= :minimumAge END");
                 params.put("minimumAge", minimumAge);
             }
 
             //Setup maximum age filter
             if (maximumAge != null) {
                 //Use the TIMESTAMPDIFF (MySQL only) function to calculate age
-                whereJoiner.add("TIMESTAMPDIFF(YEAR, c.dateOfBirth, NOW()) <= :maximumAge");
+                whereJoiner.add(
+                        "CASE WHEN dateOfDeath IS NULL THEN TIMESTAMPDIFF(YEAR, c.dateOfBirth, NOW()) <= :maximumAge "
+                                + "ELSE TIMESTAMPDIFF(YEAR, c.dateOfBirth, c.dateOfDeath) <= :maximumAge END");
                 params.put("maximumAge", maximumAge);
             }
 
@@ -582,5 +586,61 @@ public class ClientManagerDBPure implements ClientManager {
 
         Collection<TransplantRequest> transplantRequests = getAllTransplantRequests();
         return MatchOrganToRecipients.getListOfPotentialRecipients(donatedOrgan, transplantRequests);
+    }
+
+    /**
+     * Determines whether a donor is deceased and has chosen to donate organs that are currently available (not expired)
+     * @param client client to determine viability of as an organ donor
+     * @return boolean of whether the given client is viable as an organ donor
+     */
+    private boolean isViableDonor(Client client) {
+        if (client.isDead()) {
+            for (DonatedOrgan organ : client.getDonatedOrgans()) {
+                if (!organ.hasExpired() && organ.getOverrideReason() == null) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Fetches viable deceased donors from the database
+     * @return list of viable deceased donors
+     */
+    @Override
+    public List<Client> getViableDeceasedDonors() {
+
+        Transaction trns = null;
+
+        try (Session session = dbManager.getDBSession()) {
+            trns = session.beginTransaction();
+
+            String queryString = "SELECT c.* FROM Client c \n"
+                    + "WHERE EXISTS (SELECT donating.Client_uid \n"
+                    + "              FROM Client_organsDonating AS donating\n"
+                    + "              WHERE donating.Client_uid=c.uid "
+                    + "              LIMIT 1)\n"
+                    + "      AND c.dateOfDeath IS NOT NULL\n"
+                    + "ORDER BY c.dateOfDeath DESC";
+
+            Query<Client> query = session.createNativeQuery(queryString, Client.class);
+
+            List<Client> clients = new ArrayList<>();
+            for (Client client : query.getResultList()) {
+                if (isViableDonor(client)) {
+                    clients.add(client);
+                }
+            }
+
+            return clients;
+
+        }  catch (RollbackException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
+            if (trns != null) {
+                trns.rollback();
+            }
+            return null;
+        }
     }
 }

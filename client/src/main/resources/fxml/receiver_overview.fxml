@@ -41,22 +41,22 @@
                         <RowConstraints maxHeight="47.0" minHeight="10.0" prefHeight="47.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Label text="Age:">
+                        <Label fx:id="col1Label" text="Age:">
                            <GridPane.margin>
                               <Insets left="10.0" />
                            </GridPane.margin>
                         </Label>
-                        <Label prefHeight="16.0" prefWidth="83.0" text="Wait time:" GridPane.rowIndex="1">
+                        <Label fx:id="col2Label" prefHeight="16.0" prefWidth="83.0" text="Wait time:" GridPane.rowIndex="1">
                            <GridPane.margin>
                               <Insets left="10.0" />
                            </GridPane.margin>
                         </Label>
-                        <Label prefHeight="47.0" prefWidth="97.0" text="Hospital: " GridPane.rowIndex="3">
+                        <Label fx:id="col4Label" prefHeight="47.0" prefWidth="97.0" text="Hospital: " GridPane.rowIndex="3">
                            <padding>
                               <Insets left="10.0" />
                            </padding>
                         </Label>
-                        <Label text="Travel time: " GridPane.rowIndex="2">
+                        <Label fx:id="col3Label" text="Travel time: " GridPane.rowIndex="2">
                            <padding>
                               <Insets left="10.0" />
                            </padding>

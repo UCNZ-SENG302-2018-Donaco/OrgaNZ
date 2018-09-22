@@ -276,4 +276,23 @@ public class ClientManagerRest implements ClientManager {
 
         return responseEntity.getBody();
     }
+
+    /**
+     * Uses endpoint to get list of viable deceased donors
+     * @return list of viable deceased donors
+     */
+    @Override
+    public List<Client> getViableDeceasedDonors() {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.set("X-Auth-Token", State.getToken());
+
+        HttpEntity<String> entity = new HttpEntity<>(httpHeaders);
+
+        ResponseEntity<List<Client>> responseEntity = State.getRestTemplate().exchange(State.getBaseUri() +
+                "/viableDeceasedDonors", HttpMethod.GET, entity, new
+                ParameterizedTypeReference<List<Client>>() {
+                });
+
+        return responseEntity.getBody();
+    }
 }
