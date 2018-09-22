@@ -48,6 +48,7 @@ public class CompleteTransplantAction extends ClientAction {
         request.setResolvedDateTime(record.getDate().atTime(LocalTime.now()));
         request.setStatus(TransplantRequestStatus.COMPLETED);
 
+        manager.applyChangesTo(request);
         manager.applyChangesTo(client);
     }
 
@@ -63,18 +64,19 @@ public class CompleteTransplantAction extends ClientAction {
         request.setResolvedDateTime(null);
         request.setResolvedReason(null);
 
+        manager.applyChangesTo(request);
         manager.applyChangesTo(client);
     }
 
     @Override
     public String getExecuteText() {
-        return String.format("Resolved transplant record for '%s' on organ '%s'",
-                record.getReceiver().getFullName(), record.getOrgan());
+        return String.format("Completed %s's %s transplant.",
+                record.getReceiver().getFullName(), record.getOrgan().getOrganType().toString());
     }
 
     @Override
     public String getUnexecuteText() {
-        return String.format("Reversed resolution of transplant record for '%s' on organ '%s'",
-                record.getReceiver().getFullName(), record.getOrgan());
+        return String.format("Reversed completion of %s's %s transplant.",
+                record.getReceiver().getFullName(), record.getOrgan().getOrganType().toString());
     }
 }

@@ -3,6 +3,7 @@ package com.humanharvest.organz;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.Objects;
 import java.util.Set;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
@@ -122,5 +123,22 @@ public class ProcedureRecord {
 
     public void addAffectedOrgan(Organ organ) {
         affectedOrgans.add(organ);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ProcedureRecord)) {
+            return false;
+        }
+        ProcedureRecord record = (ProcedureRecord) o;
+        return Objects.equals(id, record.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

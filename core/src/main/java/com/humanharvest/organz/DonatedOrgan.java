@@ -231,7 +231,6 @@ public class DonatedOrgan {
 
     @Override
     public int hashCode() {
-
         return Objects.hash(id, organType);
     }
 }

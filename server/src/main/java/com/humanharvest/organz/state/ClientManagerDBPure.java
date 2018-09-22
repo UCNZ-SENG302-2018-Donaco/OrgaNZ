@@ -370,6 +370,11 @@ public class ClientManagerDBPure implements ClientManager {
         applyChangesToObject(organ);
     }
 
+    @Override
+    public void applyChangesTo(TransplantRequest request) {
+        applyChangesToObject(request);
+    }
+
     private void applyChangesToObject(Object object) {
         Transaction trns = null;
 

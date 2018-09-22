@@ -2,6 +2,7 @@ package com.humanharvest.organz;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
@@ -133,5 +134,23 @@ public class TransplantRequest {
         this.resolvedDateTime = dateTime;
         this.resolvedReason = resolvedReason;
         this.status = status;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof TransplantRequest)) {
+            return false;
+        }
+        TransplantRequest request = (TransplantRequest) o;
+        return Objects.equals(id, request.id) &&
+                requestedOrgan == request.requestedOrgan;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, requestedOrgan);
     }
 }

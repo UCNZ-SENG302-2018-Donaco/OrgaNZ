@@ -243,6 +243,12 @@ public class ClientManagerMemory implements ClientManager {
 
     @Override
     public void applyChangesTo(DonatedOrgan donatedOrgan) {
+        // No need to do anything, changes are always applied in memory
+    }
+
+    @Override
+    public void applyChangesTo(TransplantRequest request) {
+        // No need to do anything, changes are always applied in memory
     }
 
     /**
