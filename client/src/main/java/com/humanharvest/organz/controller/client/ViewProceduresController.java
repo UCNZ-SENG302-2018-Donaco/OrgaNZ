@@ -1,6 +1,7 @@
 package com.humanharvest.organz.controller.client;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.Set;
 import java.util.logging.Level;
@@ -188,6 +189,7 @@ public class ViewProceduresController extends SubController {
 
     /**
      * Sends modifications to server, and alerts the user if there is an error.
+     *
      * @param procedureRecord the procedure record to modify
      * @param modification the modification(s) to make
      */
@@ -486,6 +488,45 @@ public class ViewProceduresController extends SubController {
                         mainController.getStage());
             }
         }
+    }
+
+    /**
+     * Generates a popup that displays all information on a procedure
+     */
+    @FXML
+    private void viewDetails() {
+        ProcedureRecord record = getSelectedRecord();
+        //todo disable button (and delete button) if nothing is selected
+        System.out.println(record);
+        if (record != null) {
+            String title = "";
+            if (record instanceof TransplantRecord) {
+                title += "Transplant ";
+            }
+            title += "Procedure: " + record.getSummary();
+
+            String description = "";
+            if (!record.getDescription().isEmpty()) {
+                description = record.getDescription() + "\n\n";
+            }
+
+            String affectedOrgans;
+            if (record.getAffectedOrgans().isEmpty()) {
+                affectedOrgans = "No affected organs";
+            } else {
+                affectedOrgans = record.getAffectedOrgans().toString();
+                affectedOrgans = "Affected organs: " + affectedOrgans.substring(1, affectedOrgans.length() - 1);
+            }
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d MMMM yyyy");
+
+            String information = description
+                    + affectedOrgans + ".\n\n"
+                    + "Scheduled date: " + record.getDate().format(formatter) + ".";
+
+            PageNavigator.showAlert(AlertType.INFORMATION, title, information, mainController.getStage());
+        }
+
     }
 
     @FXML

@@ -143,7 +143,8 @@
             <BorderPane.margin>
               <Insets bottom="20.0" left="10.0" right="10.0" />
             </BorderPane.margin>
-            <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteProcedure" text="Delete" />
+            <Button mnemonicParsing="false" onAction="#viewDetails" text="View details" fx:id="viewDetailsButton"/>
+            <Button mnemonicParsing="false" onAction="#deleteProcedure" text="Delete" fx:id="deleteButton"/>
           </HBox>
         </bottom>
       </BorderPane>
