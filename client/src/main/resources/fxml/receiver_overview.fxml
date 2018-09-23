@@ -10,6 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
+<?import javafx.scene.layout.StackPane?>
 <VBox fx:id="receiverVBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="250.0" prefWidth="169.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.client.ReceiverOverviewController">
    <children>
       <Label fx:id="priority" alignment="CENTER" prefHeight="25.0" prefWidth="201.0" style="-fx-background-color: lightgrey;" text="#1">
@@ -20,7 +21,9 @@
       <Separator prefWidth="200.0" />
       <VBox alignment="CENTER" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="100.0">
          <children>
-            <ImageView fx:id="imageView" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
+           <StackPane prefHeight="100" prefWidth="100">
+             <ImageView fx:id="imageView" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" VBox.vgrow="ALWAYS" />
+           </StackPane>
          </children>
       </VBox>
       <Label fx:id="name" prefHeight="15.0" prefWidth="200.0">

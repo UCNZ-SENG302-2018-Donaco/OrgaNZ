@@ -8,9 +8,12 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.layout.StackPane?>
 <VBox xmlns:fx="http://javafx.com/fxml/1" maxHeight="400.0" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="320.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/8.0.121" fx:controller="com.humanharvest.organz.controller.client.DeceasedDonorOverviewController" fx:id="deceasedDonorPane">
    <children>
-      <ImageView fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" fx:id="imageView"/>
+      <StackPane prefHeight="200" prefWidth="200">
+         <ImageView fx:id="imageView" fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" VBox.vgrow="ALWAYS" />
+      </StackPane>
       <VBox prefWidth="200.0">
          <children>
             <Label maxWidth="1.7976931348623157E308" text="Name" fx:id="nameLabel">
