@@ -194,12 +194,13 @@ public class SpiderWebController extends SubController {
         organFocus.setScalable(false);
         organFocus.setCollidable(true);
         organNodes.add(organPane);
+        // Double click to override and organ or to unoverride
         organPane.setOnMouseClicked(click -> {
-            if (click.getClickCount() == 3) {
+            if (click.getClickCount() == 2 && !organ.hasExpired()) {
                 if (organ.getOverrideReason() == null) {
-                    State.getClientResolver()
-                            .manuallyOverrideOrgan(organ, "Manually Overridden by Doctor using WebView");
-                    organ.manuallyOverride("Manually Overridden by Doctor using WebView");
+                    final String reason = "Manually Overridden by Doctor using WebView";
+                    State.getClientResolver().manuallyOverrideOrgan(organ, reason);
+                    organ.manuallyOverride(reason);
 
                 } else {
                     State.getClientResolver().cancelManualOverrideForOrgan(organ);
@@ -260,8 +261,9 @@ public class SpiderWebController extends SubController {
         matchesList.setCellFactory(param -> new PotentialRecipientCell(param.getItems()));
 
         matchesList.setOrientation(Orientation.HORIZONTAL);
-        matchesList.setMinWidth(400);
-        matchesList.setFixedCellSize(200);
+        matchesList.setMinWidth(380);
+        matchesList.setMaxHeight(225);
+        matchesList.setFixedCellSize(190);
 
         matchesLists.add(matchesList);
 

@@ -61,6 +61,13 @@ public class ReceiverOverviewController extends ViewBaseController {
     private Label age;
 
     @FXML
+    private Label weight;
+
+    @FXML
+    private Label height;
+
+
+    @FXML
     private Label priority;
 
     @FXML
@@ -87,6 +94,8 @@ public class ReceiverOverviewController extends ViewBaseController {
         // Set name and age
         name.setText(viewedClient.getFullName());
         age.setText(String.valueOf(viewedClient.getAge()));
+        weight.setText(String.valueOf(viewedClient.getWeight()));
+        height.setText(String.valueOf(viewedClient.getHeight()));
 
         // Set hospital
         if (viewedClient.getHospital() == null) {
@@ -181,6 +190,7 @@ public class ReceiverOverviewController extends ViewBaseController {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
             return;
         }
+
         Image image = new Image(new ByteArrayInputStream(bytes));
         imageView.setImage(image);
     }
@@ -198,6 +208,6 @@ public class ReceiverOverviewController extends ViewBaseController {
     }
 
     public void setPriority(int priority) {
-        this.priority.setText(Integer.toString(priority));
+        this.priority.setText("#" + Integer.toString(priority));
     }
 }
