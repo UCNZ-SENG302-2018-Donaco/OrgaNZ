@@ -2,6 +2,7 @@ package com.humanharvest.organz;
 
 import java.time.Duration;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
@@ -281,6 +282,32 @@ public class Hospital {
      */
     public Duration calculateTimeTo(Hospital otherHospital) {
         return calculateTimeTo(otherHospital, DEFAULT_HELICOPTER_SPEED);
+    }
+
+    /**
+     * Return the nearest hospital that can transplant the given organ
+     *
+     * @param organ The organ required for transplant
+     * @param hospitals The other hospitals to check
+     * @return The nearest hospital. Will be null if there are no valid hospitals
+     */
+    public Hospital getNearestWithTransplantProgram(Organ organ, Collection<Hospital> hospitals) {
+        if (hasTransplantProgram(organ)) {
+            return this;
+        } else {
+            Hospital nearest = null;
+            double nearestDist = Double.MAX_VALUE;
+            for (Hospital hospital : hospitals) {
+                if (hospital.hasTransplantProgram(organ)) {
+                    double distance = hospital.calculateDistanceTo(this);
+                    if (distance < nearestDist) {
+                        nearest = hospital;
+                        nearestDist = distance;
+                    }
+                }
+            }
+            return nearest;
+        }
     }
 
     @Override

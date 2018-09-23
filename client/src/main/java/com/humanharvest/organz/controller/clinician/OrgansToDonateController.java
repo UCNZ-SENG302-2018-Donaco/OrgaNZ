@@ -8,7 +8,6 @@ import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
@@ -22,6 +21,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
@@ -80,8 +80,6 @@ public class OrgansToDonateController extends SubController {
     private static final Logger LOGGER = Logger.getLogger(OrgansToDonateController.class.getName());
     private static final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("d MMM yyyy hh:mm a");
 
-    private static final Hospital dummyHospital = new Hospital("Choose hospital...", 0, 0, "");
-
     @FXML
     private HBox menuBarPane;
 
@@ -128,8 +126,14 @@ public class OrgansToDonateController extends SubController {
 
     private final Session session;
     private final ClientManager manager;
+
     private final ObservableList<DonatedOrgan> observableOrgansToDonate = FXCollections.observableArrayList();
     private final SortedList<DonatedOrgan> sortedOrgansToDonate = new SortedList<>(observableOrgansToDonate);
+
+    private final ObservableList<Hospital> hospitals = FXCollections.observableArrayList();
+    private final FilteredList<Hospital> filteredHospitals = new FilteredList<>(hospitals);
+    private final SortedList<Hospital> sortedHospitals = new SortedList<>(filteredHospitals);
+
     private DonatedOrgan selectedOrgan;
     private Set<String> regionsToFilter;
     private EnumSet<Organ> organsToFilter;
@@ -217,10 +221,9 @@ public class OrgansToDonateController extends SubController {
         tableView.getSortOrder().add(timeUntilExpiryCol);
 
         // Setup transplant hospital choice picker
-        transplantHospitalChoice.setItems(FXCollections.observableArrayList(State.getConfigManager().getHospitals()));
-        transplantHospitalChoice.getItems().sort(Comparator.comparing(Hospital::getName));
-        transplantHospitalChoice.getItems().add(0, dummyHospital);
-        transplantHospitalChoice.setValue(dummyHospital);
+        hospitals.setAll(State.getConfigManager().getHospitals());
+        sortedHospitals.setComparator(Comparator.comparing(Hospital::getName));
+        transplantHospitalChoice.setItems(sortedHospitals);
     }
 
     /**
@@ -401,12 +404,26 @@ public class OrgansToDonateController extends SubController {
             transplantDatePicker.setValue(null);
         } else {
             Client selected = potentialRecipients.getSelectionModel().getSelectedItem();
+            DonatedOrgan organToDonate = tableView.getSelectionModel().getSelectedItem();
+            filteredHospitals.setPredicate(hospital -> hospital.hasTransplantProgram(organToDonate.getOrganType()));
+
             scheduleTransplantBtn.setDisable(false);
             transplantDatePicker.setDisable(false);
             transplantHospitalChoice.setDisable(false);
 
-            transplantHospitalChoice.setValue(selected.getHospital()); // TODO change this when nearest hospital impl'd
-            transplantDatePicker.setValue(LocalDate.now()); // TODO change this when travel time implemented
+            Hospital nearest = selected.getHospital().getNearestWithTransplantProgram(
+                    organToDonate.getOrganType(), filteredHospitals);
+            if (nearest != null) {
+                transplantHospitalChoice.setValue(nearest);
+                transplantDatePicker.setValue(
+                        LocalDateTime.now().plus(nearest.calculateTimeTo(selected.getHospital())).toLocalDate());
+            } else {
+                PageNavigator.showAlert(AlertType.ERROR,
+                        "No valid hospitals",
+                        "There are no hospitals that can transplant this organ. "
+                                + "Please contact your system administrator.",
+                        mainController.getStage());
+            }
         }
     }
 
@@ -429,7 +446,7 @@ public class OrgansToDonateController extends SubController {
         }
 
         Hospital transplantHospital = transplantHospitalChoice.getValue();
-        if (transplantHospital == null || Objects.equals(transplantHospital, dummyHospital)) {
+        if (transplantHospital == null) {
 
             PageNavigator.showAlert(AlertType.ERROR,
                     "Missing Transplant Hospital",
@@ -492,7 +509,6 @@ public class OrgansToDonateController extends SubController {
 
         // Reset values
         transplantDatePicker.setValue(null);
-        transplantHospitalChoice.setValue(dummyHospital);
 
         PageNavigator.refreshAllWindows();
     }
