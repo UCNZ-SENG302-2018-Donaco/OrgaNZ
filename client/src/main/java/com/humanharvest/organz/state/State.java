@@ -10,7 +10,6 @@ import javafx.stage.Stage;
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.Clinician;
-import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.resolvers.CommandRunner;
 import com.humanharvest.organz.resolvers.CommandRunnerRest;
@@ -86,7 +85,6 @@ public final class State {
     private static Set<Country> allowedCountries;
     private static UiType uiType = UiType.STANDARD;
     private static Stage primaryStage;
-    private static DonatedOrgan organToDisplay;
     private static Client spiderwebDonor;
 
     private State() {
@@ -344,14 +342,6 @@ public final class State {
 
     public static void setUiType(UiType type) {
         uiType = type;
-    }
-
-    public static DonatedOrgan getOrganToDisplay() {
-        return organToDisplay;
-    }
-
-    public static void setOrganToDisplay(DonatedOrgan organToDisplay) {
-        State.organToDisplay = organToDisplay;
     }
 
     public static Client getSpiderwebDonor() {

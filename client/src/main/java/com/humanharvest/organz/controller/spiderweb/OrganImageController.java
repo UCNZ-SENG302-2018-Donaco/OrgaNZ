@@ -9,10 +9,9 @@ import javafx.fxml.FXML;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
-import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.controller.client.ViewClientController;
-import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.enums.Organ;
 
 import org.apache.commons.io.IOUtils;
 
@@ -24,22 +23,15 @@ public class OrganImageController extends SubController {
     @FXML
     private ImageView organImage;
     private static final Logger LOGGER = Logger.getLogger(ViewClientController.class.getName());
-    private DonatedOrgan donatedOrgan;
-
-    @FXML
-    private void initialize() {
-        donatedOrgan = State.getOrganToDisplay();
-        loadImage();
-    }
 
     /**
      * Loads the organs icon based on what type of organ it is.
      */
-    private void loadImage() {
+    public void loadImage(Organ organ) {
 
         byte[] bytes;
 
-        try (InputStream in = getClass().getResourceAsStream("/images/" + donatedOrgan.getOrganType().toString() + ".png")) {
+        try (InputStream in = getClass().getResourceAsStream("/images/" + organ.toString() + ".png")) {
             bytes = IOUtils.toByteArray(in);
 
             Image image = new Image(new ByteArrayInputStream(bytes));
