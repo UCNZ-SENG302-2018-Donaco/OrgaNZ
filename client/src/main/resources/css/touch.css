@@ -1,12 +1,11 @@
 .backdrop {
   -fx-background-color: #F7F7FF;
-
 }
 
 .window {
     -fx-font-family: Lato;
   -fx-border-insets: 10;
-  -fx-background-color: rgba(115, 149, 191, 0.70);
+  -fx-background-color: rgb(154, 199, 242);
   -fx-background-radius: 3;
   -fx-border-radius: 3;
   -fx-border-color: white;
@@ -21,21 +20,40 @@
     -fx-font-family: Lato;
 }
 
-.button, .choice-box, .text-field {
+
+.button, .choice-box, .text-field, .toggle-button, .text-area {
     -fx-background-color:  #BDD5EA;
     -fx-font-family: Lato;
     -fx-effect: dropshadow(three-pass-box, rgba(100, 100, 100, 0.2), 3, 0.5, 2, 0);
 }
 
+.button:hover, .choice-box:hover, .text-field:hover, .toggle-button:hover, .text-area:hover  {
+    -fx-background-color: #d69c95;
+}
+
+
+.button:focused, .choice-box:focused, .text-field:focused, .toggle-button:focused, .text-area:focused {
+    -fx-background-color: rgba(255, 246, 242, 0.94);
+}
 .accordion {
     -fx-background-color: #495867;
     -fx-font-family: Lato;
 }
 
 .table-view {
-    -fx-background-color: #495867;
+    -fx-background-color: #627a89;
     -fx-font-family: Lato;
 }
 
+.date-picker {
+    -fx-background-color: rgba(129, 166, 215, 0.71);;
+}
+.table-row-cell{
+    -fx-border-color: rgb(162, 189, 255);
+    -fx-background-color: rgb(72, 99, 153);
+}
 
+.table-row-cell .text {
+    -fx-fill: #e8e6ff;
+}
 
