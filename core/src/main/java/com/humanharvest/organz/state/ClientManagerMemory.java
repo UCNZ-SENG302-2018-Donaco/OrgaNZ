@@ -239,16 +239,51 @@ public class ClientManagerMemory implements ClientManager {
                 nextId++;
             }
         }
+
+        // Add IDs to each donated organ
+        nextId = client.getDonatedOrgans().stream()
+                .mapToLong(organ -> organ.getId() == null ? 0 : organ.getId())
+                .max().orElse(0) + 1;
+        for (DonatedOrgan organ : client.getDonatedOrgans()) {
+            if (organ.getId() == null) {
+                organ.setId(nextId);
+                nextId++;
+            }
+        }
     }
 
     @Override
     public void applyChangesTo(DonatedOrgan donatedOrgan) {
-        // No need to do anything, changes are always applied in memory
+        // Ensure that all records associated with the client have an id
+        Client client = donatedOrgan.getDonor();
+
+        // Add IDs to each donated organ
+        long nextId = client.getDonatedOrgans().stream()
+                .mapToLong(organ -> organ.getId() == null ? 0 : organ.getId())
+                .max().orElse(0) + 1;
+        for (DonatedOrgan organ : client.getDonatedOrgans()) {
+            if (organ.getId() == null) {
+                organ.setId(nextId);
+                nextId++;
+            }
+        }
     }
 
     @Override
-    public void applyChangesTo(TransplantRequest request) {
-        // No need to do anything, changes are always applied in memory
+    public void applyChangesTo(TransplantRequest transplantRequest) {
+        // Ensure that all records associated with the client have an id
+        Client client = transplantRequest.getClient();
+
+        // Add IDs to all transplant requests
+        long nextId = client.getTransplantRequests().stream()
+                .mapToLong(request -> request.getId() == null ? 0 : request.getId())
+                .max().orElse(0) + 1;
+        for (TransplantRequest request : client.getTransplantRequests()) {
+            if (request.getId() == null) {
+                request.setId(nextId);
+                nextId++;
+            }
+        }
     }
 
     /**

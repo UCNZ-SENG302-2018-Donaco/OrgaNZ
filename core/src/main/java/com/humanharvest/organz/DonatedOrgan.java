@@ -4,8 +4,8 @@ import static com.humanharvest.organz.utilities.enums.DonatedOrganSortOptionsEnu
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.Objects;
 import java.util.Comparator;
+import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -154,6 +154,10 @@ public class DonatedOrgan {
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getOverrideReason() {
