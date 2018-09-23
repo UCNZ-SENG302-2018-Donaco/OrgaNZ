@@ -25,7 +25,6 @@ import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.database.DBManager;
-import com.humanharvest.organz.server.controller.client.ClientController;
 import com.humanharvest.organz.utilities.algorithms.MatchOrganToRecipients;
 import com.humanharvest.organz.utilities.enums.ClientSortOptionsEnum;
 import com.humanharvest.organz.utilities.enums.ClientType;
@@ -49,7 +48,7 @@ import org.hibernate.query.Query;
  */
 public class ClientManagerDBPure implements ClientManager {
 
-    private static final Logger LOGGER = Logger.getLogger(ClientController.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ClientManagerDBPure.class.getName());
     private static final Pattern WHITE_SPACE = Pattern.compile("(%20|\\s)+");
 
     private final DBManager dbManager;
@@ -67,6 +66,7 @@ public class ClientManagerDBPure implements ClientManager {
         List<Client> clients;
 
         try (Session session = dbManager.getDBSession()) {
+            session.beginTransaction();
             clients = session
                     .createQuery("FROM Client", Client.class)
                     .getResultList();
