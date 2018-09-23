@@ -40,8 +40,14 @@ public class TransplantRecord extends ProcedureRecord {
         setDate(scheduledDate);
         setClient(request.getClient());
         setSummary(organ.getOrganType().toString() + " transplant");
-        setDescription(String.format("Transplant of %s from donor '%s' to recipient '%s'.",
-                organ.getOrganType().toString(), organ.getDonor().getFullName(), request.getClient().getFullName()));
+
+        setDescription(String.format(
+                "Transplant of %s from donor '%s' to recipient '%s' at %s hospital.",
+                organ.getOrganType().toString(),
+                organ.getDonor().getFullName(),
+                request.getClient().getFullName(),
+                hospital.getName()));
+
         addAffectedOrgan(organ.getOrganType());
     }
 
