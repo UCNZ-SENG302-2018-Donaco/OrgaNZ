@@ -60,20 +60,20 @@ public class ReceiverOverviewController extends ViewBaseController {
     @FXML
     private Label age;
 
-  @FXML
-  private Label col1Label;
+    @FXML
+    private Label col1Label;
 
-  @FXML
-  private Label col2Label;
+    @FXML
+    private Label col2Label;
 
-  @FXML
-  private Label col3Label;
+    @FXML
+    private Label col3Label;
 
-  @FXML
-  private Label col4Label;
+    @FXML
+    private Label col4Label;
 
-  @FXML
-  private VBox receiverVBox;
+    @FXML
+    private VBox receiverVBox;
 
     /**
      * Initializes the UI for this page.
@@ -137,7 +137,7 @@ public class ReceiverOverviewController extends ViewBaseController {
             }
         });
 
-      }
+    }
 
 
     private void updateWaitTime() {
@@ -183,6 +183,7 @@ public class ReceiverOverviewController extends ViewBaseController {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
             return;
         }
+
         Image image = new Image(new ByteArrayInputStream(bytes));
         imageView.setImage(image);
     }
