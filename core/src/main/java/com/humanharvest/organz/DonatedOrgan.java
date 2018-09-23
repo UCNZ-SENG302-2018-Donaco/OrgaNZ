@@ -218,10 +218,11 @@ public class DonatedOrgan {
                 return Comparator.comparing(organ -> organ.getDonor().getRegionOfDeath());
             case TIME_OF_DEATH:
                 return Comparator.comparing(organ -> organ.getDonor().getDateOfDeath());
-            default:
             case TIME_UNTIL_EXPIRY:
                 return Comparator.comparing(DonatedOrgan::getDurationUntilExpiry,
                         Comparator.nullsLast(Comparator.naturalOrder()));
+            default:
+                throw new IllegalArgumentException("Unknown sort type: " + sortOption);
         }
     }
 
@@ -229,7 +230,8 @@ public class DonatedOrgan {
         CURRENT,
         NO_EXPIRY,
         EXPIRED,
-        OVERRIDDEN
+        OVERRIDDEN,
+        TRANSPLANT_COMPLETED,
     }
 
     /**

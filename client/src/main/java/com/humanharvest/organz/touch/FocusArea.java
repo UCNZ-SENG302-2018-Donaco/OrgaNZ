@@ -55,6 +55,7 @@ public class FocusArea implements InvalidationListener {
     private final LinkedList<TimedPoint> eventPoints = new LinkedList<>();
     private Point2D velocity = Point2D.ZERO;
     private boolean collidable;
+    private boolean disableHinting;
 
     public FocusArea(Pane pane) {
         this.pane = pane;
@@ -151,7 +152,9 @@ public class FocusArea implements InvalidationListener {
     }
 
     private void updatePaneTransform() {
-        pane.setCacheHint(CacheHint.SPEED);
+        if (!disableHinting) {
+            pane.setCacheHint(CacheHint.SPEED);
+        }
         List<Transform> transforms = pane.getTransforms();
         if (transforms.size() == 1 && Objects.equals(transforms.get(0), transform)) {
             return;
@@ -218,6 +221,10 @@ public class FocusArea implements InvalidationListener {
 
     public void setVelocity(Point2D velocity) {
         this.velocity = velocity;
+    }
+
+    public void setDisableHinting(boolean disableHinting) {
+        this.disableHinting = disableHinting;
     }
 
     private static final class TextFieldSkinConsumer implements Consumer<EventTarget> {
