@@ -257,18 +257,15 @@ public class SpiderWebController extends SubController {
             organToRecipientConnector.setVisible(newValue);
         });
 
-        // Create the line
-        Line connector = new Line();
-        connector.setStrokeWidth(4);
-        Text durationText = new Text(ExpiryBarUtils.getDurationString(organ, durationFormat));
-
         // Redraws lines when organs or donor pane is moved
         deceasedDonorPane.localToParentTransformProperty().addListener((observable, oldValue, newValue) -> {
             Bounds bounds = deceasedDonorPane.getBoundsInParent();
-            connector.setStartX(bounds.getMinX() + bounds.getWidth() / 2);
-            connector.setStartY(bounds.getMinY() + bounds.getHeight() / 2);
-            updateConnector(organ, connector, durationText, organPane);
+            deceasedToOrganConnector.setStartX(bounds.getMinX() + bounds.getWidth() / 2);
+            deceasedToOrganConnector.setStartY(bounds.getMinY() + bounds.getHeight() / 2);
+            updateDonorConnector(organ, deceasedToOrganConnector, organPane);
+            updateConnectorText(durationText, organ, deceasedToOrganConnector);
         });
+
         organPane.localToParentTransformProperty().addListener((observable, oldValue, newValue) -> {
             Bounds bounds = organPane.getBoundsInParent();
             deceasedToOrganConnector.setEndX(bounds.getMinX() + bounds.getWidth() / 2);
@@ -301,7 +298,8 @@ public class SpiderWebController extends SubController {
 
                     matchesList.setVisible(false);
                     organImageController.matchCountIsVisible(false);
-                    updateConnector(organ, connector, durationText, organPane);
+                    updateDonorConnector(organ, deceasedToOrganConnector, organPane);
+                    updateConnectorText(durationText, organ, deceasedToOrganConnector);
 
                 } else {
                     State.getClientResolver().cancelManualOverrideForOrgan(organ);
@@ -309,7 +307,8 @@ public class SpiderWebController extends SubController {
 
                     matchesList.setVisible(true);
                     organImageController.matchCountIsVisible(false);
-                    updateConnector(organ, connector, durationText, organPane);
+                    updateDonorConnector(organ, deceasedToOrganConnector, organPane);
+                    updateConnectorText(durationText, organ, deceasedToOrganConnector);
                 }
             }
         });
@@ -322,8 +321,7 @@ public class SpiderWebController extends SubController {
         });
 
         canvas.getChildren().add(0, deceasedToOrganConnector);
-
-        canvas.getChildren().add(0, connector);
+        canvas.getChildren().add(0, organToRecipientConnector);
         canvas.getChildren().add(0, durationText);
         canvas.getChildren().add(matchesList);
 //        MaskedView maskedMatchesList = new MaskedView(matchesList);
