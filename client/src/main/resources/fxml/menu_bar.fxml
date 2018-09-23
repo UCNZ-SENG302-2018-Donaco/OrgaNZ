@@ -5,7 +5,6 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.layout.HBox?>
-
 <HBox maxWidth="1.7976931348623157E308" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.MenuBarController">
   <children>
     <MenuBar fx:id="menuBar" maxWidth="1.7976931348623157E308" minWidth="-Infinity" HBox.hgrow="ALWAYS">
@@ -44,7 +43,7 @@
             <MenuItem fx:id="requestOrganItem" mnemonicParsing="false" onAction="#goToRequestOrganDonation" text="Request Organs" />
             <MenuItem fx:id="transplantRequestsItem" mnemonicParsing="false" onAction="#goToTransplants" text="Transplant Requests" />
             <MenuItem fx:id="organsToDonateItem" mnemonicParsing="false" onAction="#goToOrganstoDonate" text="Organs To Donate" />
-                  <MenuItem fx:id="organWeb" mnemonicParsing="false" onAction="#openOrganWeb" text="Organ Web" />
+            <MenuItem mnemonicParsing="false" onAction="#openOrganWeb" text="Organ Web" fx:id="organWebItem"/>
           </items>
         </Menu>
         <Menu fx:id="medicationsPrimaryItem" mnemonicParsing="false" text="Medications">

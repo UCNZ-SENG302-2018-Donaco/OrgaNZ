@@ -179,12 +179,15 @@ public class SpiderWebController extends SubController {
     }
 
     private void addOrganNode(DonatedOrgan organ) {
-        State.setOrganToDisplay(organ);
         MainController newMain = PageNavigator.openNewWindow(80, 80);
-        PageNavigator.loadPage(Page.ORGAN_IMAGE, newMain);
+        OrganImageController organImageController = (OrganImageController) PageNavigator
+                .loadPage(Page.ORGAN_IMAGE, newMain);
+        organImageController.loadImage(organ.getOrganType());
         newMain.getStyles().clear();
+
         Pane organPane = newMain.getPane();
         FocusArea organFocus = (FocusArea) organPane.getUserData();
+
         organFocus.setScalable(false);
         organFocus.setCollidable(true);
         organNodes.add(organPane);
@@ -265,7 +268,7 @@ public class SpiderWebController extends SubController {
             setPositionUsingTransform(organNodes.get(i),
                     centreX + radius * Math.sin(angleSize * i),
                     centreY + radius * Math.cos(angleSize * i),
-                    360 - Math.toDegrees(angleSize * i), 1);
+                    360.01 - Math.toDegrees(angleSize * i), 1);
         }
     }
 

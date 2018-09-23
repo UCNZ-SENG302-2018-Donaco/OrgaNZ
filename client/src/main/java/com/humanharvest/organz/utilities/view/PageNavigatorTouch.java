@@ -1,8 +1,6 @@
 package com.humanharvest.organz.utilities.view;
 
 import java.io.IOException;
-import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -22,12 +20,12 @@ import javafx.scene.transform.Transform;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
-import com.humanharvest.organz.touch.MultitouchHandler;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.controller.components.TouchAlertController;
 import com.humanharvest.organz.controller.components.TouchAlertTextController;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.touch.MultitouchHandler;
 
 /**
  * Utility class for controlling navigation between pages.
@@ -66,9 +64,10 @@ public class PageNavigatorTouch implements IPageNavigator {
      *
      * @param page the Page (enum including path to fxml file) to be loaded.
      * @param controller the MainController to load this page on to.
+     * @return The SubController for the new age, or null if the new page could not be loaded.
      */
     @Override
-    public void loadPage(Page page, MainController controller) {
+    public SubController loadPage(Page page, MainController controller) {
         try {
             LOGGER.info("Loading page: " + page);
             FXMLLoader loader = new FXMLLoader(PageNavigatorTouch.class.getResource(page.getPath()));
@@ -78,11 +77,13 @@ public class PageNavigatorTouch implements IPageNavigator {
             controller.setSubController(subController);
 
             controller.setPage(page, loadedPage);
+            return subController;
 
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Couldn't load the page", e);
             showAlert(Alert.AlertType.ERROR, "Could not load page: " + page,
                     "The page loader failed to load the layout for the page.", controller.getStage());
+            return null;
         }
     }
 
