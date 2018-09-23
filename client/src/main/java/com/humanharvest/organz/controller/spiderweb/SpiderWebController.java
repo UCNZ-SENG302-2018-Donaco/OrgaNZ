@@ -253,6 +253,7 @@ public class SpiderWebController extends SubController {
             connector.setEndY(bounds.getMinY() + bounds.getHeight() / 2);
             updateConnector(organ, connector, durationText, organPane);
             updateMatchesListPosition(matchesList, newValue, bounds);
+            matchesList.toFront();
         });
 
         canvas.getChildren().add(0, connector);
