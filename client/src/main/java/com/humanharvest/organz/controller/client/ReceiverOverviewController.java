@@ -190,6 +190,7 @@ public class ReceiverOverviewController extends ViewBaseController {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
             return;
         }
+
         Image image = new Image(new ByteArrayInputStream(bytes));
         imageView.setImage(image);
     }
