@@ -179,12 +179,15 @@ public class SpiderWebController extends SubController {
     }
 
     private void addOrganNode(DonatedOrgan organ) {
-        State.setOrganToDisplay(organ);
         MainController newMain = PageNavigator.openNewWindow(80, 80);
-        PageNavigator.loadPage(Page.ORGAN_IMAGE, newMain);
+        OrganImageController organImageController = (OrganImageController) PageNavigator
+                .loadPage(Page.ORGAN_IMAGE, newMain);
+        organImageController.loadImage(organ.getOrganType());
         newMain.getStyles().clear();
+
         Pane organPane = newMain.getPane();
         FocusArea organFocus = (FocusArea) organPane.getUserData();
+
         organFocus.setScalable(false);
         organFocus.setCollidable(true);
         organNodes.add(organPane);

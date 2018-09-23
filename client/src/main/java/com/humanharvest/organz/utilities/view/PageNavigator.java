@@ -5,6 +5,7 @@ import javafx.scene.control.Alert;
 import javafx.stage.Window;
 
 import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.controller.components.TouchAlertTextController;
 
 /**
@@ -31,9 +32,10 @@ public class PageNavigator {
      *
      * @param page the Page (enum including path to fxml file) to be loaded.
      * @param controller the MainController to load this page on to.
+     * @return The SubController for the new age, or null if the new page could not be loaded.
      */
-    public static void loadPage(Page page, MainController controller) {
-        pageNavigator.loadPage(page, controller);
+    public static SubController loadPage(Page page, MainController controller) {
+        return pageNavigator.loadPage(page, controller);
     }
 
     /**
