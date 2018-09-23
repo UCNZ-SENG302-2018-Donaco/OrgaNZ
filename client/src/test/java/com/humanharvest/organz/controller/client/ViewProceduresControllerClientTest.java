@@ -1,5 +1,6 @@
 package com.humanharvest.organz.controller.client;
 
+import static org.junit.Assert.assertEquals;
 import static org.testfx.api.FxAssert.verifyThat;
 import static org.testfx.matcher.control.TableViewMatchers.containsRow;
 import static org.testfx.util.NodeQueryUtils.isVisible;
@@ -7,6 +8,9 @@ import static org.testfx.util.NodeQueryUtils.isVisible;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+
+import javafx.scene.Node;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.ProcedureRecord;
@@ -16,11 +20,12 @@ import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
 
 import org.junit.Test;
+import org.testfx.util.NodeQueryUtils;
 
 public class ViewProceduresControllerClientTest extends ControllerTest {
 
     private final Client testClient = new Client(1);
-    private final Collection<ProcedureRecord> pastRecords = new ArrayList<>();
+    private final List<ProcedureRecord> pastRecords = new ArrayList<>();
     private final Collection<ProcedureRecord> pendingRecords = new ArrayList<>();
 
     @Override
@@ -89,6 +94,15 @@ public class ViewProceduresControllerClientTest extends ControllerTest {
                     record.getAffectedOrgans(),
                     record.getDescription()));
         }
+    }
+
+    @Test
+    public void viewProcedureTest() {
+        clickOn((Node) lookup(NodeQueryUtils.hasText("Summary1")).query());
+
+        clickOn("#viewDetailsButton");
+
+        assertEquals(3, testClient.getPastProcedures().size());
     }
 
 }

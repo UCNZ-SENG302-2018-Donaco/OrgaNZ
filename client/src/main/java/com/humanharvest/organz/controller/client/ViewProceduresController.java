@@ -312,14 +312,14 @@ public class ViewProceduresController extends SubController {
             mainController.loadSidebar(sidebarPane);
             newProcedurePane.setVisible(false);
             newProcedurePane.setManaged(false);
-            procedureButtonsPane.setVisible(false);
-            procedureButtonsPane.setManaged(false);
             pendingProcedureView.setEditable(false);
             pastProcedureView.setEditable(false);
             datePendCol.setEditable(false);
             datePastCol.setEditable(false);
             affectedPendCol.setEditable(false);
             affectedPastCol.setEditable(false);
+            deleteButton.setVisible(false);
+            deleteButton.setManaged(false);
             deleteButton.setDisable(true);
             completeTransplantButton.setDisable(true);
         } else if (windowContext.isClinViewClientWindow()) {
