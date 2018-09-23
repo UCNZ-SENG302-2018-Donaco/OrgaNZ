@@ -42,7 +42,7 @@ public class TransplantRecord extends ProcedureRecord {
         setSummary(organ.getOrganType().toString() + " transplant");
 
         setDescription(String.format(
-                "Transplant of %s from donor '%s' to recipient '%s' at %s hospital.",
+                "Transplant of %s from donor '%s' to recipient '%s' at %s.",
                 organ.getOrganType().toString(),
                 organ.getDonor().getFullName(),
                 request.getClient().getFullName(),
