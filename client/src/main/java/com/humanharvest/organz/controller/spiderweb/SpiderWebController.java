@@ -195,8 +195,30 @@ public class SpiderWebController extends SubController {
         organFocus.setCollidable(true);
         organNodes.add(organPane);
         // Double click to override and organ or to unoverride
+        // Create matches list
+        ListView<Client> matchesList = createMatchesList(organ);
+        int index = 0;
+        /*
+        Temporary. Will be changed when swipe events
+        are updated in MultiTouchHandler
+         */
+        matchesList.setOnSwipeRight(swipeRight -> {
+            matchesList.scrollTo(1);
+        });
+        matchesList.setOnSwipeLeft(swipeLeft -> {
+            matchesList.scrollTo(0);
+
+        });
+
         organPane.setOnMouseClicked(click -> {
-            if (click.getClickCount() == 2 && !organ.hasExpired()) {
+            if (click.getClickCount() == 1) {
+                if (matchesList.isVisible()) {
+                    matchesList.setVisible(false);
+                } else {
+                    matchesList.setVisible(true);
+                }
+
+            } else if (click.getClickCount() == 2 && !organ.hasExpired()) {
                 if (organ.getOverrideReason() == null) {
                     final String reason = "Manually Overridden by Doctor using WebView";
                     State.getClientResolver().manuallyOverrideOrgan(organ, reason);
@@ -213,8 +235,7 @@ public class SpiderWebController extends SubController {
         connector.setStrokeWidth(4);
         Text durationText = new Text(ExpiryBarUtils.getDurationString(organ, durationFormat));
 
-        // Create matches list
-        ListView<Client> matchesList = createMatchesList(organ);
+
 
         // Redraws lines when organs or donor pane is moved
         deceasedDonorPane.localToParentTransformProperty().addListener((observable, oldValue, newValue) -> {
@@ -234,6 +255,9 @@ public class SpiderWebController extends SubController {
         canvas.getChildren().add(0, connector);
         canvas.getChildren().add(0, durationText);
         canvas.getChildren().add(matchesList);
+//        MaskedView maskedMatchesList = new MaskedView(matchesList);
+//        maskedMatchesList.setFadingSize(0);
+//        canvas.getChildren().add(maskedMatchesList);
 
         Bounds bounds = deceasedDonorPane.getBoundsInParent();
         connector.setStartX(bounds.getMinX() + bounds.getWidth() / 2);
@@ -254,6 +278,7 @@ public class SpiderWebController extends SubController {
     private ListView<Client> createMatchesList(DonatedOrgan organ) {
         // Setup the ListView
         final ListView<Client> matchesList = new ListView<>();
+        matchesList.getStylesheets().add(getClass().getResource("/css/list-view-cell-gap.css").toExternalForm());
 
         List<Client> potentialMatches = State.getClientManager().getOrganMatches(organ);
         matchesList.setItems(FXCollections.observableArrayList(potentialMatches));
