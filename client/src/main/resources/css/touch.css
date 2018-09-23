@@ -1,10 +1,12 @@
 .backdrop {
-  -fx-background-color: grey;
+  -fx-background-color: #F7F7FF;
+
 }
 
 .window {
+    -fx-font-family: Lato;
   -fx-border-insets: 10;
-  -fx-background-color: #d6e5ff;
+  -fx-background-color: rgba(115, 149, 191, 0.70);
   -fx-background-radius: 3;
   -fx-border-radius: 3;
   -fx-border-color: white;
@@ -13,3 +15,27 @@
   -fx-effect: dropshadow(three-pass-box, rgba(100, 100, 100, 1), 24, 0.5, 0, 0);
   -fx-background-insets: 10;
 }
+
+.split-pane {
+    -fx-background-color: rgba(115, 149, 191, 0.71);
+    -fx-font-family: Lato;
+}
+
+.button, .choice-box, .text-field {
+    -fx-background-color:  #BDD5EA;
+    -fx-font-family: Lato;
+    -fx-effect: dropshadow(three-pass-box, rgba(100, 100, 100, 0.2), 3, 0.5, 2, 0);
+}
+
+.accordion {
+    -fx-background-color: #495867;
+    -fx-font-family: Lato;
+}
+
+.table-view {
+    -fx-background-color: #495867;
+    -fx-font-family: Lato;
+}
+
+
+
