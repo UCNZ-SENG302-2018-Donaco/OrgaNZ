@@ -262,7 +262,7 @@ public class SpiderWebController extends SubController {
 
         matchesList.setOrientation(Orientation.HORIZONTAL);
         matchesList.setMinWidth(380);
-        matchesList.setMaxHeight(225);
+        matchesList.setMaxHeight(250);
         matchesList.setFixedCellSize(190);
 
         matchesLists.add(matchesList);
