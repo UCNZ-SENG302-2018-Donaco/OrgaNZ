@@ -20,7 +20,8 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
-<VBox prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.client.ViewClientController">
+
+<VBox prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.client.ViewClientController">
   <SplitPane dividerPositions="0.5" orientation="VERTICAL" VBox.vgrow="ALWAYS">
     <HBox fx:id="menuBarPane" maxHeight="-Infinity" />
     <SplitPane dividerPositions="0.29797979797979796" VBox.vgrow="ALWAYS">
@@ -108,7 +109,7 @@
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                           <children>
-                            <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#uploadPhoto" text="Upload" fx:id="uploadPhotoButton"/>
+                            <Button fx:id="uploadPhotoButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#uploadPhoto" text="Upload" />
                             <Button fx:id="deletePhotoButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#deletePhoto" text="Delete" GridPane.columnIndex="1" />
                           </children>
                         </GridPane>
@@ -243,7 +244,6 @@
                           </children>
                         </GridPane>
                       </children>
-                      <Button mnemonicParsing="false" onAction="#openRecDetForLiver" text="Open receiver details for liver" />
                     </VBox>
                     <VBox spacing="10.0" GridPane.columnIndex="2">
                       <children>

@@ -77,25 +77,12 @@ public class ReceiverOverviewController extends ViewBaseController {
      * Initializes the UI for this page.
      */
     private void setClientFields() {
-        //todo replace dummy donor and organ
-        Client dummyDonor = new Client();
-        if (dummyDonor.getHospital() == null) {
-            dummyDonor.setHospital(new Hospital("temp", 0, 0, "nowhere"));
-        } else {
-            dummyDonor.setHospital(new Hospital("", viewedClient.getHospital().getLatitude() + 1,
-                    viewedClient.getHeight(), ""));
-            donor = dummyDonor;
-            organ = Organ.LIVER;
-        }
 
-        //Set client priority
-        priority.setText("1");
-
-        // Set name and age
+        // Set name, age, weight, and height
         name.setText(viewedClient.getFullName());
         age.setText(String.valueOf(viewedClient.getAge()));
-        weight.setText(String.valueOf(viewedClient.getWeight()));
-        height.setText(String.valueOf(viewedClient.getHeight()));
+        weight.setText(String.valueOf((int)viewedClient.getWeight()));
+        height.setText(String.valueOf((int)viewedClient.getHeight()));
 
         // Set hospital
         if (viewedClient.getHospital() == null) {
