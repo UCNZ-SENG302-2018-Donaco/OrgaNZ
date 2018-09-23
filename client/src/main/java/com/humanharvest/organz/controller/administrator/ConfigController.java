@@ -104,10 +104,12 @@ public class ConfigController extends SubController {
         }
         modifiedHospitalPrograms.clear();
 
+        // Refresh hospitals, but restore selected hospital to what it was
+        Hospital selectedHospital = hospitalSelector.getSelectionModel().getSelectedItem();
         hospitalSelector.getItems().setAll(State.getConfigManager().getHospitals());
         hospitalSelector.getItems().sort(Comparator.comparing(Hospital::getName));
-
-        newHospitalSelected();
+        organSelector.getCheckModel().clearChecks();
+        hospitalSelector.getSelectionModel().select(selectedHospital);
     }
 
     /**
@@ -220,14 +222,17 @@ public class ConfigController extends SubController {
     }
 
     private void onTransplantProgramsChanged() {
-        // Determine the changed programs
-        Set<Organ> newPrograms = EnumSet.noneOf(Organ.class);
-        newPrograms.addAll(organSelector.getCheckModel().getCheckedItems());
+        Hospital selectedHospital = hospitalSelector.getSelectionModel().getSelectedItem();
+        if (selectedHospital != null) {
+            // Determine the changed programs
+            Set<Organ> newPrograms = EnumSet.noneOf(Organ.class);
+            newPrograms.addAll(organSelector.getCheckModel().getCheckedItems());
 
-        // Put the modified programs into an entry for that hospital
-        modifiedHospitalPrograms.put(
-                hospitalSelector.getSelectionModel().getSelectedItem(),
-                newPrograms);
+            // Put the modified programs into an entry for that hospital
+            modifiedHospitalPrograms.put(
+                    hospitalSelector.getSelectionModel().getSelectedItem(),
+                    newPrograms);
+        }
     }
 
     /**
