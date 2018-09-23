@@ -190,7 +190,7 @@ public class SpiderWebController extends SubController {
         organNodes.add(organPane);
         // Double click to override and organ or to unoverride
         organPane.setOnMouseClicked(click -> {
-            if (click.getClickCount() == 2) {
+            if (click.getClickCount() == 2 && !organ.hasExpired()) {
                 if (organ.getOverrideReason() == null) {
                     final String reason = "Manually Overridden by Doctor using WebView";
                     State.getClientResolver().manuallyOverrideOrgan(organ, reason);
