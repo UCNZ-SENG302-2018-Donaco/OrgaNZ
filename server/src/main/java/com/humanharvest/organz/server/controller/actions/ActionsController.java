@@ -60,12 +60,11 @@ public class ActionsController {
         //Get the next Action to redo
         ActionInvoker actionInvoker = State.getActionInvoker(authToken);
 
-
+        String actionText;
         boolean canUndo = actionInvoker.canUndo();
         boolean canRedo = actionInvoker.canRedo();
-        String actionText;
         if (canRedo) {
-            actionText = actionInvoker.nextRedo().getUnexecuteText();
+            actionText = actionInvoker.nextRedo().getExecuteText();
         } else {
             actionText = "No more actions to redo";
         }

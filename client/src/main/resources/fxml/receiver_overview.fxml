@@ -29,7 +29,7 @@
                   <Font size="20.0" />
                </font>
             </Label>
-            <ImageView fx:id="imageView" fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
+            <ImageView fx:id="imageView" fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" />
          </children></Pane>
       <Pane prefHeight="250.0" prefWidth="250.0">
          <children>
