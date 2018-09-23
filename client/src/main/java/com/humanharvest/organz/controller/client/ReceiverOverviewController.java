@@ -17,6 +17,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.Hospital;
@@ -58,16 +60,6 @@ public class ReceiverOverviewController extends ViewBaseController {
     private Label hospital;
 
     @FXML
-    private Label age;
-
-    @FXML
-    private Label weight;
-
-    @FXML
-    private Label height;
-
-
-    @FXML
     private Label priority;
 
     @FXML
@@ -79,10 +71,10 @@ public class ReceiverOverviewController extends ViewBaseController {
     private void setClientFields() {
 
         // Set name, age, weight, and height
-        name.setText(viewedClient.getFullName());
-        age.setText(String.valueOf(viewedClient.getAge()));
-        weight.setText(String.valueOf((int)viewedClient.getWeight()));
-        height.setText(String.valueOf((int)viewedClient.getHeight()));
+        name.setText(viewedClient.getPreferredNameFormatted());
+        Double nameSize = Math.min(name.getFont().getSize(), 300 / name.getText().length());
+        Font nameFont = Font.font(null, FontWeight.SEMI_BOLD, nameSize);
+        name.setFont(nameFont);
 
         // Set hospital
         if (viewedClient.getHospital() == null) {
