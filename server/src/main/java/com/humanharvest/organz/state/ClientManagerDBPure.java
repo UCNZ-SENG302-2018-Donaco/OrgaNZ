@@ -15,6 +15,7 @@ import java.util.Set;
 import java.util.StringJoiner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.persistence.OptimisticLockException;
 import javax.persistence.RollbackException;
@@ -48,6 +49,7 @@ import org.hibernate.query.Query;
 public class ClientManagerDBPure implements ClientManager {
 
     private static final Logger LOGGER = Logger.getLogger(ClientManagerDBPure.class.getName());
+    private static final Pattern WHITE_SPACE = Pattern.compile("(%20|\\s)+");
 
     private final DBManager dbManager;
 
@@ -226,13 +228,22 @@ public class ClientManagerDBPure implements ClientManager {
             //Setup the name filter. For this we make a series of OR checks on the names, if any is true it's true.
             //Checks any portion of any name
             if (q != null && !q.isEmpty()) {
-                StringJoiner qOrJoiner = new StringJoiner(" OR ");
-                qOrJoiner.add("UPPER(c.firstName) LIKE UPPER(:q)");
-                qOrJoiner.add("UPPER(c.middleName) LIKE UPPER(:q)");
-                qOrJoiner.add("UPPER(c.preferredName) LIKE UPPER(:q)");
-                qOrJoiner.add("UPPER(c.lastName) LIKE UPPER(:q)");
-                whereJoiner.add("(" + qOrJoiner + ")");
-                params.put("q", "%" + q + "%");
+                String[] qParts = WHITE_SPACE.split(q);
+                StringJoiner qAndJoiner = new StringJoiner(" AND ");
+
+                //For every substring, make sure that it matches any of the names
+                int i = 0;
+                for (String qPart : qParts) {
+                    StringJoiner qOrJoiner = new StringJoiner(" OR ");
+                    qOrJoiner.add("UPPER(c.firstName) LIKE UPPER(:q" + i + ")");
+                    qOrJoiner.add("UPPER(c.middleName) LIKE UPPER(:q" + i + ")");
+                    qOrJoiner.add("UPPER(c.preferredName) LIKE UPPER(:q" + i + ")");
+                    qOrJoiner.add("UPPER(c.lastName) LIKE UPPER(:q" + i + ")");
+                    params.put("q" + i, "%" + qPart + "%");
+                    qAndJoiner.add("(" + qOrJoiner + ")");
+                    i++;
+                }
+                whereJoiner.add("(" + qAndJoiner + ")");
             }
 
             //Set offset to zero if not given
