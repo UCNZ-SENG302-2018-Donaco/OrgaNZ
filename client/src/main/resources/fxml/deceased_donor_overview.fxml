@@ -11,7 +11,7 @@
 
 <VBox fx:id="deceasedDonorPane" maxHeight="400.0" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="320.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.client.DeceasedDonorOverviewController">
    <children>
-      <ImageView fx:id="imageView" fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" />
+      <ImageView fx:id="imageView" fitHeight="200.0" fitWidth="200.0" pickOnBounds="true"/>
       <VBox prefWidth="200.0">
          <children>
             <Label fx:id="nameLabel" maxWidth="1.7976931348623157E308" text="Name">

@@ -354,8 +354,8 @@ public class SearchClientsController extends SubController {
      * @param hBox the HBox to enable.
      */
     private void enableHBox(HBox hBox) {
-        hBox.setManaged(false);
-        hBox.setVisible(false);
+        hBox.setManaged(true);
+        hBox.setVisible(true);
     }
 
     /**

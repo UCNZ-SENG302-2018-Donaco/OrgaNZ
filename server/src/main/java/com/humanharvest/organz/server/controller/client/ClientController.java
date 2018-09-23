@@ -380,7 +380,7 @@ public class ClientController {
         // Create the directory if it doesn't exist
         File directory = new File(State.getImageDirectory());
         if (!directory.exists()) {
-            directory.mkdir();
+            directory.mkdirs();
         }
 
         // Get the relevant client

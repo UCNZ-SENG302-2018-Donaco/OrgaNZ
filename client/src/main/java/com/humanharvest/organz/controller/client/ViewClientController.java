@@ -275,6 +275,7 @@ public class ViewClientController extends ViewBaseController {
     private void setEnabledCountries() {
         ObservableList<Country> enabledCountries = FXCollections.observableArrayList(
                 State.getConfigManager().getAllowedCountries());
+        FXCollections.sort(enabledCountries);
         country.setItems(enabledCountries);
         deathCountry.setItems(enabledCountries);
     }
@@ -378,6 +379,7 @@ public class ViewClientController extends ViewBaseController {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
             return;
         }
+
         Image image = new Image(new ByteArrayInputStream(bytes));
         imageView.setImage(image);
     }

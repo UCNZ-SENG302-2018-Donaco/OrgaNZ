@@ -1,6 +1,5 @@
 package com.humanharvest.organz.controller.spiderweb;
 
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -14,7 +13,9 @@ import javafx.geometry.Point2D;
 import javafx.scene.CacheHint;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.effect.ColorAdjust;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.LinearGradient;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
@@ -26,6 +27,7 @@ import javafx.stage.Screen;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
+import com.humanharvest.organz.DonatedOrgan.OrganState;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.controller.components.ExpiryBarUtils;
@@ -46,6 +48,9 @@ public class SpiderWebController extends SubController {
     private static final Logger LOGGER = Logger.getLogger(SpiderWebController.class.getName());
     private static final DurationFormat durationFormat = DurationFormat.X_HRS_Y_MINS_SECS;
     private static final double LABEL_OFFSET = 50.0;
+
+    private static final ColorAdjust OVERRIDDEN_COLOR = new ColorAdjust(0, 0, -0.6, -0.6);
+    private static final ColorAdjust EXPIRED_COLOR = new ColorAdjust(0, 0, -0.4, -0.4);
 
     private final Client client;
 
@@ -85,6 +90,7 @@ public class SpiderWebController extends SubController {
      * @param x The x translation
      * @param y The y translation
      * @param angle The angle to rotate (degrees)
+     * @param scale The scale to apply to both x and y
      */
     private static void setPositionUsingTransform(Node node, double x, double y, double angle, double scale) {
         FocusArea focusArea = (FocusArea) node.getUserData();
@@ -109,41 +115,59 @@ public class SpiderWebController extends SubController {
         layoutOrganNodes(300);
     }
 
-    private static void updateConnector(DonatedOrgan donatedOrgan, Line line, Text durationText) {
-        Duration duration = donatedOrgan.getDurationUntilExpiry();
-        if (ExpiryBarUtils.isDurationZero(duration)) {
-            line.setStroke(ExpiryBarUtils.greyColour);
-        } else {
-            // Progress as a decimal. starts at 0 (at time of death) and goes to 1.
-            double progressDecimal = donatedOrgan.getProgressDecimal();
-            double fullMarker = donatedOrgan.getFullMarker();
-
-            LinearGradient linearGradient = ExpiryBarUtils.getLinearGradient(progressDecimal, fullMarker,
-                    line.getStartX(), line.getStartY(), line.getEndX(), line.getEndY());
-
-            line.setStroke(linearGradient);
-        }
-
+    private static void updateConnectorText(Text durationText, DonatedOrgan donatedOrgan, Line line) {
+        // Set the text
         durationText.setText(ExpiryBarUtils.getDurationString(donatedOrgan, durationFormat));
 
+        // Remove the old translation
         durationText.getTransforms().removeIf(Affine.class::isInstance);
 
         Affine trans = new Affine();
 
+        // Translate the text to the left by at least LABEL_OFFSET and more if the line is a large width
+        // Also move it up by 5 pixels to put it just above the line
         double xWidth = line.getStartX() - line.getEndX();
         double yWidth = line.getStartY() - line.getEndY();
         double lineWidth = Math.sqrt(Math.pow(xWidth, 2) + Math.pow(yWidth, 2));
         trans.prepend(new Translate(Math.max(LABEL_OFFSET, lineWidth * 0.2), -5));
 
+        // Rotate the text by the angle of the line
         double angle = getAngle(line.getStartX(), line.getStartY(), line.getEndX(), line.getEndY());
         trans.prepend(new Rotate(angle));
+
+        // Apply the new transformation
         durationText.getTransforms().add(trans);
 
-        double x = line.getEndX();
-        durationText.setTranslateX(x);
+        // Translate the text to the end of the line (then the above transforms take effect)
+        durationText.setTranslateX(line.getEndX());
+        durationText.setTranslateY(line.getEndY());
+    }
 
-        double y = line.getEndY();
-        durationText.setTranslateY(y);
+    private static void updateConnector(DonatedOrgan donatedOrgan, Line line, Text durationText, Pane organPane) {
+        OrganState organState = donatedOrgan.getState();
+        switch (organState) {
+            case OVERRIDDEN:
+                line.setStroke(Color.BLACK);
+                organPane.setEffect(OVERRIDDEN_COLOR);
+                break;
+            case EXPIRED:
+                line.setStroke(ExpiryBarUtils.darkGreyColour);
+                organPane.setEffect(EXPIRED_COLOR);
+                break;
+            case NO_EXPIRY:
+                line.setStroke(ExpiryBarUtils.noExpiryGreenColour);
+                organPane.setEffect(null);
+                break;
+            case CURRENT:
+                LinearGradient linearGradient = ExpiryBarUtils.getLinearGradient(
+                        donatedOrgan.getProgressDecimal(), donatedOrgan.getFullMarker(),
+                        line.getStartX(), line.getStartY(), line.getEndX(), line.getEndY());
+
+                line.setStroke(linearGradient);
+                organPane.setEffect(null);
+                break;
+        }
+        updateConnectorText(durationText, donatedOrgan, line);
     }
 
     private static double getAngle(double x1, double y1, double x2, double y2) {
@@ -164,12 +188,13 @@ public class SpiderWebController extends SubController {
         organFocus.setScalable(false);
         organFocus.setCollidable(true);
         organNodes.add(organPane);
+        // Double click to override and organ or to unoverride
         organPane.setOnMouseClicked(click -> {
-            if (click.getClickCount() == 3) {
+            if (click.getClickCount() == 2 && !organ.hasExpiredNaturally()) {
                 if (organ.getOverrideReason() == null) {
-                    State.getClientResolver()
-                            .manuallyOverrideOrgan(organ, "Manually Overridden by Doctor using WebView");
-                    organ.manuallyOverride("Manually Overridden by Doctor using WebView");
+                    final String reason = "Manually Overridden by Doctor using WebView";
+                    State.getClientResolver().manuallyOverrideOrgan(organ, reason);
+                    organ.manuallyOverride(reason);
 
                 } else {
                     State.getClientResolver().cancelManualOverrideForOrgan(organ);
@@ -187,13 +212,13 @@ public class SpiderWebController extends SubController {
             Bounds bounds = deceasedDonorPane.getBoundsInParent();
             connector.setStartX(bounds.getMinX() + bounds.getWidth() / 2);
             connector.setStartY(bounds.getMinY() + bounds.getHeight() / 2);
-            updateConnector(organ, connector, durationText);
+            updateConnector(organ, connector, durationText, organPane);
         });
         organPane.localToParentTransformProperty().addListener((observable, oldValue, newValue) -> {
             Bounds bounds = organPane.getBoundsInParent();
             connector.setEndX(bounds.getMinX() + bounds.getWidth() / 2);
             connector.setEndY(bounds.getMinY() + bounds.getHeight() / 2);
-            updateConnector(organ, connector, durationText);
+            updateConnector(organ, connector, durationText, organPane);
         });
 
         canvas.getChildren().add(0, connector);
@@ -202,13 +227,13 @@ public class SpiderWebController extends SubController {
         Bounds bounds = deceasedDonorPane.getBoundsInParent();
         connector.setStartX(bounds.getMinX() + bounds.getWidth() / 2);
         connector.setStartY(bounds.getMinY() + bounds.getHeight() / 2);
-        updateConnector(organ, connector, durationText);
+        updateConnector(organ, connector, durationText, organPane);
 
         // Attach timer to update connector each second (for time until expiration)
         final Timeline clock = new Timeline(new KeyFrame(
                 javafx.util.Duration.seconds(1),
                 event -> {
-                    updateConnector(organ, connector, durationText);
+                    updateConnector(organ, connector, durationText, organPane);
                 }));
         clock.setCycleCount(Animation.INDEFINITE);
         clock.play();

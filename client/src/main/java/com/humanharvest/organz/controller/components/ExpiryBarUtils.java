@@ -17,11 +17,14 @@ import javafx.scene.paint.LinearGradient;
 import javafx.scene.paint.Stop;
 
 import com.humanharvest.organz.DonatedOrgan;
+import com.humanharvest.organz.DonatedOrgan.OrganState;
 import com.humanharvest.organz.utilities.DurationFormatter.DurationFormat;
 
 public final class ExpiryBarUtils {
 
     public static final Color greyColour = Color.rgb(170, 170, 170);
+    public static final Color darkGreyColour = Color.rgb(100, 100, 100);
+    public static final Color noExpiryGreenColour = Color.rgb(191, 255, 164);
     private static final Color maroonColour = Color.rgb(170, 0, 0);
 
     private ExpiryBarUtils() {
@@ -130,26 +133,22 @@ public final class ExpiryBarUtils {
 
     public static String getDurationString(DonatedOrgan donatedOrgan, DurationFormat format) {
         Duration durationUntilExpiry = donatedOrgan.getDurationUntilExpiry();
-
-        if (durationUntilExpiry == null) {
-            Duration timeSinceDeath = Duration.between(
-                    donatedOrgan.getDateTimeOfDonation(),
-                    LocalDateTime.now());
-            return String.format("No expiry (%s since death)", getFormattedDuration(timeSinceDeath, format));
-
-        } else if (isDurationZero(durationUntilExpiry)) {
-            if (donatedOrgan.getOverrideReason() == null) {
+        OrganState organState = donatedOrgan.getState();
+        switch (organState) {
+            case OVERRIDDEN:
+                return "Overridden";
+            case NO_EXPIRY:
+                Duration timeSinceDeath = Duration.between(donatedOrgan.getDateTimeOfDonation(), LocalDateTime.now());
+                return String.format("No expiry (%s since death)", getFormattedDuration(timeSinceDeath, format));
+            case EXPIRED:
                 Duration timeSinceExpiry = Duration.between(
                         donatedOrgan.getDateTimeOfDonation()
-                                .plus(donatedOrgan.getOrganType().getMaxExpiration()),
-                        LocalDateTime.now());
-
+                                .plus(donatedOrgan.getOrganType().getMaxExpiration()), LocalDateTime.now());
                 return String.format("Expired (%s ago)", getFormattedDuration(timeSinceExpiry, format));
-            } else {
-                return "Overridden";
-            }
-        } else {
-            return getFormattedDuration(durationUntilExpiry, format);
+            case CURRENT:
+                return getFormattedDuration(durationUntilExpiry, format);
+            default:
+                return "Could not calculate duration";
         }
     }
 
