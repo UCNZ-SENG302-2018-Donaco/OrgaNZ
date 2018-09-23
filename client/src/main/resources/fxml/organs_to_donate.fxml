@@ -68,7 +68,7 @@
                       </GridPane.margin>
                       <children>
                         <TitledPane HBox.hgrow="ALWAYS" expanded="false" prefHeight="26.0"
-                          prefWidth="798.0" text="Filter">
+                          prefWidth="798.0" text="Filters">
                           <content>
                             <GridPane hgap="10.0">
                               <columnConstraints>
