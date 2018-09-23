@@ -235,7 +235,18 @@ public class SpiderWebController extends SubController {
         });
         matchesList.setOnSwipeLeft(swipeLeft -> {
             matchesList.scrollTo(0);
+        });
 
+        // Create the lines
+        Line deceasedToOrganConnector = new Line();
+        deceasedToOrganConnector.setStrokeWidth(4);
+        Text durationText = new Text(ExpiryBarUtils.getDurationString(organ, durationFormat));
+
+        Line organToRecipientConnector = new Line();
+        organToRecipientConnector.setStrokeWidth(4);
+
+        matchesList.visibleProperty().addListener((observable, oldValue, newValue) -> {
+            organToRecipientConnector.setVisible(newValue);
         });
 
         organPane.setOnMouseClicked(click -> {
@@ -258,14 +269,6 @@ public class SpiderWebController extends SubController {
                 }
             }
         });
-
-        // Create the lines
-        Line deceasedToOrganConnector = new Line();
-        deceasedToOrganConnector.setStrokeWidth(4);
-        Text durationText = new Text(ExpiryBarUtils.getDurationString(organ, durationFormat));
-
-        Line organToRecipientConnector = new Line();
-        organToRecipientConnector.setStrokeWidth(4);
 
         // Redraws lines when organs pane is moved
         organPane.localToParentTransformProperty().addListener((observable, oldValue, newValue) -> {
@@ -318,7 +321,6 @@ public class SpiderWebController extends SubController {
                 }));
         clock.setCycleCount(Animation.INDEFINITE);
         clock.play();
-
     }
 
     private ListView<Client> createMatchesList(DonatedOrgan organ) {
