@@ -36,7 +36,7 @@ public class CreateIllnessView {
         this.diagnosisDate = diagnosisDate;
     }
 
-    public boolean isChronic() {
+    public boolean getIsChronic() {
         return isChronic;
     }
 
