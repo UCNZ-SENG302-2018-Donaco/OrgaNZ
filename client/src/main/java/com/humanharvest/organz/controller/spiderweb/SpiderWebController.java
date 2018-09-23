@@ -8,6 +8,7 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Bounds;
 import javafx.geometry.Orientation;
@@ -185,10 +186,17 @@ public class SpiderWebController extends SubController {
     }
 
     private void addOrganNode(DonatedOrgan organ) {
+        List<Client> potentialMatches = State.getClientManager().getOrganMatches(organ);
+
         MainController newMain = PageNavigator.openNewWindow(70, 70);
         OrganImageController organImageController = (OrganImageController) PageNavigator
                 .loadPage(Page.ORGAN_IMAGE, newMain);
         organImageController.loadImage(organ.getOrganType());
+        organImageController.setMatchCount(potentialMatches.size());
+        if (potentialMatches.size() == 0 && !organ.hasExpired()) {
+            organImageController.matchCountIsVisible(true);
+        }
+
         newMain.getStyles().clear();
 
         Pane organPane = newMain.getPane();
@@ -199,7 +207,7 @@ public class SpiderWebController extends SubController {
         organNodes.add(organPane);
         // Double click to override and organ or to unoverride
         // Create matches list
-        ListView<Client> matchesList = createMatchesList(organ);
+        ListView<Client> matchesList = createMatchesList(FXCollections.observableArrayList(potentialMatches));
         int index = 0;
         /*
         Temporary. Will be changed when swipe events
@@ -213,32 +221,10 @@ public class SpiderWebController extends SubController {
 
         });
 
-        organPane.setOnMouseClicked(click -> {
-            if (click.getClickCount() == 1) {
-                if (matchesList.isVisible()) {
-                    matchesList.setVisible(false);
-                } else {
-                    matchesList.setVisible(true);
-                }
-
-            } else if (click.getClickCount() == 2 && !organ.hasExpiredNaturally()) {
-                if (organ.getOverrideReason() == null) {
-                    final String reason = "Manually Overridden by Doctor using WebView";
-                    State.getClientResolver().manuallyOverrideOrgan(organ, reason);
-                    organ.manuallyOverride(reason);
-
-                } else {
-                    State.getClientResolver().cancelManualOverrideForOrgan(organ);
-                    organ.cancelManualOverride();
-                }
-            }
-        });
         // Create the line
         Line connector = new Line();
         connector.setStrokeWidth(4);
         Text durationText = new Text(ExpiryBarUtils.getDurationString(organ, durationFormat));
-
-
 
         // Redraws lines when organs or donor pane is moved
         deceasedDonorPane.localToParentTransformProperty().addListener((observable, oldValue, newValue) -> {
@@ -254,6 +240,32 @@ public class SpiderWebController extends SubController {
             updateConnector(organ, connector, durationText, organPane);
             updateMatchesListPosition(matchesList, newValue, bounds);
             matchesList.toFront();
+        });
+
+        organPane.setOnMouseClicked(click -> {
+            if (click.getClickCount() == 1 && !organ.hasExpired()) {
+                matchesList.setVisible(!matchesList.isVisible());
+                organImageController.matchCountIsVisible(!matchesList.isVisible() && !organ.hasExpired());
+
+            } else if (click.getClickCount() == 2 && !organ.hasExpiredNaturally()) {
+                if (organ.getOverrideReason() == null) {
+                    final String reason = "Manually Overridden by Doctor using WebView";
+                    State.getClientResolver().manuallyOverrideOrgan(organ, reason);
+                    organ.manuallyOverride(reason);
+
+                    matchesList.setVisible(false);
+                    organImageController.matchCountIsVisible(false);
+                    updateConnector(organ, connector, durationText, organPane);
+
+                } else {
+                    State.getClientResolver().cancelManualOverrideForOrgan(organ);
+                    organ.cancelManualOverride();
+
+                    matchesList.setVisible(true);
+                    organImageController.matchCountIsVisible(false);
+                    updateConnector(organ, connector, durationText, organPane);
+                }
+            }
         });
 
         canvas.getChildren().add(0, connector);
@@ -279,13 +291,12 @@ public class SpiderWebController extends SubController {
 
     }
 
-    private ListView<Client> createMatchesList(DonatedOrgan organ) {
+    private ListView<Client> createMatchesList(ObservableList<Client> potentialMatches) {
         // Setup the ListView
         final ListView<Client> matchesList = new ListView<>();
         matchesList.getStylesheets().add(getClass().getResource("/css/list-view-cell-gap.css").toExternalForm());
 
-        List<Client> potentialMatches = State.getClientManager().getOrganMatches(organ);
-        matchesList.setItems(FXCollections.observableArrayList(potentialMatches));
+        matchesList.setItems(potentialMatches);
 
         matchesList.setCellFactory(param -> new PotentialRecipientCell(param.getItems()));
 
