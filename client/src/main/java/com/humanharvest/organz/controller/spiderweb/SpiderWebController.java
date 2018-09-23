@@ -261,8 +261,9 @@ public class SpiderWebController extends SubController {
         matchesList.setCellFactory(param -> new PotentialRecipientCell(param.getItems()));
 
         matchesList.setOrientation(Orientation.HORIZONTAL);
-        matchesList.setMinWidth(400);
-        matchesList.setFixedCellSize(200);
+        matchesList.setMinWidth(380);
+        matchesList.setMaxHeight(225);
+        matchesList.setFixedCellSize(190);
 
         matchesLists.add(matchesList);
 
