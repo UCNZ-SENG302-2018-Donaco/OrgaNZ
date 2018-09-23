@@ -48,7 +48,6 @@ public class DeleteProcedureRecordAction extends ClientAction {
     @Override
     protected void unExecute() {
         super.unExecute();
-        client.addProcedureRecord(record);
 
         if (record instanceof TransplantRecord) {
             TransplantRecord transplant = (TransplantRecord) record;
@@ -65,6 +64,8 @@ public class DeleteProcedureRecordAction extends ClientAction {
             manager.applyChangesTo(transplant.getRequest());
         }
 
+        record = record.cloneWithoutId();
+        client.addProcedureRecord(record);
         manager.applyChangesTo(client);
     }
 

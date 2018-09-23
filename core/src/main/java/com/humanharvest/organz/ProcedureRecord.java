@@ -141,4 +141,8 @@ public class ProcedureRecord {
     public int hashCode() {
         return Objects.hash(id);
     }
+
+    public ProcedureRecord cloneWithoutId() {
+        return new ProcedureRecord(getSummary(), getDescription(), getDate());
+    }
 }

@@ -82,4 +82,11 @@ public class TransplantRecord extends ProcedureRecord {
     public void setCompleted(boolean completed) {
         this.completed = completed;
     }
+
+    @Override
+    public TransplantRecord cloneWithoutId() {
+        TransplantRecord clone = new TransplantRecord(getOrgan(), getRequest(), getHospital(), getDate());
+        clone.completed = this.completed;
+        return clone;
+    }
 }
