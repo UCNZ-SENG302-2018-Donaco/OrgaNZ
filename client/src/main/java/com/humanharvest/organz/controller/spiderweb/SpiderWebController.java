@@ -268,7 +268,7 @@ public class SpiderWebController extends SubController {
             setPositionUsingTransform(organNodes.get(i),
                     centreX + radius * Math.sin(angleSize * i),
                     centreY + radius * Math.cos(angleSize * i),
-                    360 - Math.toDegrees(angleSize * i), 1);
+                    360.01 - Math.toDegrees(angleSize * i), 1);
         }
     }
 
