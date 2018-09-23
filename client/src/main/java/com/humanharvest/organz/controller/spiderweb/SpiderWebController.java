@@ -185,7 +185,7 @@ public class SpiderWebController extends SubController {
     }
 
     private void addOrganNode(DonatedOrgan organ) {
-        MainController newMain = PageNavigator.openNewWindow(80, 80);
+        MainController newMain = PageNavigator.openNewWindow(70, 70);
         OrganImageController organImageController = (OrganImageController) PageNavigator
                 .loadPage(Page.ORGAN_IMAGE, newMain);
         organImageController.loadImage(organ.getOrganType());
@@ -349,18 +349,9 @@ public class SpiderWebController extends SubController {
 
         Affine transform = new Affine();
         transform.prepend(new Scale(0.5, 0.5));
-        transform.prepend(new Translate(-50, 120));
+        transform.prepend(new Translate(-50, 90));
         transform.prepend(newTransform);
 
         matchesList.getTransforms().add(transform);
-
-//        Affine transform = new Affine();
-//        double x = deceasedDonorPane.getLocalToParentTransform().getTx() + radius * Math.sin(angleSize * i);
-//        double y = deceasedDonorPane.getLocalToParentTransform().getTy() + radius * Math.cos(angleSize * i);
-//        double angle = 360 - Math.toDegrees(angleSize * i);
-//        transform.prepend(new Translate(x, y));
-//        transform.prepend(new Rotate(angle, x, y));
-//        matchesLists.get(i).getTransforms().add(transform);
-
     }
 }
