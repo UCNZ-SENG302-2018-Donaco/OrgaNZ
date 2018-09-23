@@ -150,6 +150,10 @@ public class MainController {
         this.subController = subController;
     }
 
+    public SubController getSubController() {
+        return subController;
+    }
+
     /**
      * Refreshes the title of the window, and calls the current page's {@link SubController#refresh()} method.
      */

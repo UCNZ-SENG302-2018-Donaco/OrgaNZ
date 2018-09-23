@@ -140,7 +140,7 @@ public class SpiderWebController extends SubController {
         durationText.setTranslateY(line.getEndY());
     }
 
-    private static void updateConnector(DonatedOrgan donatedOrgan, Line line, Text durationText, Pane organPane) {
+    private static void updateDonorConnector(DonatedOrgan donatedOrgan, Line line, Pane organPane) {
         OrganState organState = donatedOrgan.getState();
         switch (organState) {
             case OVERRIDDEN:
@@ -163,8 +163,31 @@ public class SpiderWebController extends SubController {
                 line.setStroke(linearGradient);
                 organPane.setEffect(null);
                 break;
+            case TRANSPLANT_COMPLETED:
+                //TODO
+                break;
         }
-        updateConnectorText(durationText, donatedOrgan, line);
+    }
+
+    private static void updateRecipientConnector(DonatedOrgan donatedOrgan, Line line) {
+        OrganState organState = donatedOrgan.getState();
+        switch (organState) {
+            case OVERRIDDEN:
+                line.setStroke(Color.BLACK);
+                break;
+            case EXPIRED:
+                line.setStroke(ExpiryBarUtils.darkGreyColour);
+                break;
+            case NO_EXPIRY:
+                line.setStroke(ExpiryBarUtils.noExpiryGreenColour);
+                break;
+            case CURRENT:
+                line.setStroke(Color.WHITE);
+                break;
+            case TRANSPLANT_COMPLETED:
+                //TODO
+                break;
+        }
     }
 
     private static double getAngle(double x1, double y1, double x2, double y2) {
@@ -204,7 +227,9 @@ public class SpiderWebController extends SubController {
 
         organFocus.setScalable(false);
         organFocus.setCollidable(true);
+        organFocus.setDisableHinting(true);
         organNodes.add(organPane);
+
         // Double click to override and organ or to unoverride
         // Create matches list
         ListView<Client> matchesList = createMatchesList(FXCollections.observableArrayList(potentialMatches));
@@ -218,7 +243,18 @@ public class SpiderWebController extends SubController {
         });
         matchesList.setOnSwipeLeft(swipeLeft -> {
             matchesList.scrollTo(0);
+        });
 
+        // Create the lines
+        Line deceasedToOrganConnector = new Line();
+        deceasedToOrganConnector.setStrokeWidth(4);
+        Text durationText = new Text(ExpiryBarUtils.getDurationString(organ, durationFormat));
+
+        Line organToRecipientConnector = new Line();
+        organToRecipientConnector.setStrokeWidth(4);
+
+        matchesList.visibleProperty().addListener((observable, oldValue, newValue) -> {
+            organToRecipientConnector.setVisible(newValue);
         });
 
         // Create the line
@@ -235,10 +271,20 @@ public class SpiderWebController extends SubController {
         });
         organPane.localToParentTransformProperty().addListener((observable, oldValue, newValue) -> {
             Bounds bounds = organPane.getBoundsInParent();
-            connector.setEndX(bounds.getMinX() + bounds.getWidth() / 2);
-            connector.setEndY(bounds.getMinY() + bounds.getHeight() / 2);
-            updateConnector(organ, connector, durationText, organPane);
+            deceasedToOrganConnector.setEndX(bounds.getMinX() + bounds.getWidth() / 2);
+            deceasedToOrganConnector.setEndY(bounds.getMinY() + bounds.getHeight() / 2);
+            updateDonorConnector(organ, deceasedToOrganConnector, organPane);
+            updateConnectorText(durationText, organ, deceasedToOrganConnector);
             updateMatchesListPosition(matchesList, newValue, bounds);
+
+            organToRecipientConnector.setStartX(bounds.getMinX() + bounds.getWidth() / 2);
+            organToRecipientConnector.setStartY(bounds.getMinY() + bounds.getHeight() / 2);
+
+            Bounds matchBounds = matchesList.getBoundsInParent();
+            organToRecipientConnector.setEndX(matchBounds.getMinX() + matchBounds.getWidth() / 2);
+            organToRecipientConnector.setEndY(matchBounds.getMinY() + matchBounds.getHeight() / 2);
+            updateRecipientConnector(organ, organToRecipientConnector);
+
             matchesList.toFront();
         });
 
@@ -268,6 +314,15 @@ public class SpiderWebController extends SubController {
             }
         });
 
+        matchesList.widthProperty().addListener((observable, oldValue, newValue) -> {
+            Bounds matchBounds = matchesList.getBoundsInParent();
+            organToRecipientConnector.setEndX(matchBounds.getMinX() + matchBounds.getWidth() / 2);
+            organToRecipientConnector.setEndY(matchBounds.getMinY() + matchBounds.getHeight() / 2);
+            updateRecipientConnector(organ, organToRecipientConnector);
+        });
+
+        canvas.getChildren().add(0, deceasedToOrganConnector);
+
         canvas.getChildren().add(0, connector);
         canvas.getChildren().add(0, durationText);
         canvas.getChildren().add(matchesList);
@@ -276,19 +331,21 @@ public class SpiderWebController extends SubController {
 //        canvas.getChildren().add(maskedMatchesList);
 
         Bounds bounds = deceasedDonorPane.getBoundsInParent();
-        connector.setStartX(bounds.getMinX() + bounds.getWidth() / 2);
-        connector.setStartY(bounds.getMinY() + bounds.getHeight() / 2);
-        updateConnector(organ, connector, durationText, organPane);
+        deceasedToOrganConnector.setStartX(bounds.getMinX() + bounds.getWidth() / 2);
+        deceasedToOrganConnector.setStartY(bounds.getMinY() + bounds.getHeight() / 2);
+        updateDonorConnector(organ, deceasedToOrganConnector, organPane);
+        updateConnectorText(durationText, organ, deceasedToOrganConnector);
 
         // Attach timer to update connector each second (for time until expiration)
-        final Timeline clock = new Timeline(new KeyFrame(
+        Timeline clock = new Timeline(new KeyFrame(
                 javafx.util.Duration.seconds(1),
                 event -> {
-                    updateConnector(organ, connector, durationText, organPane);
+                    updateDonorConnector(organ, deceasedToOrganConnector, organPane);
+                    updateRecipientConnector(organ, organToRecipientConnector);
+                    updateConnectorText(durationText, organ, deceasedToOrganConnector);
                 }));
         clock.setCycleCount(Animation.INDEFINITE);
         clock.play();
-
     }
 
     private ListView<Client> createMatchesList(ObservableList<Client> potentialMatches) {
