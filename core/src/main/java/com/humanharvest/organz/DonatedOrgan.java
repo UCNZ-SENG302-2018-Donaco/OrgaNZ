@@ -110,6 +110,17 @@ public class DonatedOrgan {
     }
 
     /**
+     * @return true if the organ has expired by time
+     */
+    public boolean hasExpiredNaturally() {
+        if (organType.getMaxExpiration() == null) {
+            return false;
+        }
+        Duration timeToExpiry = organType.getMaxExpiration().minus(getTimeSinceDonation());
+        return timeToExpiry.isNegative() || timeToExpiry.isZero();
+    }
+
+    /**
      * Returns whether this organ is able to be donated (i.e. has not expired or been manually overriden.
      * @return True if this donated organ is available, false otherwise.
      */
