@@ -41,10 +41,10 @@ import com.humanharvest.organz.views.client.ModifyIllnessObject;
 /**
  * Controller for the medical history page, which shows a list of all current and past illnesses for the client.
  */
-public class ClientMedicalHistoryController extends SubController {
+public class ViewMedicalHistoryController extends SubController {
 
     private static final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("d MMM yyyy");
-    private static final Logger LOGGER = Logger.getLogger(ClientMedicalHistoryController.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ViewMedicalHistoryController.class.getName());
 
     private final Session session;
     private final ClientResolver resolver;
@@ -96,7 +96,7 @@ public class ClientMedicalHistoryController extends SubController {
     /**
      * Gets the current session and resolver from the global state.
      */
-    public ClientMedicalHistoryController() {
+    public ViewMedicalHistoryController() {
         session = State.getSession();
         resolver = State.getClientResolver();
     }
@@ -151,7 +151,7 @@ public class ClientMedicalHistoryController extends SubController {
      */
     private static Boolean getChronicFirstSortPolicy(TableView<IllnessRecord> table) {
         Comparator<IllnessRecord> comparator = (r1, r2) -> {
-            if (r1.isChronic() == r2.isChronic()) {
+            if (r1.getIsChronic() == r2.getIsChronic()) {
                 Comparator<IllnessRecord> tableComparator = table.getComparator();
                 if (tableComparator != null) {
                     return table.getComparator().compare(r1, r2);
@@ -159,7 +159,7 @@ public class ClientMedicalHistoryController extends SubController {
                     // negative because sorting DESC
                     return -Integer.signum(r1.getDiagnosisDate().compareTo(r2.getDiagnosisDate()));
                 }
-            } else if (r1.isChronic()) {
+            } else if (r1.getIsChronic()) {
                 return -1;
             } else {
                 return 1;
@@ -170,14 +170,14 @@ public class ClientMedicalHistoryController extends SubController {
     }
 
     /**
-     * Initializes the page, setting cell value/represntation factories for all the columns, setting up selection
+     * Initializes the page, setting cell value/representation factories for all the columns, setting up selection
      * listeners, setting the sort policy for each table and setting the initial value for the date diagnosed picker.
      */
     @FXML
     public void initialize() {
         illnessCurrCol.setCellValueFactory(new PropertyValueFactory<>("illnessName"));
         diagnosisDateCurrCol.setCellValueFactory(new PropertyValueFactory<>("diagnosisDate"));
-        chronicCurrCol.setCellValueFactory(new PropertyValueFactory<>("chronic"));
+        chronicCurrCol.setCellValueFactory(new PropertyValueFactory<>("isChronic"));
 
         illnessPastCol.setCellValueFactory(new PropertyValueFactory<>("illnessName"));
         diagnosisDatePastCol.setCellValueFactory(new PropertyValueFactory<>("diagnosisDate"));
@@ -206,8 +206,8 @@ public class ClientMedicalHistoryController extends SubController {
                     enableAppropriateButtons();
                 });
 
-        currentIllnessView.setSortPolicy(ClientMedicalHistoryController::getChronicFirstSortPolicy);
-        pastIllnessView.setSortPolicy(ClientMedicalHistoryController::getChronicFirstSortPolicy);
+        currentIllnessView.setSortPolicy(ViewMedicalHistoryController::getChronicFirstSortPolicy);
+        pastIllnessView.setSortPolicy(ViewMedicalHistoryController::getChronicFirstSortPolicy);
 
         dateDiagnosedPicker.setValue(LocalDate.now());
     }
@@ -297,7 +297,7 @@ public class ClientMedicalHistoryController extends SubController {
                 toggleChronicButton.setDisable(false);
                 deleteButton.setDisable(false);
                 toggleCuredButton.setText("Mark as Cured");
-                if (selectedRecord.isChronic()) {
+                if (selectedRecord.getIsChronic()) {
                     toggleChronicButton.setText("Mark as not Chronic");
                 } else {
                     toggleChronicButton.setText("Mark as Chronic");
@@ -338,7 +338,7 @@ public class ClientMedicalHistoryController extends SubController {
         IllnessRecord record = getSelectedRecord();
         ModifyIllnessObject modifyIllnessObject = new ModifyIllnessObject();
         if (record != null) {
-            if (record.isChronic()) {
+            if (record.getIsChronic()) {
                 PageNavigator.showAlert(AlertType.ERROR,
                         "Can't move a chronic illness to past illnesses.",
                         "An illness can't be cured if it is chronic. If the illness has been cured, first mark it as"
@@ -389,16 +389,16 @@ public class ClientMedicalHistoryController extends SubController {
         ModifyIllnessObject modifyIllnessObject = new ModifyIllnessObject();
         if (record != null) {
 
-            if (record.isChronic()) {
+            if (record.getIsChronic()) {
                 // Current, chronic illness -> Current illness
-                modifyIllnessObject.setChronic(false);
+                modifyIllnessObject.setIsChronic(false);
             } else {
                 if (record.getCuredDate() != null) {
                     // Past illness -> Current, chronic illness
                     modifyIllnessObject.setCuredDate(null);
                 }
                 // Illness -> chronic illness
-                modifyIllnessObject.setChronic(true);
+                modifyIllnessObject.setIsChronic(true);
             }
             try {
                 State.getClientResolver().modifyIllnessRecord(client, record, modifyIllnessObject);
