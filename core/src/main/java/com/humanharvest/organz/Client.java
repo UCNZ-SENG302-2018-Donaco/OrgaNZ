@@ -66,7 +66,7 @@ public class Client implements ConcurrencyControlledEntity {
 
     private static final Logger LOGGER = Logger.getLogger(Client.class.getName());
 
-    private static final Pattern whiteSpace = Pattern.compile("\\s+");
+    private static final Pattern WHITE_SPACE = Pattern.compile("(%20|\\s)+");
 
     @JsonView(Views.Overview.class)
     private final Instant createdTimestamp;
@@ -919,14 +919,16 @@ public class Client implements ConcurrencyControlledEntity {
     }
 
     /**
-     * Takes a string and checks if each space separated string section matches one of the names
+     * Takes a string and checks if each space separated string section matches one of the names.
+     * For example, the search term "Ollie Chick" will match "Ollie Nicholas Chick" but not "Ollie Murs",
+     * and the search term "O Chick" will match "Ollie Chick" and "Oscar Chick" and "Chick O'Sullivan".
      *
      * @param searchParam The string to be checked
      * @return True if all sections of the passed string match any of the names of the client
      */
     public boolean nameContains(String searchParam) {
         String lowerSearch = searchParam.toLowerCase(Locale.UK);
-        String[] splitSearchItems = whiteSpace.split(lowerSearch);
+        String[] splitSearchItems = WHITE_SPACE.split(lowerSearch);
 
         boolean isMatch = true;
         for (String string : splitSearchItems) {
@@ -949,20 +951,20 @@ public class Client implements ConcurrencyControlledEntity {
      */
     private HashSet<String> splitNames() {
 
-        String[] fname = whiteSpace.split(firstName);
-        String[] lname = whiteSpace.split(lastName);
+        String[] fname = WHITE_SPACE.split(firstName);
+        String[] lname = WHITE_SPACE.split(lastName);
         String[] mname;
         String[] pname;
 
         if (middleName == null) {
             mname = new String[0];
         } else {
-            mname = whiteSpace.split(middleName);
+            mname = WHITE_SPACE.split(middleName);
         }
         if (preferredName == null) {
             pname = new String[0];
         } else {
-            pname = whiteSpace.split(preferredName);
+            pname = WHITE_SPACE.split(preferredName);
         }
 
         HashSet<String> names = new HashSet<>(Arrays.asList(fname));
@@ -981,7 +983,7 @@ public class Client implements ConcurrencyControlledEntity {
      */
     public boolean profileSearch(String searchParam) {
         String lowerSearch = searchParam.toLowerCase();
-        String[] splitSearchItems = whiteSpace.split(lowerSearch);
+        String[] splitSearchItems = WHITE_SPACE.split(lowerSearch);
 
         Collection<String> searched = new ArrayList<>(Arrays.asList(splitSearchItems));
 
