@@ -14,6 +14,7 @@ import com.humanharvest.organz.DashboardStatistics;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.TransplantRequest;
+import com.humanharvest.organz.state.State.DataStorageType;
 import com.humanharvest.organz.utilities.enums.ClientSortOptionsEnum;
 import com.humanharvest.organz.utilities.enums.ClientType;
 import com.humanharvest.organz.utilities.enums.DonatedOrganSortOptionsEnum;
@@ -202,7 +203,14 @@ public class ClientManagerRest implements ClientManager {
 
     @Override
     public DashboardStatistics getStatistics() {
-        return null;
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("X-Auth-Token", State.getToken());
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        ResponseEntity<DashboardStatistics> responseEntity = State.getRestTemplate().exchange(State.getBaseUri() +
+                "/statistics", HttpMethod.GET, entity, DashboardStatistics.class);
+
+        return responseEntity.getBody();
     }
 
     /**

@@ -41,6 +41,7 @@ import com.humanharvest.organz.views.client.PaginatedTransplantList;
 import org.hibernate.ReplicationMode;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.query.Query;
 
 /**
@@ -520,7 +521,55 @@ public class ClientManagerDBPure implements ClientManager {
 
     @Override
     public DashboardStatistics getStatistics() {
-        return null;
+        DashboardStatistics statistics = new DashboardStatistics();
+        Transaction trns = null;
+
+        // Gets statistics for counts of clients, organs, and requests from the DB
+        String query = "SELECT (SELECT count(*)"
+                + "        FROM Client) AS clientCount\n"
+                + "       (SELECT count(*)\n"
+                + "        FROM Client\n"
+                + "        WHERE Client.isDonor = 1 and Client.isReceiver = 0\n"
+                + "       ) AS donorCount,\n"
+                + "        \n"
+                + "       (SELECT count(*)\n"
+                + "        FROM Client\n"
+                + "        WHERE Client.isDonor = 0 and Client.isReceiver = 1\n"
+                + "       ) AS receiverCount,\n"
+                + "        \n"
+                + "       (SELECT count(*)\n"
+                + "        FROM Client \n"
+                + "        WHERE Client.isDonor = 1 and Client.isReceiver = 1\n"
+                + "       ) AS donorReceiverCount,\n"
+                + "       \n"
+                + "       (SELECT count(*)\n"
+                + "        FROM DonatedOrgan\n"
+                + "        WHERE DonatedOrgan.available = 1\n"
+                + "       ) AS organCount,\n"
+                + "       \n"
+                + "       (SELECT count(*)\n"
+                + "        FROM TransplantRequest\n"
+                + "        WHERE TransplantRequest.status = \"WAITING\"\n"
+                + "       ) AS requestCount\n"
+                + "        \n"
+                + "FROM dual";
+
+        try (Session session = dbManager.getDBSession()) {
+            trns = session.beginTransaction();
+
+            Query<DashboardStatistics> countQuery = session.createNativeQuery(query);
+            countQuery.getSingleResult();
+
+
+
+        } catch (RollbackException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
+            if (trns != null) {
+                trns.rollback();
+            }
+        }
+
+        return statistics;
     }
 
     /**
