@@ -81,18 +81,6 @@ public class ConfigControllerTest extends ControllerTest {
         alertDialogHasHeaderAndContainsContent(hospitalName, firstHospital.getAddress());
     }
 
-    /**
-     * Asserts that header is expectedHeader and content contains expectedContent.
-     */
-    private static void alertDialogHasHeaderAndContainsContent(String expectedHeader, String expectedContent) {
-        javafx.stage.Stage actualAlertDialog = getTopModalStage();
-        assertNotNull(actualAlertDialog);
-
-        DialogPane dialogPane = (DialogPane) actualAlertDialog.getScene().getRoot();
-        assertEquals(expectedHeader, dialogPane.getHeaderText());
-        assertThat(dialogPane.getContentText(), containsString(expectedContent));
-    }
-
     @Test
     public void addTransplantProgram() {
         clickOn(firstHospital.getName());

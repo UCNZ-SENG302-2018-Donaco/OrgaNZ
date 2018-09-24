@@ -16,6 +16,7 @@ import com.humanharvest.organz.Client;
 import com.humanharvest.organz.ProcedureRecord;
 import com.humanharvest.organz.controller.ControllerTest;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
 
@@ -50,7 +51,9 @@ public class ViewProceduresControllerClientTest extends ControllerTest {
             testClient.deleteProcedureRecord(record);
         }
 
-        pastRecords.add(new ProcedureRecord("Summary1", "Description1", LocalDate.of(2000, 1, 1)));
+        ProcedureRecord procedureRecord = new ProcedureRecord("Summary1", "Description1", LocalDate.of(2000, 1, 1));
+        procedureRecord.addAffectedOrgan(Organ.LIVER);
+        pastRecords.add(procedureRecord);
         pastRecords.add(new ProcedureRecord("Summary2", "Description2", LocalDate.of(2000, 2, 1)));
         pastRecords.add(new ProcedureRecord("A Summary 3", "Description3", LocalDate.of(2000, 3, 1)));
         pendingRecords.add(new ProcedureRecord("Summary4", "Description4", LocalDate.of(2045, 1, 1)));
@@ -98,11 +101,18 @@ public class ViewProceduresControllerClientTest extends ControllerTest {
 
     @Test
     public void viewProcedureTest() {
-        clickOn((Node) lookup(NodeQueryUtils.hasText("Summary1")).query());
+        ProcedureRecord record = pastRecords.get(0);
+        clickOn((Node) lookup(NodeQueryUtils.hasText(record.getSummary())).query());
 
         clickOn("#viewDetailsButton");
 
-        assertEquals(3, testClient.getPastProcedures().size());
+        String[] expectedStrings = {
+                record.getDescription(),
+                record.getAffectedOrgans().iterator().next().toString(),
+                String.valueOf(record.getDate().getYear())
+        };
+        String expectedTitle = "Procedure: " + record.getSummary();
+        alertDialogHasHeaderAndContainsContents(expectedTitle, expectedStrings);
     }
 
 }
