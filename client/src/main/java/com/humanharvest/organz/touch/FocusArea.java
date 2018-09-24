@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -57,6 +58,8 @@ public class FocusArea implements InvalidationListener {
     private boolean rotatable = true;
 
     private Affine transform;
+
+    private List<CurrentTouch> paneTouches;
 
     // A chain of the last X seconds of touch events. Used to smooth out fluctuations in touch events.
     private final LinkedList<TimedPoint> eventPoints = new LinkedList<>();
@@ -236,39 +239,52 @@ public class FocusArea implements InvalidationListener {
 
     public void handleTouchEvent(TouchEvent event, CurrentTouch currentTouch) {
 
+        this.paneTouches = MultitouchHandler.findPaneTouches(pane);
+
         TouchPoint touchPoint = event.getTouchPoint();
 
         if (event.getEventType() == TouchEvent.TOUCH_PRESSED) {
-            currentTouch.setCurrentScreenPoint(new Point2D(touchPoint.getX(), touchPoint.getY()));
-
-            pane.toFront();
-
-            OnScreenKeyboard<?> keyboard = KeyboardManager.getInstance().getKeyboard(pane);
-            ReflectionUtils.<KeyboardPane>getField(keyboard.getSkin(), "keyboardPane").toFront();
-
-            // Forwards the touch event to an important node.
-            currentTouch.getImportantElement().ifPresent(node -> {
-                NodeEventDispatcher eventDispatcher = (NodeEventDispatcher) node.getEventDispatcher();
-                eventDispatcher.dispatchCapturingEvent(event);
-            });
-            if (MultitouchHandler.findPaneTouches(pane).size() == 1) {
-                // Informs the focus area nodes of a touch event
-                setLastPosition(System.nanoTime(), PointUtils.getCentreOfNode(pane));
-                propagateEvent(event.getTarget());
-            }
+            onTouchPressed(event, currentTouch);
         } else if (event.getEventType() == TouchEvent.TOUCH_RELEASED) {
-            // Forwards the touch event to an important node.
-            currentTouch.getImportantElement().ifPresent(node -> {
-                NodeEventDispatcher eventDispatcher = (NodeEventDispatcher) node.getEventDispatcher();
-                eventDispatcher.dispatchCapturingEvent(event);
-            });
-
-            if (MultitouchHandler.findPaneTouches(pane).isEmpty()) {
-                pane.setCacheHint(CacheHint.QUALITY);
-                setupVelocity(System.nanoTime(), PointUtils.getCentreOfNode(pane));
-            }
+            onTouchReleased(event, currentTouch);
         } else {
-            handleCurrentTouch(touchPoint, currentTouch);
+            onTouchHeld(event, currentTouch);
+        }
+    }
+
+    protected void onTouchPressed(TouchEvent event, CurrentTouch currentTouch) {
+
+        TouchPoint touchPoint = event.getTouchPoint();
+        currentTouch.setCurrentScreenPoint(new Point2D(touchPoint.getX(), touchPoint.getY()));
+
+        pane.toFront();
+
+        OnScreenKeyboard<?> keyboard = KeyboardManager.getInstance().getKeyboard(pane);
+        ReflectionUtils.<KeyboardPane>getField(keyboard.getSkin(), "keyboardPane").toFront();
+
+        // Forwards the touch event to an important node.
+        currentTouch.getImportantElement().ifPresent(node -> {
+            NodeEventDispatcher eventDispatcher = (NodeEventDispatcher) node.getEventDispatcher();
+            eventDispatcher.dispatchCapturingEvent(event);
+        });
+        if (paneTouches.size() == 1) {
+            // Informs the focus area nodes of a touch event
+            setLastPosition(System.nanoTime(), PointUtils.getCentreOfNode(pane));
+            propagateEvent(event.getTarget());
+        }
+    }
+
+    protected void onTouchReleased(TouchEvent event, CurrentTouch currentTouch) {
+
+        // Forwards the touch event to an important node.
+        currentTouch.getImportantElement().ifPresent(node -> {
+            NodeEventDispatcher eventDispatcher = (NodeEventDispatcher) node.getEventDispatcher();
+            eventDispatcher.dispatchCapturingEvent(event);
+        });
+
+        if (paneTouches.isEmpty()) {
+            pane.setCacheHint(CacheHint.QUALITY);
+            setupVelocity(System.nanoTime(), PointUtils.getCentreOfNode(pane));
         }
     }
 
@@ -278,7 +294,9 @@ public class FocusArea implements InvalidationListener {
      * @param touchPoint The touch point from the new event.
      * @param currentTouch The state of the finger this event belongs to.
      */
-    private void handleCurrentTouch(TouchPoint touchPoint, CurrentTouch currentTouch) {
+    protected void onTouchHeld(TouchEvent event, CurrentTouch currentTouch) {
+
+        TouchPoint touchPoint = event.getTouchPoint();
         Point2D touchPointPosition = new Point2D(touchPoint.getX(), touchPoint.getY());
         if (PointUtils.distance(touchPointPosition, currentTouch.getCurrentScreenPoint()) < 2) {
             return;
@@ -287,12 +305,11 @@ public class FocusArea implements InvalidationListener {
         setLastPosition(System.nanoTime(), PointUtils.getCentreOfNode(pane));
 
         // Find other touches belonging to this pane.
-        List<CurrentTouch> paneTouches = MultitouchHandler.findPaneTouches(pane);
         if (paneTouches.size() == 1) {
             handleSingleTouch(touchPointPosition, currentTouch);
 
         } else if (paneTouches.size() == 2) {
-            CurrentTouch otherTouch = getOtherTouch(currentTouch, paneTouches);
+            CurrentTouch otherTouch = getOtherTouch(currentTouch);
             handleDoubleTouch(touchPointPosition, touchPoint, currentTouch, otherTouch);
         }
     }
@@ -393,7 +410,7 @@ public class FocusArea implements InvalidationListener {
         return delta;
     }
 
-    private static CurrentTouch getOtherTouch(CurrentTouch currentTouch, List<? extends CurrentTouch> paneTouches) {
+    private CurrentTouch getOtherTouch(CurrentTouch currentTouch) {
         if (Objects.equals(paneTouches.get(0), currentTouch)) {
             return paneTouches.get(1);
         } else {
@@ -414,6 +431,10 @@ public class FocusArea implements InvalidationListener {
             }
             currentTouch.setCurrentScreenPoint(touchPointPosition);
         }
+    }
+
+    protected Collection<CurrentTouch> getPaneTouches() {
+        return Collections.unmodifiableList(paneTouches);
     }
 
     private static final class TextFieldSkinConsumer implements Consumer<EventTarget> {

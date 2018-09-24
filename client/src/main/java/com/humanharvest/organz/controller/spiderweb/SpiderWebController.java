@@ -222,7 +222,7 @@ public class SpiderWebController extends SubController {
         List<Client> potentialMatches = State.getClientManager().getOrganMatches(organ);
 
         MainController newMain = ((PageNavigatorTouch)PageNavigator.getInstance())
-                .openNewWindow(70, 70, OrganFocusArea::new);
+                .openNewWindow(70, 70, pane -> new OrganFocusArea(pane));
 
         OrganImageController organImageController = (OrganImageController) PageNavigator
                 .loadPage(Page.ORGAN_IMAGE, newMain);
