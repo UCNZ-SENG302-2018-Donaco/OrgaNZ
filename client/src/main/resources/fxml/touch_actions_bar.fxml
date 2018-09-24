@@ -27,12 +27,12 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="35.0" prefWidth="43.0" style="-fx-background-radius: 30; -fx-background-color: #BDD5EA;">
+            <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="35.0" prefWidth="43.0" style="-fx-background-color: #CFC7FA;">
                <graphic>
                   <JFXHamburger fx:id="hamburger" style="-fx-background-radius: 30;"> </JFXHamburger>
                </graphic>
             </Button>
-            <Button fx:id="homeButton" alignment="CENTER" maxWidth="1.7976931348623157E308" minWidth="-Infinity" mnemonicParsing="false" onAction="#navigateHome" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
+            <Button fx:id="homeButton" alignment="CENTER" mnemonicParsing="false" onAction="#navigateHome" GridPane.columnIndex="1">
                <graphic>
                   <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                      <image>
