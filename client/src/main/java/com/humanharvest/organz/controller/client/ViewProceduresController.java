@@ -1,6 +1,9 @@
 package com.humanharvest.organz.controller.client;
 
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.Set;
@@ -37,6 +40,8 @@ import com.humanharvest.organz.controller.components.OrganCheckComboBoxCell;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.DurationFormatter;
+import com.humanharvest.organz.utilities.DurationFormatter.Format;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.exceptions.BadRequestException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
@@ -519,11 +524,20 @@ public class ViewProceduresController extends SubController {
             }
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d MMMM yyyy");
+            String dayDifference = DurationFormatter.getFormattedDuration(
+                    Duration.between(LocalDateTime.now(), LocalDateTime.of(record.getDate(), LocalTime.MIDNIGHT)),
+                    Format.DAYS);
+            String date;
+            if (record.hasHappened()) {
+                date = "Date: ";
+            } else {
+                date = "Scheduled date: ";
+            }
+            date += record.getDate().format(formatter) + " (" + dayDifference + ")";
 
             String information = description
                     + affectedOrgans + ".\n\n"
-                    + "Scheduled date: " + record.getDate().format(formatter) + "."; //todo add (x days ago) or (in x
-            // days)
+                    + date + ".";
 
             PageNavigator.showAlert(AlertType.INFORMATION, title, information, mainController.getStage());
         }

@@ -30,8 +30,21 @@ public abstract class DurationFormatter {
                 return getDurationFormattedXHoursYMinutesSeconds(duration);
             case BIGGEST:
                 return getDurationFormattedBiggest(duration);
+            case DAYS:
+                return getDurationFormattedDays(duration);
             default:
                 throw new UnsupportedOperationException("Unknown format for duration.");
+        }
+    }
+
+    private static String getDurationFormattedDays(Duration duration) {
+        long days = duration.toDays();
+        if (days == 0) {
+            return "today";
+        } else if (days < 0) {
+            return days * -1 + " days ago";
+        } else {
+            return "in " + days + " days";
         }
     }
 
@@ -104,7 +117,7 @@ public abstract class DurationFormatter {
     }
 
     public enum Format {
-        X_HOURS_Y_MINUTES_SECONDS, BIGGEST
+        X_HOURS_Y_MINUTES_SECONDS, BIGGEST, DAYS
     }
 
 }
