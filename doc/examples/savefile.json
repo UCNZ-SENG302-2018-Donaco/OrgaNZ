@@ -50,7 +50,7 @@
     "transplantRequests": [
       {
         "requestedOrgan": "LIVER",
-        "requestDate": {
+        "requestDateTime": {
           "date": {
             "year": 2018,
             "month": 5,
@@ -67,7 +67,7 @@
       },
       {
         "requestedOrgan": "CORNEA",
-        "requestDate": {
+        "requestDateTime": {
           "date": {
             "year": 2018,
             "month": 5,
@@ -84,7 +84,7 @@
       },
       {
         "requestedOrgan": "BONE_MARROW",
-        "requestDate": {
+        "requestDateTime": {
           "date": {
             "year": 2018,
             "month": 5,
@@ -97,7 +97,7 @@
             "nano": 223000000
           }
         },
-        "resolvedDate": {
+        "resolvedDateTime": {
           "date": {
             "year": 2018,
             "month": 5,

@@ -20,7 +20,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javafx.beans.property.Property;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -379,6 +378,7 @@ public class ViewClientController extends ViewBaseController {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
             return;
         }
+
         Image image = new Image(new ByteArrayInputStream(bytes));
         imageView.setImage(image);
     }
@@ -633,19 +633,12 @@ public class ViewClientController extends ViewBaseController {
      * @param modifyClientObject The object to pass along that changes are applied to.
      */
     private void promptMarkAsDead(ModifyClientObject modifyClientObject) {
-        Property<Boolean> response = PageNavigator.showAlert(AlertType.CONFIRMATION,
+        PageNavigator.showAlert(AlertType.CONFIRMATION,
                 "Are you sure you want to mark this client as dead?",
-                "This will cancel all waiting transplant requests for this client.", mainController.getStage());
-
-        if (response.getValue() != null) {
-            updateDeathFields(modifyClientObject);
-        } else {
-            response.addListener((observable, oldValue, newValue) -> {
-                if (newValue) {
+                "This will cancel all waiting transplant requests for this client.", mainController.getStage(),
+                isOk -> {
                     updateDeathFields(modifyClientObject);
-                }
-            });
-        }
+                });
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.humanharvest.organz.controller;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -13,8 +14,8 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import com.humanharvest.organz.touch.MultitouchHandler;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.touch.MultitouchHandler;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
 
@@ -92,10 +93,21 @@ public class MainController {
      * Closes the window.
      */
     @FXML
-    void closeWindow() {
+    public void closeWindow() {
         stage.close();
         if (State.getUiType() == State.UiType.TOUCH) {
             MultitouchHandler.removePane(pane);
+        }
+        State.deleteMainController(this);
+    }
+
+    /**
+     * Shows the window.
+     */
+    public void showWindow() {
+        State.addMainController(this);
+        if (State.getUiType() == State.UiType.TOUCH) {
+            MultitouchHandler.addPane(pane);
         }
     }
 
@@ -182,5 +194,9 @@ public class MainController {
         } else {
             stage.setTitle(title);
         }
+    }
+
+    public List<String> getStyles() {
+        return pageHolder.getStyleClass();
     }
 }

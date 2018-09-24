@@ -90,7 +90,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n\t\"requestedOrgan\": \"HEART\",\n\t\"requestDate\": \"2017-03-21T20:55:51.383\",\n\t\"status\": \"WAITING\"\n}"
+              "raw": "{\n\t\"requestedOrgan\": \"HEART\",\n\t\"requestDateTime\": \"2017-03-21T20:55:51.383\",\n\t\"status\": \"WAITING\"\n}"
             },
             "url": {
               "raw": "localhost:8080/clients/2/transplantRequests",
