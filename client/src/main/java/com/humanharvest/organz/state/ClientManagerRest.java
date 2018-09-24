@@ -1,6 +1,7 @@
 package com.humanharvest.organz.state;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -27,6 +28,7 @@ import com.humanharvest.organz.views.client.DonatedOrganView;
 import com.humanharvest.organz.views.client.PaginatedClientList;
 import com.humanharvest.organz.views.client.PaginatedDonatedOrgansList;
 import com.humanharvest.organz.views.client.PaginatedTransplantList;
+import com.humanharvest.organz.views.client.TransplantRequestView;
 
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -285,5 +287,31 @@ public class ClientManagerRest implements ClientManager {
                 });
 
         return responseEntity.getBody();
+    }
+
+    /**
+     * @param donatedOrgan available organ to find potential matches for
+     * @return list of TransplantRequests that will match the given organ
+     */
+    @Override
+    public List<TransplantRequest> getMatchingOrganTransplants(DonatedOrgan donatedOrgan) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.set("X-Auth-Token", State.getToken());
+
+        HttpEntity<String> entity = new HttpEntity<>(httpHeaders);
+
+        ResponseEntity<List<TransplantRequestView>> responseEntity = State.getRestTemplate()
+                .exchange(State.getBaseUri() +
+                        "/matchOrganToTransplants/" + donatedOrgan.getId(), HttpMethod.GET, entity, new
+                        ParameterizedTypeReference<List<TransplantRequestView>>() {
+                        });
+
+        if (responseEntity.getBody() != null) {
+            return responseEntity.getBody().stream()
+                    .map(TransplantRequestView::getTransplantRequest)
+                    .collect(Collectors.toList());
+        } else {
+            return new ArrayList<>();
+        }
     }
 }

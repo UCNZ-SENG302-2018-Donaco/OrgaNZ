@@ -476,4 +476,13 @@ public class ClientManagerMemory implements ClientManager {
     public List<Client> getOrganMatches(DonatedOrgan donatedOrgan) {
         return MatchOrganToRecipients.getListOfPotentialRecipients(donatedOrgan, getAllCurrentTransplantRequests());
     }
+
+    /**
+     * @param donatedOrgan available organ to find potential matches for
+     * @return list of TransplantRequests that will match the given organ
+     */
+    @Override
+    public List<TransplantRequest> getMatchingOrganTransplants(DonatedOrgan donatedOrgan) {
+        return MatchOrganToRecipients.getListOfPotentialTransplants(donatedOrgan, getAllCurrentTransplantRequests());
+    }
 }

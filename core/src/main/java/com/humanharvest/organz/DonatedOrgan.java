@@ -37,6 +37,7 @@ public class DonatedOrgan {
         NO_EXPIRY,
         EXPIRED,
         OVERRIDDEN,
+        TRANSPLANT_PLANNED,
         TRANSPLANT_COMPLETED,
     }
 
@@ -245,6 +246,14 @@ public class DonatedOrgan {
      * @return The current state of the organ
      */
     public OrganState getState() {
+        if (!available) {
+            if (receiver == null) {
+                return OrganState.TRANSPLANT_PLANNED;
+            } else {
+                return OrganState.TRANSPLANT_COMPLETED;
+            }
+        }
+
         if (overrideReason != null) {
             return OrganState.OVERRIDDEN;
         } else if (organType.getMaxExpiration() == null) {

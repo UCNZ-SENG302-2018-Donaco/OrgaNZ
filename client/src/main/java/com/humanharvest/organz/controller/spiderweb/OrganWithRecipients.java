@@ -20,9 +20,9 @@ import javafx.scene.text.Text;
 import javafx.scene.transform.Transform;
 import javafx.util.Duration;
 
-import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.DonatedOrgan.OrganState;
+import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.components.ExpiryBarUtils;
 import com.humanharvest.organz.controller.components.PotentialRecipientCell;
@@ -42,7 +42,7 @@ public class OrganWithRecipients {
     private Pane deceasedDonorPane;
 
     private DonatedOrgan organ;
-    private List<Client> potentialMatches;
+    private List<TransplantRequest> potentialMatches;
 
     private OrganImageController organImageController;
     private Pane organPane;
@@ -55,7 +55,8 @@ public class OrganWithRecipients {
     private ChangeListener<Transform> organPaneTransformListener = handleOrganPaneTransformed();
     private ChangeListener<Transform> matchesListTransformListener = handlePotentialMatchesTransformed();
 
-    public OrganWithRecipients(DonatedOrgan organ, List<Client> potentialMatches, Pane deceasedDonorPane, Pane canvas) {
+    public OrganWithRecipients(DonatedOrgan organ, List<TransplantRequest> potentialMatches, Pane deceasedDonorPane,
+            Pane canvas) {
         this.organ = organ;
         this.potentialMatches = potentialMatches;
         this.deceasedDonorPane = deceasedDonorPane;
@@ -123,9 +124,18 @@ public class OrganWithRecipients {
     private void createMatchesList() {
         // Double click to override and organ or to unoverride
         // Create matches list
-        ListView<Client> matchesListView = createMatchesList(FXCollections.observableArrayList(potentialMatches));
+//        if (organ.getState() == OrganState.CURRENT || organ.getState() == OrganState.NO_EXPIRY) {
+        ListView<TransplantRequest> matchesListView = createMatchesList(
+                FXCollections.observableArrayList(potentialMatches));
         matchesPane = new Pane(matchesListView);
         MultitouchHandler.addPane(matchesPane);
+//        } else if (organ.getState() == OrganState.TRANSPLANT_COMPLETED ||
+//                organ.getState() == OrganState.TRANSPLANT_PLANNED) {
+//
+//
+//
+//        }
+
     }
 
     public Pane getOrganPane() {
@@ -242,14 +252,15 @@ public class OrganWithRecipients {
         deceasedToOrganConnector.setEndY(bounds.getMinY() + bounds.getHeight() / 2);
     }
 
-    private ListView<Client> createMatchesList(ObservableList<Client> potentialMatches) {
+    private ListView<TransplantRequest> createMatchesList(ObservableList<TransplantRequest> potentialMatches) {
         // Setup the ListView
-        final ListView<Client> matchesList = new ListView<>();
+        final ListView<TransplantRequest> matchesList = new ListView<>();
         matchesList.getStylesheets().add(getClass().getResource("/css/list-view-cell-gap.css").toExternalForm());
 
         matchesList.setItems(potentialMatches);
 
-        matchesList.setCellFactory(param -> new PotentialRecipientCell(param.getItems()));
+        matchesList.setCellFactory(param -> new PotentialRecipientCell(
+                param.getItems(), organ.getDonor()));
 
         matchesList.setOrientation(Orientation.HORIZONTAL);
         matchesList.setMinWidth(380);

@@ -99,5 +99,7 @@ public interface ClientManager {
 
     List<Client> getOrganMatches(DonatedOrgan donatedOrgan);
 
+    List<TransplantRequest> getMatchingOrganTransplants(DonatedOrgan donatedOrgan);
+
     List<HistoryItem> getAllHistoryItems();
 }

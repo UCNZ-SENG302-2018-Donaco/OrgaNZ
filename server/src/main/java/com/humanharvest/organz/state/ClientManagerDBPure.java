@@ -613,4 +613,15 @@ public class ClientManagerDBPure implements ClientManager {
         Collection<TransplantRequest> transplantRequests = getAllTransplantRequests();
         return MatchOrganToRecipients.getListOfPotentialRecipients(donatedOrgan, transplantRequests);
     }
+
+    /**
+     * @param donatedOrgan available organ to find potential matches for
+     * @return list of TransplantRequests that will match the given organ
+     */
+    @Override
+    public List<TransplantRequest> getMatchingOrganTransplants(DonatedOrgan donatedOrgan) {
+
+        Collection<TransplantRequest> transplantRequests = getAllTransplantRequests();
+        return MatchOrganToRecipients.getListOfPotentialTransplants(donatedOrgan, transplantRequests);
+    }
 }
