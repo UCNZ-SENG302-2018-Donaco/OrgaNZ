@@ -60,7 +60,7 @@ public class OrganWithRecipients {
         this.deceasedDonorPane = deceasedDonorPane;
 
         MainController newMain = ((PageNavigatorTouch) PageNavigator.getInstance())
-                .openNewWindow(70, 70, OrganFocusArea::new);
+                .openNewWindow(70, 70, pane -> new OrganFocusArea(pane, this));
         newMain.getStyles().clear();
 
         organImageController = (OrganImageController) PageNavigator
