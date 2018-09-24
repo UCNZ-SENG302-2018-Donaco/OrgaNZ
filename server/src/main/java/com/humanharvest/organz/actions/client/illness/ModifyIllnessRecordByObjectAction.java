@@ -1,6 +1,7 @@
-package com.humanharvest.organz.actions.client;
+package com.humanharvest.organz.actions.client.illness;
 
 import com.humanharvest.organz.IllnessRecord;
+import com.humanharvest.organz.actions.client.ClientAction;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.views.client.ModifyIllnessObject;
 
@@ -20,11 +21,12 @@ public class ModifyIllnessRecordByObjectAction extends ClientAction {
         this.oldRecord = oldRecord;
 
         record = new IllnessRecord(newIllnessDetails.getIllnessName(),
-                newIllnessDetails.getDiagnosisDate(), newIllnessDetails.getCuredDate(), newIllnessDetails.getIsChronic());
+                newIllnessDetails.getDiagnosisDate(), newIllnessDetails.getCuredDate(),
+                newIllnessDetails.getIsChronic());
     }
 
     @Override
-    public void execute() {
+    protected void execute() {
         super.execute();
         BeanUtils.copyProperties(oldIllnessDetails.getUnmodifiedFields(), record);
         client.addIllnessRecord(record);

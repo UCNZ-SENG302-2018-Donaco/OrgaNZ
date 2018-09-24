@@ -143,7 +143,7 @@ public class ClientManagerDBPure implements ClientManager {
                 //Use the TIMESTAMPDIFF (MySQL only) function to calculate age
                 whereJoiner.add(
                         "CASE WHEN dateOfDeath IS NULL THEN TIMESTAMPDIFF(YEAR, c.dateOfBirth, NOW()) >= :minimumAge "
-                        + "ELSE TIMESTAMPDIFF(YEAR, c.dateOfBirth, c.dateOfDeath) >= :minimumAge END");
+                                + "ELSE TIMESTAMPDIFF(YEAR, c.dateOfBirth, c.dateOfDeath) >= :minimumAge END");
                 params.put("minimumAge", minimumAge);
             }
 
@@ -373,19 +373,33 @@ public class ClientManagerDBPure implements ClientManager {
 
     @Override
     public void applyChangesTo(Client client) {
+        applyChangesToObject(client);
+    }
+
+    @Override
+    public void applyChangesTo(DonatedOrgan organ) {
+        applyChangesToObject(organ);
+    }
+
+    @Override
+    public void applyChangesTo(TransplantRequest request) {
+        applyChangesToObject(request);
+    }
+
+    private void applyChangesToObject(Object object) {
         Transaction trns = null;
 
         try (Session session = dbManager.getDBSession()) {
             trns = session.beginTransaction();
 
             try {
-                session.update(client);
+                session.update(object);
                 trns.commit();
             } catch (OptimisticLockException exc) {
                 // TODO fix this hack
                 try (Session otherSession = dbManager.getDBSession()) {
                     trns = otherSession.beginTransaction();
-                    otherSession.replicate(client, ReplicationMode.OVERWRITE);
+                    otherSession.replicate(object, ReplicationMode.OVERWRITE);
                     trns.commit();
                 }
             }
@@ -562,6 +576,7 @@ public class ClientManagerDBPure implements ClientManager {
         List<DonatedOrgan> filteredOrgans = getAllOrgansToDonate().stream()
                 .filter(organ -> organ.getDurationUntilExpiry() == null || !organ.getDurationUntilExpiry().isZero())
                 .filter(organ -> organ.getOverrideReason() == null)
+                .filter(DonatedOrgan::isAvailable)
                 .filter(organ -> regionsToFilter.isEmpty()
                         || regionsToFilter.contains(organ.getDonor().getRegionOfDeath())
                         || (regionsToFilter.contains("International")

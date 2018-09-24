@@ -81,7 +81,6 @@ public class IllnessRecord {
 
     /**
      * This method should be called only when this record is added to/removed from a client's collection.
-     * Therefore it is package-private so it may only be called from Client.
      *
      * @param client The client to set this record as belonging to.
      */

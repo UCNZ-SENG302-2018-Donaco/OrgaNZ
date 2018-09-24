@@ -140,7 +140,6 @@ public class ReceiverOverviewController extends ViewBaseController {
 
     }
 
-
     private void updateWaitTime() {
         if (viewedTransplantRequest == null) {
             requestedTime.setText("Error: no request");

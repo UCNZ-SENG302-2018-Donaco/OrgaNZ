@@ -1,6 +1,7 @@
 package com.humanharvest.organz.utilities;
 
 public class ReflectionException extends RuntimeException {
+
     public ReflectionException() {
     }
 

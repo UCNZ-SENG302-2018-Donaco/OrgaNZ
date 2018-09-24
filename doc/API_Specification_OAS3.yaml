@@ -1,6 +1,6 @@
-openapi: "3.0.3"
+openapi: "3.0.1"
 info:
-  version: 1.0.8
+  version: 1.0.9
   title: "Organz API"
   description: |
     An API used to access the Human Harvest Inc server.
@@ -1116,6 +1116,88 @@ paths:
         500:
           $ref: '#/components/responses/500InternalServerError'
 
+  '/clients/{uid}/transplants':
+    parameters:
+      - in: path
+        name: uid
+        description: Client User ID
+        required: true
+        schema:
+          type: integer
+          minimum: 0
+    post:
+      tags:
+        - Client Procedures
+      security:
+        - ClinicianAccess: []
+        - AdministratorAccess: []
+      summary: Schedule a transplant
+      description: The transplant record date must not be in the past. If it is, a 400 error will be returned.
+      parameters:
+        - $ref: '#/components/parameters/organId'
+        - $ref: '#/components/parameters/requestId'
+        - $ref: '#/components/parameters/hospitalId'
+        - $ref: '#/components/parameters/dateString'
+      responses:
+        200:
+          description: Updated
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        404:
+          $ref: '#/components/responses/404NotFound'
+        412:
+          $ref: '#/components/responses/412PreconditionFailed'
+        428:
+          $ref: '#/components/responses/428PreconditionRequired'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
+
+  '/clients/{uid}/transplants/{id}':
+    parameters:
+    - in: path
+      name: uid
+      description: Client User ID
+      required: true
+      schema:
+        type: integer
+        minimum: 0
+    - in: path
+      name: id
+      description: Transplant record ID
+      required: true
+      schema:
+        type: integer
+    post:
+      tags:
+        - Client Procedures
+      security:
+        - ClinicianAccess: []
+        - AdministratorAccess: []
+      summary: Resolve a transplant record
+      description: The transplant record date must not be in the future, if it is a 400 error will be thrown.
+
+      responses:
+        200:
+          description: Updated
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        404:
+          $ref: '#/components/responses/404NotFound'
+        412:
+          $ref: '#/components/responses/412PreconditionFailed'
+        428:
+          $ref: '#/components/responses/428PreconditionRequired'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
+
   '/clients/transplantRequests':
     get:
       tags:
@@ -1806,7 +1888,7 @@ paths:
     post:
       tags:
         - Configuration
-      summary: Updates the allowed list of countries
+      summary: Updates the allowed list of hospitals
       security:
         - AdministratorAccess: []
       requestBody:
@@ -1814,6 +1896,37 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/hospitalList'
+      responses:
+        200:
+          description: OK
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
+
+  '/config/hospitals/{id}/transplantPrograms':
+    parameters:
+      - in: path
+        name: id
+        description: Hospital ID
+        required: true
+        schema:
+          type: integer
+    post:
+      tags:
+        - Configuration
+      summary: Updates the set of organs that the hospital can perform transplants for
+      security:
+        - AdministratorAccess: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/organTypeList'
       responses:
         200:
           description: OK
@@ -2066,6 +2179,46 @@ components:
       description: "If the sort order should be reversed"
       schema:
         type: boolean
+
+    donatedOrgan:
+      name: donatedOrgan
+      in: header
+      description: The DonatedOrgan unique ID to get results for
+      required: true
+      schema:
+        type: number
+
+    organId:
+      name: organId
+      in: query
+      description: "The id of the DonatedOrgan to use in the transplant"
+      required: true
+      schema:
+        type: integer
+
+    requestId:
+      name: donatedOrganId
+      in: query
+      description: "The id of the TransplantRequest to fulfill with this transplant"
+      required: true
+      schema:
+        type: integer
+
+    hospitalId:
+      name: hospitalId
+      in: query
+      description: "The id of the Hospital the transplant will take place in"
+      required: true
+      schema:
+        type: integer
+
+    dateString:
+      name: dateString
+      in: query
+      description: "An ISO formatted string (YYYY-mm-dd) representing a date"
+      required: true
+      schema:
+        type: string
 
   examples:
     clientDetailsExample:
@@ -2543,10 +2696,10 @@ components:
           type: number
         requestedOrgan:
           $ref: '#/components/schemas/organEnum'
-        requestDate:
-          $ref: '#/components/schemas/date'
-        resolvedDate:
-          $ref: '#/components/schemas/date'
+        requestDateTime:
+          $ref: '#/components/schemas/dateTime'
+        resolvedDateTime:
+          $ref: '#/components/schemas/dateTime'
         status:
           $ref: '#/components/schemas/transplantRequestStatusEnum'
         resolvedReason:
@@ -2557,10 +2710,10 @@ components:
       properties:
         requestedOrgan:
           $ref: '#/components/schemas/organEnum'
-        requestDate:
-          $ref: '#/components/schemas/date'
-        resolvedDate:
-          $ref: '#/components/schemas/date'
+        requestDateTime:
+          $ref: '#/components/schemas/dateTime'
+        resolvedDateTime:
+          $ref: '#/components/schemas/dateTime'
         status:
           $ref: '#/components/schemas/transplantRequestStatusEnum'
         resolvedReason:
@@ -2604,6 +2757,11 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/organEnum'
+
+    organTypeList:
+      type: array
+      items:
+        $ref: '#/components/schemas/organEnum'
 
     textResponse:
       type: object

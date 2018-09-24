@@ -22,7 +22,6 @@ public abstract class ClientBornAndDiedDatesValidator {
         throw new IllegalStateException("Utility class");
     }
 
-
     /**
      * Returns true if the date of birth is not null and is not in the future
      *
