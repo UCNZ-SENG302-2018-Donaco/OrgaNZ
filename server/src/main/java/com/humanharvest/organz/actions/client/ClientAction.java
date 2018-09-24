@@ -6,8 +6,8 @@ import com.humanharvest.organz.state.ClientManager;
 
 public abstract class ClientAction extends Action {
 
-    final Client client;
-    final ClientManager manager;
+    protected final Client client;
+    protected final ClientManager manager;
 
     protected ClientAction(Client client, ClientManager manager) {
         this.client = client;

@@ -88,11 +88,17 @@ public class ModifyObjectByMethodAction extends Action {
         throw new NoSuchMethodException("Object does not contain that method");
     }
 
+    /**
+     * Must be public to allow access by children
+     */
     @Override
     public void execute() {
         runChange(newValue);
     }
 
+    /**
+     * Must be public to allow access by children
+     */
     @Override
     public void unExecute() {
         runChange(oldValue);

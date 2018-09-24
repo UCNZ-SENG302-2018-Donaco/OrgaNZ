@@ -2,6 +2,7 @@ package com.humanharvest.organz;
 
 import java.time.Duration;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
@@ -20,6 +21,7 @@ import javax.persistence.Table;
 
 import com.humanharvest.organz.utilities.algorithms.DistanceCalculation;
 import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.views.client.Views;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
@@ -99,7 +101,7 @@ public class Hospital {
      * @return a set of hospitals
      */
     public static Set<Hospital> getDefaultHospitals() {
-        return new HashSet<>(Arrays.asList(
+        Set<Hospital> hospitals = new HashSet<>(Arrays.asList(
                 new Hospital("Auckland City Hospital", -36.8604597, 174.7691264,
                         "2 Park Road, Grafton, Auckland 1023"),
                 new Hospital("Greenlane Clinical Centre", -36.8944687, 174.7805867,
@@ -175,6 +177,14 @@ public class Hospital {
                 new Hospital("Whanganui Hospital", -39.9451776, 175.0369961,
                         "100 Heads Road, Gonville, Wanganui 4501")
         ));
+
+        for (Hospital hospital : hospitals) {
+            for (Organ organ : Organ.values()) {
+                hospital.addTransplantProgramFor(organ);
+            }
+        }
+
+        return hospitals;
     }
 
     @Override
@@ -237,6 +247,10 @@ public class Hospital {
         return transplantPrograms.remove(organ);
     }
 
+    public boolean hasTransplantProgram(Organ organ) {
+        return transplantPrograms.contains(organ);
+    }
+
     /**
      * Calculates and returns the Haversine distance between the current and the given hospitals in km
      *
@@ -246,6 +260,17 @@ public class Hospital {
     public double calculateDistanceTo(Hospital hospital) {
         return DistanceCalculation.distanceBetweenInKm(latitude, longitude,
                 hospital.getLatitude(), hospital.getLongitude());
+    }
+
+    /**
+     * Calculates and returns the Haversine distance between this hospital and the given region
+     *
+     * @param region region to find the distance to
+     * @return distance in km between this hospital and the given region
+     */
+    public double calculateDistanceTo(Region region) {
+        return DistanceCalculation.distanceBetweenInKm(latitude, longitude,
+                region.getLatitude(), region.getLongitude());
     }
 
     /**
@@ -271,15 +296,41 @@ public class Hospital {
         return calculateTimeTo(otherHospital, DEFAULT_HELICOPTER_SPEED);
     }
 
+    /**
+     * Return the nearest hospital that can transplant the given organ
+     *
+     * @param organ The organ required for transplant
+     * @param hospitals The other hospitals to check
+     * @return The nearest hospital. Will be null if there are no valid hospitals
+     */
+    public Hospital getNearestWithTransplantProgram(Organ organ, Collection<Hospital> hospitals) {
+        if (hasTransplantProgram(organ)) {
+            return this;
+        } else {
+            Hospital nearest = null;
+            double nearestDist = Double.MAX_VALUE;
+            for (Hospital hospital : hospitals) {
+                if (hospital.hasTransplantProgram(organ)) {
+                    double distance = hospital.calculateDistanceTo(this);
+                    if (distance < nearestDist) {
+                        nearest = hospital;
+                        nearestDist = distance;
+                    }
+                }
+            }
+            return nearest;
+        }
+    }
+
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object obj) {
+        if (this == obj) {
             return true;
         }
-        if (!(o instanceof Hospital)) {
+        if (!(obj instanceof Hospital)) {
             return false;
         }
-        Hospital hospital = (Hospital) o;
+        Hospital hospital = (Hospital) obj;
         return Objects.equals(id, hospital.id) &&
                 Objects.equals(name, hospital.name);
     }

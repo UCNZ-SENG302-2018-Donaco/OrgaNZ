@@ -44,15 +44,15 @@ public class FocusArea implements InvalidationListener {
     private final Collection<Consumer<EventTarget>> skinHandlers = new ArrayList<>();
     private final Collection<Consumer<EventTarget>> popupHandlers = new ArrayList<>();
     private final Pane pane;
-
-    // A chain of the last X seconds of touch events. Used to smooth out fluctuations in touch events.
-    private final LinkedList<TimedPoint> eventPoints = new LinkedList<>();
-
     private boolean outOfDate = true;
     private boolean translatable = true;
     private boolean scalable = true;
     private boolean rotatable = true;
+
     private Affine transform;
+
+    // A chain of the last X seconds of touch events. Used to smooth out fluctuations in touch events.
+    private final LinkedList<TimedPoint> eventPoints = new LinkedList<>();
     private Point2D velocity = Point2D.ZERO;
     private boolean collidable;
 
@@ -212,50 +212,12 @@ public class FocusArea implements InvalidationListener {
         return velocity;
     }
 
-    public void setVelocity(Point2D velocity) {
-        this.velocity = velocity;
-    }
-
     public void addVelocity(Point2D velocityDelta) {
         velocity = velocity.add(velocityDelta);
     }
 
-    public boolean isTranslatable() {
-        return translatable;
-    }
-
-    public void setTranslatable(boolean translatable) {
-        this.translatable = translatable;
-    }
-
-    /**
-     * Returns if this focus area can be collided with.
-     */
-    public boolean isCollidable() {
-        return collidable;
-    }
-
-    /**
-     * Sets if this focus area can be collided with.
-     */
-    public void setCollidable(boolean collidable) {
-        this.collidable = collidable;
-    }
-
-    public boolean isScalable() {
-        return scalable;
-    }
-
-    public void setScalable(boolean scalable) {
-        this.scalable = scalable;
-    }
-
-    public boolean isRotatable() {
-        return rotatable;
-    }
-
-    public void setRotatable(boolean rotatable) {
-        this.rotatable = rotatable;
+    public void setVelocity(Point2D velocity) {
+        this.velocity = velocity;
     }
 
     private static final class TextFieldSkinConsumer implements Consumer<EventTarget> {
@@ -385,7 +347,6 @@ public class FocusArea implements InvalidationListener {
     }
 
     private static class TimedPoint {
-
         private final long time;
         private final Point2D position;
 
@@ -401,5 +362,43 @@ public class FocusArea implements InvalidationListener {
         public Point2D getPosition() {
             return position;
         }
+    }
+
+    public boolean isTranslatable() {
+        return translatable;
+    }
+
+    public void setTranslatable(boolean translatable) {
+        this.translatable = translatable;
+    }
+
+    /**
+     * Returns if this focus area can be collided with.
+     */
+    public boolean isCollidable() {
+        return collidable;
+    }
+
+    /**
+     * Sets if this focus area can be collided with.
+     */
+    public void setCollidable(boolean collidable) {
+        this.collidable = collidable;
+    }
+
+    public boolean isScalable() {
+        return scalable;
+    }
+
+    public void setScalable(boolean scalable) {
+        this.scalable = scalable;
+    }
+
+    public boolean isRotatable() {
+        return rotatable;
+    }
+
+    public void setRotatable(boolean rotatable) {
+        this.rotatable = rotatable;
     }
 }
