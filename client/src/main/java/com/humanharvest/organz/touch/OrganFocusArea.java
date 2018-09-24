@@ -4,14 +4,20 @@ import javafx.geometry.Point2D;
 import javafx.scene.input.TouchEvent;
 import javafx.scene.layout.Pane;
 
+import com.humanharvest.organz.controller.spiderweb.OrganWithRecipients;
+
 public class OrganFocusArea extends FocusArea {
 
     private static final double MAX_CLICK_DISTANCE = 25;
+
+    private OrganWithRecipients organWithRecipients;
+
     private Point2D originalTouchPoint;
     private boolean countsAsClick;
 
-    public OrganFocusArea(Pane pane) {
+    public OrganFocusArea(Pane pane, OrganWithRecipients organWithRecipients) {
         super(pane);
+        this.organWithRecipients = organWithRecipients;
     }
 
     @Override
