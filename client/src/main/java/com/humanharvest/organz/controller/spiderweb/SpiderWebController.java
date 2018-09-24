@@ -18,7 +18,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.effect.ColorAdjust;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TouchEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.LinearGradient;
@@ -30,6 +30,7 @@ import javafx.scene.transform.Scale;
 import javafx.scene.transform.Transform;
 import javafx.scene.transform.Translate;
 import javafx.stage.Screen;
+import javafx.util.Duration;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
@@ -41,11 +42,13 @@ import com.humanharvest.organz.controller.components.PotentialRecipientCell;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.touch.FocusArea;
 import com.humanharvest.organz.touch.MultitouchHandler;
+import com.humanharvest.organz.touch.OrganFocusArea;
 import com.humanharvest.organz.touch.PhysicsHandler;
 import com.humanharvest.organz.touch.PointUtils;
 import com.humanharvest.organz.utilities.DurationFormatter.DurationFormat;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
+import com.humanharvest.organz.utilities.view.PageNavigatorTouch;
 
 /**
  * The Spider web controller which handles everything to do with displaying panes in the spider web stage.
@@ -76,7 +79,8 @@ public class SpiderWebController extends SubController {
         canvas.getChildren().clear();
 
         // Close existing windows, but save them for later
-        List<MainController> toClose = new ArrayList<>(State.getMainControllers());
+        // Copy to a new list to prevent concurrent modification
+        Iterable<MainController> toClose = new ArrayList<>(State.getMainControllers());
         for (MainController mainController : toClose) {
             mainController.closeWindow();
             previouslyOpenWindows.add(mainController);
@@ -215,12 +219,14 @@ public class SpiderWebController extends SubController {
     private void addOrganNode(DonatedOrgan organ) {
         List<Client> potentialMatches = State.getClientManager().getOrganMatches(organ);
 
-        MainController newMain = PageNavigator.openNewWindow(70, 70);
+        MainController newMain = ((PageNavigatorTouch)PageNavigator.getInstance())
+                .openNewWindow(70, 70, OrganFocusArea::new);
+
         OrganImageController organImageController = (OrganImageController) PageNavigator
                 .loadPage(Page.ORGAN_IMAGE, newMain);
         organImageController.loadImage(organ.getOrganType());
         organImageController.setMatchCount(potentialMatches.size());
-        if (potentialMatches.size() == 0 && !organ.hasExpired()) {
+        if (potentialMatches.isEmpty() && !organ.hasExpired()) {
             organImageController.matchCountIsVisible(true);
         }
 
@@ -240,11 +246,9 @@ public class SpiderWebController extends SubController {
         Pane matchesPane = new Pane(matchesList);
         MultitouchHandler.addPane(matchesPane);
         FocusArea matchesFocusArea = (FocusArea) matchesPane.getUserData();
-        matchesPane.addEventHandler(MouseEvent.MOUSE_PRESSED, (event -> matchesFocusArea.setTranslatable(false)));
-        matchesPane.addEventHandler(MouseEvent.MOUSE_RELEASED, (event -> matchesFocusArea.setTranslatable(true)));
+        matchesPane.addEventHandler(TouchEvent.TOUCH_PRESSED, event -> matchesFocusArea.setTranslatable(false));
+        matchesPane.addEventHandler(TouchEvent.TOUCH_RELEASED, event -> matchesFocusArea.setTranslatable(true));
 
-
-        int index = 0;
         /*
         Temporary. Will be changed when swipe events
         are updated in MultiTouchHandler
@@ -297,13 +301,17 @@ public class SpiderWebController extends SubController {
         });
 
         organPane.setOnMouseClicked(click -> {
+            if (click.isSynthesized()) {
+                return;
+            }
+
             if (click.getClickCount() == 1 && !organ.hasExpired()) {
                 matchesList.setVisible(!matchesList.isVisible());
                 organImageController.matchCountIsVisible(!matchesList.isVisible() && !organ.hasExpired());
 
             } else if (click.getClickCount() == 2 && !organ.hasExpiredNaturally()) {
                 if (organ.getOverrideReason() == null) {
-                    final String reason = "Manually Overridden by Doctor using WebView";
+                    String reason = "Manually Overridden by Doctor using WebView";
                     State.getClientResolver().manuallyOverrideOrgan(organ, reason);
                     organ.manuallyOverride(reason);
 
@@ -346,7 +354,7 @@ public class SpiderWebController extends SubController {
 
         // Attach timer to update connector each second (for time until expiration)
         Timeline clock = new Timeline(new KeyFrame(
-                javafx.util.Duration.seconds(1),
+                Duration.seconds(1),
                 event -> {
                     updateDonorConnector(organ, deceasedToOrganConnector, organPane);
                     updateRecipientConnector(organ, organToRecipientConnector);
@@ -358,7 +366,7 @@ public class SpiderWebController extends SubController {
 
     private ListView<Client> createMatchesList(ObservableList<Client> potentialMatches) {
         // Setup the ListView
-        final ListView<Client> matchesList = new ListView<>();
+        ListView<Client> matchesList = new ListView<>();
         matchesList.getStylesheets().add(getClass().getResource("/css/list-view-cell-gap.css").toExternalForm());
 
         matchesList.setItems(potentialMatches);
@@ -390,8 +398,8 @@ public class SpiderWebController extends SubController {
     }
 
     private void layoutOrganNodes(double radius) {
-        final int numNodes = organNodes.size();
-        final double angleSize = (Math.PI * 2) / numNodes;
+        int numNodes = organNodes.size();
+        double angleSize = (Math.PI * 2) / numNodes;
 
         Bounds bounds = deceasedDonorPane.getBoundsInParent();
         double centreX = bounds.getMinX() + bounds.getWidth() / 2;
@@ -410,6 +418,7 @@ public class SpiderWebController extends SubController {
         MultitouchHandler.setPhysicsHandler(new PhysicsHandler(MultitouchHandler.getRootPane()));
 
         // Close all windows for the spider web and clear
+        // Copy to a new list to prevent concurrent modification
         List<MainController> toClose = new ArrayList<>(State.getMainControllers());
         toClose.forEach(MainController::closeWindow);
         canvas.getChildren().clear();
