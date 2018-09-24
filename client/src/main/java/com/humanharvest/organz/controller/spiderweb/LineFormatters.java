@@ -114,10 +114,7 @@ public class LineFormatters {
             transform.prepend(new Scale(0.5, 0.5));
             transform.prepend(new Translate(-50, 90));
             transform.prepend(newTransform);
-
-            if (!focusArea.getTransform().equals(transform)) {
-                focusArea.setTransform(transform);
-            }
+            focusArea.setTransform(transform);
         }
     }
 
@@ -129,10 +126,7 @@ public class LineFormatters {
             Affine transform = new Affine();
             transform.prepend(new Translate(50, -90));
             transform.prepend(newTransform);
-
-            if (!focusArea.getTransform().equals(transform)) {
-                focusArea.setTransform(transform);
-            }
+            focusArea.setTransform(transform);
         }
     }
 
