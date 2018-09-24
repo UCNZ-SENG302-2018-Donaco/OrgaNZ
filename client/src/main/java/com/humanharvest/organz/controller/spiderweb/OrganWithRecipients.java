@@ -131,7 +131,7 @@ public class OrganWithRecipients {
 
         organPane.setOnMouseClicked(handleOrganPaneClick());
 
-        matchesListView.widthProperty().addListener(handlePotentialMatchesTransformed());
+        matchesListView.localToParentTransformProperty().addListener(handlePotentialMatchesTransformed());
     }
 
     public EventHandler<MouseEvent> handleOrganPaneClick() {
@@ -182,21 +182,25 @@ public class OrganWithRecipients {
             updateDonorConnector(organ, deceasedToOrganConnector, organPane);
             setDonorConnectorEnd(bounds);
             updateConnectorText(durationText, organ, deceasedToOrganConnector);
-            updateMatchesListPosition(matchesPane, newValue, bounds);
+            updateMatchesListPosition(matchesPane, newValue);
 
             setRecipientConnectorStart(bounds);
-
             setRecipientConnectorEnd(matchesPane.getBoundsInParent());
             updateRecipientConnector(organ, organToRecipientConnector);
 
             matchesPane.toFront();
+            organPane.toFront();
         };
     }
 
-    public ChangeListener<Number> handlePotentialMatchesTransformed() {
+    public ChangeListener<Transform> handlePotentialMatchesTransformed() {
         return (observable, oldValue, newValue) -> {
             setRecipientConnectorEnd(matchesPane.getBoundsInParent());
             updateRecipientConnector(organ, organToRecipientConnector);
+            updateOrganPanePosition(organPane, newValue);
+
+            matchesPane.toFront();
+            organPane.toFront();
         };
     }
 
