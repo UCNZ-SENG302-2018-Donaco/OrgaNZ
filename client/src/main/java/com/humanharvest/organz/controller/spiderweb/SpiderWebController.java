@@ -10,7 +10,6 @@ import javafx.geometry.Point2D;
 import javafx.scene.CacheHint;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.effect.ColorAdjust;
 import javafx.scene.layout.Pane;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Rotate;
@@ -27,7 +26,6 @@ import com.humanharvest.organz.touch.FocusArea;
 import com.humanharvest.organz.touch.MultitouchHandler;
 import com.humanharvest.organz.touch.PhysicsHandler;
 import com.humanharvest.organz.touch.PointUtils;
-import com.humanharvest.organz.utilities.DurationFormatter.DurationFormat;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 
@@ -37,10 +35,6 @@ import com.humanharvest.organz.utilities.view.PageNavigator;
 public class SpiderWebController extends SubController {
 
     private static final Logger LOGGER = Logger.getLogger(SpiderWebController.class.getName());
-    private static final DurationFormat durationFormat = DurationFormat.X_HRS_Y_MINS_SECS;
-
-    private static final ColorAdjust OVERRIDDEN_COLOR = new ColorAdjust(0, 0, -0.6, -0.6);
-    private static final ColorAdjust EXPIRED_COLOR = new ColorAdjust(0, 0, -0.4, -0.4);
 
     private final Client client;
 
@@ -97,14 +91,6 @@ public class SpiderWebController extends SubController {
         transform.append(new Rotate(angle, centre.getX(), centre.getY()));
         focusArea.setTransform(transform);
         node.setCacheHint(CacheHint.QUALITY);
-    }
-
-    private static double getAngle(double x1, double y1, double x2, double y2) {
-        double angle = Math.toDegrees(Math.atan2(y1 - y2, x1 - x2));
-        if (angle < 0) {
-            angle += 360;
-        }
-        return angle;
     }
 
     /**
