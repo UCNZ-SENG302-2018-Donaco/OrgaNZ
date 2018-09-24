@@ -159,15 +159,6 @@ public class DonatedOrgan {
     }
 
     /**
-     * Returns whether this organ is able to be donated (i.e. has not expired or been manually overriden.
-     *
-     * @return True if this donated organ is available, false otherwise.
-     */
-    public boolean isAvailable() {
-        return !hasExpired() && getOverrideReason() == null;
-    }
-
-    /**
      * @return the duration; except if the organ has expired or is overridden, then it returns Duration.ZERO
      */
     public Duration getDurationUntilExpiry() {
@@ -216,6 +207,14 @@ public class DonatedOrgan {
         this.id = id;
     }
 
+    public boolean isAvailable() {
+        return available;
+    }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
+    }
+
     public String getOverrideReason() {
         return overrideReason;
     }
@@ -262,11 +261,6 @@ public class DonatedOrgan {
                 return OrganState.CURRENT;
             }
         }
-    }
-
-    public void setAvailable(boolean available) {
-        this.available = available;
-
     }
 
     @Override
