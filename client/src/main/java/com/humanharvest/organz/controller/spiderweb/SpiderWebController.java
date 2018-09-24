@@ -233,6 +233,9 @@ public class SpiderWebController extends SubController {
         // Double click to override and organ or to unoverride
         // Create matches list
         ListView<Client> matchesList = createMatchesList(FXCollections.observableArrayList(potentialMatches));
+        Pane matchesPane = new Pane(matchesList);
+        MultitouchHandler.addPane(matchesPane);
+
         int index = 0;
         /*
         Temporary. Will be changed when swipe events
@@ -272,7 +275,7 @@ public class SpiderWebController extends SubController {
             deceasedToOrganConnector.setEndY(bounds.getMinY() + bounds.getHeight() / 2);
             updateDonorConnector(organ, deceasedToOrganConnector, organPane);
             updateConnectorText(durationText, organ, deceasedToOrganConnector);
-            updateMatchesListPosition(matchesList, newValue, bounds);
+            updateMatchesListPosition(matchesPane, newValue, bounds);
 
             organToRecipientConnector.setStartX(bounds.getMinX() + bounds.getWidth() / 2);
             organToRecipientConnector.setStartY(bounds.getMinY() + bounds.getHeight() / 2);
@@ -323,7 +326,6 @@ public class SpiderWebController extends SubController {
         canvas.getChildren().add(0, deceasedToOrganConnector);
         canvas.getChildren().add(0, organToRecipientConnector);
         canvas.getChildren().add(0, durationText);
-        canvas.getChildren().add(matchesList);
 //        MaskedView maskedMatchesList = new MaskedView(matchesList);
 //        maskedMatchesList.setFadingSize(0);
 //        canvas.getChildren().add(maskedMatchesList);
@@ -411,14 +413,14 @@ public class SpiderWebController extends SubController {
         }
     }
 
-    private void updateMatchesListPosition(ListView<Client> matchesList, Transform newTransform, Bounds bounds) {
-        matchesList.getTransforms().removeIf(transform -> transform instanceof Affine);
+    private void updateMatchesListPosition(Pane matchesPane, Transform newTransform, Bounds bounds) {
+        FocusArea focusArea = (FocusArea) matchesPane.getUserData();
 
         Affine transform = new Affine();
         transform.prepend(new Scale(0.5, 0.5));
         transform.prepend(new Translate(-50, 90));
         transform.prepend(newTransform);
 
-        matchesList.getTransforms().add(transform);
+        focusArea.setTransform(transform);
     }
 }
