@@ -501,7 +501,7 @@ public class ViewProceduresController extends SubController {
     @FXML
     private void viewDetails() {
         ProcedureRecord record = getSelectedRecord();
-        //todo disable button (and delete button) if nothing is selected
+        //todo disable this button (and delete button) if nothing is selected
         System.out.println(record);
         if (record != null) {
             String title = "";
@@ -525,7 +525,7 @@ public class ViewProceduresController extends SubController {
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d MMMM yyyy");
             String dayDifference = DurationFormatter.getFormattedDuration(
-                    Duration.between(LocalDateTime.now(), LocalDateTime.of(record.getDate(), LocalTime.MIDNIGHT)),
+                    Duration.between(LocalDateTime.now(), LocalDateTime.of(record.getDate(), LocalTime.now())),
                     Format.DAYS);
             String date;
             if (record.hasHappened()) {
