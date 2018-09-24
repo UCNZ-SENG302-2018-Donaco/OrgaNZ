@@ -45,15 +45,15 @@
 }
 
 .table-view {
-    -fx-background-color: rgba(32, 60, 65, 0.71);
+    -fx-background-color: rgb(46, 124, 129);
     -fx-font-family: Lato;
 }
 
 
 
 .table-row-cell{
-    -fx-border-color: rgba(74, 177, 182, 0.71);
-    -fx-background-color: rgba(21, 50, 53, 0.71);
+    -fx-border-color: rgb(76, 191, 196);
+    -fx-background-color: rgb(44, 127, 130);
 }
 
 .table-row-cell .text {
