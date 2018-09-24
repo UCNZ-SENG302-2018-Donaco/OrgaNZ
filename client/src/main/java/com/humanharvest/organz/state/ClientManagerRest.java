@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.DashboardStatistics;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.TransplantRequest;
@@ -197,6 +198,11 @@ public class ClientManagerRest implements ClientManager {
     @Override
     public List<HistoryItem> getAllHistoryItems() {
         return Collections.emptyList();
+    }
+
+    @Override
+    public DashboardStatistics getStatistics() {
+        return null;
     }
 
     /**

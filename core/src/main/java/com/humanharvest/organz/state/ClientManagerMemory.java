@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.DashboardStatistics;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.IllnessRecord;
@@ -353,6 +354,28 @@ public class ClientManagerMemory implements ClientManager {
         return clients.stream()
                 .flatMap(client -> client.getChangesHistory().stream())
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public DashboardStatistics getStatistics() {
+        DashboardStatistics statistics = new DashboardStatistics();
+        statistics.setClientsTotal(clients.size());
+
+        int donorReceiverCount = (int) clients.stream().filter(client -> client.isDonor() && client.isReceiver())
+                .count();
+        int donorCount = (int) clients.stream().filter(client -> client.isDonor() && !client.isReceiver())
+                .count();
+        int receiverCount = (int) clients.stream().filter(client -> !client.isDonor() && client.isReceiver())
+                .count();
+
+        statistics.setDonorsTotal(donorCount);
+        statistics.setReceiversTotal(receiverCount);
+        statistics.setDonorReceiverTotal(donorReceiverCount);
+
+        statistics.setOrgansTotal(getAllOrgansToDonate().size());
+        statistics.setRequestsTotal(getAllTransplantRequests().size());
+
+        return statistics;
     }
 
     /**

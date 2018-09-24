@@ -21,6 +21,7 @@ import javax.persistence.OptimisticLockException;
 import javax.persistence.RollbackException;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.DashboardStatistics;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.TransplantRequest;
@@ -515,6 +516,11 @@ public class ClientManagerDBPure implements ClientManager {
         }
 
         return requests == null ? new ArrayList<>() : requests;
+    }
+
+    @Override
+    public DashboardStatistics getStatistics() {
+        return null;
     }
 
     /**

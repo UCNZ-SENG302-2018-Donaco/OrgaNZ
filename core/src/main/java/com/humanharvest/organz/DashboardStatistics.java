@@ -10,7 +10,7 @@ public class DashboardStatistics {
     private int receiversTotal;
     private int donorReceiverTotal;
 
-    private int matchesTotal;
+    private int requestsTotal;
     private int organsTotal;
 
     public int getClientsTotal() {
@@ -37,12 +37,12 @@ public class DashboardStatistics {
         this.receiversTotal = receiversTotal;
     }
 
-    public int getMatchesTotal() {
-        return matchesTotal;
+    public int getRequestsTotal() {
+        return requestsTotal;
     }
 
-    public void setMatchesTotal(int matchesTotal) {
-        this.matchesTotal = matchesTotal;
+    public void setRequestsTotal(int requestsTotal) {
+        this.requestsTotal = requestsTotal;
     }
 
     public int getOrgansTotal() {
