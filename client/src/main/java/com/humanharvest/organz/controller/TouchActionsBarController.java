@@ -52,15 +52,19 @@ public class TouchActionsBarController extends SubController {
 
         hamburger.addEventHandler(MouseEvent.MOUSE_CLICKED, (e) -> {
 
-            if (controller.getDrawer().isShown()) {
+            if (controller.getDrawer().isOpened()) {
 
                 controller.loadSidebar(null);
 
                 controller.getDrawer().close();
                 controller.getDrawer().setDisable(true);
+                controller.getDrawer().setVisible(false);
+//                controller.getDrawer().isOpe
             } else {
                 controller.getDrawer().open();
                 controller.getDrawer().setDisable(false);
+
+//                controller.getDrawer().setVisible(true);
             }
         });
         refresh();

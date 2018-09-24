@@ -60,3 +60,8 @@
     -fx-fill: #e8e6ff;
 }
 
+.jfx-drawer .button {
+  -fx-background-color: rgba(104, 250, 255, 0.71);
+  -fx-background-radius: 5;
+}
+

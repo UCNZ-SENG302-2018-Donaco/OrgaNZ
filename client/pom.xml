@@ -59,11 +59,17 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- https://mvnrepository.com/artifact/com.jfoenix/jfoenix -->
+    <!--&lt;!&ndash; https://mvnrepository.com/artifact/com.jfoenix/jfoenix &ndash;&gt;-->
+    <!--<dependency>-->
+      <!--<groupId>com.jfoenix</groupId>-->
+      <!--<artifactId>jfoenix</artifactId>-->
+      <!--<version>1.7.0</version>-->
+    <!--</dependency>-->
+
     <dependency>
       <groupId>com.jfoenix</groupId>
       <artifactId>jfoenix</artifactId>
-      <version>1.7.0</version>
+      <version>8.0.4</version>
     </dependency>
 
 
