@@ -852,6 +852,7 @@ public class Client implements ConcurrencyControlledEntity {
      * @return the transplant request that is for the passed in organ
      */
     public TransplantRequest getTransplantRequest(Organ organ) {
+        //TODO: This shouldn't really happen because there can be multiple transplants with same organ
         for (TransplantRequest transplantRequest : transplantRequests) {
             if (transplantRequest.getRequestedOrgan() == organ) {
                 return transplantRequest;
@@ -860,6 +861,17 @@ public class Client implements ConcurrencyControlledEntity {
 
         // Couldn't find one
         return null;
+    }
+
+    /**
+     * Returns the transplant request by id
+     * If there is no such transplant request, returns null.
+     *
+     * @param id the transplant id
+     * @return the transplant request with the given id or null if none exists
+     */
+    public TransplantRequest getTransplantRequest(long id) {
+        return transplantRequests.stream().filter(request -> request.getId() == id).findFirst().orElse(null);
     }
 
     public void setTransplantRequests(List<TransplantRequest> requests) {

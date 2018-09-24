@@ -66,19 +66,17 @@ public class DeleteProcedureRecordAction extends ClientAction {
 
         if (record instanceof TransplantRecord) {
             TransplantRecord transplant = (TransplantRecord) record;
+            TransplantRequest request = client.getTransplantRequest(transplant.getRequest().getId());
             // Set the request's status back to what it was before
             if (transplant.isCompleted()) {
-                System.out.println("Change status back to completed");
-                transplant.getRequest().setStatus(TransplantRequestStatus.COMPLETED);
+                request.setStatus(TransplantRequestStatus.COMPLETED);
                 transplant.getOrgan().setReceiver(transplant.getRequest().getClient());
             } else {
-                System.out.println("Change status back to scheduled");
-                transplant.getRequest().setStatus(TransplantRequestStatus.SCHEDULED);
+                request.setStatus(TransplantRequestStatus.SCHEDULED);
             }
             // Make the organ set unavailable again
             transplant.getOrgan().setAvailable(false);
             manager.applyChangesTo(transplant.getOrgan());
-            manager.applyChangesTo(transplant.getRequest());
 
             // Re-add the previously deleted duplicate requests
             requestsToDelete.forEach(client::addTransplantRequest);
