@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.DashboardStatistics;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.TransplantRequest;
@@ -96,4 +97,6 @@ public interface ClientManager {
     List<Client> getOrganMatches(DonatedOrgan donatedOrgan);
 
     List<HistoryItem> getAllHistoryItems();
+
+    DashboardStatistics getStatistics();
 }
