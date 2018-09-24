@@ -33,7 +33,6 @@ import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.state.State.UiType;
-import com.humanharvest.organz.touch.MultitouchHandler;
 import com.humanharvest.organz.utilities.CacheManager;
 import com.humanharvest.organz.utilities.exceptions.BadRequestException;
 import com.humanharvest.organz.utilities.view.Page;

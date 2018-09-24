@@ -2,8 +2,6 @@ package com.humanharvest.organz.state;
 
 import java.io.IOException;
 
-import com.humanharvest.organz.utilities.enums.Organ;
-
 public interface ImageManager {
 
     /**
@@ -21,7 +19,6 @@ public interface ImageManager {
      * @throws IOException if there is an error loading default image
      */
     byte[] getDefaultImage() throws IOException;
-
 
     /**
      * Posts an image to the clients profile to replace their existing one (which may be the default one)

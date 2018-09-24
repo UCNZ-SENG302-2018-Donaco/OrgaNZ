@@ -117,15 +117,6 @@ public class StaffLoginController extends SubController {
         JSONConverter.updateHistory(save, "action_history.json");
     }
 
-    /**
-     * Checks if the staff id is valid and checks that the username and password is correct
-     * The user cannot be logged in until valid parameters are supplied.
-     */
-    @FXML
-    private void signIn() {
-        handleSignIn(staffId.getText(), password.getText(), mainController);
-    }
-
     public static void handleSignIn(String username, String password, MainController mainController) {
         if (isValidStaffIdInput(username)) {
             if (IS_NUMBER.matcher(username).matches()) {
@@ -136,5 +127,14 @@ public class StaffLoginController extends SubController {
         } else {
             invalidStaffIdAlert(mainController);
         }
+    }
+
+    /**
+     * Checks if the staff id is valid and checks that the username and password is correct
+     * The user cannot be logged in until valid parameters are supplied.
+     */
+    @FXML
+    private void signIn() {
+        handleSignIn(staffId.getText(), password.getText(), mainController);
     }
 }

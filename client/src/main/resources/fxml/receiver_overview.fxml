@@ -10,12 +10,11 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-
 <VBox fx:id="receiverVBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.client.ReceiverOverviewController">
    <children>
       <Pane prefHeight="250.0" prefWidth="250.0">
          <children>
-            <ImageView fx:id="imageView" fitHeight="200.0" fitWidth="200.0" pickOnBounds="true"/>
+           <ImageView fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" fx:id="imageView"/>
          </children></Pane>
       <Pane prefHeight="250.0" prefWidth="250.0">
          <children>
@@ -41,22 +40,22 @@
                         <RowConstraints maxHeight="47.0" minHeight="10.0" prefHeight="47.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Label fx:id="col1Label" text="Age:">
+                       <Label text="Age:" fx:id="col1Label">
                            <GridPane.margin>
                               <Insets left="10.0" />
                            </GridPane.margin>
                         </Label>
-                        <Label fx:id="col2Label" prefHeight="16.0" prefWidth="83.0" text="Wait time:" GridPane.rowIndex="1">
+                       <Label GridPane.rowIndex="1" prefHeight="16.0" prefWidth="83.0" text="Wait time:" fx:id="col2Label">
                            <GridPane.margin>
                               <Insets left="10.0" />
                            </GridPane.margin>
                         </Label>
-                        <Label fx:id="col4Label" prefHeight="47.0" prefWidth="97.0" text="Hospital: " GridPane.rowIndex="3">
+                       <Label GridPane.rowIndex="3" prefHeight="47.0" prefWidth="97.0" text="Hospital: " fx:id="col4Label">
                            <padding>
                               <Insets left="10.0" />
                            </padding>
                         </Label>
-                        <Label fx:id="col3Label" text="Travel time: " GridPane.rowIndex="2">
+                       <Label GridPane.rowIndex="2" text="Travel time: " fx:id="col3Label">
                            <padding>
                               <Insets left="10.0" />
                            </padding>

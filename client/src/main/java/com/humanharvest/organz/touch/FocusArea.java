@@ -368,6 +368,10 @@ public class FocusArea implements InvalidationListener {
         return translatable;
     }
 
+    public void setTranslatable(boolean translatable) {
+        this.translatable = translatable;
+    }
+
     /**
      * Returns if this focus area can be collided with.
      */
@@ -380,10 +384,6 @@ public class FocusArea implements InvalidationListener {
      */
     public void setCollidable(boolean collidable) {
         this.collidable = collidable;
-    }
-
-    public void setTranslatable(boolean translatable) {
-        this.translatable = translatable;
     }
 
     public boolean isScalable() {

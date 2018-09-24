@@ -996,8 +996,7 @@ public class Client implements ConcurrencyControlledEntity {
         Collection<String> matchedNames = new ArrayList<>();
 
         for (String searchedParam : searched) {
-            for (String name : lowercaseNames)
-{
+            for (String name : lowercaseNames) {
 
                 if (name.startsWith(searchedParam)) {
                     matchedNames.add(name);

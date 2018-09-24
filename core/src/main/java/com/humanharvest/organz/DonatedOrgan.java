@@ -112,15 +112,11 @@ public class DonatedOrgan {
         return getDurationUntilExpiry() == Duration.ZERO;
     }
 
-    /**
-     * @return true if the organ has expired by time
-     */
-    public boolean hasExpiredNaturally() {
-        if (organType.getMaxExpiration() == null) {
-            return false;
-        }
-        Duration timeToExpiry = organType.getMaxExpiration().minus(getTimeSinceDonation());
-        return timeToExpiry.isNegative() || timeToExpiry.isZero();
+    public enum OrganState {
+        CURRENT,
+        NO_EXPIRY,
+        EXPIRED,
+        OVERRIDDEN
     }
 
     /**
@@ -223,11 +219,15 @@ public class DonatedOrgan {
         }
     }
 
-    public enum OrganState {
-        CURRENT,
-        NO_EXPIRY,
-        EXPIRED,
-        OVERRIDDEN
+    /**
+     * @return true if the organ has expired by time
+     */
+    public boolean hasExpiredNaturally() {
+        if (organType.getMaxExpiration() == null) {
+            return false;
+        }
+        Duration timeToExpiry = organType.getMaxExpiration().minus(getTimeSinceDonation());
+        return timeToExpiry.isNegative() || timeToExpiry.isZero();
     }
 
     /**
