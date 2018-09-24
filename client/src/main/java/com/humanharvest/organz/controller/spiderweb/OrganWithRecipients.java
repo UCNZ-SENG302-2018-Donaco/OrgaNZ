@@ -19,6 +19,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Transform;
+import javafx.util.Duration;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
@@ -108,7 +109,7 @@ public class OrganWithRecipients {
 
         // Attach timer to update connector each second (for time until expiration)
         Timeline clock = new Timeline(new KeyFrame(
-                javafx.util.Duration.seconds(1),
+                Duration.seconds(1),
                 event -> {
                     updateDonorConnector(organ, deceasedToOrganConnector, organPane);
                     updateRecipientConnector(organ, organToRecipientConnector);
