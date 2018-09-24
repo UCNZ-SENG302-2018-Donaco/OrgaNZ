@@ -228,15 +228,15 @@ public class Hospital {
         return Collections.unmodifiableSet(transplantPrograms);
     }
 
+    public void setTransplantPrograms(Set<Organ> transplantPrograms) {
+        this.transplantPrograms = new HashSet<>(transplantPrograms);
+    }
+
     /**
      * @return true if transplantPrograms is null
      */
     public boolean transplantProgramsIsNull() {
         return transplantPrograms == null;
-    }
-
-    public void setTransplantPrograms(Set<Organ> transplantPrograms) {
-        this.transplantPrograms = new HashSet<>(transplantPrograms);
     }
 
     public boolean addTransplantProgramFor(Organ organ) {

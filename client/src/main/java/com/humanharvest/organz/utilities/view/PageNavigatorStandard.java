@@ -100,8 +100,6 @@ public class PageNavigatorStandard implements IPageNavigator {
             mainPane.setPrefWidth(width);
             mainPane.setPrefHeight(height);
 
-
-
             return mainController;
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Error loading new window\n", e);

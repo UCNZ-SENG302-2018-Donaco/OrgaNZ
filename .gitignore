@@ -192,3 +192,4 @@ local.properties
 
 # Code Recommenders
 .recommenders/
+.idea/codeStyles/codeStyleConfig.xml

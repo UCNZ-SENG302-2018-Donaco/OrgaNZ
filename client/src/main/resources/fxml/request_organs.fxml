@@ -13,110 +13,109 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
-
-<VBox prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.client.RequestOrgansController">
-  <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
-    <HBox fx:id="menuBarPane" maxHeight="-Infinity" minHeight="-Infinity" />
-    <SplitPane dividerPositions="0.5" VBox.vgrow="ALWAYS">
-      <HBox fx:id="sidebarPane" maxWidth="-Infinity" />
+<VBox xmlns:fx="http://javafx.com/fxml/1" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.121" fx:controller="com.humanharvest.organz.controller.client.RequestOrgansController">
+  <SplitPane VBox.vgrow="ALWAYS" dividerPositions="0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="200.0">
+    <HBox maxHeight="-Infinity" minHeight="-Infinity" fx:id="menuBarPane"/>
+    <SplitPane VBox.vgrow="ALWAYS" dividerPositions="0.5">
+      <HBox maxWidth="-Infinity" fx:id="sidebarPane"/>
       <VBox prefHeight="600.0" prefWidth="800.0">
         <BorderPane VBox.vgrow="ALWAYS">
           <top>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Receive Organs" textAlignment="CENTER" BorderPane.alignment="CENTER">
+            <Text BorderPane.alignment="CENTER" strokeType="OUTSIDE" strokeWidth="0.0" text="Receive Organs" textAlignment="CENTER">
               <font>
-                <Font size="24.0" />
+                <Font size="24.0"/>
               </font>
               <BorderPane.margin>
-                <Insets bottom="10.0" top="50.0" />
+                <Insets bottom="10.0" top="50.0"/>
               </BorderPane.margin>
             </Text>
           </top>
           <center>
             <VBox BorderPane.alignment="CENTER">
               <BorderPane.margin>
-                <Insets bottom="30.0" left="30.0" right="30.0" />
+                <Insets bottom="30.0" left="30.0" right="30.0"/>
               </BorderPane.margin>
-              <HBox fx:id="newRequestForm" alignment="CENTER" maxHeight="1.7976931348623157E308">
+              <HBox alignment="CENTER" maxHeight="1.7976931348623157E308" fx:id="newRequestForm">
                 <VBox.margin>
-                  <Insets top="10.0" />
+                  <Insets top="10.0"/>
                 </VBox.margin>
                 <Text strokeType="OUTSIDE" strokeWidth="0.0" text="New request to receive: ">
                   <font>
-                    <Font size="14.0" />
+                    <Font size="14.0"/>
                   </font>
                   <HBox.margin>
-                    <Insets right="10.0" />
+                    <Insets right="10.0"/>
                   </HBox.margin>
                 </Text>
-                <ChoiceBox fx:id="newOrganChoiceBox" prefHeight="30.0" HBox.hgrow="ALWAYS">
+                <ChoiceBox HBox.hgrow="ALWAYS" prefHeight="30.0" fx:id="newOrganChoiceBox">
                   <HBox.margin>
-                    <Insets right="-1.0" />
+                    <Insets right="-1.0"/>
                   </HBox.margin>
                 </ChoiceBox>
-                <Button mnemonicParsing="false" onAction="#submitNewRequest" prefHeight="30.0" text="Submit Request" HBox.hgrow="ALWAYS">
+                <Button HBox.hgrow="ALWAYS" mnemonicParsing="false" onAction="#submitNewRequest" prefHeight="30.0" text="Submit Request">
                   <HBox.margin>
-                    <Insets left="-1.0" />
+                    <Insets left="-1.0"/>
                   </HBox.margin>
                 </Button>
               </HBox>
               <VBox VBox.vgrow="ALWAYS">
                 <VBox.margin>
-                  <Insets top="10.0" />
+                  <Insets top="10.0"/>
                 </VBox.margin>
                 <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Current Requests" textAlignment="CENTER">
                   <font>
-                    <Font size="18.0" />
+                    <Font size="18.0"/>
                   </font>
                   <VBox.margin>
-                    <Insets />
+                    <Insets/>
                   </VBox.margin>
                 </Text>
-                <TableView fx:id="currentRequestsTable" maxHeight="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                <TableView VBox.vgrow="ALWAYS" maxHeight="1.7976931348623157E308" fx:id="currentRequestsTable">
                   <columns>
-                    <TableColumn fx:id="organCurrCol" prefWidth="75.0" text="Organ" />
-                    <TableColumn fx:id="requestDateTimeCurrCol" prefWidth="75.0" text="Date Requested" />
+                    <TableColumn prefWidth="75.0" text="Organ" fx:id="organCurrCol"/>
+                    <TableColumn prefWidth="75.0" text="Date Requested" fx:id="requestDateTimeCurrCol"/>
                   </columns>
                   <VBox.margin>
-                    <Insets top="5.0" />
+                    <Insets top="5.0"/>
                   </VBox.margin>
                   <columnResizePolicy>
-                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
                   </columnResizePolicy>
                 </TableView>
-                <HBox fx:id="resolveRequestBar" prefHeight="100.0" prefWidth="200.0" spacing="5.0">
+                <HBox prefHeight="100.0" prefWidth="200.0" spacing="5.0" fx:id="resolveRequestBar">
                   <VBox.margin>
-                    <Insets top="5.0" />
+                    <Insets top="5.0"/>
                   </VBox.margin>
-                  <ComboBox fx:id="cancelTransplantOptions" prefHeight="25.0" promptText="Resolution Reason" HBox.hgrow="ALWAYS" />
-                  <TextField fx:id="customReason" promptText="Reason" visible="false" />
-                  <Button alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#resolveRequest" text="Resolve Request" />
+                  <ComboBox HBox.hgrow="ALWAYS" prefHeight="25.0" promptText="Resolution Reason" fx:id="cancelTransplantOptions"/>
+                  <TextField promptText="Reason" visible="false" fx:id="customReason"/>
+                  <Button alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#resolveRequest" text="Resolve Request"/>
                 </HBox>
               </VBox>
               <VBox VBox.vgrow="ALWAYS">
                 <VBox.margin>
-                  <Insets top="10.0" />
+                  <Insets top="10.0"/>
                 </VBox.margin>
                 <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Past Requests" textAlignment="CENTER">
                   <font>
-                    <Font size="18.0" />
+                    <Font size="18.0"/>
                   </font>
                   <VBox.margin>
-                    <Insets />
+                    <Insets/>
                   </VBox.margin>
                 </Text>
-                <TableView fx:id="pastRequestsTable" maxHeight="1.7976931348623157E308" VBox.vgrow="ALWAYS">
+                <TableView VBox.vgrow="ALWAYS" maxHeight="1.7976931348623157E308" fx:id="pastRequestsTable">
                   <columns>
-                    <TableColumn fx:id="organPastCol" prefWidth="75.0" text="Organ" />
-                    <TableColumn fx:id="requestDateTimePastCol" prefWidth="75.0" text="Date Requested" />
-                    <TableColumn fx:id="resolvedDateTimePastCol" prefWidth="75.0" text="Date Resolved" />
-                    <TableColumn fx:id="requestStatusPastCol" prefWidth="75.0" text="Resolution" />
-                    <TableColumn fx:id="resolvedReasonPastCol" prefWidth="75.0" text="Reason" />
+                    <TableColumn prefWidth="75.0" text="Organ" fx:id="organPastCol"/>
+                    <TableColumn prefWidth="75.0" text="Date Requested" fx:id="requestDateTimePastCol"/>
+                    <TableColumn prefWidth="75.0" text="Date Resolved" fx:id="resolvedDateTimePastCol"/>
+                    <TableColumn prefWidth="75.0" text="Resolution" fx:id="requestStatusPastCol"/>
+                    <TableColumn prefWidth="75.0" text="Reason" fx:id="resolvedReasonPastCol"/>
                   </columns>
                   <VBox.margin>
-                    <Insets top="5.0" />
+                    <Insets top="5.0"/>
                   </VBox.margin>
                   <columnResizePolicy>
-                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
                   </columnResizePolicy>
                 </TableView>
               </VBox>

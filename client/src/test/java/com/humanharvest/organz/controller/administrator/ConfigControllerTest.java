@@ -32,9 +32,35 @@ public class ConfigControllerTest extends ControllerTest {
     private Hospital firstHospital;
     private Hospital secondHospital;
 
+    /**
+     * Asserts that header is expectedHeader and content contains expectedContent.
+     */
+    private static void alertDialogHasHeaderAndContainsContent(String expectedHeader, String expectedContent) {
+        javafx.stage.Stage actualAlertDialog = getTopModalStage();
+        assertNotNull(actualAlertDialog);
+
+        DialogPane dialogPane = (DialogPane) actualAlertDialog.getScene().getRoot();
+        assertEquals(expectedHeader, dialogPane.getHeaderText());
+        assertThat(dialogPane.getContentText(), containsString(expectedContent));
+    }
+
     @Override
     protected Page getPage() {
         return Page.ADMIN_CONFIG;
+    }
+
+    @Test
+    public void hospitalListHasAllHospitals() {
+        verifyThat("#hospitalSelector", hasItems(hospitals.size()));
+    }
+
+    @Test
+    public void hospitalDetailsCanBeOpened() {
+        String hospitalName = firstHospital.getName();
+
+        // Double click on the hospital and check it generates a popup about that hospital.
+        doubleClickOn(hospitalName);
+        alertDialogHasHeaderAndContainsContent(hospitalName, firstHospital.getAddress());
     }
 
     @Override
@@ -68,32 +94,6 @@ public class ConfigControllerTest extends ControllerTest {
     }
 
     @Test
-    public void hospitalListHasAllHospitals() {
-        verifyThat("#hospitalSelector", hasItems(hospitals.size()));
-    }
-
-    @Test
-    public void hospitalDetailsCanBeOpened() {
-        String hospitalName = firstHospital.getName();
-
-        // Double click on the hospital and check it generates a popup about that hospital.
-        doubleClickOn(hospitalName);
-        alertDialogHasHeaderAndContainsContent(hospitalName, firstHospital.getAddress());
-    }
-
-    /**
-     * Asserts that header is expectedHeader and content contains expectedContent.
-     */
-    private static void alertDialogHasHeaderAndContainsContent(String expectedHeader, String expectedContent) {
-        javafx.stage.Stage actualAlertDialog = getTopModalStage();
-        assertNotNull(actualAlertDialog);
-
-        DialogPane dialogPane = (DialogPane) actualAlertDialog.getScene().getRoot();
-        assertEquals(expectedHeader, dialogPane.getHeaderText());
-        assertThat(dialogPane.getContentText(), containsString(expectedContent));
-    }
-
-    @Test
     public void addTransplantProgram() {
         clickOn(firstHospital.getName());
 
@@ -102,7 +102,6 @@ public class ConfigControllerTest extends ControllerTest {
         clickOn("Apply");
         assertThatHospitalOnlyContainsFirstOrgan(firstHospital);
     }
-
 
     @Test
     public void organChecksAreMaintainedAfterClickingOnAnotherHospital() {

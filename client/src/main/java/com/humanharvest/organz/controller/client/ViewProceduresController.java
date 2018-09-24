@@ -115,6 +115,33 @@ public class ViewProceduresController extends SubController {
         return true;
     }
 
+    private static TableCell<ProcedureRecord, String> formatOutOfDate() {
+        return new TextFieldTableCell<ProcedureRecord, String>(new DefaultStringConverter()) {
+            @Override
+            public void updateItem(String item, boolean empty) {
+                TransplantRecord record = getTableRow().getItem() instanceof TransplantRecord ?
+                        (TransplantRecord) getTableRow().getItem() : null;
+                super.updateItem(item, empty);
+
+                if (record != null) {
+                    if (record.isCompleted()) {
+                        if (record.getDate().isAfter(LocalDate.now())) {
+                            setStyle("-fx-text-fill: red;");
+                        } else {
+                            setStyle("");
+                        }
+                    } else {
+                        if (record.getDate().isBefore(LocalDate.now())) {
+                            setStyle("-fx-text-fill: red;");
+                        } else {
+                            setStyle("");
+                        }
+                    }
+                }
+            }
+        };
+    }
+
     /**
      * Handles the edit event when a procedure summary cell is edited.
      *
@@ -188,6 +215,7 @@ public class ViewProceduresController extends SubController {
 
     /**
      * Sends modifications to server, and alerts the user if there is an error.
+     *
      * @param procedureRecord the procedure record to modify
      * @param modification the modification(s) to make
      */
@@ -271,33 +299,6 @@ public class ViewProceduresController extends SubController {
 
         // Setup the "new procedure" affected organs input with all organ values
         affectedOrgansField.getItems().setAll(Organ.values());
-    }
-
-    private static TableCell<ProcedureRecord, String> formatOutOfDate() {
-        return new TextFieldTableCell<ProcedureRecord, String>(new DefaultStringConverter()) {
-            @Override
-            public void updateItem(String item, boolean empty) {
-                TransplantRecord record = getTableRow().getItem() instanceof TransplantRecord ?
-                        (TransplantRecord) getTableRow().getItem() : null;
-                super.updateItem(item, empty);
-
-                if (record != null) {
-                    if (record.isCompleted()) {
-                        if (record.getDate().isAfter(LocalDate.now())) {
-                            setStyle("-fx-text-fill: red;");
-                        } else {
-                            setStyle("");
-                        }
-                    } else {
-                        if (record.getDate().isBefore(LocalDate.now())) {
-                            setStyle("-fx-text-fill: red;");
-                        } else {
-                            setStyle("");
-                        }
-                    }
-                }
-            }
-        };
     }
 
     /**
