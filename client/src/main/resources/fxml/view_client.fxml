@@ -109,7 +109,7 @@
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                           <children>
-                            <Button fx:id="uploadPhotoButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#uploadPhoto" text="Add Photo" />
+                            <Button fx:id="uploadPhotoButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#uploadPhoto" text="Upload" />
                             <Button fx:id="deletePhotoButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#deletePhoto" text="Delete" GridPane.columnIndex="1" />
                           </children>
                         </GridPane>

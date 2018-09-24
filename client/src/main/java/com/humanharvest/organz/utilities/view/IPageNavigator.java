@@ -7,6 +7,7 @@ import javafx.scene.layout.Region;
 import javafx.stage.Window;
 
 import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.controller.components.TouchAlertTextController;
 
 public interface IPageNavigator {
@@ -27,8 +28,9 @@ public interface IPageNavigator {
      *
      * @param page the Page (enum including path to fxml file) to be loaded.
      * @param controller the MainController to load this page on to.
+     * @return The SubController for the new age, or null if the new page could not be loaded.
      */
-    void loadPage(Page page, MainController controller);
+    SubController loadPage(Page page, MainController controller);
 
     /**
      * Refreshes all windows, to be used when an update occurs. Only refreshes titles and sidebars

@@ -25,12 +25,11 @@ public class ActionsController {
         //Get the next Action to undo
         ActionInvoker actionInvoker = State.getActionInvoker(authToken);
 
-
-        String actionText;
         boolean canUndo = actionInvoker.canUndo();
         boolean canRedo = actionInvoker.canRedo();
+        String actionText;
         if (canUndo) {
-            actionText = actionInvoker.nextUndo().getExecuteText();
+            actionText = actionInvoker.nextUndo().getUnexecuteText();
         } else {
             actionText = "No more actions to undo";
         }

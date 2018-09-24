@@ -26,7 +26,8 @@ import com.fasterxml.jackson.annotation.JsonView;
 
 @JsonAutoDetect(fieldVisibility = Visibility.ANY,
         getterVisibility = Visibility.NONE,
-        setterVisibility = Visibility.NONE)
+        setterVisibility = Visibility.NONE,
+        isGetterVisibility = Visibility.NONE)
 @Entity
 @Table
 public class DonatedOrgan {
@@ -109,6 +110,17 @@ public class DonatedOrgan {
      */
     public boolean hasExpired() {
         return getDurationUntilExpiry() == Duration.ZERO;
+    }
+
+    /**
+     * @return true if the organ has expired by time
+     */
+    public boolean hasExpiredNaturally() {
+        if (organType.getMaxExpiration() == null) {
+            return false;
+        }
+        Duration timeToExpiry = organType.getMaxExpiration().minus(getTimeSinceDonation());
+        return timeToExpiry.isNegative() || timeToExpiry.isZero();
     }
 
     /**
@@ -208,6 +220,37 @@ public class DonatedOrgan {
             case TIME_UNTIL_EXPIRY:
                 return Comparator.comparing(DonatedOrgan::getDurationUntilExpiry,
                         Comparator.nullsLast(Comparator.naturalOrder()));
+        }
+    }
+
+    public enum OrganState {
+        CURRENT,
+        NO_EXPIRY,
+        EXPIRED,
+        OVERRIDDEN
+    }
+
+    /**
+     * Get the organs current state from the OrganState ENUM for easier checks
+     *
+     * @return The current state of the organ
+     */
+    public OrganState getState() {
+        if (overrideReason != null) {
+            return OrganState.OVERRIDDEN;
+        } else if (organType.getMaxExpiration() == null) {
+            return OrganState.NO_EXPIRY;
+        } else {
+            Duration duration = getDurationUntilExpiry();
+            if (duration == null ||
+                    duration.isZero() ||
+                    duration.isNegative() ||
+                    duration.equals(Duration.ZERO) ||
+                    duration.minusSeconds(1).isNegative()) {
+                return OrganState.EXPIRED;
+            } else {
+                return OrganState.CURRENT;
+            }
         }
     }
 

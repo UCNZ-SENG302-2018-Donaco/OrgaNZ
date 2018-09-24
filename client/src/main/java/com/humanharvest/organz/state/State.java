@@ -56,7 +56,6 @@ public final class State {
     }
 
     private static String baseUri = "http://csse-s302g7.canterbury.ac.nz:8080/";
-
     private static DataStorageType currentStorageType = DataStorageType.MEMORY;
 
     private static ClientManager clientManager;
@@ -86,6 +85,7 @@ public final class State {
     private static Set<Country> allowedCountries;
     private static UiType uiType = UiType.STANDARD;
     private static Stage primaryStage;
+    private static Client spiderwebDonor;
 
     private State() {
     }
@@ -342,5 +342,13 @@ public final class State {
 
     public static void setUiType(UiType type) {
         uiType = type;
+    }
+
+    public static Client getSpiderwebDonor() {
+        return spiderwebDonor;
+    }
+
+    public static void setSpiderwebDonor(Client spiderwebDonor) {
+        State.spiderwebDonor = spiderwebDonor;
     }
 }
