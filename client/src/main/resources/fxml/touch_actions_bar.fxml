@@ -60,7 +60,7 @@
                         <Image url="/images/actions/refresh.png" />
                      </image></ImageView>
                </graphic></Button>
-            <Button mnemonicParsing="false" onAction="#duplicateWindow" GridPane.columnIndex="6">
+            <Button fx:id="duplicateButton" mnemonicParsing="false" onAction="#duplicateWindow" GridPane.columnIndex="6">
                <graphic>
                   <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
                      <image>

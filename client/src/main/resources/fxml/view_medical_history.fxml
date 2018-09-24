@@ -40,7 +40,7 @@
                 <Insets left="10.0" right="10.0" top="20.0"/>
               </VBox.margin>
               <Label maxWidth="1.7976931348623157E308" text="Illness:">
-                <font>ClientMedicalHistoryController
+                <font>
                   <Font size="14.0"/>
                 </font>
                 <HBox.margin>

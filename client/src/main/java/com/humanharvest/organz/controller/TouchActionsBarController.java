@@ -35,6 +35,9 @@ public class TouchActionsBarController extends SubController {
     private Button redoButton;
 
     @FXML
+    private Button duplicateButton;
+
+    @FXML
     private JFXHamburger hamburger;
     private MainController mainController;
 
@@ -46,6 +49,7 @@ public class TouchActionsBarController extends SubController {
         mainController = controller;
         if (State.getSession().getLoggedInUserType() == UserType.CLIENT) {
             homeButton.setVisible(false);
+            duplicateButton.setVisible(false);
         }
 
         if (windowContext.isClinViewClientWindow()) {
