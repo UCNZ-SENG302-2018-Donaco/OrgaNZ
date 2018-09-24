@@ -1,6 +1,8 @@
 package com.humanharvest.organz.controller;
 
+import java.awt.Event;
 import java.io.IOException;
+import java.util.EventListener;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -56,6 +58,9 @@ public class MainController {
     public void initialize() {
         pageHolder.getStyleClass().add("window");
         drawer.setDisable(true);
+        drawer.setVisible(false);
+        drawer.setOnDrawerOpened(EventListener -> drawer.setVisible(true));
+
     }
 
     public JFXDrawer getDrawer() {

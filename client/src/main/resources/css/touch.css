@@ -1,62 +1,83 @@
+/**
+Colors:
+
+#222426 - Raisin Black
+#45494D - Outer Space
+#737980 - Aurometalsaurus
+#9AA4B3 - Cadet Grey
+#EBF0F5 - Flash White
+
+ */
+
 .backdrop {
   -fx-background-color: #F7F7FF;
 }
 
 .window {
     -fx-font-family: Lato;
-  -fx-border-insets: 10;
-    -fx-background-color: rgba(70, 140, 145, 0.71);
-  -fx-background-radius: 15;
-  -fx-border-radius: 3;
-  -fx-border-color: rgba(255, 255, 255, 0);
-  -fx-border-style: solid;
-  -fx-border-width: 2;
-  -fx-effect: dropshadow(three-pass-box, rgba(100, 100, 100, 1), 24, 0.5, 0, 0);
-  -fx-background-insets: 10;
+    -fx-border-insets: 10;
+    -fx-background-color: #bdbfc1;
+    -fx-background-radius: 15;
+    -fx-border-radius: 3;
+    -fx-border-color: rgba(255, 255, 255, 0);
+    -fx-border-style: solid;
+    -fx-border-width: 2;
+    -fx-effect: dropshadow(three-pass-box, rgba(100, 100, 100, 1), 24, 0.5, 0, 0);
+    -fx-background-insets: 10;
+}
+
+.window .label {
+    -fx-text-fill: #282828;
 }
 
 .split-pane {
-    -fx-background-color: rgba(80, 169, 174, 0.71);
-    -fx-background-radius: 15 90 15 15;
+    -fx-background-color: #737980;
+    -fx-background-radius: 15 30 15 15;
     -fx-font-family: Lato;
 }
 
 
 .button, .choice-box, .text-field, .toggle-button, .text-area .date-picker .text-field {
-    -fx-control-inner-background: rgba(97, 250, 255, 0.71);
-    -fx-background-color: rgba(104, 250, 255, 0.71);
-    -fx-prompt-text-fill: black;
-    -fx-background-radius: 90;
+    -fx-control-inner-background: #9AA4B3;
+    -fx-background-color: #9AA4B3;
+    -fx-background-radius: 5;
     -fx-font-family: Lato;
     -fx-effect: dropshadow(three-pass-box, rgba(100, 100, 100, 0.2), 3, 0.5, 2, 0);
 }
 
 .button:hover, .choice-box:hover, .text-field:hover, .toggle-button:hover, .text-area:hover, .date-picker .text-field:hover {
-    -fx-background-color: #d69c95;
+    -fx-background-color: #EBF0F5;
 }
 
 
 .button:focused, .choice-box:focused, .text-field:focused, .toggle-button:focused, .text-area:focused, .date-picker .text-field:focused {
     -fx-background-color: rgba(255, 246, 242, 0.94);
 }
+
 .accordion {
     -fx-background-color: #495867;
     -fx-font-family: Lato;
 }
 
 .table-view {
-    -fx-background-color: rgba(32, 60, 65, 0.71);
+    -fx-background-color: #9AA4B3;
     -fx-font-family: Lato;
 }
 
-
-
 .table-row-cell{
-    -fx-border-color: rgba(74, 177, 182, 0.71);
-    -fx-background-color: rgba(21, 50, 53, 0.71);
+    -fx-border-color: #9AA4B3;
+    -fx-background-color: #bdbfc1;
 }
 
 .table-row-cell .text {
-    -fx-fill: #e8e6ff;
+    -fx-fill: #282828;
+}
+
+.jfx-drawer .button {
+  -fx-background-color: #9AA4B3;
+}
+
+.jfx-drawer {
+  -fx-padding: 0px 0px 0px 10px;
 }
 

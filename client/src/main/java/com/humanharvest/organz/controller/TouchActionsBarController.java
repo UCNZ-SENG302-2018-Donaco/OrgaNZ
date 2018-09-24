@@ -35,35 +35,51 @@ public class TouchActionsBarController extends SubController {
     private Button redoButton;
 
     @FXML
+    private Button duplicateButton;
+
+    @FXML
     private JFXHamburger hamburger;
+    private MainController mainController;
 
     private static final Logger LOGGER = Logger.getLogger(TouchActionsBarController.class.getName());
 
     @Override
     public void setup(MainController controller) {
         super.setup(controller);
+        mainController = controller;
         if (State.getSession().getLoggedInUserType() == UserType.CLIENT) {
             homeButton.setVisible(false);
+            duplicateButton.setVisible(false);
         }
 
         if (windowContext.isClinViewClientWindow()) {
             homeButton.setDisable(true);
         }
 
-        hamburger.addEventHandler(MouseEvent.MOUSE_CLICKED, (e) -> {
-
-            if (controller.getDrawer().isShown()) {
-
-                controller.loadSidebar(null);
-
-                controller.getDrawer().close();
-                controller.getDrawer().setDisable(true);
-            } else {
-                controller.getDrawer().open();
-                controller.getDrawer().setDisable(false);
-            }
-        });
+        hamburger.addEventHandler(MouseEvent.MOUSE_CLICKED, (e) -> toggleSidebar());
         refresh();
+    }
+
+
+    private void toggleSidebar() {
+        if (mainController.getDrawer().isOpened()) {
+            closeSidebar();
+        } else {
+            openSidebar();
+        }
+
+    }
+
+    private void closeSidebar() {
+
+        mainController.getDrawer().close();
+        mainController.getDrawer().setDisable(true);
+        mainController.getDrawer().setVisible(false);
+    }
+
+    private void openSidebar() {
+        mainController.getDrawer().open();
+        mainController.getDrawer().setDisable(false);
     }
 
     @FXML
@@ -116,6 +132,7 @@ public class TouchActionsBarController extends SubController {
         State.addMainController(mainController);
         mainController.resetWindowContext();
         PageNavigator.loadPage(Page.LANDING, mainController);
+        closeSidebar();
     }
 
 
