@@ -60,6 +60,7 @@ public class MainController {
         drawer.setDisable(true);
         drawer.setVisible(false);
         drawer.setOnDrawerOpened(EventListener -> drawer.setVisible(true));
+
     }
 
     public JFXDrawer getDrawer() {

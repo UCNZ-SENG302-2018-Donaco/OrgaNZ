@@ -53,6 +53,7 @@ Colors:
 .button:focused, .choice-box:focused, .text-field:focused, .toggle-button:focused, .text-area:focused, .date-picker .text-field:focused {
     -fx-background-color: rgba(255, 246, 242, 0.94);
 }
+
 .accordion {
     -fx-background-color: #495867;
     -fx-font-family: Lato;
@@ -74,10 +75,9 @@ Colors:
 
 .jfx-drawer .button {
   -fx-background-color: #9AA4B3;
-  -fx-background-radius: 5;
 }
 
-.jfx-drawer:focused {
-    -fx-background-color: rgba(255, 255, 255, 0);
+.jfx-drawer {
+  -fx-padding: 0px 0px 0px 10px;
 }
 
