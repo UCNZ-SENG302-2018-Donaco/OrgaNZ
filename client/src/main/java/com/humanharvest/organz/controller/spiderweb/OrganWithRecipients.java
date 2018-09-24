@@ -28,9 +28,11 @@ import com.humanharvest.organz.controller.components.PotentialRecipientCell;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.touch.FocusArea;
 import com.humanharvest.organz.touch.MultitouchHandler;
+import com.humanharvest.organz.touch.OrganFocusArea;
 import com.humanharvest.organz.utilities.DurationFormatter.DurationFormat;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
+import com.humanharvest.organz.utilities.view.PageNavigatorTouch;
 
 public class OrganWithRecipients {
 
@@ -56,7 +58,8 @@ public class OrganWithRecipients {
         this.potentialMatches = potentialMatches;
         this.deceasedDonorPane = deceasedDonorPane;
 
-        MainController newMain = PageNavigator.openNewWindow(70, 70);
+        MainController newMain = ((PageNavigatorTouch) PageNavigator.getInstance())
+                .openNewWindow(70, 70, OrganFocusArea::new);
         newMain.getStyles().clear();
 
         organImageController = (OrganImageController) PageNavigator
@@ -64,7 +67,7 @@ public class OrganWithRecipients {
         organImageController.loadImage(organ.getOrganType());
         organImageController.setMatchCount(potentialMatches.size());
 
-        if (potentialMatches.size() == 0 && !organ.hasExpired()) {
+        if (potentialMatches.isEmpty() && !organ.hasExpired()) {
             organImageController.matchCountIsVisible(true);
         }
 
@@ -132,13 +135,17 @@ public class OrganWithRecipients {
 
     public EventHandler<MouseEvent> handleOrganPaneClick() {
         return click -> {
+            if (click.isSynthesized()) {
+                return;
+            }
+
             if (click.getClickCount() == 1 && !organ.hasExpired()) {
                 matchesListView.setVisible(!matchesListView.isVisible());
                 organImageController.matchCountIsVisible(!matchesListView.isVisible() && !organ.hasExpired());
 
             } else if (click.getClickCount() == 2 && !organ.hasExpiredNaturally()) {
                 if (organ.getOverrideReason() == null) {
-                    final String reason = "Manually Overridden by Doctor using WebView";
+                    String reason = "Manually Overridden by Doctor using WebView";
                     State.getClientResolver().manuallyOverrideOrgan(organ, reason);
                     organ.manuallyOverride(reason);
 
