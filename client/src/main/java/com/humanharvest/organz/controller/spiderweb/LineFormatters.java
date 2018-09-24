@@ -117,18 +117,6 @@ public class LineFormatters {
         }
     }
 
-    public static void updateOrganPanePosition(Pane organPane, Transform newTransform) {
-        FocusArea focusArea = (FocusArea) organPane.getUserData();
-
-        // If not currently touching the organ pane
-        if (MultitouchHandler.findPaneTouches(organPane).isEmpty()) {
-            Affine transform = new Affine();
-            transform.prepend(new Translate(50, -90));
-            transform.prepend(newTransform);
-            focusArea.setTransform(transform);
-        }
-    }
-
     private static double getAngle(double x1, double y1, double x2, double y2) {
         double angle = Math.toDegrees(Math.atan2(y1 - y2, x1 - x2));
         if (angle < 0) {
