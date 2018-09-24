@@ -33,8 +33,16 @@ public class DeleteProcedureRecordAction extends ClientAction {
 
         if (record instanceof TransplantRecord) {
             TransplantRecord transplant = (TransplantRecord) record;
+
             // Set the request's status back to waiting
             transplant.getRequest().setStatus(TransplantRequestStatus.WAITING);
+            // Delete other requests that have since been made for this
+            client.getTransplantRequests().stream()
+                    .filter(request -> request.getRequestedOrgan().equals(transplant.getOrgan().getOrganType()))
+                    .filter(request -> request.getStatus() == TransplantRequestStatus.WAITING)
+                    .filter(request -> !request.equals(transplant.getRequest()))
+                    .forEach(client::removeTransplantRequest);
+
             // Make the organ available again
             transplant.getOrgan().setReceiver(null);
             transplant.getOrgan().setAvailable(true);

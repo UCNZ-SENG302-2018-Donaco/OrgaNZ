@@ -222,7 +222,6 @@ public class OrgansToDonateController extends SubController {
 
         // Setup transplant hospital choice picker
         hospitals.setAll(State.getConfigManager().getHospitals());
-        sortedHospitals.setComparator(Comparator.comparing(Hospital::getName));
         transplantHospitalChoice.setItems(sortedHospitals);
     }
 
@@ -326,8 +325,8 @@ public class OrgansToDonateController extends SubController {
                     tableView.refresh();
                     observableOrgansToDonate.removeIf(donatedOrgan ->
                             donatedOrgan.getOverrideReason() != null ||
-                                    (donatedOrgan.getDurationUntilExpiry() != null &&
-                                            donatedOrgan.getDurationUntilExpiry().minusSeconds(1).isNegative()));
+                                    donatedOrgan.getDurationUntilExpiry() != null &&
+                                            donatedOrgan.getDurationUntilExpiry().minusSeconds(1).isNegative());
                 }));
         clock.setCycleCount(Animation.INDEFINITE);
         clock.play();
@@ -411,19 +410,42 @@ public class OrgansToDonateController extends SubController {
             transplantDatePicker.setDisable(false);
             transplantHospitalChoice.setDisable(false);
 
-            Hospital nearest = selected.getHospital().getNearestWithTransplantProgram(
-                    organToDonate.getOrganType(), filteredHospitals);
-            if (nearest != null) {
-                transplantHospitalChoice.setValue(nearest);
-                transplantDatePicker.setValue(
-                        LocalDateTime.now().plus(nearest.calculateTimeTo(selected.getHospital())).toLocalDate());
+            if (selected.getHospital() == null) {
+                // Recipient has no hospital, try sorting by distance to their region instead
+                Region region;
+                try {
+                    region = Region.fromString(selected.getRegion());
+                } catch (IllegalArgumentException exc) {
+                    region = null;
+                }
+                if (region == null) {
+                    // Recipient has no region, just sort hospitals in alphabetical order instead
+                    sortedHospitals.setComparator(Comparator.comparing(Hospital::getName));
+                } else {
+                    Region finalRegion = region;
+                    sortedHospitals.setComparator(Comparator.comparing(hospital -> hospital.calculateDistanceTo(
+                            finalRegion)));
+                }
             } else {
-                PageNavigator.showAlert(AlertType.ERROR,
-                        "No valid hospitals",
-                        "There are no hospitals that can transplant this organ. "
-                                + "Please contact your system administrator.",
-                        mainController.getStage());
+                // Sort choice of hospitals for the transplant by which are nearest to the client
+                sortedHospitals.setComparator(Comparator.comparing(hospital -> hospital.calculateTimeTo(
+                        selected.getHospital())));
+
+                Hospital nearest = selected.getHospital().getNearestWithTransplantProgram(organToDonate.getOrganType(),
+                        filteredHospitals);
+                if (nearest == null) {
+                    // No hospital that can transplant this organ
+                    transplantHospitalChoice.setDisable(true);
+                    scheduleTransplantBtn.setDisable(true);
+                } else {
+                    // Set the default choice to the nearest hospital (to the recipient) that can do the transplant
+                    transplantHospitalChoice.setValue(nearest);
+                    transplantDatePicker.setValue(LocalDateTime.now()
+                            .plus(nearest.calculateTimeTo(selected.getHospital())).toLocalDate());
+                }
             }
+
+
         }
     }
 
@@ -552,11 +574,21 @@ public class OrgansToDonateController extends SubController {
 
     private void displayMatches(DonatedOrgan selectedOrgan) {
         try {
-            List<Client> matches = State.getClientManager().getOrganMatches(selectedOrgan);
-            potentialRecipients.setItems(FXCollections.observableArrayList(matches));
+            boolean noPossibleHospital = State.getConfigManager().getHospitals()
+                    .stream()
+                    .noneMatch(hospital -> hospital.hasTransplantProgram(selectedOrgan.getOrganType()));
 
-            if (matches.isEmpty()) {
-                placeholder.setText("No potential recipients for this organ");
+            if (noPossibleHospital) {
+                potentialRecipients.setItems(FXCollections.emptyObservableList());
+                placeholder.setText("There are no hospitals that can transplant this organ. "
+                        + "Please contact your system administrator.");
+            } else {
+                List<Client> matches = State.getClientManager().getOrganMatches(selectedOrgan);
+                potentialRecipients.setItems(FXCollections.observableArrayList(matches));
+
+                if (matches.isEmpty()) {
+                    placeholder.setText("No potential recipients for this organ");
+                }
             }
 
         } catch (NotFoundException e) {
