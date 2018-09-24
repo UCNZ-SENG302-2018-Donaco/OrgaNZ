@@ -72,6 +72,26 @@ public class AppUI extends Application {
     }
 
     /**
+     * Initialises the touch components, namely the MultitouchHandler and various panes.
+     */
+    private static void startTouch(Stage primaryStage) throws IOException {
+        Pane root = new TuioFXCanvas();
+        Scene scene = new Scene(root);
+
+        loadBackPane(root);
+        MultitouchHandler.initialise(root);
+
+        loadTouchMainPane();
+
+        primaryStage.setScene(scene);
+
+        primaryStage.setFullScreen(true);
+        primaryStage.setOnCloseRequest(event -> {
+            MultitouchHandler.stageClosing();
+        });
+    }
+
+    /**
      * Starts the JavaFX GUI. Sets up the main stage and initialises the state of the system.
      * Loads from the save file or creates one if one does not yet exist.
      *
@@ -126,26 +146,6 @@ public class AppUI extends Application {
 
             new SpiderWebController(State.getClientManager().getClientByID(9096).orElseThrow(RuntimeException::new));
         }
-    }
-
-    /**
-     * Initialises the touch components, namely the MultitouchHandler and various panes.
-     */
-    private static void startTouch(Stage primaryStage) throws IOException {
-        Pane root = new TuioFXCanvas();
-        Scene scene = new Scene(root);
-
-        loadBackPane(root);
-        MultitouchHandler.initialise(root);
-
-        loadTouchMainPane();
-
-        primaryStage.setScene(scene);
-
-        primaryStage.setFullScreen(true);
-        primaryStage.setOnCloseRequest(event -> {
-            MultitouchHandler.stageClosing();
-        });
     }
 
     /**

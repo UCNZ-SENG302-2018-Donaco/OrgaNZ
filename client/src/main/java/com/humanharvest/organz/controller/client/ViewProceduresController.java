@@ -186,6 +186,7 @@ public class ViewProceduresController extends SubController {
 
     /**
      * Sends modifications to server, and alerts the user if there is an error.
+     *
      * @param procedureRecord the procedure record to modify
      * @param modification the modification(s) to make
      */

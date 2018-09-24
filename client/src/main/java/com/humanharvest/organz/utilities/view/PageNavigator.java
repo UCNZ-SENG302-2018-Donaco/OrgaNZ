@@ -87,11 +87,11 @@ public class PageNavigator {
         return instance.showAlertWithText(title, bodyText, window);
     }
 
-    public static void setInstance(IPageNavigator navigator) {
-        instance = navigator;
-    }
-
     public static IPageNavigator getInstance() {
         return instance;
+    }
+
+    public static void setInstance(IPageNavigator navigator) {
+        instance = navigator;
     }
 }

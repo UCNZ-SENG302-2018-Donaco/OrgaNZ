@@ -1,6 +1,5 @@
 package com.humanharvest.organz.controller.clinician;
 
-import static org.junit.Assert.fail;
 import static org.testfx.api.FxAssert.verifyThat;
 
 import java.time.LocalDate;

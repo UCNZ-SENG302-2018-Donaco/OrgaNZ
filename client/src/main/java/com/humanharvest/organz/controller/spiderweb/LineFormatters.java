@@ -1,6 +1,5 @@
 package com.humanharvest.organz.controller.spiderweb;
 
-import javafx.geometry.Bounds;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
