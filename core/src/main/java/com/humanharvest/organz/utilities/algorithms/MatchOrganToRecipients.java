@@ -260,9 +260,8 @@ public abstract class MatchOrganToRecipients {
 
         Client donor = donatedOrgan.getDonor();
 
-        // If the organ trying to be matched has expired, or the donor isn't registered to a hospital,
-        // then return an empty list.
-        if (donatedOrgan.hasExpired() || donor.getHospital() == null) {
+        // If the organ trying to be matched has expired then return an empty list.
+        if (donatedOrgan.hasExpired()) {
             return potentialMatches;
         }
 

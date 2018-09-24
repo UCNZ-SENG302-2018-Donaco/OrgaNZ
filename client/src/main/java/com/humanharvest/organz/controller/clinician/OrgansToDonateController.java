@@ -222,7 +222,6 @@ public class OrgansToDonateController extends SubController {
 
         // Setup transplant hospital choice picker
         hospitals.setAll(State.getConfigManager().getHospitals());
-        sortedHospitals.setComparator(Comparator.comparing(Hospital::getName));
         transplantHospitalChoice.setItems(sortedHospitals);
     }
 
@@ -411,19 +410,47 @@ public class OrgansToDonateController extends SubController {
             transplantDatePicker.setDisable(false);
             transplantHospitalChoice.setDisable(false);
 
-            Hospital nearest = selected.getHospital().getNearestWithTransplantProgram(
-                    organToDonate.getOrganType(), filteredHospitals);
-            if (nearest != null) {
-                transplantHospitalChoice.setValue(nearest);
-                transplantDatePicker.setValue(
-                        LocalDateTime.now().plus(nearest.calculateTimeTo(selected.getHospital())).toLocalDate());
+            if (selected.getHospital() == null) {
+                // Recipient has no hospital, try sorting by distance to their region instead
+                Region region;
+                try {
+                    region = Region.fromString(selected.getRegion());
+                } catch (IllegalArgumentException exc) {
+                    region = null;
+                }
+                if (region == null) {
+                    // Recipient has no region, just sort hospitals in alphabetical order instead
+                    sortedHospitals.setComparator(Comparator.comparing(Hospital::getName));
+                } else {
+                    Region finalRegion = region;
+                    sortedHospitals.setComparator(Comparator.comparing(hospital -> hospital.calculateDistanceTo(
+                            finalRegion)));
+                }
             } else {
-                PageNavigator.showAlert(AlertType.ERROR,
-                        "No valid hospitals",
-                        "There are no hospitals that can transplant this organ. "
-                                + "Please contact your system administrator.",
-                        mainController.getStage());
+                // Sort choice of hospitals for the transplant by which are nearest to the client
+                sortedHospitals.setComparator(Comparator.comparing(hospital -> hospital.calculateTimeTo(
+                        selected.getHospital())));
+
+                Hospital nearest = selected.getHospital().getNearestWithTransplantProgram(organToDonate.getOrganType(),
+                        filteredHospitals);
+                if (nearest == null) {
+                    // No hospital that can transplant this organ
+                    transplantHospitalChoice.setDisable(true);
+                    scheduleTransplantBtn.setDisable(true);
+                    PageNavigator.showAlert(AlertType.ERROR,
+                            "No valid hospitals",
+                            "There are no hospitals that can transplant this organ. "
+                                    + "Please contact your system administrator.",
+                            mainController.getStage());
+                } else {
+                    // Set the default choice to the nearest hospital (to the recipient) that can do the transplant
+                    transplantHospitalChoice.setValue(nearest);
+                    transplantDatePicker.setValue(LocalDateTime.now()
+                            .plus(nearest.calculateTimeTo(selected.getHospital())).toLocalDate());
+                }
             }
+
+
         }
     }
 

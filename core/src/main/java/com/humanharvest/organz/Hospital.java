@@ -21,6 +21,7 @@ import javax.persistence.Table;
 
 import com.humanharvest.organz.utilities.algorithms.DistanceCalculation;
 import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.views.client.Views;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
@@ -259,6 +260,17 @@ public class Hospital {
     public double calculateDistanceTo(Hospital hospital) {
         return DistanceCalculation.distanceBetweenInKm(latitude, longitude,
                 hospital.getLatitude(), hospital.getLongitude());
+    }
+
+    /**
+     * Calculates and returns the Haversine distance between this hospital and the given region
+     *
+     * @param region region to find the distance to
+     * @return distance in km between this hospital and the given region
+     */
+    public double calculateDistanceTo(Region region) {
+        return DistanceCalculation.distanceBetweenInKm(latitude, longitude,
+                region.getLatitude(), region.getLongitude());
     }
 
     /**
