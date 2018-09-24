@@ -129,43 +129,48 @@ public class OrganWithRecipients {
 
         organPane.localToParentTransformProperty().addListener(handleOrganPaneTransformed());
 
-        organPane.setOnMouseClicked(handleOrganPaneClick());
+        organPane.setOnMouseClicked(this::handleOrganPaneClick);
 
         matchesListView.widthProperty().addListener(handlePotentialMatchesTransformed());
     }
 
-    public EventHandler<MouseEvent> handleOrganPaneClick() {
-        return click -> {
-            if (click.isSynthesized()) {
-                return;
-            }
+    public void handleOrganPaneClick(MouseEvent event) {
+        if (event.isSynthesized()) {
+            return;
+        }
 
-            if (click.getClickCount() == 1 && !organ.hasExpired()) {
-                matchesListView.setVisible(!matchesListView.isVisible());
-                organImageController.matchCountIsVisible(!matchesListView.isVisible() && !organ.hasExpired());
+        if (event.getClickCount() == 1) {
+            handleOrganSingleClick();
+        } else if (event.getClickCount() == 2 && !organ.hasExpiredNaturally()) {
+            handleOrganDoubleClick();
+        }
+    }
 
-            } else if (click.getClickCount() == 2 && !organ.hasExpiredNaturally()) {
-                if (organ.getOverrideReason() == null) {
-                    String reason = "Manually Overridden by Doctor using WebView";
-                    State.getClientResolver().manuallyOverrideOrgan(organ, reason);
-                    organ.manuallyOverride(reason);
+    public void handleOrganSingleClick() {
+        if (!organ.hasExpired()) {
+            matchesListView.setVisible(!matchesListView.isVisible());
+            organImageController.matchCountIsVisible(!matchesListView.isVisible());
+        }
+    }
 
-                    matchesListView.setVisible(false);
-                    organImageController.matchCountIsVisible(false);
-                    updateDonorConnector(organ, deceasedToOrganConnector, organPane);
-                    updateConnectorText(durationText, organ, deceasedToOrganConnector);
+    public void handleOrganDoubleClick() {
+        if (organ.getOverrideReason() == null) {
+            String reason = "Manually Overridden by Doctor using WebView";
+            State.getClientResolver().manuallyOverrideOrgan(organ, reason);
+            organ.manuallyOverride(reason);
 
-                } else {
-                    State.getClientResolver().cancelManualOverrideForOrgan(organ);
-                    organ.cancelManualOverride();
+            matchesListView.setVisible(false);
 
-                    matchesListView.setVisible(true);
-                    organImageController.matchCountIsVisible(false);
-                    updateDonorConnector(organ, deceasedToOrganConnector, organPane);
-                    updateConnectorText(durationText, organ, deceasedToOrganConnector);
-                }
-            }
-        };
+        } else {
+            State.getClientResolver().cancelManualOverrideForOrgan(organ);
+            organ.cancelManualOverride();
+
+            matchesListView.setVisible(true);
+        }
+
+        organImageController.matchCountIsVisible(false);
+        updateDonorConnector(organ, deceasedToOrganConnector, organPane);
+        updateConnectorText(durationText, organ, deceasedToOrganConnector);
     }
 
     public ChangeListener<Transform> handleDeceasedDonorTransformed() {

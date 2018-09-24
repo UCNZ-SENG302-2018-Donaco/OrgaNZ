@@ -291,7 +291,6 @@ public class FocusArea implements InvalidationListener {
     /**
      * Handles a single new touch event. Will process both single touch events and multitouch events.
      *
-     * @param touchPoint The touch point from the new event.
      * @param currentTouch The state of the finger this event belongs to.
      */
     protected void onTouchHeld(TouchEvent event, CurrentTouch currentTouch) {

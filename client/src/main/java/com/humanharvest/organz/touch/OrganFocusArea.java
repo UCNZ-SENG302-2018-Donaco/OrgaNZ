@@ -1,5 +1,9 @@
 package com.humanharvest.organz.touch;
 
+import java.awt.Toolkit;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import javafx.geometry.Point2D;
 import javafx.scene.input.TouchEvent;
 import javafx.scene.layout.Pane;
@@ -9,8 +13,12 @@ import com.humanharvest.organz.controller.spiderweb.OrganWithRecipients;
 public class OrganFocusArea extends FocusArea {
 
     private static final double MAX_CLICK_DISTANCE = 25;
+    private static final int MULTI_CLICK_INTERVAL =
+            (int) Toolkit.getDefaultToolkit().getDesktopProperty("awt.multiClickInterval");
 
-    private OrganWithRecipients organWithRecipients;
+    private final OrganWithRecipients organWithRecipients;
+    private final Timer doubleClickTimer;
+    private TimerTask currentClickTimer;
 
     private Point2D originalTouchPoint;
     private boolean countsAsClick;
@@ -18,6 +26,7 @@ public class OrganFocusArea extends FocusArea {
     public OrganFocusArea(Pane pane, OrganWithRecipients organWithRecipients) {
         super(pane);
         this.organWithRecipients = organWithRecipients;
+        doubleClickTimer = new Timer();
     }
 
     @Override
@@ -37,7 +46,19 @@ public class OrganFocusArea extends FocusArea {
         super.onTouchReleased(event, currentTouch);
 
         if (countsAsClick) {
-            System.out.println("ASKDJHHASD");
+            if (currentClickTimer != null) {
+                currentClickTimer.cancel();
+                currentClickTimer = null;
+                organWithRecipients.handleOrganDoubleClick();
+            } else {
+                currentClickTimer = new TimerTask() {
+                    @Override
+                    public void run() {
+                        organWithRecipients.handleOrganSingleClick();
+                    }
+                };
+                doubleClickTimer.schedule(currentClickTimer, MULTI_CLICK_INTERVAL);
+            }
         }
     }
 
