@@ -77,19 +77,15 @@
     </dependency>
 
     <dependency>
-      <groupId>TUIO</groupId>
-      <artifactId>main</artifactId>
-      <version>1.1</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/../lib/libTUIO.jar</systemPath>
+      <groupId>tuio</groupId>
+      <artifactId>tuio</artifactId>
+      <version>1.0.0</version>
     </dependency>
 
     <dependency>
-      <groupId>org.tuiofx</groupId>
-      <artifactId>all</artifactId>
-      <version>0.10.4</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/../lib/tuiofx-all-0.10.4.jar</systemPath>
+      <groupId>tuio</groupId>
+      <artifactId>tuiofx</artifactId>
+      <version>1.0.0</version>
     </dependency>
 
     <dependency>
@@ -150,6 +146,13 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <repositories>
+    <repository>
+      <id>project-repo</id>
+      <url>file://${project.basedir}/../lib/</url>
+    </repository>
+  </repositories>
 
   <build>
     <plugins>

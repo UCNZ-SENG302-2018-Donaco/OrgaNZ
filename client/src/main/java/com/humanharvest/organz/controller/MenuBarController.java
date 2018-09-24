@@ -76,7 +76,7 @@ public class MenuBarController extends SubController {
     public MenuItem settingsItem;
     public MenuItem quitItem;
     public MenuItem duplicateItem;
-    public MenuItem organWeb;
+    public MenuItem organWebItem;
 
     public SeparatorMenuItem topSeparator;
 
@@ -120,6 +120,7 @@ public class MenuBarController extends SubController {
      */
     private static void exit() {
         Platform.exit();
+        System.exit(0);
     }
 
     @Override
@@ -151,7 +152,7 @@ public class MenuBarController extends SubController {
         Menu[] allMenus = {filePrimaryItem, editPrimaryItem, clientPrimaryItem, organPrimaryItem,
                 medicationsPrimaryItem, staffPrimaryItem, profilePrimaryItem};
 
-        organWeb.setVisible(windowContext.isClinViewClientWindow());
+        organWebItem.setVisible(windowContext.isClinViewClientWindow() && windowContext.getViewClient().isDead());
 
         // Duplicate item is exclusively for the touch screen interface
         if (State.getUiType() == UiType.TOUCH) {
@@ -553,10 +554,7 @@ public class MenuBarController extends SubController {
 
     @FXML
     private void openOrganWeb() {
-        System.out.println("Openning spiderweb");
-        State.setSpiderwebDonor(windowContext.getViewClient());
-        System.out.println(State.getSpiderwebDonor());
-        SpiderWebController spiderWebController = new SpiderWebController(windowContext.getViewClient());
+        new SpiderWebController(windowContext.getViewClient());
     }
 
     /**

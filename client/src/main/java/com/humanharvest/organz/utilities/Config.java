@@ -70,7 +70,7 @@ public final class Config {
 
             File configFile = new File(cacheDirectory);
             boolean failed = !configFile.mkdirs();
-            if (failed) {
+            if (failed && !configFile.exists()) {
                 LOGGER.log(Level.WARNING, "Cache directory could not be created");
             }
         }

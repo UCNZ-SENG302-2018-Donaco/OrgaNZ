@@ -207,6 +207,7 @@ public class RegisterOrganDonationController extends SubController {
             overrideReason.append("\n").append(LocalDateTime.now().format(dateTimeFormat));
             if (session.getLoggedInUserType() == UserType.CLINICIAN) {
                 overrideReason.append(String.format("%nOverriden by clinician %d (%s)",
+//                        s = 1
                         session.getLoggedInClinician().getStaffId(), session.getLoggedInClinician().getFullName()));
             } else if (session.getLoggedInUserType() == UserType.ADMINISTRATOR) {
                 overrideReason.append(String.format("%nOverriden by admin '%s'.",

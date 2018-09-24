@@ -327,8 +327,6 @@ public class ClientController {
      * @param uid the id of the client
      * @param authToken id token
      * @return a byte array of the image
-     * @throws IfMatchRequiredException Thrown if there is no If-Match header, will result in a 428 error
-     * @throws IfMatchFailedException Thrown if the If-Match header does not match the Clients ETag. 412 error
      * @throws InvalidRequestException Generic 400 exception if fields are malformed or inconsistent
      */
     @GetMapping("clients/{uid}/image")
@@ -341,7 +339,6 @@ public class ClientController {
         File directory = new File(State.getImageDirectory());
         if (!directory.exists()) {
             throw new NotFoundException();
-
         }
 
         // Get the relevant client
@@ -385,7 +382,7 @@ public class ClientController {
         // Create the directory if it doesn't exist
         File directory = new File(State.getImageDirectory());
         if (!directory.exists()) {
-            directory.mkdir();
+            directory.mkdirs();
         }
 
         // Get the relevant client
@@ -457,17 +454,13 @@ public class ClientController {
      * Gets an image which matches the type of organ requested.
      *
      * @param organType type of organ
-     * @param authToken id token
      * @return a byte array of the organ which matches the organ type.
-     * @throws IfMatchRequiredException Thrown if there is no If-Match header, will result in a 428 error
-     * @throws IfMatchFailedException Thrown if the If-Match header does not match the Clients ETag. 412 error
      * @throws InvalidRequestException Generic 400 exception if fields are malformed or inconsisten
      */
     @GetMapping("organimage/{organType}")
     public ResponseEntity<byte[]> getOrganImage(
-            @PathVariable Organ organType,
-            @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
-            throws InvalidRequestException, IfMatchFailedException, IfMatchRequiredException {
+            @PathVariable Organ organType)
+            throws InvalidRequestException {
 
         // Check if the directory exists. If not, then clearly the image doesn't
         File directory = new File(State.getImageDirectory());
@@ -476,7 +469,6 @@ public class ClientController {
         }
 
         // Get the organ image
-        System.out.println(State.getImageDirectory() + organType.toString() + ".png");
         try (InputStream in = new FileInputStream(State.getImageDirectory() + organType.toString() + ".png")) {
             byte[] out = IOUtils.toByteArray(in);
             HttpHeaders headers = new HttpHeaders();
@@ -488,7 +480,5 @@ public class ClientController {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
     }
-
 }
