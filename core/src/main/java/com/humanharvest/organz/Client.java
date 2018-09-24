@@ -816,7 +816,7 @@ public class Client implements ConcurrencyControlledEntity {
         return Collections.unmodifiableList(procedures.stream()
                 .filter(record -> {
                     if (record instanceof TransplantRecord) {
-                        return !((TransplantRecord)record).isCompleted();
+                        return !((TransplantRecord) record).isCompleted();
                     }
                     return record.getDate().isAfter(LocalDate.now());
                 })
@@ -832,16 +832,24 @@ public class Client implements ConcurrencyControlledEntity {
         return Collections.unmodifiableList(procedures.stream()
                 .filter(record -> {
                     if (record instanceof TransplantRecord) {
-                        return ((TransplantRecord)record).isCompleted();
+                        return ((TransplantRecord) record).isCompleted();
                     }
                     return !record.getDate().isAfter(LocalDate.now());
                 })
                 .collect(Collectors.toList()));
     }
 
-
     public List<TransplantRequest> getTransplantRequests() {
         return Collections.unmodifiableList(transplantRequests);
+    }
+
+    public void setTransplantRequests(List<TransplantRequest> requests) {
+        transplantRequests = new ArrayList<>(requests);
+        for (TransplantRequest request : requests) {
+            request.setClient(this);
+        }
+        isReceiver = !transplantRequests.isEmpty();
+        updateModifiedTimestamp();
     }
 
     /**
@@ -872,15 +880,6 @@ public class Client implements ConcurrencyControlledEntity {
      */
     public TransplantRequest getTransplantRequest(long id) {
         return transplantRequests.stream().filter(request -> request.getId() == id).findFirst().orElse(null);
-    }
-
-    public void setTransplantRequests(List<TransplantRequest> requests) {
-        transplantRequests = new ArrayList<>(requests);
-        for (TransplantRequest request : requests) {
-            request.setClient(this);
-        }
-        isReceiver = !transplantRequests.isEmpty();
-        updateModifiedTimestamp();
     }
 
     /**

@@ -10,8 +10,6 @@ import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 import com.humanharvest.organz.utilities.exceptions.DateOutOfBoundsException;
 
-import org.apache.tomcat.jni.Local;
-
 /**
  * A reversible action that will resolve a transplant record and correctly link the organ to the recipient, as well
  * as the transplant request.

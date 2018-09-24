@@ -37,25 +37,6 @@ public class StaffLoginController extends SubController {
     private PasswordField password;
 
     /**
-     * Override so we can set the page title.
-     *
-     * @param mainController The MainController
-     */
-    @Override
-    public void setup(MainController mainController) {
-        super.setup(mainController);
-        mainController.setTitle("Staff login");
-    }
-
-    /**
-     * Navigates a user back to the Landing page.
-     */
-    @FXML
-    private void goBack() {
-        PageNavigator.loadPage(Page.LANDING, mainController);
-    }
-
-    /**
      * Checks that the staff ID is an integer and is positive.
      *
      * @return true if the staffID is a positive integer. False otherwise.
@@ -127,6 +108,25 @@ public class StaffLoginController extends SubController {
         } else {
             invalidStaffIdAlert(mainController);
         }
+    }
+
+    /**
+     * Override so we can set the page title.
+     *
+     * @param mainController The MainController
+     */
+    @Override
+    public void setup(MainController mainController) {
+        super.setup(mainController);
+        mainController.setTitle("Staff login");
+    }
+
+    /**
+     * Navigates a user back to the Landing page.
+     */
+    @FXML
+    private void goBack() {
+        PageNavigator.loadPage(Page.LANDING, mainController);
     }
 
     /**

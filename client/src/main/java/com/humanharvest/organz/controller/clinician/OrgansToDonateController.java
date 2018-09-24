@@ -80,50 +80,6 @@ public class OrgansToDonateController extends SubController {
     private static final Logger LOGGER = Logger.getLogger(OrgansToDonateController.class.getName());
     private static final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("d MMM yyyy hh:mm a");
 
-    @FXML
-    private HBox menuBarPane;
-
-    @FXML
-    private TableView<DonatedOrgan> tableView;
-
-    @FXML
-    private TableColumn<DonatedOrgan, String> clientCol;
-
-    @FXML
-    private TableColumn<DonatedOrgan, Organ> organCol;
-
-    @FXML
-    private TableColumn<DonatedOrgan, String> regionCol;
-
-    @FXML
-    private TableColumn<DonatedOrgan, LocalDateTime> timeOfDeathCol;
-
-    @FXML
-    private TableColumn<DonatedOrgan, Duration> timeUntilExpiryCol;
-
-    @FXML
-    private ListView<Client> potentialRecipients;
-
-    @FXML
-    private Pagination pagination;
-
-    @FXML
-    private CheckComboBox<String> regionFilter;
-
-    @FXML
-    private CheckComboBox<Organ> organFilter;
-
-    @FXML
-    private Button scheduleTransplantBtn;
-    @FXML
-    private DatePicker transplantDatePicker;
-
-    @FXML
-    private ChoiceBox<Hospital> transplantHospitalChoice;
-
-    @FXML
-    private Text displayingXToYOfZText;
-
     private final Session session;
     private final ClientManager manager;
 
@@ -133,6 +89,37 @@ public class OrgansToDonateController extends SubController {
     private final ObservableList<Hospital> hospitals = FXCollections.observableArrayList();
     private final FilteredList<Hospital> filteredHospitals = new FilteredList<>(hospitals);
     private final SortedList<Hospital> sortedHospitals = new SortedList<>(filteredHospitals);
+
+    @FXML
+    private HBox menuBarPane;
+    @FXML
+    private TableView<DonatedOrgan> tableView;
+    @FXML
+    private TableColumn<DonatedOrgan, String> clientCol;
+    @FXML
+    private TableColumn<DonatedOrgan, Organ> organCol;
+    @FXML
+    private TableColumn<DonatedOrgan, String> regionCol;
+    @FXML
+    private TableColumn<DonatedOrgan, LocalDateTime> timeOfDeathCol;
+    @FXML
+    private TableColumn<DonatedOrgan, Duration> timeUntilExpiryCol;
+    @FXML
+    private ListView<Client> potentialRecipients;
+    @FXML
+    private Pagination pagination;
+    @FXML
+    private CheckComboBox<String> regionFilter;
+    @FXML
+    private CheckComboBox<Organ> organFilter;
+    @FXML
+    private Text displayingXToYOfZText;
+    @FXML
+    private Button scheduleTransplantBtn;
+    @FXML
+    private DatePicker transplantDatePicker;
+    @FXML
+    private ChoiceBox<Hospital> transplantHospitalChoice;
 
     private DonatedOrgan selectedOrgan;
     private Set<String> regionsToFilter;
@@ -444,8 +431,6 @@ public class OrgansToDonateController extends SubController {
                             .plus(nearest.calculateTimeTo(selected.getHospital())).toLocalDate());
                 }
             }
-
-
         }
     }
 
@@ -509,7 +494,6 @@ public class OrgansToDonateController extends SubController {
 
             return;
         }
-
         finishTransplantRequest(request, organToDonate, transplantHospital, transplantDate, receiver);
     }
 
