@@ -325,8 +325,8 @@ public class OrgansToDonateController extends SubController {
                     tableView.refresh();
                     observableOrgansToDonate.removeIf(donatedOrgan ->
                             donatedOrgan.getOverrideReason() != null ||
-                                    (donatedOrgan.getDurationUntilExpiry() != null &&
-                                            donatedOrgan.getDurationUntilExpiry().minusSeconds(1).isNegative()));
+                                    donatedOrgan.getDurationUntilExpiry() != null &&
+                                            donatedOrgan.getDurationUntilExpiry().minusSeconds(1).isNegative());
                 }));
         clock.setCycleCount(Animation.INDEFINITE);
         clock.play();
@@ -437,11 +437,6 @@ public class OrgansToDonateController extends SubController {
                     // No hospital that can transplant this organ
                     transplantHospitalChoice.setDisable(true);
                     scheduleTransplantBtn.setDisable(true);
-                    PageNavigator.showAlert(AlertType.ERROR,
-                            "No valid hospitals",
-                            "There are no hospitals that can transplant this organ. "
-                                    + "Please contact your system administrator.",
-                            mainController.getStage());
                 } else {
                     // Set the default choice to the nearest hospital (to the recipient) that can do the transplant
                     transplantHospitalChoice.setValue(nearest);
@@ -579,11 +574,21 @@ public class OrgansToDonateController extends SubController {
 
     private void displayMatches(DonatedOrgan selectedOrgan) {
         try {
-            List<Client> matches = State.getClientManager().getOrganMatches(selectedOrgan);
-            potentialRecipients.setItems(FXCollections.observableArrayList(matches));
+            boolean noPossibleHospital = State.getConfigManager().getHospitals()
+                    .stream()
+                    .noneMatch(hospital -> hospital.hasTransplantProgram(selectedOrgan.getOrganType()));
 
-            if (matches.isEmpty()) {
-                placeholder.setText("No potential recipients for this organ");
+            if (noPossibleHospital) {
+                potentialRecipients.setItems(FXCollections.emptyObservableList());
+                placeholder.setText("There are no hospitals that can transplant this organ. "
+                        + "Please contact your system administrator.");
+            } else {
+                List<Client> matches = State.getClientManager().getOrganMatches(selectedOrgan);
+                potentialRecipients.setItems(FXCollections.observableArrayList(matches));
+
+                if (matches.isEmpty()) {
+                    placeholder.setText("No potential recipients for this organ");
+                }
             }
 
         } catch (NotFoundException e) {
