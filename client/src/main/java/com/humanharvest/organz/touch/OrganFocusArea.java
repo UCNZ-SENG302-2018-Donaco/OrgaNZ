@@ -55,10 +55,15 @@ public class OrganFocusArea extends FocusArea {
                     @Override
                     public void run() {
                         organWithRecipients.handleOrganSingleClick();
+                        currentClickTimer = null;
                     }
                 };
                 doubleClickTimer.schedule(currentClickTimer, MULTI_CLICK_INTERVAL);
             }
+        } else if (currentClickTimer != null) {
+            currentClickTimer.cancel();
+            currentClickTimer = null;
+            organWithRecipients.handleOrganSingleClick();
         }
     }
 
