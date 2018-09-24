@@ -14,17 +14,13 @@ import com.humanharvest.organz.controller.components.TouchAlertTextController;
  */
 public class PageNavigator {
 
-    private static IPageNavigator pageNavigator = new PageNavigatorStandard();
+    private static IPageNavigator instance = new PageNavigatorStandard();
 
     /**
      * Private constructor to prevent instantiation of utility class
      */
     private PageNavigator() {
         throw new IllegalStateException("Utility class");
-    }
-
-    public static void setPageNavigator(IPageNavigator navigator) {
-        pageNavigator = navigator;
     }
 
     /**
@@ -35,14 +31,14 @@ public class PageNavigator {
      * @return The SubController for the new age, or null if the new page could not be loaded.
      */
     public static SubController loadPage(Page page, MainController controller) {
-        return pageNavigator.loadPage(page, controller);
+        return instance.loadPage(page, controller);
     }
 
     /**
      * Refreshes all windows, to be used when an update occurs. Only refreshes titles and sidebars
      */
     public static void refreshAllWindows() {
-        pageNavigator.refreshAllWindows();
+        instance.refreshAllWindows();
     }
 
     /**
@@ -51,7 +47,7 @@ public class PageNavigator {
      * @return The MainController for the new window, or null if the new window could not be created.
      */
     public static MainController openNewWindow(int width, int height) {
-        return pageNavigator.openNewWindow(width, height);
+        return instance.openNewWindow(width, height);
     }
 
     /**
@@ -72,7 +68,7 @@ public class PageNavigator {
      * @return The generated alert.
      */
     public static Alert generateAlert(Alert.AlertType alertType, String title, String bodyText) {
-        return pageNavigator.generateAlert(alertType, title, bodyText);
+        return instance.generateAlert(alertType, title, bodyText);
     }
 
     /**
@@ -84,10 +80,18 @@ public class PageNavigator {
      * @return an Optional for the button that was clicked to dismiss the alert.
      */
     public static Property<Boolean> showAlert(Alert.AlertType alertType, String title, String bodyText, Window window) {
-        return pageNavigator.showAlert(alertType, title, bodyText, window);
+        return instance.showAlert(alertType, title, bodyText, window);
     }
 
     public static TouchAlertTextController showTextAlert(String title, String bodyText, Window window) {
-        return pageNavigator.showAlertWithText(title, bodyText, window);
+        return instance.showAlertWithText(title, bodyText, window);
+    }
+
+    public static void setInstance(IPageNavigator navigator) {
+        instance = navigator;
+    }
+
+    public static IPageNavigator getInstance() {
+        return instance;
     }
 }

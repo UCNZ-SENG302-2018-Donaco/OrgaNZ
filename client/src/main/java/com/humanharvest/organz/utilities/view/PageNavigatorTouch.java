@@ -3,6 +3,7 @@ package com.humanharvest.organz.utilities.view;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -25,6 +26,7 @@ import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.controller.components.TouchAlertController;
 import com.humanharvest.organz.controller.components.TouchAlertTextController;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.touch.FocusArea;
 import com.humanharvest.organz.touch.MultitouchHandler;
 
 /**
@@ -105,6 +107,16 @@ public class PageNavigatorTouch implements IPageNavigator {
      */
     @Override
     public MainController openNewWindow(int width, int height) {
+
+        return openNewWindow(width, height, FocusArea::new);
+    }
+
+    /**
+     * Opens a new window.
+     *
+     * @return The MainController for the new window, or null if the new window could not be created.
+     */
+    public MainController openNewWindow(int width, int height, Function<Pane, FocusArea> focusAreaCreator) {
         LOGGER.info("Opening new window");
         try {
             Stage newStage = new Stage();
@@ -135,7 +147,8 @@ public class PageNavigatorTouch implements IPageNavigator {
             stackPane.setPrefWidth(width);
             stackPane.setPrefHeight(height);
 
-            MultitouchHandler.addPane(mainPane);
+            FocusArea focusArea = focusAreaCreator.apply(mainPane);
+            MultitouchHandler.addPane(mainPane, focusArea);
 
             return mainController;
         } catch (IOException e) {

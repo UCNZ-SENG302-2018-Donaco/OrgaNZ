@@ -1,5 +1,6 @@
 package com.humanharvest.organz.controller.spiderweb;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -11,25 +12,31 @@ import javafx.scene.CacheHint;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.effect.ColorAdjust;
+import javafx.scene.input.TouchEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
 import javafx.scene.transform.Translate;
 import javafx.stage.Screen;
+import javafx.util.Duration;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
+import com.humanharvest.organz.DonatedOrgan.OrganState;
+import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.touch.FocusArea;
 import com.humanharvest.organz.touch.MultitouchHandler;
+import com.humanharvest.organz.touch.OrganFocusArea;
 import com.humanharvest.organz.touch.PhysicsHandler;
 import com.humanharvest.organz.touch.PointUtils;
 import com.humanharvest.organz.utilities.DurationFormatter.DurationFormat;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
+import com.humanharvest.organz.utilities.view.PageNavigatorTouch;
 
 /**
  * The Spider web controller which handles everything to do with displaying panes in the spider web stage.
@@ -58,11 +65,15 @@ public class SpiderWebController extends SubController {
         canvas.getChildren().clear();
 
         // Close existing windows, but save them for later
-        MultitouchHandler.setPhysicsHandler(new SpiderPhysicsHandler(MultitouchHandler.getRootPane()));
-        for (MainController mainController : State.getMainControllers()) {
+        // Copy to a new list to prevent concurrent modification
+        Iterable<MainController> toClose = new ArrayList<>(State.getMainControllers());
+        for (MainController mainController : toClose) {
             mainController.closeWindow();
             previouslyOpenWindows.add(mainController);
         }
+
+        // Setup spider web physics
+        MultitouchHandler.setPhysicsHandler(new SpiderPhysicsHandler(MultitouchHandler.getRootPane()));
 
         Button exitButton = new Button("Exit Spider Web");
         canvas.getChildren().add(exitButton);
@@ -144,8 +155,8 @@ public class SpiderWebController extends SubController {
     }
 
     private void layoutOrganNodes(double radius) {
-        final int numNodes = organNodes.size();
-        final double angleSize = (Math.PI * 2) / numNodes;
+        int numNodes = organNodes.size();
+        double angleSize = (Math.PI * 2) / numNodes;
 
         Bounds bounds = deceasedDonorPane.getBoundsInParent();
         double centreX = bounds.getMinX() + bounds.getWidth() / 2;
@@ -163,13 +174,14 @@ public class SpiderWebController extends SubController {
         MultitouchHandler.setPhysicsHandler(new PhysicsHandler(MultitouchHandler.getRootPane()));
 
         // Close all windows for the spider web and clear
-        for (MainController mainController : State.getMainControllers()) {
-            mainController.closeWindow();
-        }
+        // Copy to a new list to prevent concurrent modification
+        List<MainController> toClose = new ArrayList<>(State.getMainControllers());
+        toClose.forEach(MainController::closeWindow);
         canvas.getChildren().clear();
 
         // Open all the previously open windows again
         for (MainController mainController : previouslyOpenWindows) {
+            canvas.getChildren().add(mainController.getPane());
             mainController.showWindow();
         }
     }
