@@ -73,7 +73,7 @@
                 <TableView VBox.vgrow="ALWAYS" maxHeight="1.7976931348623157E308" fx:id="currentRequestsTable">
                   <columns>
                     <TableColumn prefWidth="75.0" text="Organ" fx:id="organCurrCol"/>
-                    <TableColumn prefWidth="75.0" text="Date Requested" fx:id="requestDateCurrCol"/>
+                    <TableColumn prefWidth="75.0" text="Date Requested" fx:id="requestDateTimeCurrCol"/>
                   </columns>
                   <VBox.margin>
                     <Insets top="5.0"/>
@@ -106,8 +106,8 @@
                 <TableView VBox.vgrow="ALWAYS" maxHeight="1.7976931348623157E308" fx:id="pastRequestsTable">
                   <columns>
                     <TableColumn prefWidth="75.0" text="Organ" fx:id="organPastCol"/>
-                    <TableColumn prefWidth="75.0" text="Date Requested" fx:id="requestDatePastCol"/>
-                    <TableColumn prefWidth="75.0" text="Date Resolved" fx:id="resolvedDatePastCol"/>
+                    <TableColumn prefWidth="75.0" text="Date Requested" fx:id="requestDateTimePastCol"/>
+                    <TableColumn prefWidth="75.0" text="Date Resolved" fx:id="resolvedDateTimePastCol"/>
                     <TableColumn prefWidth="75.0" text="Resolution" fx:id="requestStatusPastCol"/>
                     <TableColumn prefWidth="75.0" text="Reason" fx:id="resolvedReasonPastCol"/>
                   </columns>
