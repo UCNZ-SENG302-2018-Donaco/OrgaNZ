@@ -38,6 +38,7 @@ public class DonatedOrgan {
         EXPIRED,
         OVERRIDDEN
     }
+
     @Id
     @GeneratedValue
     @JsonView(Views.Overview.class)
