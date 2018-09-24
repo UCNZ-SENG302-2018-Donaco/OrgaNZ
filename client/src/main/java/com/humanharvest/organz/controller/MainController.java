@@ -147,12 +147,12 @@ public class MainController {
         }
     }
 
-    public void setSubController(SubController subController) {
-        this.subController = subController;
-    }
-
     public SubController getSubController() {
         return subController;
+    }
+
+    public void setSubController(SubController subController) {
+        this.subController = subController;
     }
 
     /**

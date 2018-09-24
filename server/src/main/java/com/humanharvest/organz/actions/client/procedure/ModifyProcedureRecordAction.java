@@ -1,4 +1,4 @@
-package com.humanharvest.organz.actions.client;
+package com.humanharvest.organz.actions.client.procedure;
 
 import java.time.LocalDate;
 import java.util.Objects;
@@ -6,6 +6,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.humanharvest.organz.ProcedureRecord;
+import com.humanharvest.organz.actions.client.ClientAction;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.utilities.enums.Organ;
 

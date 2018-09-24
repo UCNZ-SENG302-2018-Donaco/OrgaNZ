@@ -3,15 +3,12 @@ package com.humanharvest.organz.state;
 import java.io.IOException;
 import java.io.InputStream;
 
-import com.humanharvest.organz.utilities.enums.Organ;
-
 import org.apache.commons.io.IOUtils;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  * Deals with all image handling in with the server for the client.
@@ -49,7 +46,6 @@ public class ImageManagerRest implements ImageManager {
      * Gets the default user image
      *
      * @return a byte array of the default image
-     * @throws IOException
      */
     @Override
     public byte[] getDefaultImage() throws IOException {
@@ -59,7 +55,6 @@ public class ImageManagerRest implements ImageManager {
         }
         return res;
     }
-
 
     /**
      * Posts an image to the clients profile to replace their existing one (which may be the default one)

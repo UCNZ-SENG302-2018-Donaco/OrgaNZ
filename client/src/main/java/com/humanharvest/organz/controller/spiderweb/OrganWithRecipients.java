@@ -66,7 +66,6 @@ public class OrganWithRecipients {
 
         createMatchesList();
 
-
         // Create the lines
         deceasedToOrganConnector = new Line();
         deceasedToOrganConnector.setStrokeWidth(4);

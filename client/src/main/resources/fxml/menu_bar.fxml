@@ -5,66 +5,66 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.layout.HBox?>
-<HBox maxWidth="1.7976931348623157E308" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.MenuBarController">
+<HBox xmlns:fx="http://javafx.com/fxml/1" maxWidth="1.7976931348623157E308" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8.0.121" fx:controller="com.humanharvest.organz.controller.MenuBarController">
   <children>
-    <MenuBar fx:id="menuBar" maxWidth="1.7976931348623157E308" minWidth="-Infinity" HBox.hgrow="ALWAYS">
+    <MenuBar HBox.hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="-Infinity" fx:id="menuBar">
       <menus>
-        <Menu fx:id="filePrimaryItem" mnemonicParsing="false" text="File">
+        <Menu mnemonicParsing="false" text="File" fx:id="filePrimaryItem">
           <items>
-            <MenuItem fx:id="saveClientsItem" mnemonicParsing="false" onAction="#saveClients" text="Save Clients" />
-            <MenuItem fx:id="saveCliniciansItem" mnemonicParsing="false" onAction="#saveClinicians" text="Save Clinicians" />
-            <MenuItem fx:id="loadItem" mnemonicParsing="false" onAction="#load" text="Load" />
-            <MenuItem fx:id="refreshCacheItem" mnemonicParsing="false" onAction="#refreshCache" text="Refresh cache" />
-            <MenuItem fx:id="settingsItem" mnemonicParsing="false" onAction="#goToSettings" text="Settings" />
-            <SeparatorMenuItem fx:id="topSeparator" mnemonicParsing="false" />
-            <MenuItem fx:id="logOutItem" mnemonicParsing="false" onAction="#logout" text="Log Out" />
-            <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem fx:id="duplicateItem" mnemonicParsing="false" onAction="#duplicateWindow" text="Duplicate Window" />
-            <MenuItem fx:id="closeItem" mnemonicParsing="false" onAction="#closeWindow" text="Close Window" />
-            <MenuItem fx:id="quitItem" mnemonicParsing="false" onAction="#quitProgram" text="Quit" />
+            <MenuItem mnemonicParsing="false" onAction="#saveClients" text="Save Clients" fx:id="saveClientsItem"/>
+            <MenuItem mnemonicParsing="false" onAction="#saveClinicians" text="Save Clinicians" fx:id="saveCliniciansItem"/>
+            <MenuItem mnemonicParsing="false" onAction="#load" text="Load" fx:id="loadItem"/>
+            <MenuItem mnemonicParsing="false" onAction="#refreshCache" text="Refresh cache" fx:id="refreshCacheItem"/>
+            <MenuItem mnemonicParsing="false" onAction="#goToSettings" text="Settings" fx:id="settingsItem"/>
+            <SeparatorMenuItem mnemonicParsing="false" fx:id="topSeparator"/>
+            <MenuItem mnemonicParsing="false" onAction="#logout" text="Log Out" fx:id="logOutItem"/>
+            <SeparatorMenuItem mnemonicParsing="false"/>
+            <MenuItem mnemonicParsing="false" onAction="#duplicateWindow" text="Duplicate Window" fx:id="duplicateItem"/>
+            <MenuItem mnemonicParsing="false" onAction="#closeWindow" text="Close Window" fx:id="closeItem"/>
+            <MenuItem mnemonicParsing="false" onAction="#quitProgram" text="Quit" fx:id="quitItem"/>
           </items>
         </Menu>
-        <Menu fx:id="editItem" mnemonicParsing="false" text="Edit">
+        <Menu mnemonicParsing="false" text="Edit" fx:id="editItem">
           <items>
-            <MenuItem fx:id="undoItem" mnemonicParsing="false" onAction="#undo" text="Undo" />
-            <MenuItem fx:id="redoItem" mnemonicParsing="false" onAction="#redo" text="Redo" />
+            <MenuItem mnemonicParsing="false" onAction="#undo" text="Undo" fx:id="undoItem"/>
+            <MenuItem mnemonicParsing="false" onAction="#redo" text="Redo" fx:id="redoItem"/>
           </items>
         </Menu>
-        <Menu fx:id="clientPrimaryItem" mnemonicParsing="false" text="Client">
+        <Menu mnemonicParsing="false" text="Client" fx:id="clientPrimaryItem">
           <items>
-            <MenuItem fx:id="searchClientItem" mnemonicParsing="false" onAction="#goToSearch" text="Search Clients" />
-            <MenuItem fx:id="viewClientItem" mnemonicParsing="false" onAction="#goToViewClient" text="View Client Profile" />
-            <MenuItem fx:id="createClientItem" mnemonicParsing="false" onAction="#goToCreateClient" text="Create a client" />
+            <MenuItem mnemonicParsing="false" onAction="#goToSearch" text="Search Clients" fx:id="searchClientItem"/>
+            <MenuItem mnemonicParsing="false" onAction="#goToViewClient" text="View Client Profile" fx:id="viewClientItem"/>
+            <MenuItem mnemonicParsing="false" onAction="#goToCreateClient" text="Create a client" fx:id="createClientItem"/>
           </items>
         </Menu>
-        <Menu fx:id="organPrimaryItem" mnemonicParsing="false" text="Organs">
+        <Menu mnemonicParsing="false" text="Organs" fx:id="organPrimaryItem">
           <items>
-            <MenuItem fx:id="donateOrganItem" mnemonicParsing="false" onAction="#goToRegisterOrganDonation" text="Donate Organs" />
-            <MenuItem fx:id="requestOrganItem" mnemonicParsing="false" onAction="#goToRequestOrganDonation" text="Request Organs" />
-            <MenuItem fx:id="transplantRequestsItem" mnemonicParsing="false" onAction="#goToTransplants" text="Transplant Requests" />
-            <MenuItem fx:id="organsToDonateItem" mnemonicParsing="false" onAction="#goToOrganstoDonate" text="Organs To Donate" />
+            <MenuItem mnemonicParsing="false" onAction="#goToRegisterOrganDonation" text="Donate Organs" fx:id="donateOrganItem"/>
+            <MenuItem mnemonicParsing="false" onAction="#goToRequestOrganDonation" text="Request Organs" fx:id="requestOrganItem"/>
+            <MenuItem mnemonicParsing="false" onAction="#goToTransplants" text="Transplant Requests" fx:id="transplantRequestsItem"/>
+            <MenuItem mnemonicParsing="false" onAction="#goToOrganstoDonate" text="Organs To Donate" fx:id="organsToDonateItem"/>
             <MenuItem mnemonicParsing="false" onAction="#openOrganWeb" text="Organ Web" fx:id="organWebItem"/>
           </items>
         </Menu>
-        <Menu fx:id="medicationsPrimaryItem" mnemonicParsing="false" text="Medications">
+        <Menu mnemonicParsing="false" text="Medications" fx:id="medicationsPrimaryItem">
           <items>
-            <MenuItem fx:id="viewMedicationsItem" mnemonicParsing="false" onAction="#goToViewMedications" text="View Medications" />
-            <MenuItem fx:id="medicalHistoryItem" mnemonicParsing="false" onAction="#goToIllnessHistory" text="Medical History" />
-            <MenuItem fx:id="proceduresItem" mnemonicParsing="false" onAction="#goToViewProcedures" text="Procedures" />
+            <MenuItem mnemonicParsing="false" onAction="#goToViewMedications" text="View Medications" fx:id="viewMedicationsItem"/>
+            <MenuItem mnemonicParsing="false" onAction="#goToIllnessHistory" text="Medical History" fx:id="medicalHistoryItem"/>
+            <MenuItem mnemonicParsing="false" onAction="#goToViewProcedures" text="Procedures" fx:id="proceduresItem"/>
           </items>
         </Menu>
-        <Menu fx:id="staffPrimaryItem" mnemonicParsing="false" text="Staff">
+        <Menu mnemonicParsing="false" text="Staff" fx:id="staffPrimaryItem">
           <items>
-            <MenuItem fx:id="staffListItem" mnemonicParsing="false" onAction="#goToStaffList" text="Staff List" />
-            <MenuItem fx:id="createClinicianItem" mnemonicParsing="false" onAction="#goToCreateClinician" text="Create Clinician" />
-            <MenuItem fx:id="createAdministratorItem" mnemonicParsing="false" onAction="#goToCreateAdmin" text="Create Administrator" />
+            <MenuItem mnemonicParsing="false" onAction="#goToStaffList" text="Staff List" fx:id="staffListItem"/>
+            <MenuItem mnemonicParsing="false" onAction="#goToCreateClinician" text="Create Clinician" fx:id="createClinicianItem"/>
+            <MenuItem mnemonicParsing="false" onAction="#goToCreateAdmin" text="Create Administrator" fx:id="createAdministratorItem"/>
           </items>
         </Menu>
-        <Menu fx:id="profilePrimaryItem" mnemonicParsing="false" text="Profile">
+        <Menu mnemonicParsing="false" text="Profile" fx:id="profilePrimaryItem">
           <items>
-            <MenuItem fx:id="viewClinicianItem" mnemonicParsing="false" onAction="#goToViewClinician" text="View Clinician" />
-            <MenuItem fx:id="historyItem" mnemonicParsing="false" onAction="#goToHistory" text="History" />
-            <MenuItem fx:id="cliItem" mnemonicParsing="false" onAction="#goToCommandLine" text="CLI" />
+            <MenuItem mnemonicParsing="false" onAction="#goToViewClinician" text="View Clinician" fx:id="viewClinicianItem"/>
+            <MenuItem mnemonicParsing="false" onAction="#goToHistory" text="History" fx:id="historyItem"/>
+            <MenuItem mnemonicParsing="false" onAction="#goToCommandLine" text="CLI" fx:id="cliItem"/>
           </items>
         </Menu>
       </menus>

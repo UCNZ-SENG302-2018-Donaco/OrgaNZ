@@ -1,6 +1,7 @@
 package com.humanharvest.organz.utilities.view;
 
-import javafx.beans.property.Property;
+import java.util.function.Consumer;
+
 import javafx.scene.control.Alert;
 import javafx.stage.Window;
 
@@ -12,7 +13,7 @@ import com.humanharvest.organz.controller.components.TouchAlertTextController;
  * Utility class for controlling navigation between pages.
  * All methods on the navigator are static to facilitate simple access from anywhere in the application.
  */
-public class PageNavigator {
+public final class PageNavigator {
 
     private static IPageNavigator instance = new PageNavigatorStandard();
 
@@ -77,21 +78,33 @@ public class PageNavigator {
      * @param alertType the type of alert to show (can determine its style and button options).
      * @param title the text to show as the title and heading of the alert.
      * @param bodyText the text to show within the body of the alert.
-     * @return an Optional for the button that was clicked to dismiss the alert.
      */
-    public static Property<Boolean> showAlert(Alert.AlertType alertType, String title, String bodyText, Window window) {
-        return instance.showAlert(alertType, title, bodyText, window);
+    public static void showAlert(Alert.AlertType alertType, String title, String bodyText, Window window) {
+        instance.showAlert(alertType, title, bodyText, window, null);
+    }
+
+    /**
+     * Shows a pop-up alert of the given type, and awaits user input to dismiss it (blocking).
+     *
+     * @param alertType the type of alert to show (can determine its style and button options).
+     * @param title the text to show as the title and heading of the alert.
+     * @param bodyText the text to show within the body of the alert.
+     * @param onResponse a callback for when an ok/cancel button is clicked.
+     */
+    public static void showAlert(Alert.AlertType alertType, String title, String bodyText, Window window,
+            Consumer<Boolean> onResponse) {
+        instance.showAlert(alertType, title, bodyText, window, onResponse);
     }
 
     public static TouchAlertTextController showTextAlert(String title, String bodyText, Window window) {
         return instance.showAlertWithText(title, bodyText, window);
     }
 
-    public static void setInstance(IPageNavigator navigator) {
-        instance = navigator;
-    }
-
     public static IPageNavigator getInstance() {
         return instance;
+    }
+
+    public static void setInstance(IPageNavigator navigator) {
+        instance = navigator;
     }
 }

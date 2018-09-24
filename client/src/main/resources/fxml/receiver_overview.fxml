@@ -7,69 +7,68 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-
-<?import javafx.scene.layout.StackPane?>
-<VBox fx:id="receiverVBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="250.0" prefWidth="169.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.client.ReceiverOverviewController">
-   <children>
-      <Label fx:id="priority" alignment="CENTER" prefHeight="25.0" prefWidth="201.0" style="-fx-background-color: lightgrey;" text="#1">
-         <font>
-            <Font size="20.0" />
-         </font>
-      </Label>
-      <Separator prefWidth="200.0" />
-      <VBox alignment="CENTER" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="100.0">
-         <children>
-           <StackPane prefHeight="100" prefWidth="100">
-             <ImageView fx:id="imageView" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" VBox.vgrow="ALWAYS" />
-           </StackPane>
-         </children>
-      </VBox>
-      <Label fx:id="name" prefHeight="15.0" prefWidth="200.0">
-         <font>
-            <Font name="System Bold" size="19.0" />
-         </font>
-         <VBox.margin>
-            <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
-         </VBox.margin>
-      </Label>
-      <Separator prefHeight="11.0" prefWidth="200.0" />
-      <VBox>
-         <children>
-            <Label fx:id="hospital" prefHeight="16.0" prefWidth="209.0" text="Hospital Name">
-               <VBox.margin>
-                  <Insets bottom="5.0" left="10.0" top="5.0" />
-               </VBox.margin>
+<VBox xmlns:fx="http://javafx.com/fxml/1" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="250.0" prefWidth="169.0" xmlns="http://javafx.com/javafx/8.0.121" fx:controller="com.humanharvest.organz.controller.client.ReceiverOverviewController" fx:id="receiverVBox">
+  <children>
+    <Label style="-fx-background-color: lightgrey;" alignment="CENTER" prefHeight="25.0" prefWidth="201.0" text="#1" fx:id="priority">
+      <font>
+        <Font size="20.0"/>
+      </font>
+    </Label>
+    <Separator prefWidth="200.0"/>
+    <VBox alignment="CENTER" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="100.0">
+      <children>
+        <StackPane prefHeight="100" prefWidth="100">
+          <ImageView VBox.vgrow="ALWAYS" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" fx:id="imageView"/>
+        </StackPane>
+      </children>
+    </VBox>
+    <Label prefHeight="15.0" prefWidth="200.0" fx:id="name">
+      <font>
+        <Font name="System Bold" size="19.0"/>
+      </font>
+      <VBox.margin>
+        <Insets bottom="5.0" left="10.0" right="10.0" top="5.0"/>
+      </VBox.margin>
+    </Label>
+    <Separator prefHeight="11.0" prefWidth="200.0"/>
+    <VBox>
+      <children>
+        <Label prefHeight="16.0" prefWidth="209.0" text="Hospital Name" fx:id="hospital">
+          <VBox.margin>
+            <Insets bottom="5.0" left="10.0" top="5.0"/>
+          </VBox.margin>
+        </Label>
+        <GridPane prefHeight="56.0" prefWidth="200.0">
+          <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="110.0" minWidth="10.0" prefWidth="110.0"/>
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="109.0" minWidth="10.0" prefWidth="70.0"/>
+          </columnConstraints>
+          <rowConstraints>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+          </rowConstraints>
+          <children>
+            <Label GridPane.rowIndex="1" text="Wait time:">
+              <GridPane.margin>
+                <Insets left="10.0"/>
+              </GridPane.margin>
             </Label>
-            <GridPane prefHeight="56.0" prefWidth="200.0">
-              <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="110.0" minWidth="10.0" prefWidth="110.0" />
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="109.0" minWidth="10.0" prefWidth="70.0" />
-              </columnConstraints>
-              <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-              </rowConstraints>
-               <children>
-                  <Label text="Wait time:" GridPane.rowIndex="1">
-                     <GridPane.margin>
-                        <Insets left="10.0" />
-                     </GridPane.margin>
-                  </Label>
-                  <Label text="Travel time:">
-                     <GridPane.margin>
-                        <Insets left="10.0" />
-                     </GridPane.margin>
-                  </Label>
-                  <Label fx:id="requestedTime" prefHeight="16.0" prefWidth="103.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <Label fx:id="travelTime" prefHeight="16.0" prefWidth="110.0" GridPane.columnIndex="1" />
-               </children>
-               <VBox.margin>
-                  <Insets bottom="5.0" />
-               </VBox.margin>
-            </GridPane>
-         </children>
-      </VBox>
-   </children>
+            <Label text="Travel time:">
+              <GridPane.margin>
+                <Insets left="10.0"/>
+              </GridPane.margin>
+            </Label>
+            <Label GridPane.columnIndex="1" GridPane.rowIndex="1" prefHeight="16.0" prefWidth="103.0" fx:id="requestedTime"/>
+            <Label GridPane.columnIndex="1" prefHeight="16.0" prefWidth="110.0" fx:id="travelTime"/>
+          </children>
+          <VBox.margin>
+            <Insets bottom="5.0"/>
+          </VBox.margin>
+        </GridPane>
+      </children>
+    </VBox>
+  </children>
 </VBox>

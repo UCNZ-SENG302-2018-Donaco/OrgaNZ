@@ -2,7 +2,6 @@ package com.humanharvest.organz.controller;
 
 import static org.mockito.Mockito.mock;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;

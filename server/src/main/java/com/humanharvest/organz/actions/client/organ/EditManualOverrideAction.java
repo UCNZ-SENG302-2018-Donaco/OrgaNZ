@@ -1,6 +1,7 @@
-package com.humanharvest.organz.actions.client;
+package com.humanharvest.organz.actions.client.organ;
 
 import com.humanharvest.organz.DonatedOrgan;
+import com.humanharvest.organz.actions.client.ClientAction;
 import com.humanharvest.organz.state.ClientManager;
 
 public class EditManualOverrideAction extends ClientAction {
@@ -17,14 +18,14 @@ public class EditManualOverrideAction extends ClientAction {
     }
 
     @Override
-    public void execute() {
+    protected void execute() {
         super.execute();
         donatedOrgan.manuallyOverride(newOverrideReason);
         manager.applyChangesTo(client);
     }
 
     @Override
-    public void unExecute() {
+    protected void unExecute() {
         super.unExecute();
         donatedOrgan.manuallyOverride(oldOverrideReason);
         manager.applyChangesTo(client);

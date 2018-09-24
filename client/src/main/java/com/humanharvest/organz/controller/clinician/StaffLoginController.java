@@ -37,25 +37,6 @@ public class StaffLoginController extends SubController {
     private PasswordField password;
 
     /**
-     * Override so we can set the page title.
-     *
-     * @param mainController The MainController
-     */
-    @Override
-    public void setup(MainController mainController) {
-        super.setup(mainController);
-        mainController.setTitle("Staff login");
-    }
-
-    /**
-     * Navigates a user back to the Landing page.
-     */
-    @FXML
-    private void goBack() {
-        PageNavigator.loadPage(Page.LANDING, mainController);
-    }
-
-    /**
      * Checks that the staff ID is an integer and is positive.
      *
      * @return true if the staffID is a positive integer. False otherwise.
@@ -117,15 +98,6 @@ public class StaffLoginController extends SubController {
         JSONConverter.updateHistory(save, "action_history.json");
     }
 
-    /**
-     * Checks if the staff id is valid and checks that the username and password is correct
-     * The user cannot be logged in until valid parameters are supplied.
-     */
-    @FXML
-    private void signIn() {
-        handleSignIn(staffId.getText(), password.getText(), mainController);
-    }
-
     public static void handleSignIn(String username, String password, MainController mainController) {
         if (isValidStaffIdInput(username)) {
             if (IS_NUMBER.matcher(username).matches()) {
@@ -136,5 +108,33 @@ public class StaffLoginController extends SubController {
         } else {
             invalidStaffIdAlert(mainController);
         }
+    }
+
+    /**
+     * Override so we can set the page title.
+     *
+     * @param mainController The MainController
+     */
+    @Override
+    public void setup(MainController mainController) {
+        super.setup(mainController);
+        mainController.setTitle("Staff login");
+    }
+
+    /**
+     * Navigates a user back to the Landing page.
+     */
+    @FXML
+    private void goBack() {
+        PageNavigator.loadPage(Page.LANDING, mainController);
+    }
+
+    /**
+     * Checks if the staff id is valid and checks that the username and password is correct
+     * The user cannot be logged in until valid parameters are supplied.
+     */
+    @FXML
+    private void signIn() {
+        handleSignIn(staffId.getText(), password.getText(), mainController);
     }
 }

@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 import com.humanharvest.organz.BaseTest;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.actions.ActionInvoker;
+import com.humanharvest.organz.actions.client.organ.ModifyClientOrgansAction;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.ClientManagerMemory;
 import com.humanharvest.organz.utilities.enums.Organ;
