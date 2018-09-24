@@ -294,7 +294,8 @@ public class RequestOrgansController extends SubController {
                     "Request already exists",
                     "Client already has a waiting request for this organ.", mainController.getStage());
         } else if (client.getTransplantRequests().stream()
-                .anyMatch(request -> request.getStatus() == TransplantRequestStatus.SCHEDULED)) {
+                .anyMatch(request -> request.getRequestedOrgan() == selectedOrgan &&
+                        request.getStatus() == TransplantRequestStatus.SCHEDULED)) {
             PageNavigator.showAlert(
                     AlertType.ERROR,
                     "Transplant already scheduled",
