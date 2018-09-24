@@ -6,6 +6,7 @@ package com.humanharvest.organz.utilities.view;
  */
 public enum Page {
     MAIN("/fxml/main.fxml"),
+    DASHBOARD("/fxml/dashboard.fxml"),
     TOUCH_MAIN("/fxml/touch_main.fxml"),
     BACKDROP("/fxml/backdrop.fxml"),
     LANDING("/fxml/landing.fxml"),
