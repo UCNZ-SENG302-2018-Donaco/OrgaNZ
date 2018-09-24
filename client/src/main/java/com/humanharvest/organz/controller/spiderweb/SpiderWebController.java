@@ -1,5 +1,6 @@
 package com.humanharvest.organz.controller.spiderweb;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -35,6 +36,7 @@ import javafx.util.Duration;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.DonatedOrgan.OrganState;
+import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.controller.components.ExpiryBarUtils;
@@ -297,9 +299,9 @@ public class SpiderWebController extends SubController {
             organToRecipientConnector.setEndY(matchBounds.getMinY() + matchBounds.getHeight() / 2);
             updateRecipientConnector(organ, organToRecipientConnector);
 
+
             matchesList.toFront();
         });
-
         organPane.setOnMouseClicked(click -> {
             if (click.isSynthesized()) {
                 return;
@@ -362,6 +364,12 @@ public class SpiderWebController extends SubController {
                 }));
         clock.setCycleCount(Animation.INDEFINITE);
         clock.play();
+    }
+
+    public void triggerTransplant(DonatedOrgan organ,Client recpient){
+        TransplantRequest request = new TransplantRequest(client,organ.getOrganType());
+        //Change Line and add text
+        LocalDateTime durationText = request.getRequestDateTime();
     }
 
     private ListView<Client> createMatchesList(ObservableList<Client> potentialMatches) {
