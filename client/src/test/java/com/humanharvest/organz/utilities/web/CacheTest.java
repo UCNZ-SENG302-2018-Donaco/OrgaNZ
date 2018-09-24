@@ -1,8 +1,9 @@
 package com.humanharvest.organz.utilities.web;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
-import java.io.EOFException;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
@@ -12,8 +13,6 @@ import com.humanharvest.organz.BaseTest;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.utilities.CacheManager;
 import com.humanharvest.organz.utilities.enums.Gender;
-import com.humanharvest.organz.utilities.exceptions.BadDrugNameException;
-import com.humanharvest.organz.utilities.exceptions.BadGatewayException;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.api.client.testing.http.MockHttpTransport;

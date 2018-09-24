@@ -13,12 +13,11 @@ import org.junit.jupiter.api.Test;
 
 public class HospitalTest {
 
-    private Hospital hospital;
     private final Organ organ = Organ.LIVER;
-
     private final Set<Organ> organs = new HashSet<>();
     private final Organ organ1 = Organ.HEART;
     private final Organ organ2 = Organ.BONE;
+    private Hospital hospital;
 
     @BeforeEach
     public void setUp() {

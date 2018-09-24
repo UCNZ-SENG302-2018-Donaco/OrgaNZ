@@ -24,7 +24,8 @@ public class ConfigResolverRest implements ConfigResolver {
                 .exchange(State.getBaseUri() + "config/hospitals/{id}/transplantPrograms",
                         HttpMethod.POST,
                         entity,
-                        new ParameterizedTypeReference<Set<Organ>>() {},
+                        new ParameterizedTypeReference<Set<Organ>>() {
+                        },
                         hospital.getId());
     }
 }

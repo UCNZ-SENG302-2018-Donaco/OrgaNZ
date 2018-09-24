@@ -828,6 +828,15 @@ public class Client implements ConcurrencyControlledEntity {
         return Collections.unmodifiableList(transplantRequests);
     }
 
+    public void setTransplantRequests(List<TransplantRequest> requests) {
+        transplantRequests = new ArrayList<>(requests);
+        for (TransplantRequest request : requests) {
+            request.setClient(this);
+        }
+        isReceiver = !transplantRequests.isEmpty();
+        updateModifiedTimestamp();
+    }
+
     /**
      * Returns the transplant request relevant to the passed in organ.
      * If there is no such transplant request, returns null.
@@ -844,15 +853,6 @@ public class Client implements ConcurrencyControlledEntity {
 
         // Couldn't find one
         return null;
-    }
-
-    public void setTransplantRequests(List<TransplantRequest> requests) {
-        transplantRequests = new ArrayList<>(requests);
-        for (TransplantRequest request : requests) {
-            request.setClient(this);
-        }
-        isReceiver = !transplantRequests.isEmpty();
-        updateModifiedTimestamp();
     }
 
     /**
@@ -980,8 +980,7 @@ public class Client implements ConcurrencyControlledEntity {
         Collection<String> matchedNames = new ArrayList<>();
 
         for (String searchedParam : searched) {
-            for (String name : lowercaseNames)
-{
+            for (String name : lowercaseNames) {
 
                 if (name.startsWith(searchedParam)) {
                     matchedNames.add(name);

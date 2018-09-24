@@ -459,6 +459,4 @@ public class MatchOrganToRecipientsTest {
         assertEquals(recipient1, eligibleClients.get(0));
     }
 
-
-
 }

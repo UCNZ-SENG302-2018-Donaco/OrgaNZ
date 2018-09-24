@@ -11,12 +11,11 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import org.controlsfx.control.CheckListView?>
-
-<VBox prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.administrator.ConfigController">
+<VBox xmlns:fx="http://javafx.com/fxml/1" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.121" fx:controller="com.humanharvest.organz.controller.administrator.ConfigController">
   <children>
-    <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+    <SplitPane VBox.vgrow="ALWAYS" dividerPositions="0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="200.0">
       <items>
-        <HBox fx:id="menuBarPane" maxHeight="20.0" minHeight="-Infinity" />
+        <HBox maxHeight="20.0" minHeight="-Infinity" fx:id="menuBarPane"/>
         <SplitPane VBox.vgrow="ALWAYS">
           <items>
             <VBox prefHeight="600.0" prefWidth="800.0">
@@ -25,85 +24,86 @@
                   <center>
                     <VBox BorderPane.alignment="CENTER">
                       <BorderPane.margin>
-                        <Insets bottom="40.0" left="100.0" right="100.0" />
+                        <Insets bottom="40.0" left="100.0" right="100.0"/>
                       </BorderPane.margin>
                       <children>
-                                    <HBox prefHeight="387.0" prefWidth="798.0">
-                                       <children>
-                                          <VBox prefHeight="200.0" prefWidth="450.0">
-                                             <children>
-                                                <Label alignment="CENTER" prefHeight="16.0" prefWidth="278.0" text="Allowed Countries">
-                                                   <font>
-                                                      <Font size="18.0" />
-                                                   </font>
-                                                </Label>
-                                                <CheckListView fx:id="allowedCountries">
-                                                   <VBox.margin>
-                                                      <Insets bottom="10.0" left="30.0" right="30.0" top="15.0" />
-                                                   </VBox.margin>
-                                                </CheckListView>
-                                                <HBox alignment="CENTER" prefHeight="38.0" prefWidth="272.0">
-                                                   <children>
-                                      <Button mnemonicParsing="false" onAction="#selectAll" text="Select All">
-                                                         <HBox.margin>
-                                                            <Insets left="10.0" right="10.0" />
-                                                         </HBox.margin>
-                                                      </Button>
-                                      <Button mnemonicParsing="false" onAction="#selectNone" text="Select None">
-                                                         <HBox.margin>
-                                                            <Insets left="10.0" right="10.0" />
-                                                         </HBox.margin>
-                                                      </Button>
-                                                   </children>
-                                                </HBox>
-                                             </children>
-                                          </VBox>
-                                          <Separator orientation="VERTICAL" prefHeight="269.0" prefWidth="0.0" />
-                                          <VBox prefHeight="269.0" prefWidth="698.0">
-                                             <children>
-                                                <Label alignment="CENTER" prefHeight="16.0" prefWidth="606.0" text="Hospitals">
-                                                   <font>
-                                                      <Font size="18.0" />
-                                                   </font>
-                                                </Label>
-                                                <HBox>
-                                                   <children>
-                                                      <ListView fx:id="hospitalSelector" HBox.hgrow="ALWAYS">
-                                                         <HBox.margin>
-                                                            <Insets bottom="10.0" left="30.0" right="15.0" top="15.0" />
-                                                         </HBox.margin>
-                                                      </ListView>
-                                                      <VBox alignment="TOP_CENTER" HBox.hgrow="ALWAYS">
-                                                         <children>
-                                                            <Label text="Transplant Programs" textAlignment="CENTER" VBox.vgrow="ALWAYS">
-                                                               <font>
-                                                                  <Font size="15.0" />
-                                                               </font>
-                                                               <VBox.margin>
-                                                                  <Insets bottom="10.0" />
-                                                               </VBox.margin></Label>
-                                                            <CheckListView fx:id="organSelector" />
-                                                         </children>
-                                                         <HBox.margin>
-                                                            <Insets bottom="10.0" left="30.0" right="15.0" top="15.0" />
-                                                         </HBox.margin>
-                                                      </VBox>
-                                                   </children>
-                                                </HBox>
-                                             </children>
-                                          </VBox>
-                                       </children>
-                                    </HBox>
+                        <HBox prefHeight="387.0" prefWidth="798.0">
+                          <children>
+                            <VBox prefHeight="200.0" prefWidth="450.0">
+                              <children>
+                                <Label alignment="CENTER" prefHeight="16.0" prefWidth="278.0" text="Allowed Countries">
+                                  <font>
+                                    <Font size="18.0"/>
+                                  </font>
+                                </Label>
+                                <CheckListView fx:id="allowedCountries">
+                                  <VBox.margin>
+                                    <Insets bottom="10.0" left="30.0" right="30.0" top="15.0"/>
+                                  </VBox.margin>
+                                </CheckListView>
+                                <HBox alignment="CENTER" prefHeight="38.0" prefWidth="272.0">
+                                  <children>
+                                    <Button mnemonicParsing="false" onAction="#selectAll" text="Select All">
+                                      <HBox.margin>
+                                        <Insets left="10.0" right="10.0"/>
+                                      </HBox.margin>
+                                    </Button>
+                                    <Button mnemonicParsing="false" onAction="#selectNone" text="Select None">
+                                      <HBox.margin>
+                                        <Insets left="10.0" right="10.0"/>
+                                      </HBox.margin>
+                                    </Button>
+                                  </children>
+                                </HBox>
+                              </children>
+                            </VBox>
+                            <Separator orientation="VERTICAL" prefHeight="269.0" prefWidth="0.0"/>
+                            <VBox prefHeight="269.0" prefWidth="698.0">
+                              <children>
+                                <Label alignment="CENTER" prefHeight="16.0" prefWidth="606.0" text="Hospitals">
+                                  <font>
+                                    <Font size="18.0"/>
+                                  </font>
+                                </Label>
+                                <HBox>
+                                  <children>
+                                    <ListView HBox.hgrow="ALWAYS" fx:id="hospitalSelector">
+                                      <HBox.margin>
+                                        <Insets bottom="10.0" left="30.0" right="15.0" top="15.0"/>
+                                      </HBox.margin>
+                                    </ListView>
+                                    <VBox HBox.hgrow="ALWAYS" alignment="TOP_CENTER">
+                                      <children>
+                                        <Label VBox.vgrow="ALWAYS" text="Transplant Programs" textAlignment="CENTER">
+                                          <font>
+                                            <Font size="15.0"/>
+                                          </font>
+                                          <VBox.margin>
+                                            <Insets bottom="10.0"/>
+                                          </VBox.margin>
+                                        </Label>
+                                        <CheckListView fx:id="organSelector"/>
+                                      </children>
+                                      <HBox.margin>
+                                        <Insets bottom="10.0" left="30.0" right="15.0" top="15.0"/>
+                                      </HBox.margin>
+                                    </VBox>
+                                  </children>
+                                </HBox>
+                              </children>
+                            </VBox>
+                          </children>
+                        </HBox>
                       </children>
                     </VBox>
                   </center>
                   <top>
-                    <Label alignment="TOP_LEFT" prefHeight="44.0" prefWidth="176.0" text="Settings" BorderPane.alignment="CENTER">
+                    <Label BorderPane.alignment="CENTER" alignment="TOP_LEFT" prefHeight="44.0" prefWidth="176.0" text="Settings">
                       <font>
-                        <Font size="24.0" />
+                        <Font size="24.0"/>
                       </font>
                       <BorderPane.margin>
-                        <Insets bottom="30.0" top="20.0" />
+                        <Insets bottom="30.0" top="20.0"/>
                       </BorderPane.margin>
                     </Label>
                   </top>
@@ -118,17 +118,17 @@
       <children>
         <Button cancelButton="true" mnemonicParsing="false" onAction="#cancel" prefHeight="30.0" prefWidth="100.0" text="Cancel">
           <HBox.margin>
-            <Insets />
+            <Insets/>
           </HBox.margin>
         </Button>
         <Button mnemonicParsing="false" onAction="#apply" prefHeight="30.0" prefWidth="100.0" text="Apply">
           <HBox.margin>
-            <Insets left="20.0" right="20.0" />
+            <Insets left="20.0" right="20.0"/>
           </HBox.margin>
         </Button>
       </children>
       <opaqueInsets>
-        <Insets />
+        <Insets/>
       </opaqueInsets>
     </HBox>
   </children>

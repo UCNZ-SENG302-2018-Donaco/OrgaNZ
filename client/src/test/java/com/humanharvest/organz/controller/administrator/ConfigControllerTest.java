@@ -99,7 +99,6 @@ public class ConfigControllerTest extends ControllerTest {
         assertThatHospitalOnlyContainsFirstOrgan(firstHospital);
     }
 
-
     @Test
     public void organChecksAreMaintainedAfterClickingOnAnotherHospital() {
         // click on the first hospital, and select the first organ

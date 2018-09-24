@@ -69,7 +69,7 @@ public class ClientMedicationsController {
             @PathVariable int uid,
             @RequestBody CreateMedicationRecordView medicationRecordView,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
-            throws AuthenticationException{
+            throws AuthenticationException {
 
         Optional<Client> client = State.getClientManager().getClientByID(uid);
 

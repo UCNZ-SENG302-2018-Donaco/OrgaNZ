@@ -55,7 +55,7 @@ public class PhysicsHandler {
         }
 
         if (centre.getX() + delta.getX() > rootPane.getWidth()) {
-            delta = new Point2D( rootPane.getWidth() - centre.getX(), delta.getY());
+            delta = new Point2D(rootPane.getWidth() - centre.getX(), delta.getY());
             velocity = new Point2D(-velocity.getX() * COLLISION_VELOCITY_LOSS,
                     velocity.getY() * COLLISION_VELOCITY_LOSS);
         }
