@@ -63,7 +63,7 @@ public class AppUI extends Application {
     private static void loadTouchMainPane() {
         MainController mainController = PageNavigator.openNewWindow();
         mainController.setWindowContext(WindowContext.defaultContext());
-        PageNavigator.loadPage(Page.LANDING, mainController);
+        PageNavigator.loadPage(Page.LOGIN_STAFF, mainController);
     }
 
     private static void addCss(Scene scene) {

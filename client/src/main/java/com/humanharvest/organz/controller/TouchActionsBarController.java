@@ -7,6 +7,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 import org.controlsfx.control.Notifications;
@@ -17,12 +18,15 @@ import com.humanharvest.organz.state.State.UiType;
 import com.humanharvest.organz.touch.MultitouchHandler;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
-import com.humanharvest.organz.utilities.view.WindowContext;
 import com.humanharvest.organz.views.ActionResponseView;
 
+import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXHamburger;
 
-
+/**
+ * A class to handle everything to do with the navigation of both clients using the desktop application and
+ * admins/clinicians who are using the touch application.
+ */
 public class TouchActionsBarController extends SubController {
 
     @FXML
@@ -39,10 +43,17 @@ public class TouchActionsBarController extends SubController {
 
     @FXML
     private JFXHamburger hamburger;
-    private MainController mainController;
+
+    @FXML
+    private Pane entireMenubarPane;
+
 
     private static final Logger LOGGER = Logger.getLogger(TouchActionsBarController.class.getName());
 
+    /**
+     * Setup the menu bar colours, buttons, and hamburger.
+     * @param controller
+     */
     @Override
     public void setup(MainController controller) {
         super.setup(controller);
@@ -50,44 +61,64 @@ public class TouchActionsBarController extends SubController {
         if (State.getSession().getLoggedInUserType() == UserType.CLIENT) {
             homeButton.setVisible(false);
             duplicateButton.setVisible(false);
+            entireMenubarPane.setStyle("-fx-background-color: rgb(176, 255, 137)");
+        } else {
+            entireMenubarPane.setStyle("-fx-background-color: rgb(137, 186, 255)");
         }
 
         if (windowContext.isClinViewClientWindow()) {
             homeButton.setDisable(true);
+            entireMenubarPane.setStyle("-fx-background-color: rgb(255, 217, 137)");
         }
 
-        hamburger.addEventHandler(MouseEvent.MOUSE_CLICKED, (e) -> toggleSidebar());
+        hamburger.addEventHandler(MouseEvent.MOUSE_CLICKED, (e) -> toggleSidebar(controller.getDrawer()));
         refresh();
     }
 
-
-    private void toggleSidebar() {
-        if (mainController.getDrawer().isOpened()) {
-            closeSidebar();
+    /**
+     * Open the drawer if closed. Close the drawer if open
+     * @param drawer the item to toggle
+     */
+    private void toggleSidebar(JFXDrawer drawer) {
+        if (drawer.isOpened()) {
+            closeSidebar(drawer);
         } else {
-            openSidebar();
+            openSidebar(drawer);
         }
 
     }
 
-    private void closeSidebar() {
-
-        mainController.getDrawer().close();
-        mainController.getDrawer().setDisable(true);
-        mainController.getDrawer().setVisible(false);
+    /**
+     * If the draw item is open, it will be closed.
+     * @param drawer the item to close
+     */
+    private void closeSidebar(JFXDrawer drawer) {
+        drawer.close();
+        drawer.setDisable(true);
+        drawer.setVisible(false);
     }
 
-    private void openSidebar() {
-        mainController.getDrawer().open();
-        mainController.getDrawer().setDisable(false);
+    /**
+     * If the draw item is closed, it will be opened.
+     * @param drawer the item to open
+     */
+    private void openSidebar(JFXDrawer drawer) {
+        drawer.open();
+        drawer.setDisable(false);
     }
 
+    /**
+     * Navigates the user to the home screen
+     */
     @FXML
     private void navigateHome() {
         // We need to navigate to our dashboard (for now we're just loading the search clients page).
         PageNavigator.loadPage(Page.SEARCH, mainController);
     }
 
+    /**
+     * Undo the last action
+     */
     @FXML
     private void undoAction() {
         ActionResponseView responseView = State.getActionResolver().executeUndo(null);
@@ -95,6 +126,9 @@ public class TouchActionsBarController extends SubController {
         PageNavigator.refreshAllWindows();
     }
 
+    /**
+     * Redo the last action
+     */
     @FXML
     private void redoAction() {
         ActionResponseView responseView = State.getActionResolver().executeRedo(null);
@@ -102,6 +136,9 @@ public class TouchActionsBarController extends SubController {
         PageNavigator.refreshAllWindows();
     }
 
+    /**
+     * Refresh the page
+     */
     @Override
     public void refresh() {
         ActionResponseView responseView = State.getActionResolver().getUndo();
@@ -109,6 +146,9 @@ public class TouchActionsBarController extends SubController {
         redoButton.setDisable(!responseView.isCanRedo());
     }
 
+    /**
+     * Open another instance of the currently opened window
+     */
     @FXML
     private void duplicateWindow() {
         MainController newMain = PageNavigator.openNewWindow();
@@ -121,6 +161,9 @@ public class TouchActionsBarController extends SubController {
         }
     }
 
+    /**
+     * Log out of the currently logged in user and take them back to the landing page
+     */
     public void logout() {
         State.logout();
         for (MainController controller : State.getMainControllers()) {
@@ -131,11 +174,13 @@ public class TouchActionsBarController extends SubController {
         State.clearMainControllers();
         State.addMainController(mainController);
         mainController.resetWindowContext();
-        PageNavigator.loadPage(Page.LANDING, mainController);
-        closeSidebar();
+        PageNavigator.loadPage(Page.LOGIN_STAFF, mainController);
+        closeSidebar(mainController.getDrawer());
     }
 
-
+    /**
+     * Exit the pane that is currently open
+     */
     public void exit() {
         if (State.getUiType() == UiType.TOUCH) {
             MultitouchHandler.removePane(mainController.getPane());

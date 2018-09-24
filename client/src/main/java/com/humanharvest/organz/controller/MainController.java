@@ -1,8 +1,7 @@
 package com.humanharvest.organz.controller;
 
-import java.awt.Event;
+
 import java.io.IOException;
-import java.util.EventListener;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -10,7 +9,6 @@ import java.util.logging.Logger;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -21,14 +19,10 @@ import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State.UiType;
 import com.humanharvest.organz.touch.MultitouchHandler;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.touch.MultitouchHandler;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
 
 import com.jfoenix.controls.JFXDrawer;
-import com.jfoenix.controls.JFXHamburger;
-import com.jfoenix.transitions.hamburger.HamburgerBackArrowBasicTransition;
-import com.jfoenix.transitions.hamburger.HamburgerSlideCloseTransition;
 
 /**
  * Main controller class for the application window.
@@ -44,7 +38,6 @@ public class MainController {
     private String title;
     private SidebarController sidebarController;
     private MenuBarController menuBarController;
-    private TouchActionsBarController touchActionsBarController;
     private SubController subController;
     /**
      * Holder of a switchable page.
@@ -136,10 +129,8 @@ public class MainController {
     /**
      * Method that can be called from other controllers to load the sidebar into that page.
      * Will set the sidebar as the child of the pane given.
-     *
-     * @param sidebarPane The container pane for the sidebar, given by the importer.
      */
-    public void loadSidebar(Pane sidebarPane) {
+    private void loadSidebar() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(Page.SIDEBAR.getPath()));
             VBox sidebar = loader.load();
@@ -173,19 +164,27 @@ public class MainController {
         }
     }
 
+    /**
+     * Loads the touch actions bar and uses the sidebars fxml as the content
+     * @param pane the pane to load the touch actions bar for
+     */
     public void loadTouchActionsBar(Pane pane) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(Page.TOUCH_ACTIONS_BAR.getPath()));
             HBox touch_action_bar = loader.load();
-            touchActionsBarController = loader.getController();
+            TouchActionsBarController touchActionsBarController = loader.getController();
             touchActionsBarController.setup(this);
             pane.getChildren().setAll(touch_action_bar);
-            loadSidebar(null);
+            loadSidebar();
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Couldn't load touch actions bar from fxml file.", e);
         }
     }
 
+    /**
+     * Sets up the navigation type for the given pane
+     * @param pane type of pane to setup navigation for
+     */
     public void loadNavigation(Pane pane) {
         if (State.getUiType() == UiType.TOUCH || State.getSession().getLoggedInUserType() == UserType.CLIENT) {
             loadTouchActionsBar(pane);

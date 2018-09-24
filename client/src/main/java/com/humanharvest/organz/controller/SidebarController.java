@@ -67,23 +67,6 @@ public class SidebarController extends SubController  {
         refresh();
     }
 
-
-    /**
-     * Evaluates if the request organs button should be displayed for the current user.
-     *
-     * @param userType the type of current user
-     * @return true if the button should be shown, false otherwise
-     */
-    private boolean shouldShowRequestOrgans(Session.UserType userType) { //TODO Find out if we want this hidden if
-        // they haven't requested organs.
-        if (userType == UserType.CLIENT) {
-            Client currentClient = session.getLoggedInClient();
-            return currentClient.isReceiver();
-        } else {
-            return windowContext.isClinViewClientWindow();
-        }
-    }
-
     private void showButton(Button button) {
         button.setVisible(true);
         button.setManaged(true);
