@@ -98,13 +98,14 @@ public class MainController {
         if (State.getUiType() == State.UiType.TOUCH) {
             MultitouchHandler.removePane(pane);
         }
+        State.deleteMainController(this);
     }
 
     /**
      * Shows the window.
      */
     public void showWindow() {
-        stage.show();
+        State.addMainController(this);
         if (State.getUiType() == State.UiType.TOUCH) {
             MultitouchHandler.addPane(pane);
         }

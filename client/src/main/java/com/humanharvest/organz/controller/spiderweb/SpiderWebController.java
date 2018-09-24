@@ -75,11 +75,14 @@ public class SpiderWebController extends SubController {
         canvas.getChildren().clear();
 
         // Close existing windows, but save them for later
-        MultitouchHandler.setPhysicsHandler(new SpiderPhysicsHandler(MultitouchHandler.getRootPane()));
-        for (MainController mainController : State.getMainControllers()) {
+        List<MainController> toClose = new ArrayList<>(State.getMainControllers());
+        for (MainController mainController : toClose) {
             mainController.closeWindow();
             previouslyOpenWindows.add(mainController);
         }
+
+        // Setup spider web physics
+        MultitouchHandler.setPhysicsHandler(new SpiderPhysicsHandler(MultitouchHandler.getRootPane()));
 
         Button exitButton = new Button("Exit Spider Web");
         canvas.getChildren().add(exitButton);
@@ -400,13 +403,13 @@ public class SpiderWebController extends SubController {
         MultitouchHandler.setPhysicsHandler(new PhysicsHandler(MultitouchHandler.getRootPane()));
 
         // Close all windows for the spider web and clear
-        for (MainController mainController : State.getMainControllers()) {
-            mainController.closeWindow();
-        }
+        List<MainController> toClose = new ArrayList<>(State.getMainControllers());
+        toClose.forEach(MainController::closeWindow);
         canvas.getChildren().clear();
 
         // Open all the previously open windows again
         for (MainController mainController : previouslyOpenWindows) {
+            canvas.getChildren().add(mainController.getPane());
             mainController.showWindow();
         }
     }
