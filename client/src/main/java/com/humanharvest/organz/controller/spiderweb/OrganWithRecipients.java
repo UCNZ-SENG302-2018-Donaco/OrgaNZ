@@ -10,7 +10,6 @@ import javafx.animation.Timeline;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.geometry.Orientation;
 import javafx.scene.control.ListView;
@@ -23,6 +22,7 @@ import javafx.util.Duration;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
+import com.humanharvest.organz.DonatedOrgan.OrganState;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.components.ExpiryBarUtils;
 import com.humanharvest.organz.controller.components.PotentialRecipientCell;
@@ -48,7 +48,6 @@ public class OrganWithRecipients {
     private Pane organPane;
     private FocusArea organFocus;
     private Pane matchesPane;
-    private ListView<Client> matchesListView;
 
     private Line deceasedToOrganConnector;
     private Line organToRecipientConnector;
@@ -63,27 +62,10 @@ public class OrganWithRecipients {
                 .openNewWindow(70, 70, pane -> new OrganFocusArea(pane, this));
         newMain.getStyles().clear();
 
-        organImageController = (OrganImageController) PageNavigator
-                .loadPage(Page.ORGAN_IMAGE, newMain);
-        organImageController.loadImage(organ.getOrganType());
-        organImageController.setMatchCount(potentialMatches.size());
+        createOrganImage(newMain);
 
-        if (potentialMatches.isEmpty() && !organ.hasExpired()) {
-            organImageController.matchCountIsVisible(true);
-        }
+        createMatchesList();
 
-        organPane = newMain.getPane();
-        FocusArea organFocus = (FocusArea) organPane.getUserData();
-
-        organFocus.setScalable(false);
-        organFocus.setCollidable(true);
-        organFocus.setDisableHinting(true);
-
-        // Double click to override and organ or to unoverride
-        // Create matches list
-        matchesListView = createMatchesList(FXCollections.observableArrayList(potentialMatches));
-        matchesPane = new Pane(matchesListView);
-        MultitouchHandler.addPane(matchesPane);
 
         // Create the lines
         deceasedToOrganConnector = new Line();
@@ -93,7 +75,7 @@ public class OrganWithRecipients {
         organToRecipientConnector = new Line();
         organToRecipientConnector.setStrokeWidth(4);
 
-        matchesListView.visibleProperty().addListener((observable, oldValue, newValue) -> {
+        matchesPane.visibleProperty().addListener((observable, oldValue, newValue) -> {
             organToRecipientConnector.setVisible(newValue);
         });
 
@@ -119,6 +101,32 @@ public class OrganWithRecipients {
         clock.play();
     }
 
+    private void createOrganImage(MainController newMain) {
+        organImageController = (OrganImageController) PageNavigator
+                .loadPage(Page.ORGAN_IMAGE, newMain);
+        organImageController.loadImage(organ.getOrganType());
+        organImageController.setMatchCount(potentialMatches.size());
+
+        if (potentialMatches.isEmpty() && !organ.hasExpired()) {
+            organImageController.matchCountIsVisible(true);
+        }
+
+        organPane = newMain.getPane();
+        FocusArea organFocus = (FocusArea) organPane.getUserData();
+
+        organFocus.setScalable(false);
+        organFocus.setCollidable(true);
+        organFocus.setDisableHinting(true);
+    }
+
+    private void createMatchesList() {
+        // Double click to override and organ or to unoverride
+        // Create matches list
+        ListView<Client> matchesListView = createMatchesList(FXCollections.observableArrayList(potentialMatches));
+        matchesPane = new Pane(matchesListView);
+        MultitouchHandler.addPane(matchesPane);
+    }
+
     public Pane getOrganPane() {
         return organPane;
     }
@@ -131,7 +139,7 @@ public class OrganWithRecipients {
 
         organPane.setOnMouseClicked(this::handleOrganPaneClick);
 
-        matchesListView.localToParentTransformProperty().addListener(handlePotentialMatchesTransformed());
+        matchesPane.localToParentTransformProperty().addListener(handlePotentialMatchesTransformed());
     }
 
     public void handleOrganPaneClick(MouseEvent event) {
@@ -147,9 +155,9 @@ public class OrganWithRecipients {
     }
 
     public void handleOrganSingleClick() {
-        if (!organ.hasExpired()) {
-            matchesListView.setVisible(!matchesListView.isVisible());
-            organImageController.matchCountIsVisible(!matchesListView.isVisible());
+        if (organ.getState() == OrganState.CURRENT) {
+            matchesPane.setVisible(!matchesPane.isVisible());
+            organImageController.matchCountIsVisible(!matchesPane.isVisible());
         }
     }
 
@@ -159,13 +167,13 @@ public class OrganWithRecipients {
             State.getClientResolver().manuallyOverrideOrgan(organ, reason);
             organ.manuallyOverride(reason);
 
-            matchesListView.setVisible(false);
+            matchesPane.setVisible(false);
 
         } else {
             State.getClientResolver().cancelManualOverrideForOrgan(organ);
             organ.cancelManualOverride();
 
-            matchesListView.setVisible(true);
+            matchesPane.setVisible(true);
         }
 
         organImageController.matchCountIsVisible(false);
