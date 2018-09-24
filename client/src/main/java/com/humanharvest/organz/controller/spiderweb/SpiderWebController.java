@@ -18,6 +18,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.effect.ColorAdjust;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.LinearGradient;
@@ -235,6 +236,10 @@ public class SpiderWebController extends SubController {
         ListView<Client> matchesList = createMatchesList(FXCollections.observableArrayList(potentialMatches));
         Pane matchesPane = new Pane(matchesList);
         MultitouchHandler.addPane(matchesPane);
+        FocusArea matchesFocusArea = (FocusArea) matchesPane.getUserData();
+        matchesPane.addEventHandler(MouseEvent.MOUSE_PRESSED, (event -> matchesFocusArea.setTranslatable(false)));
+        matchesPane.addEventHandler(MouseEvent.MOUSE_RELEASED, (event -> matchesFocusArea.setTranslatable(true)));
+
 
         int index = 0;
         /*
