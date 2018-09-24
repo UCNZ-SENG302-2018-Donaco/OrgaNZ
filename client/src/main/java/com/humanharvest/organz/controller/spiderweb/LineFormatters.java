@@ -17,6 +17,7 @@ import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.DonatedOrgan.OrganState;
 import com.humanharvest.organz.controller.components.ExpiryBarUtils;
 import com.humanharvest.organz.touch.FocusArea;
+import com.humanharvest.organz.touch.MultitouchHandler;
 import com.humanharvest.organz.utilities.DurationFormatter.DurationFormat;
 
 public class LineFormatters {
@@ -104,15 +105,35 @@ public class LineFormatters {
         }
     }
 
-    public static void updateMatchesListPosition(Pane matchesPane, Transform newTransform, Bounds bounds) {
+    public static void updateMatchesListPosition(Pane matchesPane, Transform newTransform) {
         FocusArea focusArea = (FocusArea) matchesPane.getUserData();
 
-        Affine transform = new Affine();
-        transform.prepend(new Scale(0.5, 0.5));
-        transform.prepend(new Translate(-50, 90));
-        transform.prepend(newTransform);
+        // If not currently touching the matches pane
+        if (MultitouchHandler.findPaneTouches(matchesPane).isEmpty()) {
+            Affine transform = new Affine();
+            transform.prepend(new Scale(0.5, 0.5));
+            transform.prepend(new Translate(-50, 90));
+            transform.prepend(newTransform);
 
-        focusArea.setTransform(transform);
+            if (!focusArea.getTransform().equals(transform)) {
+                focusArea.setTransform(transform);
+            }
+        }
+    }
+
+    public static void updateOrganPanePosition(Pane organPane, Transform newTransform) {
+        FocusArea focusArea = (FocusArea) organPane.getUserData();
+
+        // If not currently touching the organ pane
+        if (MultitouchHandler.findPaneTouches(organPane).isEmpty()) {
+            Affine transform = new Affine();
+            transform.prepend(new Translate(50, -90));
+            transform.prepend(newTransform);
+
+            if (!focusArea.getTransform().equals(transform)) {
+                focusArea.setTransform(transform);
+            }
+        }
     }
 
     private static double getAngle(double x1, double y1, double x2, double y2) {

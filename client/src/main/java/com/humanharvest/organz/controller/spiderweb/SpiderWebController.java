@@ -35,13 +35,13 @@ import com.humanharvest.organz.utilities.view.PageNavigator;
 public class SpiderWebController extends SubController {
 
     private static final Logger LOGGER = Logger.getLogger(SpiderWebController.class.getName());
+    private static final double RADIUS = 300;
 
     private final Client client;
 
     private final List<MainController> previouslyOpenWindows = new ArrayList<>();
     private final Pane canvas;
     private Pane deceasedDonorPane;
-    private final List<Pane> organNodes = new ArrayList<>();
 
     public SpiderWebController(Client viewedClient) {
         client = viewedClient;
@@ -97,25 +97,30 @@ public class SpiderWebController extends SubController {
      * Loads a window for each non expired organ.
      */
     private void displayOrgans() {
-        for (DonatedOrgan organ : client.getDonatedOrgans()) {
-            addOrganNode(organ);
+        List<DonatedOrgan> donatedOrgans = client.getDonatedOrgans();
+        Bounds donorBounds = deceasedDonorPane.getBoundsInParent();
+        double centreX = donorBounds.getMinX() + donorBounds.getWidth() / 2;
+        double centreY = donorBounds.getMinY() + donorBounds.getHeight() / 2;
+        double angleSize = (Math.PI * 2) / donatedOrgans.size();
+
+        for (int i = 0; i < donatedOrgans.size(); i++) {
+            DonatedOrgan donatedOrgan = donatedOrgans.get(i);
+
+            double xPos = centreX + RADIUS * Math.sin(angleSize * i);
+            double yPos = centreY + RADIUS * Math.cos(angleSize * i);
+            double angle = 360.01 - Math.toDegrees(angleSize * i);
+
+            addOrganNode(donatedOrgan, xPos, yPos, angle);
         }
-        layoutOrganNodes(300);
     }
 
-    private void addOrganNode(DonatedOrgan organ) {
+    private void addOrganNode(DonatedOrgan organ, double xPos, double yPos, double rotation) {
         List<Client> potentialMatches = State.getClientManager().getOrganMatches(organ);
 
         OrganWithRecipients organWithRecipients = new OrganWithRecipients(organ, potentialMatches, deceasedDonorPane,
                 canvas);
 
-        organNodes.add(organWithRecipients.getOrganPane());
-
-//        MaskedView maskedMatchesList = new MaskedView(matchesList);
-//        maskedMatchesList.setFadingSize(0);
-//        canvas.getChildren().add(maskedMatchesList);
-
-
+        setPositionUsingTransform(organWithRecipients.getOrganPane(), xPos, yPos, rotation, 1);
     }
 
     private void displayDonatingClient() {
@@ -131,21 +136,6 @@ public class SpiderWebController extends SubController {
         double centerX = (Screen.getPrimary().getVisualBounds().getWidth() - bounds.getWidth()) / 2;
         double centerY = (Screen.getPrimary().getVisualBounds().getHeight() - bounds.getHeight()) / 2;
         setPositionUsingTransform(deceasedDonorPane, centerX, centerY, 0, 0.6);
-    }
-
-    private void layoutOrganNodes(double radius) {
-        int numNodes = organNodes.size();
-        double angleSize = (Math.PI * 2) / numNodes;
-
-        Bounds bounds = deceasedDonorPane.getBoundsInParent();
-        double centreX = bounds.getMinX() + bounds.getWidth() / 2;
-        double centreY = bounds.getMinY() + bounds.getHeight() / 2;
-        for (int i = 0; i < numNodes; i++) {
-            setPositionUsingTransform(organNodes.get(i),
-                    centreX + radius * Math.sin(angleSize * i),
-                    centreY + radius * Math.cos(angleSize * i),
-                    360.01 - Math.toDegrees(angleSize * i), 1);
-        }
     }
 
     @FXML
