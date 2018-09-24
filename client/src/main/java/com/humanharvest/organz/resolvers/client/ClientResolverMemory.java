@@ -1,6 +1,7 @@
 package com.humanharvest.organz.resolvers.client;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
@@ -13,18 +14,19 @@ import java.util.logging.Logger;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.HistoryItem;
+import com.humanharvest.organz.Hospital;
 import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.ProcedureRecord;
+import com.humanharvest.organz.TransplantRecord;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
 import com.humanharvest.organz.views.client.CreateClientView;
 import com.humanharvest.organz.views.client.CreateIllnessView;
 import com.humanharvest.organz.views.client.CreateMedicationRecordView;
-import com.humanharvest.organz.views.client.CreateProcedureView;
-import com.humanharvest.organz.views.client.CreateTransplantRequestView;
 import com.humanharvest.organz.views.client.ModifyClientObject;
 import com.humanharvest.organz.views.client.ModifyIllnessObject;
 import com.humanharvest.organz.views.client.ModifyProcedureObject;
@@ -98,9 +100,7 @@ public class ClientResolverMemory implements ClientResolver {
     }
 
     @Override
-    public List<TransplantRequest> createTransplantRequest(Client client, CreateTransplantRequestView request) {
-        TransplantRequest transplantRequest = new TransplantRequest(client, request.getRequestedOrgan(),
-                request.getRequestDateTime());
+    public List<TransplantRequest> createTransplantRequest(Client client, TransplantRequest transplantRequest) {
         client.addTransplantRequest(transplantRequest);
         State.getClientManager().applyChangesTo(client);
         return client.getTransplantRequests();
@@ -110,7 +110,7 @@ public class ClientResolverMemory implements ClientResolver {
     public List<IllnessRecord> addIllnessRecord(Client client, CreateIllnessView createIllnessView) {
         IllnessRecord illnessRecord = new IllnessRecord(createIllnessView.getIllnessName(),
                 createIllnessView.getDiagnosisDate(),
-                createIllnessView.isChronic());
+                createIllnessView.getIsChronic());
         client.addIllnessRecord(illnessRecord);
         State.getClientManager().applyChangesTo(client);
         return client.getIllnesses();
@@ -126,14 +126,17 @@ public class ClientResolverMemory implements ClientResolver {
     }
 
     @Override
-    public List<ProcedureRecord> addProcedureRecord(Client client, CreateProcedureView procedureView) {
-        ProcedureRecord procedureRecord = new ProcedureRecord(
-                procedureView.getSummary(),
-                procedureView.getDescription(),
-                procedureView.getDate());
+    public List<ProcedureRecord> addProcedureRecord(Client client, ProcedureRecord procedureRecord) {
         client.addProcedureRecord(procedureRecord);
         State.getClientManager().applyChangesTo(client);
         return client.getProcedures();
+    }
+
+    @Override
+    public List<ProcedureRecord> scheduleTransplantProcedure(DonatedOrgan organ, TransplantRequest request,
+            Hospital hospital, LocalDate date) {
+        TransplantRecord transplant = new TransplantRecord(organ, request, hospital, date);
+        return addProcedureRecord(request.getClient(), transplant);
     }
 
     @Override
@@ -141,6 +144,19 @@ public class ClientResolverMemory implements ClientResolver {
         donatedOrgan.manuallyOverride(overrideReason);
         State.getClientManager().applyChangesTo(donatedOrgan.getDonor());
         return donatedOrgan;
+    }
+
+    @Override
+    public TransplantRecord completeTransplantRecord(TransplantRecord record) {
+        record.setCompleted(true);
+        record.getOrgan().setReceiver(record.getClient());
+        TransplantRequest request = record.getRequest();
+        request.setResolvedReason("The transplant has been completed");
+        request.setResolvedDateTime(record.getDate().atTime(LocalTime.now()));
+        request.setStatus(TransplantRequestStatus.COMPLETED);
+
+        State.getClientManager().applyChangesTo(record.getClient());
+        return record;
     }
 
     //------------PATCHs----------------
@@ -187,6 +203,9 @@ public class ClientResolverMemory implements ClientResolver {
     public IllnessRecord modifyIllnessRecord(Client client, IllnessRecord toModify,
             ModifyIllnessObject modifyIllnessObject) {
         BeanUtils.copyProperties(modifyIllnessObject, toModify, modifyIllnessObject.getUnmodifiedFields());
+        if (modifyIllnessObject.getIsChronic() != null) { //quick and dirty fix for chronic not being set
+            toModify.setChronic(modifyIllnessObject.getIsChronic());
+        }
         return toModify;
     }
 

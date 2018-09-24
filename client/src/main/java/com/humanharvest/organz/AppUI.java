@@ -100,7 +100,7 @@ public class AppUI extends Application {
      */
     @Override
     public void start(Stage primaryStage) throws IOException {
-        LoggerSetup.setup(Level.INFO);
+        LoggerSetup.setup("organz.log", Level.INFO);
         LoggerSetup.enableConsole(Level.WARNING);
 
         processArguments();

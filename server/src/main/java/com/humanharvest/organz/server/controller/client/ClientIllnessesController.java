@@ -5,9 +5,9 @@ import java.util.Optional;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.IllnessRecord;
-import com.humanharvest.organz.actions.client.AddIllnessRecordAction;
-import com.humanharvest.organz.actions.client.DeleteIllnessRecordAction;
-import com.humanharvest.organz.actions.client.ModifyIllnessRecordByObjectAction;
+import com.humanharvest.organz.actions.client.illness.AddIllnessRecordAction;
+import com.humanharvest.organz.actions.client.illness.DeleteIllnessRecordAction;
+import com.humanharvest.organz.actions.client.illness.ModifyIllnessRecordByObjectAction;
 import com.humanharvest.organz.server.exceptions.GlobalControllerExceptionHandler.InvalidRequestException;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.validators.client.ModifyIllnessValidator;
@@ -83,15 +83,19 @@ public class ClientIllnessesController {
             throw new InvalidRequestException();
         }
 
-        if (record.isChronic() && modifyIllnessObject.getCuredDate() != null) {
+        if (record.getIsChronic() && modifyIllnessObject.getCuredDate() != null) {
             //Cured date is trying to be set while disease is chronic.
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+
         if (modifyIllnessObject.getIllnessName() == null) {
             modifyIllnessObject.setIllnessName(record.getIllnessName());
         }
         if (modifyIllnessObject.getDiagnosisDate() == null) {
             modifyIllnessObject.setDiagnosisDate(record.getDiagnosisDate());
+        }
+        if (modifyIllnessObject.getIsChronic() == null) {
+            modifyIllnessObject.setIsChronic(record.getIsChronic());
         }
 
         //Create the old details to allow undoable action
@@ -126,7 +130,7 @@ public class ClientIllnessesController {
         State.getAuthenticationManager().verifyClientAccess(authToken, client);
 
         IllnessRecord record = new IllnessRecord(illnessView.getIllnessName(),
-                illnessView.getDiagnosisDate(), illnessView.isChronic());
+                illnessView.getDiagnosisDate(), illnessView.getIsChronic());
 
         AddIllnessRecordAction addIllnessRecordAction = new AddIllnessRecordAction(client, record,
                 State.getClientManager());

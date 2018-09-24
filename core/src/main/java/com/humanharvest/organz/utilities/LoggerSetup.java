@@ -27,7 +27,7 @@ public final class LoggerSetup {
      *
      * @param logLevel The log level required
      */
-    public static void setup(Level logLevel) {
+    public static void setup(String logFile, Level logLevel) {
 
         Logger logger = Logger.getLogger("");
 
@@ -35,7 +35,7 @@ public final class LoggerSetup {
         FileHandler fileTxt;
 
         try {
-            fileTxt = new FileHandler("organz.log", true);
+            fileTxt = new FileHandler(logFile, true);
         } catch (IOException e) {
             logger.log(Level.SEVERE, e.getMessage(), e);
             return;

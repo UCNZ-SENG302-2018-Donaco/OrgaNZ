@@ -13,8 +13,8 @@ import org.junit.jupiter.api.Test;
 
 public class HospitalTest {
 
-    private final Organ organ = Organ.LIVER;
     private final Set<Organ> organs = new HashSet<>();
+    private final Organ organ = Organ.LIVER;
     private final Organ organ1 = Organ.HEART;
     private final Organ organ2 = Organ.BONE;
     private Hospital hospital;
@@ -23,6 +23,9 @@ public class HospitalTest {
     public void setUp() {
         Set<Hospital> hospitals = Hospital.getDefaultHospitals();
         hospital = (Hospital) hospitals.toArray()[0];
+        for (Organ organ : Organ.values()) {
+            hospital.removeTransplantProgramFor(organ);
+        }
 
         organs.add(organ1);
         organs.add(organ2);
@@ -53,8 +56,8 @@ public class HospitalTest {
 
         // Check that heart and bone have been added, and liver is no longer there
         assertEquals(2, hospital.getTransplantPrograms().size());
-        assertTrue(hospital.getTransplantPrograms().contains(organ1));
-        assertTrue(hospital.getTransplantPrograms().contains(organ2));
+        assertTrue(hospital.hasTransplantProgram(organ1));
+        assertTrue(hospital.hasTransplantProgram(organ2));
     }
 
     @Test

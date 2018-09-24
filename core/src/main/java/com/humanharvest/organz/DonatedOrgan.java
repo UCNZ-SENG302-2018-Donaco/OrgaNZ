@@ -5,6 +5,7 @@ import static com.humanharvest.organz.utilities.enums.DonatedOrganSortOptionsEnu
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Comparator;
+import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -38,6 +39,7 @@ public class DonatedOrgan {
         OVERRIDDEN,
         TRANSPLANT_COMPLETED,
     }
+
     @Id
     @GeneratedValue
     @JsonView(Views.Overview.class)
@@ -57,6 +59,8 @@ public class DonatedOrgan {
     private LocalDateTime dateTimeOfDonation;
     @JsonView(Views.Overview.class)
     private String overrideReason;  // If null this implies the organ was not manually overriden
+    @JsonView(Views.Overview.class)
+    private boolean available = true;
 
     protected DonatedOrgan() {
     }
@@ -94,11 +98,10 @@ public class DonatedOrgan {
                 return Comparator.comparing(organ -> organ.getDonor().getRegionOfDeath());
             case TIME_OF_DEATH:
                 return Comparator.comparing(organ -> organ.getDonor().getDateOfDeath());
+            default:
             case TIME_UNTIL_EXPIRY:
                 return Comparator.comparing(DonatedOrgan::getDurationUntilExpiry,
                         Comparator.nullsLast(Comparator.naturalOrder()));
-            default:
-                throw new IllegalArgumentException("Unknown sort type: " + sortOption);
         }
     }
 
@@ -209,6 +212,10 @@ public class DonatedOrgan {
         return id;
     }
 
+    public void setId(long id) {
+        this.id = id;
+    }
+
     public String getOverrideReason() {
         return overrideReason;
     }
@@ -255,5 +262,28 @@ public class DonatedOrgan {
                 return OrganState.CURRENT;
             }
         }
+    }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
+
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof DonatedOrgan)) {
+            return false;
+        }
+        DonatedOrgan that = (DonatedOrgan) o;
+        return Objects.equals(id, that.id) &&
+                organType == that.organType;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, organType);
     }
 }

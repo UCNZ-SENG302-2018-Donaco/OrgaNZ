@@ -6,7 +6,6 @@ import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javafx.beans.property.Property;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -42,7 +41,6 @@ import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.utilities.view.WindowContext;
-import com.humanharvest.organz.views.client.CreateTransplantRequestView;
 import com.humanharvest.organz.views.client.ResolveTransplantRequestObject;
 
 /**
@@ -77,11 +75,11 @@ public class RequestOrgansController extends SubController {
     @FXML
     private TableColumn<TransplantRequest, Organ> organPastCol;
     @FXML
-    private TableColumn<TransplantRequest, LocalDateTime> requestDateCurrCol;
+    private TableColumn<TransplantRequest, LocalDateTime> requestDateTimeCurrCol;
     @FXML
-    private TableColumn<TransplantRequest, LocalDateTime> requestDatePastCol;
+    private TableColumn<TransplantRequest, LocalDateTime> requestDateTimePastCol;
     @FXML
-    private TableColumn<TransplantRequest, LocalDateTime> resolvedDatePastCol;
+    private TableColumn<TransplantRequest, LocalDateTime> resolvedDateTimePastCol;
     @FXML
     private TableColumn<TransplantRequest, TransplantRequestStatus> requestStatusPastCol;
     @FXML
@@ -157,17 +155,17 @@ public class RequestOrgansController extends SubController {
 
         // Setup all cell value factories
         organCurrCol.setCellValueFactory(new PropertyValueFactory<>("requestedOrgan"));
-        requestDateCurrCol.setCellValueFactory(new PropertyValueFactory<>("requestDateTime"));
+        requestDateTimeCurrCol.setCellValueFactory(new PropertyValueFactory<>("requestDateTime"));
         organPastCol.setCellValueFactory(new PropertyValueFactory<>("requestedOrgan"));
-        requestDatePastCol.setCellValueFactory(new PropertyValueFactory<>("requestDateTime"));
+        requestDateTimePastCol.setCellValueFactory(new PropertyValueFactory<>("requestDateTime"));
         requestStatusPastCol.setCellValueFactory(new PropertyValueFactory<>("status"));
-        resolvedDatePastCol.setCellValueFactory(new PropertyValueFactory<>("resolvedDateTime"));
+        resolvedDateTimePastCol.setCellValueFactory(new PropertyValueFactory<>("resolvedDateTime"));
         resolvedReasonPastCol.setCellValueFactory(new PropertyValueFactory<>("resolvedReason"));
 
         // Format all the datetime cells
-        requestDateCurrCol.setCellFactory(cell -> formatDateTimeCell());
-        requestDatePastCol.setCellFactory(cell -> formatDateTimeCell());
-        resolvedDatePastCol.setCellFactory(cell -> formatDateTimeCell());
+        requestDateTimeCurrCol.setCellFactory(cell -> formatDateTimeCell());
+        requestDateTimePastCol.setCellFactory(cell -> formatDateTimeCell());
+        resolvedDateTimePastCol.setCellFactory(cell -> formatDateTimeCell());
 
         // Colour each row if it is a request for an organ that the client is also registered to donate.
         currentRequestsTable.setRowFactory(row -> colourIfDonatedAndRequested());
@@ -295,6 +293,13 @@ public class RequestOrgansController extends SubController {
                     AlertType.ERROR,
                     "Request already exists",
                     "Client already has a waiting request for this organ.", mainController.getStage());
+        } else if (client.getTransplantRequests().stream()
+                .anyMatch(request -> request.getRequestedOrgan() == selectedOrgan &&
+                        request.getStatus() == TransplantRequestStatus.SCHEDULED)) {
+            PageNavigator.showAlert(
+                    AlertType.ERROR,
+                    "Transplant already scheduled",
+                    "Client already has a scheduled transplant for this organ.", mainController.getStage());
         } else if (client.isDead()) { // Client is dead, they can't request an organ
             PageNavigator.showAlert(
                     AlertType.ERROR,
@@ -302,8 +307,7 @@ public class RequestOrgansController extends SubController {
                     "Client is marked as dead, so can't request an organ transplant.", mainController.getStage());
         } else { // Bluesky scenario
             // Create a request
-            CreateTransplantRequestView newRequest =
-                    new CreateTransplantRequestView(selectedOrgan, LocalDateTime.now());
+            TransplantRequest newRequest = new TransplantRequest(client, selectedOrgan, LocalDateTime.now());
 
             // Resolve the request
             try {
@@ -397,22 +401,15 @@ public class RequestOrgansController extends SubController {
 
             // Offer to go to medical history page if they said a disease was cured
             if (resolvedReasonDropdownChoice == ResolveReason.CURED) { // "Disease was cured"
-                Property<Boolean> response = PageNavigator.showAlert(AlertType.CONFIRMATION,
+                PageNavigator.showAlert(AlertType.CONFIRMATION,
                         "Go to Medical History Page",
                         "Do you want to go to the medical history page to mark the disease that was cured?",
-                        mainController.getStage());
-
-                if (response.getValue() != null) {
-                    if (response.getValue()) {
-                        PageNavigator.loadPage(Page.VIEW_MEDICAL_HISTORY, mainController);
-                    }
-                } else {
-                    response.addListener((observable, oldValue, newValue) -> {
-                        if (newValue) {
-                            PageNavigator.loadPage(Page.VIEW_MEDICAL_HISTORY, mainController);
-                        }
-                    });
-                }
+                        mainController.getStage(),
+                        isOk -> {
+                            if (isOk) {
+                                PageNavigator.loadPage(Page.VIEW_MEDICAL_HISTORY, mainController);
+                            }
+                        });
             }
         }
     }

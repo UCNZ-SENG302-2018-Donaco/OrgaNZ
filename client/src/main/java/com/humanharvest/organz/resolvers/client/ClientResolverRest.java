@@ -9,9 +9,11 @@ import java.util.stream.Collectors;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.HistoryItem;
+import com.humanharvest.organz.Hospital;
 import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.ProcedureRecord;
+import com.humanharvest.organz.TransplantRecord;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
@@ -19,8 +21,6 @@ import com.humanharvest.organz.views.SingleStringView;
 import com.humanharvest.organz.views.client.CreateClientView;
 import com.humanharvest.organz.views.client.CreateIllnessView;
 import com.humanharvest.organz.views.client.CreateMedicationRecordView;
-import com.humanharvest.organz.views.client.CreateProcedureView;
-import com.humanharvest.organz.views.client.CreateTransplantRequestView;
 import com.humanharvest.organz.views.client.DonatedOrganView;
 import com.humanharvest.organz.views.client.ModifyClientObject;
 import com.humanharvest.organz.views.client.ModifyIllnessObject;
@@ -33,6 +33,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.util.UriComponentsBuilder;
 
 public class ClientResolverRest implements ClientResolver {
 
@@ -220,12 +221,12 @@ public class ClientResolverRest implements ClientResolver {
     }
 
     @Override
-    public List<TransplantRequest> createTransplantRequest(Client client, CreateTransplantRequestView request) {
+    public List<TransplantRequest> createTransplantRequest(Client client, TransplantRequest transplantRequest) {
         HttpHeaders httpHeaders = createHeaders(true);
         ResponseEntity<List<TransplantRequest>> responseEntity = sendQuery(httpHeaders,
                 State.getBaseUri() + "clients/{id}/transplantRequests",
                 HttpMethod.POST,
-                request,
+                transplantRequest,
                 new ParameterizedTypeReference<List<TransplantRequest>>() {
                 }, client.getUid());
         return responseEntity.getBody();
@@ -260,14 +261,38 @@ public class ClientResolverRest implements ClientResolver {
     }
 
     @Override
-    public List<ProcedureRecord> addProcedureRecord(Client client, CreateProcedureView procedureView) {
+    public List<ProcedureRecord> addProcedureRecord(Client client, ProcedureRecord procedureRecord) {
         HttpHeaders httpHeaders = createHeaders(true);
         ResponseEntity<List<ProcedureRecord>> responseEntity = sendQuery(httpHeaders,
                 State.getBaseUri() + "clients/{id}/procedures",
                 HttpMethod.POST,
-                procedureView,
+                procedureRecord,
                 new ParameterizedTypeReference<List<ProcedureRecord>>() {
                 }, client.getUid());
+
+        return responseEntity.getBody();
+    }
+
+    @Override
+    public List<ProcedureRecord> scheduleTransplantProcedure(DonatedOrgan organ, TransplantRequest request,
+            Hospital hospital, LocalDate date) {
+        TransplantRecord transplant = new TransplantRecord(organ, request, hospital, date);
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(
+                State.getBaseUri() + "/clients/" + request.getClient().getUid() + "/transplants")
+                .queryParam("organId", organ.getId())
+                .queryParam("requestId", request.getId())
+                .queryParam("hospitalId", hospital.getId())
+                .queryParam("date", date.toString());
+
+        HttpHeaders httpHeaders = createHeaders(false);
+        httpHeaders.setIfMatch(request.getClient().getETag());
+        ResponseEntity<List<ProcedureRecord>> responseEntity = sendQuery(httpHeaders,
+                builder.toUriString(),
+                HttpMethod.POST,
+                transplant,
+                new ParameterizedTypeReference<List<ProcedureRecord>>() {
+                });
 
         return responseEntity.getBody();
     }
@@ -282,6 +307,18 @@ public class ClientResolverRest implements ClientResolver {
                 DonatedOrgan.class,
                 donatedOrgan.getDonor().getUid(),
                 donatedOrgan.getId());
+        return responseEntity.getBody();
+    }
+
+    @Override
+    public TransplantRecord completeTransplantRecord(TransplantRecord record) {
+        HttpHeaders httpHeaders = createHeaders(true);
+        ResponseEntity<TransplantRecord> responseEntity = sendQuery(httpHeaders,
+                State.getBaseUri() + "clients/{uid}/transplants/{id}/complete",
+                HttpMethod.POST,
+                TransplantRecord.class,
+                record.getClient().getUid(),
+                record.getId());
         return responseEntity.getBody();
     }
 

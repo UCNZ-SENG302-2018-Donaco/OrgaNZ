@@ -32,6 +32,8 @@ import com.humanharvest.organz.utilities.view.PageNavigator;
 
 public class ConfigController extends SubController {
 
+    private final Map<Hospital, Set<Organ>> modifiedHospitalPrograms = new HashMap<>();
+
     @FXML
     private HBox menuBarPane;
     @FXML
@@ -41,8 +43,7 @@ public class ConfigController extends SubController {
     @FXML
     private CheckListView<Organ> organSelector;
 
-    private Map<Hospital, Set<Organ>> modifiedHospitalPrograms = new HashMap<>();
-    private ListChangeListener<? super Organ> programsChangeListener = change -> onTransplantProgramsChanged();
+    private final ListChangeListener<? super Organ> programsChangeListener = change -> onTransplantProgramsChanged();
 
     public ConfigController() {
     }
@@ -70,7 +71,6 @@ public class ConfigController extends SubController {
         SortedList<Country> countryList = getCountryListSortedByIfInCollection(allCountries, selectedCountries);
 
         allowedCountries.getItems().setAll(countryList);
-
     }
 
     /**
@@ -104,7 +104,13 @@ public class ConfigController extends SubController {
             allowedCountries.getCheckModel().check(country);
         }
         modifiedHospitalPrograms.clear();
-        newHospitalSelected();
+
+        // Refresh hospitals, but restore selected hospital to what it was
+        Hospital selectedHospital = hospitalSelector.getSelectionModel().getSelectedItem();
+        hospitalSelector.getItems().setAll(State.getConfigManager().getHospitals());
+        hospitalSelector.getItems().sort(Comparator.comparing(Hospital::getName));
+        organSelector.getCheckModel().clearChecks();
+        hospitalSelector.getSelectionModel().select(selectedHospital);
     }
 
     /**
@@ -163,7 +169,7 @@ public class ConfigController extends SubController {
      * @param selectedCountries the subcollection of the list that the user has selected
      * @return the sorted list of countries
      */
-    private SortedList<Country> getCountryListSortedByIfInCollection(List<Country> countries,
+    private SortedList<Country> getCountryListSortedByIfInCollection(Collection<Country> countries,
             Collection<Country> selectedCountries) {
         SortedList<Country> countryList =
                 new SortedList<>(FXCollections.observableArrayList(countries));
@@ -217,14 +223,17 @@ public class ConfigController extends SubController {
     }
 
     private void onTransplantProgramsChanged() {
-        // Determine the changed programs
-        Set<Organ> newPrograms = EnumSet.noneOf(Organ.class);
-        newPrograms.addAll(organSelector.getCheckModel().getCheckedItems());
+        Hospital selectedHospital = hospitalSelector.getSelectionModel().getSelectedItem();
+        if (selectedHospital != null) {
+            // Determine the changed programs
+            Set<Organ> newPrograms = EnumSet.noneOf(Organ.class);
+            newPrograms.addAll(organSelector.getCheckModel().getCheckedItems());
 
-        // Put the modified programs into an entry for that hospital
-        modifiedHospitalPrograms.put(
-                hospitalSelector.getSelectionModel().getSelectedItem(),
-                newPrograms);
+            // Put the modified programs into an entry for that hospital
+            modifiedHospitalPrograms.put(
+                    hospitalSelector.getSelectionModel().getSelectedItem(),
+                    newPrograms);
+        }
     }
 
     /**

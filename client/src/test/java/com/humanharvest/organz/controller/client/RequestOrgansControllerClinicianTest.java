@@ -29,7 +29,6 @@ import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
-import com.humanharvest.organz.views.client.CreateTransplantRequestView;
 import com.humanharvest.organz.views.client.ResolveTransplantRequestObject;
 
 import org.junit.Before;
@@ -70,15 +69,15 @@ public class RequestOrgansControllerClinicianTest extends ControllerTest {
         State.getClientResolver().modifyOrganDonation(testClient, organStatus);
 
         State.getClientResolver().createTransplantRequest(testClient,
-                new CreateTransplantRequestView(Organ.HEART, LocalDateTime.now()));
+                new TransplantRequest(testClient, Organ.HEART, LocalDateTime.now()));
 
         State.getClientResolver().createTransplantRequest(testClient,
-                new CreateTransplantRequestView(Organ.BONE, LocalDateTime.now()));
+                new TransplantRequest(testClient, Organ.BONE, LocalDateTime.now()));
 
         LocalDateTime dateTime = LocalDateTime.now();
 
         sampleRequests = State.getClientResolver().createTransplantRequest(testClient,
-                new CreateTransplantRequestView(Organ.LIVER, dateTime));
+                new TransplantRequest(testClient, Organ.LIVER, dateTime));
 
         State.getClientResolver().resolveTransplantRequest(testClient,
                 sampleRequests.get(2),

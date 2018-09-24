@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.3.0">
+  <zoom_level>9</zoom_level>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>396</x>
+      <y>0</y>
+      <w>441</w>
+      <h>396</h>
+    </coordinates>
+    <panel_attributes>Client
+--
+-dateOfDeath: LocalDate
+-timeOfDeath: LocalTime
+-organsDonating: Set&lt;Organ&gt;
+-transplantRequests: List&lt;TransplantRequest&gt;
+-procedures: List&lt;ProcedureRecord&gt;
+-donatedOrgans: List&lt;DonatedOrgan&gt;
+-receivedOrgans: List&lt;DonatedOrgan&gt;
+--
++getCurrentlyDonatedOrgans(): Set&lt;Organ&gt;
++getCurrentlyRequestedOrgans(): Set&lt;Organ&gt;
+
++addProcedureRecord(ProcedureRecord record)
++deleteProcedureRecord(ProcedureRecord record)
+
++addTransplantRequest(TransplantRequest request)
++removeTransplantRequest(TransplantRequest request)
+
++donateOrgan(Organ organ)
++getDonatedOrgans(): List&lt;DonatedOrgan&gt;
++getReceivedOrgans(): List&lt;DonatedOrgan&gt;
++isDonor(): boolean
++isReceiver(): boolean
+-hasOverriddenOrgans(): boolean
+
++markDead(LocalDate dateOfDeath, LocalTime timeOfDeath, 
+Country countryOfDeath, String regionOfDeath, String cityOfDeath)</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>450</x>
+      <y>486</y>
+      <w>333</w>
+      <h>225</h>
+    </coordinates>
+    <panel_attributes>DonatedOrgan
+--
+-id: Long
+-organType: Organ
+-donor: Client
+-receiver: Client
+-dateTimeOfDonation: LocalDateTime
+-overrideReason: String
+--
++DonatedOrgan(Organ organType, Client donor, 
+   LocalDateTime dateTimeOfDonation): ctor
++setReceiver(Client)
++hasExpired(): boolean
++getDurationUntilExpiry(): Duration
++manuallyOverride(String overrideReason)
++cancelManualOverride()
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>864</x>
+      <y>486</y>
+      <w>333</w>
+      <h>198</h>
+    </coordinates>
+    <panel_attributes>ProcedureRecord
+--
+-id: Long
+-client: Client
+-summary: String
+-description: String
+-date: LocalDate
+-affectedOrgans Set&lt;Organ&gt;
+--
++ProcedureRecord(String summary, 
+   String description, LocalDate date): ctor
++setDate(LocalDate)
++setAffectedOrgans(Set&lt;Organ&gt;)
++addAffectedOrgan(Organ)
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>45</x>
+      <y>486</y>
+      <w>333</w>
+      <h>198</h>
+    </coordinates>
+    <panel_attributes>TransplantRequest
+--
+-id: Long
+-client: Client
+-requestedOrgan: Organ
+-requestDate: LocalDateTime
+-resolvedDate: LocalDateTime
+-status : TransplantRequestStatus
+-resolvedReason: String
+--
++TransplantRequest(Client, Organ): ctor
++setResolvedDate(LocalDateTime)
++setStatus(TransplantRequestStatus)
++setResolvedReason(String)
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>603</x>
+      <y>387</y>
+      <w>27</w>
+      <h>117</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;110.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>828</x>
+      <y>333</y>
+      <w>216</w>
+      <h>171</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>10.0;10.0;220.0;10.0;220.0;170.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>198</x>
+      <y>333</y>
+      <w>216</w>
+      <h>171</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;-</panel_attributes>
+    <additional_attributes>220.0;10.0;10.0;10.0;10.0;170.0</additional_attributes>
+  </element>
+</diagram>
