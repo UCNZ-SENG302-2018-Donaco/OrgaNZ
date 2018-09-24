@@ -522,7 +522,8 @@ public class ViewProceduresController extends SubController {
 
             String information = description
                     + affectedOrgans + ".\n\n"
-                    + "Scheduled date: " + record.getDate().format(formatter) + ".";
+                    + "Scheduled date: " + record.getDate().format(formatter) + "."; //todo add (x days ago) or (in x
+            // days)
 
             PageNavigator.showAlert(AlertType.INFORMATION, title, information, mainController.getStage());
         }
