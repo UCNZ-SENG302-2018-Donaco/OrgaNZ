@@ -2,7 +2,6 @@
 
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.VBox?>
-
-<VBox maxHeight="80.0" maxWidth="80.0" prefHeight="80.0" prefWidth="80.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.spiderweb.OrganImageController">
-  <ImageView fx:id="organImage" fitHeight="80.0" fitWidth="80.0" pickOnBounds="true" preserveRatio="true" />
+<VBox xmlns:fx="http://javafx.com/fxml/1" maxHeight="80.0" maxWidth="80.0" prefHeight="80.0" prefWidth="80.0" xmlns="http://javafx.com/javafx/8.0.121" fx:controller="com.humanharvest.organz.controller.spiderweb.OrganImageController">
+  <ImageView fitHeight="80.0" fitWidth="80.0" pickOnBounds="true" preserveRatio="true" fx:id="organImage"/>
 </VBox>

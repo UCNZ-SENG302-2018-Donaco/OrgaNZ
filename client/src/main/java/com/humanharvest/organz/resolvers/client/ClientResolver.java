@@ -8,16 +8,16 @@ import java.util.Map;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.HistoryItem;
+import com.humanharvest.organz.Hospital;
 import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.ProcedureRecord;
+import com.humanharvest.organz.TransplantRecord;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.views.client.CreateClientView;
 import com.humanharvest.organz.views.client.CreateIllnessView;
 import com.humanharvest.organz.views.client.CreateMedicationRecordView;
-import com.humanharvest.organz.views.client.CreateProcedureView;
-import com.humanharvest.organz.views.client.CreateTransplantRequestView;
 import com.humanharvest.organz.views.client.ModifyClientObject;
 import com.humanharvest.organz.views.client.ModifyIllnessObject;
 import com.humanharvest.organz.views.client.ModifyProcedureObject;
@@ -60,15 +60,20 @@ public interface ClientResolver {
 
     Client createClient(CreateClientView createClientView);
 
-    List<TransplantRequest> createTransplantRequest(Client client, CreateTransplantRequestView request);
+    List<TransplantRequest> createTransplantRequest(Client client, TransplantRequest transplantRequest);
 
     List<IllnessRecord> addIllnessRecord(Client client, CreateIllnessView createIllnessView);
 
     List<MedicationRecord> addMedicationRecord(Client client, CreateMedicationRecordView medicationRecordView);
 
-    List<ProcedureRecord> addProcedureRecord(Client client, CreateProcedureView procedureView);
+    List<ProcedureRecord> addProcedureRecord(Client client, ProcedureRecord procedureRecord);
+
+    List<ProcedureRecord> scheduleTransplantProcedure(DonatedOrgan organ, TransplantRequest request, Hospital hospital,
+            LocalDate date);
 
     DonatedOrgan manuallyOverrideOrgan(DonatedOrgan donatedOrgan, String overrideReason);
+
+    TransplantRecord completeTransplantRecord(TransplantRecord record);
 
     //------------PATCHs----------------
 

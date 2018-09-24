@@ -2,11 +2,9 @@ package com.humanharvest.organz.controller.client;
 
 import java.time.LocalDate;
 import java.util.Comparator;
-import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import javafx.collections.FXCollections;
 import javafx.collections.transformation.SortedList;
@@ -14,6 +12,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
@@ -23,11 +22,13 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
+import javafx.util.converter.DefaultStringConverter;
 import org.controlsfx.control.CheckComboBox;
 import org.controlsfx.control.Notifications;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.ProcedureRecord;
+import com.humanharvest.organz.TransplantRecord;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.controller.components.DatePickerCell;
@@ -42,7 +43,6 @@ import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.validators.NotEmptyStringValidator;
 import com.humanharvest.organz.utilities.view.PageNavigator;
-import com.humanharvest.organz.views.client.CreateProcedureView;
 import com.humanharvest.organz.views.client.ModifyProcedureObject;
 
 /**
@@ -52,7 +52,7 @@ public class ViewProceduresController extends SubController {
 
     private static final Logger LOGGER = Logger.getLogger(ViewProceduresController.class.getName());
 
-    private Session session;
+    private final Session session;
     private Client client;
 
     @FXML
@@ -81,8 +81,10 @@ public class ViewProceduresController extends SubController {
     private TableColumn<ProcedureRecord, Set<Organ>> affectedPastCol, affectedPendCol;
     @FXML
     private Button deleteButton;
+    @FXML
+    private Button completeTransplantButton;
 
-    private TableView<ProcedureRecord> selectedTableView = null;
+    private TableView<ProcedureRecord> selectedTableView;
 
     /**
      * Gets the current session from the global state.
@@ -228,10 +230,10 @@ public class ViewProceduresController extends SubController {
         descriptionPendCol.setCellValueFactory(new PropertyValueFactory<>("description"));
 
         // Setup the cell factories (these generate the editable cells)
-        summaryPastCol.setCellFactory(TextFieldTableCell.forTableColumn());
-        summaryPendCol.setCellFactory(TextFieldTableCell.forTableColumn());
-        descriptionPastCol.setCellFactory(TextFieldTableCell.forTableColumn());
-        descriptionPendCol.setCellFactory(TextFieldTableCell.forTableColumn());
+        summaryPastCol.setCellFactory(cell -> formatOutOfDate());
+        summaryPendCol.setCellFactory(cell -> formatOutOfDate());
+        descriptionPastCol.setCellFactory(cell -> formatOutOfDate());
+        descriptionPendCol.setCellFactory(cell -> formatOutOfDate());
         datePastCol.setCellFactory(DatePickerCell::new);
         datePendCol.setCellFactory(DatePickerCell::new);
         affectedPastCol.setCellFactory(OrganCheckComboBoxCell::new);
@@ -271,6 +273,33 @@ public class ViewProceduresController extends SubController {
         affectedOrgansField.getItems().setAll(Organ.values());
     }
 
+    private static TableCell<ProcedureRecord, String> formatOutOfDate() {
+        return new TextFieldTableCell<ProcedureRecord, String>(new DefaultStringConverter()) {
+            @Override
+            public void updateItem(String item, boolean empty) {
+                TransplantRecord record = getTableRow().getItem() instanceof TransplantRecord ?
+                        (TransplantRecord) getTableRow().getItem() : null;
+                super.updateItem(item, empty);
+
+                if (record != null) {
+                    if (record.isCompleted()) {
+                        if (record.getDate().isAfter(LocalDate.now())) {
+                            setStyle("-fx-text-fill: red;");
+                        } else {
+                            setStyle("");
+                        }
+                    } else {
+                        if (record.getDate().isBefore(LocalDate.now())) {
+                            setStyle("-fx-text-fill: red;");
+                        } else {
+                            setStyle("");
+                        }
+                    }
+                }
+            }
+        };
+    }
+
     /**
      * Sets up the page using the MainController given.
      * - Loads the sidebar.
@@ -299,6 +328,8 @@ public class ViewProceduresController extends SubController {
             datePastCol.setEditable(false);
             affectedPendCol.setEditable(false);
             affectedPastCol.setEditable(false);
+            deleteButton.setDisable(true);
+            completeTransplantButton.setDisable(true);
         } else if (windowContext.isClinViewClientWindow()) {
             client = windowContext.getViewClient();
             mainController.loadMenuBar(menuBarPane);
@@ -332,17 +363,11 @@ public class ViewProceduresController extends SubController {
             return;
         }
 
-        List<ProcedureRecord> allProcedures = client.getProcedures();
-
         SortedList<ProcedureRecord> sortedPastProcedures = new SortedList<>(FXCollections.observableArrayList(
-                allProcedures.stream()
-                        .filter(record -> record.getDate().isBefore(LocalDate.now()))
-                        .collect(Collectors.toList())));
+                client.getPastProcedures()));
 
         SortedList<ProcedureRecord> sortedPendingProcedures = new SortedList<>(FXCollections.observableArrayList(
-                allProcedures.stream()
-                        .filter(record -> !record.getDate().isBefore(LocalDate.now()))
-                        .collect(Collectors.toList())));
+                client.getPendingProcedures()));
 
         sortedPendingProcedures.comparatorProperty().bind(pendingProcedureView.comparatorProperty());
         sortedPastProcedures.comparatorProperty().bind(pastProcedureView.comparatorProperty());
@@ -367,13 +392,37 @@ public class ViewProceduresController extends SubController {
      * Enables and disables all buttons relevant to the selected procedure record appropriately.
      */
     private void enableAppropriateButtons() {
-        if (windowContext.isClinViewClientWindow()) {
-            if (pastProcedureView.getSelectionModel().getSelectedItem() == null &&
-                    pendingProcedureView.getSelectionModel().getSelectedItem() == null) {
-                deleteButton.setDisable(true);
-            } else {
-                deleteButton.setDisable(false);
-            }
+        if (!windowContext.isClinViewClientWindow()) {
+            // Clients can't use any buttons
+            return;
+        }
+        if (pastProcedureView.getSelectionModel().getSelectedItem() == null &&
+                pendingProcedureView.getSelectionModel().getSelectedItem() == null) {
+            // Nothing is selected
+            deleteButton.setDisable(true);
+            completeTransplantButton.setDisable(true);
+        } else {
+            // Something is selected
+            deleteButton.setDisable(false);
+            setCompleteTransplantButton();
+        }
+    }
+
+    /**
+     * Enable or disable the Complete Transplant button based on the currently selected item
+     * Will only be enabled if the currently selected item is:
+     * In the past
+     * A TransplantRecord
+     * Has not yet been completed
+     */
+    private void setCompleteTransplantButton() {
+        ProcedureRecord record = pendingProcedureView.getSelectionModel().getSelectedItem();
+        if (record instanceof TransplantRecord) {
+            TransplantRecord tRecord = (TransplantRecord) record;
+            // Disable the button if the record is completed, else enable it
+            completeTransplantButton.setDisable(tRecord.isCompleted());
+        } else {
+            completeTransplantButton.setDisable(true);
         }
     }
 
@@ -431,7 +480,7 @@ public class ViewProceduresController extends SubController {
             }
 
             try {
-                State.getClientResolver().addProcedureRecord(client, new CreateProcedureView(record));
+                State.getClientResolver().addProcedureRecord(client, record);
 
                 summaryField.setText(null);
                 descriptionField.setText(null);
@@ -447,5 +496,17 @@ public class ViewProceduresController extends SubController {
                         mainController.getStage());
             }
         }
+    }
+
+    @FXML
+    private void completeTransplant() {
+        TransplantRecord record = (TransplantRecord) pendingProcedureView.getSelectionModel().getSelectedItem();
+        State.getClientResolver().completeTransplantRecord(record);
+        Notifications.create()
+                .title("Completed Transplant")
+                .text(String.format("The transplant procedure for %s has been marked as completed.",
+                        record.getOrgan().getOrganType()))
+                .showInformation();
+        PageNavigator.refreshAllWindows();
     }
 }

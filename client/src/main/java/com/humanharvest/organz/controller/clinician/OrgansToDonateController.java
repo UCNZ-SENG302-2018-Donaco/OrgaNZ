@@ -1,12 +1,14 @@
 package com.humanharvest.organz.controller.clinician;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,11 +21,16 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -44,8 +51,9 @@ import org.controlsfx.control.Notifications;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
+import com.humanharvest.organz.Hospital;
+import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.controller.MainController;
-import com.humanharvest.organz.controller.SidebarController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.controller.components.DurationUntilExpiryCell;
 import com.humanharvest.organz.controller.components.TouchAlertTextController;
@@ -69,7 +77,7 @@ import com.humanharvest.organz.views.clinician.DonatedOrganSortPolicy;
 public class OrgansToDonateController extends SubController {
 
     private static final int ROWS_PER_PAGE = 30;
-    private static final Logger LOGGER = Logger.getLogger(SidebarController.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(OrgansToDonateController.class.getName());
     private static final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("d MMM yyyy hh:mm a");
 
     @FXML
@@ -106,12 +114,26 @@ public class OrgansToDonateController extends SubController {
     private CheckComboBox<Organ> organFilter;
 
     @FXML
+    private Button scheduleTransplantBtn;
+    @FXML
+    private DatePicker transplantDatePicker;
+
+    @FXML
+    private ChoiceBox<Hospital> transplantHospitalChoice;
+
+    @FXML
     private Text displayingXToYOfZText;
 
-    private Session session;
-    private ClientManager manager;
-    private ObservableList<DonatedOrgan> observableOrgansToDonate = FXCollections.observableArrayList();
-    private SortedList<DonatedOrgan> sortedOrgansToDonate = new SortedList<>(observableOrgansToDonate);
+    private final Session session;
+    private final ClientManager manager;
+
+    private final ObservableList<DonatedOrgan> observableOrgansToDonate = FXCollections.observableArrayList();
+    private final SortedList<DonatedOrgan> sortedOrgansToDonate = new SortedList<>(observableOrgansToDonate);
+
+    private final ObservableList<Hospital> hospitals = FXCollections.observableArrayList();
+    private final FilteredList<Hospital> filteredHospitals = new FilteredList<>(hospitals);
+    private final SortedList<Hospital> sortedHospitals = new SortedList<>(filteredHospitals);
+
     private DonatedOrgan selectedOrgan;
     private Set<String> regionsToFilter;
     private EnumSet<Organ> organsToFilter;
@@ -172,6 +194,10 @@ public class OrgansToDonateController extends SubController {
         placeholder.setTextFill(Color.GREY);
         potentialRecipients.setPlaceholder(placeholder);
 
+        potentialRecipients.getSelectionModel().getSelectedItems().addListener((ListChangeListener<? super Client>)
+                change -> handlePotentialRecipientChange());
+        handlePotentialRecipientChange();
+
         tableView.setOnSort(event -> updateOrgansToDonateList());
 
         for (Region region : Region.values()) {
@@ -193,6 +219,10 @@ public class OrgansToDonateController extends SubController {
         // Sort by time until expiry column by default.
         tableView.getSortOrder().clear();
         tableView.getSortOrder().add(timeUntilExpiryCol);
+
+        // Setup transplant hospital choice picker
+        hospitals.setAll(State.getConfigManager().getHospitals());
+        transplantHospitalChoice.setItems(sortedHospitals);
     }
 
     /**
@@ -226,7 +256,7 @@ public class OrgansToDonateController extends SubController {
             @Override
             public void updateItem(Client item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty) {
+                if (empty || item == null) {
                     setText(null);
                 } else {
                     setText(item.getFullName());
@@ -236,7 +266,7 @@ public class OrgansToDonateController extends SubController {
 
         // Open the client profile when double-clicked
         potentialRecipients.setOnMouseClicked(mouseEvent -> {
-            if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 2) {
+            if (mouseEvent.getButton() == MouseButton.PRIMARY && mouseEvent.getClickCount() == 2) {
                 Client client = potentialRecipients.getSelectionModel().getSelectedItem();
                 if (client != null) {
                     MainController newMain = PageNavigator.openNewWindow();
@@ -251,20 +281,19 @@ public class OrgansToDonateController extends SubController {
             }
         });
 
+        tableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            // Showing potential matches for the donated organ
+            potentialRecipients.getItems().clear();
+            if (newValue != null) {
+                displayMatches(newValue);
+            }
+        });
+
         // Register the mouse event for double-clicking on a record to open the client profile.
         tableView.setOnMouseClicked(mouseEvent -> {
 
-            // Showing potential matches for the donated organ
-            if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 1) {
-                DonatedOrgan donatedOrgan = tableView.getSelectionModel().getSelectedItem();
-                if (donatedOrgan != null) {
-                    potentialRecipients.getItems().clear();
-                    displayMatches(donatedOrgan);
-                }
-            }
-
             // Double clicking brings up the profile of the client who has donated the organ
-            if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 2) {
+            if (mouseEvent.getButton() == MouseButton.PRIMARY && mouseEvent.getClickCount() == 2) {
                 DonatedOrgan organToDonate = tableView.getSelectionModel().getSelectedItem();
                 if (organToDonate != null) {
                     Client client = organToDonate.getDonor();
@@ -279,7 +308,7 @@ public class OrgansToDonateController extends SubController {
                 }
 
                 // Right click to allow manual override of organ expiry
-            } else if (mouseEvent.getButton().equals(MouseButton.SECONDARY)) {
+            } else if (mouseEvent.getButton() == MouseButton.SECONDARY) {
                 MenuItem manualExpireItem = new MenuItem();
                 manualExpireItem.textProperty().setValue("Manually Override");
                 selectedOrgan = tableView.getSelectionModel().getSelectedItem();
@@ -290,14 +319,14 @@ public class OrgansToDonateController extends SubController {
         });
 
         // Attach timer to update table each second (for time until expiration)
-        final Timeline clock = new Timeline(new KeyFrame(
+        Timeline clock = new Timeline(new KeyFrame(
                 javafx.util.Duration.millis(1000),
                 event -> {
                     tableView.refresh();
                     observableOrgansToDonate.removeIf(donatedOrgan ->
                             donatedOrgan.getOverrideReason() != null ||
-                                    (donatedOrgan.getDurationUntilExpiry() != null &&
-                                            donatedOrgan.getDurationUntilExpiry().minusSeconds(1).isNegative()));
+                                    donatedOrgan.getDurationUntilExpiry() != null &&
+                                            donatedOrgan.getDurationUntilExpiry().minusSeconds(1).isNegative());
                 }));
         clock.setCycleCount(Animation.INDEFINITE);
         clock.play();
@@ -363,6 +392,149 @@ public class OrgansToDonateController extends SubController {
         setupDisplayingXToYOfZText(newOrgansToDonate.getTotalResults());
     }
 
+    private void handlePotentialRecipientChange() {
+        List<Client> selectedClients = potentialRecipients.getSelectionModel().getSelectedItems();
+        if (selectedClients.size() != 1) {
+            scheduleTransplantBtn.setDisable(true);
+            transplantDatePicker.setDisable(true);
+            transplantHospitalChoice.setDisable(true);
+
+            transplantHospitalChoice.setValue(null);
+            transplantDatePicker.setValue(null);
+        } else {
+            Client selected = potentialRecipients.getSelectionModel().getSelectedItem();
+            DonatedOrgan organToDonate = tableView.getSelectionModel().getSelectedItem();
+            filteredHospitals.setPredicate(hospital -> hospital.hasTransplantProgram(organToDonate.getOrganType()));
+
+            scheduleTransplantBtn.setDisable(false);
+            transplantDatePicker.setDisable(false);
+            transplantHospitalChoice.setDisable(false);
+
+            if (selected.getHospital() == null) {
+                // Recipient has no hospital, try sorting by distance to their region instead
+                Region region;
+                try {
+                    region = Region.fromString(selected.getRegion());
+                } catch (IllegalArgumentException exc) {
+                    region = null;
+                }
+                if (region == null) {
+                    // Recipient has no region, just sort hospitals in alphabetical order instead
+                    sortedHospitals.setComparator(Comparator.comparing(Hospital::getName));
+                } else {
+                    Region finalRegion = region;
+                    sortedHospitals.setComparator(Comparator.comparing(hospital -> hospital.calculateDistanceTo(
+                            finalRegion)));
+                }
+            } else {
+                // Sort choice of hospitals for the transplant by which are nearest to the client
+                sortedHospitals.setComparator(Comparator.comparing(hospital -> hospital.calculateTimeTo(
+                        selected.getHospital())));
+
+                Hospital nearest = selected.getHospital().getNearestWithTransplantProgram(organToDonate.getOrganType(),
+                        filteredHospitals);
+                if (nearest == null) {
+                    // No hospital that can transplant this organ
+                    transplantHospitalChoice.setDisable(true);
+                    scheduleTransplantBtn.setDisable(true);
+                } else {
+                    // Set the default choice to the nearest hospital (to the recipient) that can do the transplant
+                    transplantHospitalChoice.setValue(nearest);
+                    transplantDatePicker.setValue(LocalDateTime.now()
+                            .plus(nearest.calculateTimeTo(selected.getHospital())).toLocalDate());
+                }
+            }
+
+
+        }
+    }
+
+    @FXML
+    private void scheduleTransplant() {
+        // First make the TransplantRequest
+        List<Client> selectedClients = potentialRecipients.getSelectionModel().getSelectedItems();
+        if (selectedClients.size() != 1) {
+            return;
+        }
+
+        LocalDate transplantDate = transplantDatePicker.getValue();
+        if (transplantDate == null || transplantDate.isBefore(LocalDate.now())) {
+            PageNavigator.showAlert(AlertType.ERROR,
+                    "Invalid Transplant Date",
+                    "Please enter a valid date for the transplant to take place. "
+                            + "A valid date is one that is today or in the future.",
+                    mainController.getStage());
+            return;
+        }
+
+        Hospital transplantHospital = transplantHospitalChoice.getValue();
+        if (transplantHospital == null) {
+
+            PageNavigator.showAlert(AlertType.ERROR,
+                    "Missing Transplant Hospital",
+                    "Please select a hospital for the transplant to take place in.",
+                    mainController.getStage());
+            return;
+        }
+
+        DonatedOrgan organToDonate = tableView.getSelectionModel().getSelectedItem();
+
+        Client receiver = selectedClients.get(0);
+        List<TransplantRequest> requests = State.getClientResolver().getTransplantRequests(receiver);
+
+        Optional<TransplantRequest> optionalRequest = requests.stream()
+                .filter(r -> r.getRequestedOrgan() == organToDonate.getOrganType())
+                .findFirst();
+        if (!optionalRequest.isPresent()) {
+            PageNavigator.showAlert(AlertType.ERROR,
+                    "Could not find the transplant",
+                    "The specified transplant request could not be located, maybe it was deleted?",
+                    mainController.getStage());
+            return;
+        }
+
+        TransplantRequest request = optionalRequest.get();
+
+        if (!transplantHospital.hasTransplantProgram(request.getRequestedOrgan())) {
+            PageNavigator.showAlert(AlertType.CONFIRMATION,
+                    "Unsupported organ transplant location",
+                    "The hospital does not support this type of organ transplant. Do you wish to continue?",
+                    mainController.getStage(),
+                    isOk -> {
+                        if (isOk) {
+                            finishTransplantRequest(request, organToDonate,
+                                    transplantHospital, transplantDate, receiver);
+                        }
+                    });
+
+            return;
+        }
+
+        finishTransplantRequest(request, organToDonate, transplantHospital, transplantDate, receiver);
+    }
+
+    private void finishTransplantRequest(TransplantRequest request, DonatedOrgan organToDonate,
+            Hospital transplantHospital, LocalDate transplantDate, Client receiver) {
+        // Refresh the client to get the latest etag
+        request.setClient(State.getClientManager()
+                .getClientByID(request.getClient().getUid())
+                .orElseThrow(IllegalStateException::new));
+
+        State.getClientResolver().scheduleTransplantProcedure(organToDonate, request,
+                transplantHospital, transplantDate);
+        Notifications.create()
+                .title("Scheduled Transplant")
+                .text(String.format("A transplant for %s from %s to %s has been scheduled on %s.",
+                        request.getRequestedOrgan(), organToDonate.getDonor().getFullName(), receiver.getFullName(),
+                        transplantDate))
+                .showInformation();
+
+        // Reset values
+        transplantDatePicker.setValue(null);
+
+        PageNavigator.refreshAllWindows();
+    }
+
     /**
      * Used to detect the current sort policy of the table and convert it to a value that the server will understand.
      *
@@ -397,16 +569,26 @@ public class OrgansToDonateController extends SubController {
                 sortOption = DonatedOrganSortOptionsEnum.TIME_UNTIL_EXPIRY;
                 break;
         }
-        return new DonatedOrganSortPolicy(sortOption, sortColumn.getSortType().equals(SortType.DESCENDING));
+        return new DonatedOrganSortPolicy(sortOption, sortColumn.getSortType() == SortType.DESCENDING);
     }
 
     private void displayMatches(DonatedOrgan selectedOrgan) {
         try {
-            List<Client> matches = State.getClientManager().getOrganMatches(selectedOrgan);
-            potentialRecipients.setItems(FXCollections.observableArrayList(matches));
+            boolean noPossibleHospital = State.getConfigManager().getHospitals()
+                    .stream()
+                    .noneMatch(hospital -> hospital.hasTransplantProgram(selectedOrgan.getOrganType()));
 
-            if (matches.size() == 0) {
-                placeholder.setText("No potential recipients for this organ");
+            if (noPossibleHospital) {
+                potentialRecipients.setItems(FXCollections.emptyObservableList());
+                placeholder.setText("There are no hospitals that can transplant this organ. "
+                        + "Please contact your system administrator.");
+            } else {
+                List<Client> matches = State.getClientManager().getOrganMatches(selectedOrgan);
+                potentialRecipients.setItems(FXCollections.observableArrayList(matches));
+
+                if (matches.isEmpty()) {
+                    placeholder.setText("No potential recipients for this organ");
+                }
             }
 
         } catch (NotFoundException e) {

@@ -5,6 +5,7 @@ import static com.humanharvest.organz.utilities.enums.DonatedOrganSortOptionsEnu
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Comparator;
+import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -50,6 +51,8 @@ public class DonatedOrgan {
     private LocalDateTime dateTimeOfDonation;
     @JsonView(Views.Overview.class)
     private String overrideReason;  // If null this implies the organ was not manually overriden
+    @JsonView(Views.Overview.class)
+    private boolean available = true;
 
     protected DonatedOrgan() {
     }
@@ -109,23 +112,11 @@ public class DonatedOrgan {
         return getDurationUntilExpiry() == Duration.ZERO;
     }
 
-    /**
-     * @return true if the organ has expired by time
-     */
-    public boolean hasExpiredNaturally() {
-        if (organType.getMaxExpiration() == null) {
-            return false;
-        }
-        Duration timeToExpiry = organType.getMaxExpiration().minus(getTimeSinceDonation());
-        return timeToExpiry.isNegative() || timeToExpiry.isZero();
-    }
-
-    /**
-     * Returns whether this organ is able to be donated (i.e. has not expired or been manually overriden.
-     * @return True if this donated organ is available, false otherwise.
-     */
-    public boolean isAvailable() {
-        return !hasExpired() && getOverrideReason() == null;
+    public enum OrganState {
+        CURRENT,
+        NO_EXPIRY,
+        EXPIRED,
+        OVERRIDDEN
     }
 
     /**
@@ -171,6 +162,10 @@ public class DonatedOrgan {
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getOverrideReason() {
@@ -224,11 +219,15 @@ public class DonatedOrgan {
         }
     }
 
-    public enum OrganState {
-        CURRENT,
-        NO_EXPIRY,
-        EXPIRED,
-        OVERRIDDEN
+    /**
+     * @return true if the organ has expired by time
+     */
+    public boolean hasExpiredNaturally() {
+        if (organType.getMaxExpiration() == null) {
+            return false;
+        }
+        Duration timeToExpiry = organType.getMaxExpiration().minus(getTimeSinceDonation());
+        return timeToExpiry.isNegative() || timeToExpiry.isZero();
     }
 
     /**
@@ -253,5 +252,32 @@ public class DonatedOrgan {
                 return OrganState.CURRENT;
             }
         }
+    }
+
+    public boolean isAvailable() {
+        return available;
+    }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
+
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof DonatedOrgan)) {
+            return false;
+        }
+        DonatedOrgan that = (DonatedOrgan) o;
+        return Objects.equals(id, that.id) &&
+                organType == that.organType;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, organType);
     }
 }

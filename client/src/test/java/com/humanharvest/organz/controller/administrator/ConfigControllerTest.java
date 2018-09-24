@@ -26,8 +26,8 @@ import org.junit.Test;
 
 public class ConfigControllerTest extends ControllerTest {
 
-    private Administrator admin1 = new Administrator("admin1", "password");
-    private Set<Hospital> hospitals = Hospital.getDefaultHospitals();
+    private final Administrator admin = new Administrator("admin1", "password");
+    private final Set<Hospital> hospitals = Hospital.getDefaultHospitals();
 
     private Hospital firstHospital;
     private Hospital secondHospital;
@@ -47,12 +47,16 @@ public class ConfigControllerTest extends ControllerTest {
         for (Hospital hospital : hospitalsCopy) {
             hospital.setId(i);
             i++;
+
+            for (Organ organ : Organ.values()) {
+                hospital.removeTransplantProgramFor(organ);
+            }
         }
         State.getConfigManager().setHospitals(hospitalsCopy);
 
         // Add admin, log in, and open page
-        State.getAdministratorManager().addAdministrator(admin1);
-        State.login(admin1);
+        State.getAdministratorManager().addAdministrator(admin);
+        State.login(admin);
         mainController.setWindowContext(WindowContext.defaultContext());
 
         // sort hospitals by name and get first hospital,
@@ -80,11 +84,11 @@ public class ConfigControllerTest extends ControllerTest {
     /**
      * Asserts that header is expectedHeader and content contains expectedContent.
      */
-    private void alertDialogHasHeaderAndContainsContent(final String expectedHeader, final String expectedContent) {
-        final javafx.stage.Stage actualAlertDialog = getTopModalStage();
+    private static void alertDialogHasHeaderAndContainsContent(String expectedHeader, String expectedContent) {
+        javafx.stage.Stage actualAlertDialog = getTopModalStage();
         assertNotNull(actualAlertDialog);
 
-        final DialogPane dialogPane = (DialogPane) actualAlertDialog.getScene().getRoot();
+        DialogPane dialogPane = (DialogPane) actualAlertDialog.getScene().getRoot();
         assertEquals(expectedHeader, dialogPane.getHeaderText());
         assertThat(dialogPane.getContentText(), containsString(expectedContent));
     }
@@ -124,7 +128,5 @@ public class ConfigControllerTest extends ControllerTest {
                 .contains(Organ.values()[0]));
         assertEquals(1,
                 State.getConfigManager().getHospitalById(hospital.getId()).get().getTransplantPrograms().size());
-
     }
-
 }

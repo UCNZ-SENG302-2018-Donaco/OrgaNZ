@@ -56,8 +56,8 @@ public class SpiderWebController extends SubController {
 
     private final List<MainController> previouslyOpenWindows = new ArrayList<>();
     private final Pane canvas;
-    private Pane deceasedDonorPane;
     private final List<Pane> organNodes = new ArrayList<>();
+    private Pane deceasedDonorPane;
 
     public SpiderWebController(Client viewedClient) {
         client = viewedClient;
@@ -106,16 +106,6 @@ public class SpiderWebController extends SubController {
         transform.append(new Rotate(angle, centre.getX(), centre.getY()));
         focusArea.setTransform(transform);
         node.setCacheHint(CacheHint.QUALITY);
-    }
-
-    /**
-     * Loads a window for each non expired organ.
-     */
-    private void displayOrgans() {
-        for (DonatedOrgan organ : client.getDonatedOrgans()) {
-            addOrganNode(organ);
-        }
-        layoutOrganNodes(300);
     }
 
     private static void updateConnectorText(Text durationText, DonatedOrgan donatedOrgan, Line line) {
@@ -179,6 +169,16 @@ public class SpiderWebController extends SubController {
             angle += 360;
         }
         return angle;
+    }
+
+    /**
+     * Loads a window for each non expired organ.
+     */
+    private void displayOrgans() {
+        for (DonatedOrgan organ : client.getDonatedOrgans()) {
+            addOrganNode(organ);
+        }
+        layoutOrganNodes(300);
     }
 
     private void addOrganNode(DonatedOrgan organ) {
