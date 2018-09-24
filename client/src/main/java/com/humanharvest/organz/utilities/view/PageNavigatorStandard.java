@@ -35,9 +35,10 @@ public class PageNavigatorStandard implements IPageNavigator {
      *
      * @param page the Page (enum including path to fxml file) to be loaded.
      * @param controller the MainController to load this page on to.
+     * @return The SubController for the new age, or null if the new page could not be loaded.
      */
     @Override
-    public void loadPage(Page page, MainController controller) {
+    public SubController loadPage(Page page, MainController controller) {
         try {
             LOGGER.info("Loading page: " + page);
             FXMLLoader loader = new FXMLLoader(PageNavigatorStandard.class.getResource(page.getPath()));
@@ -46,10 +47,13 @@ public class PageNavigatorStandard implements IPageNavigator {
             subController.setup(controller);
             controller.setSubController(subController);
             controller.setPage(page, loadedPage);
+
+            return subController;
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Couldn't load the page", e);
             showAlert(Alert.AlertType.ERROR, "Could not load page: " + page,
                     "The page loader failed to load the layout for the page.", controller.getStage());
+            return null;
         }
     }
 
@@ -81,7 +85,9 @@ public class PageNavigatorStandard implements IPageNavigator {
             mainController.setStage(newStage);
             mainController.setPane(mainPane);
             State.addMainController(mainController);
-            newStage.setOnCloseRequest(e -> State.deleteMainController(mainController));
+            newStage.setOnCloseRequest(e -> {
+                State.deleteMainController(mainController);
+            });
 
             Scene scene = new Scene(mainPane);
             newStage.setScene(scene);
@@ -91,6 +97,11 @@ public class PageNavigatorStandard implements IPageNavigator {
             newStage.setMinHeight(height);
             newStage.setWidth(width);
             newStage.setHeight(height);
+
+            mainPane.setPrefWidth(width);
+            mainPane.setPrefHeight(height);
+
+
 
             return mainController;
         } catch (IOException e) {
@@ -130,8 +141,9 @@ public class PageNavigatorStandard implements IPageNavigator {
         popup.setHeaderText(bodyText);
         popup.setContentText("Reason:");
         popup.getDialogPane().lookupButton(ButtonType.OK).setDisable(true);
-        popup.getEditor().textProperty().addListener((observable, oldValue, newValue) ->
-                popup.getDialogPane().lookupButton(ButtonType.OK).setDisable(newValue.isEmpty()));
+        popup.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
+            popup.getDialogPane().lookupButton(ButtonType.OK).setDisable(newValue.isEmpty());
+        });
 
         String response = popup.showAndWait().orElse("");
         return new TouchAlertTextController(!response.isEmpty(), response);
