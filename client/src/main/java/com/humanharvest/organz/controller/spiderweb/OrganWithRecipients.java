@@ -52,8 +52,8 @@ public class OrganWithRecipients {
     private Line deceasedToOrganConnector;
     private Line organToRecipientConnector;
     private Text durationText;
-    private ChangeListener<Transform> matchesListTransformListener = handlePotentialMatchesTransformed();
     private ChangeListener<Transform> organPaneTransformListener = handleOrganPaneTransformed();
+    private ChangeListener<Transform> matchesListTransformListener = handlePotentialMatchesTransformed();
 
     public OrganWithRecipients(DonatedOrgan organ, List<Client> potentialMatches, Pane deceasedDonorPane, Pane canvas) {
         this.organ = organ;
