@@ -1,6 +1,5 @@
 package com.humanharvest.organz.controller.spiderweb;
 
-import javafx.geometry.Bounds;
 import javafx.scene.effect.ColorAdjust;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -113,18 +112,6 @@ public class LineFormatters {
             Affine transform = new Affine();
             transform.prepend(new Scale(0.5, 0.5));
             transform.prepend(new Translate(-50, 90));
-            transform.prepend(newTransform);
-            focusArea.setTransform(transform);
-        }
-    }
-
-    public static void updateOrganPanePosition(Pane organPane, Transform newTransform) {
-        FocusArea focusArea = (FocusArea) organPane.getUserData();
-
-        // If not currently touching the organ pane
-        if (MultitouchHandler.findPaneTouches(organPane).isEmpty()) {
-            Affine transform = new Affine();
-            transform.prepend(new Translate(50, -90));
             transform.prepend(newTransform);
             focusArea.setTransform(transform);
         }

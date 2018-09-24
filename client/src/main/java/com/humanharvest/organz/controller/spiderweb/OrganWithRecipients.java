@@ -53,9 +53,6 @@ public class OrganWithRecipients {
     private Line organToRecipientConnector;
     private Text durationText;
 
-    private ChangeListener<Transform> organPaneTransformListener = handleOrganPaneTransformed();
-    private ChangeListener<Transform> matchesListTransformListener = handlePotentialMatchesTransformed();
-
     public OrganWithRecipients(DonatedOrgan organ, List<Client> potentialMatches, Pane deceasedDonorPane, Pane canvas) {
         this.organ = organ;
         this.potentialMatches = potentialMatches;
@@ -137,8 +134,8 @@ public class OrganWithRecipients {
     private void enableHandlers() {
         // Redraws lines when organs or donor pane is moved
         deceasedDonorPane.localToParentTransformProperty().addListener(handleDeceasedDonorTransformed());
-        organPane.localToSceneTransformProperty().addListener(organPaneTransformListener);
-        matchesPane.localToSceneTransformProperty().addListener(matchesListTransformListener);
+        organPane.localToParentTransformProperty().addListener(handleOrganPaneTransformed());
+        matchesPane.localToParentTransformProperty().addListener(handlePotentialMatchesTransformed());
 
         organPane.setOnMouseClicked(this::handleOrganPaneClick);
     }
@@ -197,15 +194,12 @@ public class OrganWithRecipients {
             setDonorConnectorEnd(bounds);
             updateConnectorText(durationText, organ, deceasedToOrganConnector);
 
-            matchesPane.localToSceneTransformProperty().removeListener(matchesListTransformListener);
             updateMatchesListPosition(matchesPane, newValue);
-            matchesPane.localToSceneTransformProperty().addListener(matchesListTransformListener);
 
             setRecipientConnectorStart(bounds);
             setRecipientConnectorEnd(matchesPane.getBoundsInParent());
             updateRecipientConnector(organ, organToRecipientConnector);
 
-            matchesPane.toFront();
             organPane.toFront();
         };
     }
@@ -214,13 +208,6 @@ public class OrganWithRecipients {
         return (observable, oldValue, newValue) -> {
             setRecipientConnectorEnd(matchesPane.getBoundsInParent());
             updateRecipientConnector(organ, organToRecipientConnector);
-
-            organPane.localToSceneTransformProperty().removeListener(organPaneTransformListener);
-            updateOrganPanePosition(organPane, newValue);
-            organPane.localToSceneTransformProperty().addListener(organPaneTransformListener);
-
-            matchesPane.toFront();
-            organPane.toFront();
         };
     }
 
