@@ -31,7 +31,7 @@ public class ModifyIllnessRecordAction extends ClientAction {
         this.record = record;
         oldDiagnosisDate = record.getDiagnosisDate();
         oldCuredDate = record.getCuredDate();
-        oldChronic = record.isChronic();
+        oldChronic = record.getIsChronic();
         newDiagnosisDate = oldDiagnosisDate;
         newCuredDate = oldCuredDate;
         newChronic = oldChronic;

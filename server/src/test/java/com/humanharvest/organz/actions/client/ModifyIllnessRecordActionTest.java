@@ -44,7 +44,7 @@ public class ModifyIllnessRecordActionTest extends BaseTest {
         invoker.execute(action);
 
         assertEquals(newDate, baseClient.getCurrentIllnesses().get(0).getDiagnosisDate());
-        assertTrue(baseClient.getCurrentIllnesses().get(0).isChronic());
+        assertTrue(baseClient.getCurrentIllnesses().get(0).getIsChronic());
     }
 
     @Test
@@ -74,7 +74,7 @@ public class ModifyIllnessRecordActionTest extends BaseTest {
         invoker.undo();
 
         assertEquals(LocalDate.of(2018, 4, 9), baseClient.getCurrentIllnesses().get(0).getDiagnosisDate());
-        assertFalse(baseClient.getCurrentIllnesses().get(0).isChronic());
+        assertFalse(baseClient.getCurrentIllnesses().get(0).getIsChronic());
     }
 
     @Test
@@ -91,6 +91,6 @@ public class ModifyIllnessRecordActionTest extends BaseTest {
         invoker.redo();
 
         assertEquals(newDate, baseClient.getCurrentIllnesses().get(0).getDiagnosisDate());
-        assertTrue(baseClient.getCurrentIllnesses().get(0).isChronic());
+        assertTrue(baseClient.getCurrentIllnesses().get(0).getIsChronic());
     }
 }

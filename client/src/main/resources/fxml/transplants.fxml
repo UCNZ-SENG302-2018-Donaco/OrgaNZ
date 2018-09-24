@@ -66,7 +66,7 @@
                   <Font size="20.0"/>
                 </font>
               </Label>
-              <TitledPane GridPane.rowIndex="1" expanded="false" text="Filter">
+              <TitledPane GridPane.rowIndex="1" expanded="false" text="Filters">
                 <content>
                   <GridPane hgap="10.0">
                     <columnConstraints>

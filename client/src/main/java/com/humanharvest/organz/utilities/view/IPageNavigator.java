@@ -6,15 +6,20 @@ import javafx.scene.layout.Region;
 import javafx.stage.Window;
 
 import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.controller.components.TouchAlertTextController;
 
 public interface IPageNavigator {
 
     /**
      * Sets the alert window at the right size so that all the text can be read.
+     * If the alert, its dialog pane, or its dialog pane's scene is null, it does nothing. (This will happen
+     * if the alert has been closed by the user, so we don't need to resize it anyway).
      */
     static void resizeAlert(Alert alert) {
-        alert.getDialogPane().getScene().getWindow().sizeToScene();
+        if (alert != null && alert.getDialogPane() != null && alert.getDialogPane().getScene() != null) {
+            alert.getDialogPane().getScene().getWindow().sizeToScene();
+        }
     }
 
     /**
@@ -22,8 +27,9 @@ public interface IPageNavigator {
      *
      * @param page the Page (enum including path to fxml file) to be loaded.
      * @param controller the MainController to load this page on to.
+     * @return The SubController for the new age, or null if the new page could not be loaded.
      */
-    void loadPage(Page page, MainController controller);
+    SubController loadPage(Page page, MainController controller);
 
     /**
      * Refreshes all windows, to be used when an update occurs. Only refreshes titles and sidebars

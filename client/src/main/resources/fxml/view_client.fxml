@@ -107,8 +107,8 @@
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                           <children>
-                            <Button fx:id="uploadPhotoButton" mnemonicParsing="false" onAction="#uploadPhoto" prefHeight="30.0" prefWidth="110.0" text="Add Photo" />
-                            <Button fx:id="deletePhotoButton" mnemonicParsing="false" onAction="#deletePhoto" prefHeight="30.0" prefWidth="110.0" text="Delete" GridPane.columnIndex="1" />
+                            <Button fx:id="uploadPhotoButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#uploadPhoto" text="Upload" />
+                            <Button fx:id="deletePhotoButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#deletePhoto" text="Delete" GridPane.columnIndex="1" />
                           </children>
                                     <padding>
                                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />

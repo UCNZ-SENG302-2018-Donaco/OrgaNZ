@@ -45,12 +45,16 @@ public class FocusArea implements InvalidationListener {
     private final Collection<Consumer<EventTarget>> popupHandlers = new ArrayList<>();
     private final Pane pane;
     private boolean outOfDate = true;
+    private boolean translatable = true;
+    private boolean scalable = true;
+    private boolean rotatable = true;
 
     private Affine transform;
 
     // A chain of the last X seconds of touch events. Used to smooth out fluctuations in touch events.
     private final LinkedList<TimedPoint> eventPoints = new LinkedList<>();
     private Point2D velocity = Point2D.ZERO;
+    private boolean collidable;
 
     public FocusArea(Pane pane) {
         this.pane = pane;
@@ -165,7 +169,7 @@ public class FocusArea implements InvalidationListener {
     public void setLastPosition(long nanoTime, Point2D centre) {
         eventPoints.add(new TimedPoint(nanoTime, centre));
 
-        long oldTime = nanoTime - 250_000_000; // 0.25 Seconds
+        long oldTime = nanoTime - 100_000_000; // 0.1 Seconds
         while (eventPoints.peekFirst().getTime() < oldTime) {
             eventPoints.removeFirst();
         }
@@ -177,14 +181,27 @@ public class FocusArea implements InvalidationListener {
     public void setupVelocity(long nanoTime, Point2D centre) {
         TimedPoint timedPoint = eventPoints.peekFirst();
         double timeDelta = (nanoTime - timedPoint.getTime()) / 1000000000.0;
-        Point2D positionDelta = centre.subtract(timedPoint.getPosition());
-        velocity = new Point2D(positionDelta.getX() / timeDelta, positionDelta.getY() / timeDelta);
+        Point2D averagePosition = getAveragePosition();
+        Point2D positionDelta = centre.subtract(averagePosition);
+        velocity = new Point2D(positionDelta.getX(), positionDelta.getY());
 
-        if (PointUtils.distance(Point2D.ZERO, velocity) < MultitouchHandler.MIN_VELOCITY_THRESHOLD) {
+        if (PointUtils.distance(Point2D.ZERO, velocity) < PhysicsHandler.MIN_VELOCITY_THRESHOLD * 4) {
             velocity = Point2D.ZERO;
         }
 
+        velocity = velocity.multiply(1 / timeDelta);
+
         eventPoints.clear();
+    }
+
+    private Point2D getAveragePosition() {
+        double inverseTotal = 1.0 / eventPoints.size();
+        Point2D position = Point2D.ZERO;
+        for (TimedPoint timedPoint : eventPoints) {
+            position = position.add(timedPoint.getPosition().multiply(inverseTotal));
+        }
+
+        return position;
     }
 
     public Pane getPane() {
@@ -193,6 +210,10 @@ public class FocusArea implements InvalidationListener {
 
     public Point2D getVelocity() {
         return velocity;
+    }
+
+    public void addVelocity(Point2D velocityDelta) {
+        velocity = velocity.add(velocityDelta);
     }
 
     public void setVelocity(Point2D velocity) {
@@ -341,5 +362,43 @@ public class FocusArea implements InvalidationListener {
         public Point2D getPosition() {
             return position;
         }
+    }
+
+    public boolean isTranslatable() {
+        return translatable;
+    }
+
+    /**
+     * Returns if this focus area can be collided with.
+     */
+    public boolean isCollidable() {
+        return collidable;
+    }
+
+    /**
+     * Sets if this focus area can be collided with.
+     */
+    public void setCollidable(boolean collidable) {
+        this.collidable = collidable;
+    }
+
+    public void setTranslatable(boolean translatable) {
+        this.translatable = translatable;
+    }
+
+    public boolean isScalable() {
+        return scalable;
+    }
+
+    public void setScalable(boolean scalable) {
+        this.scalable = scalable;
+    }
+
+    public boolean isRotatable() {
+        return rotatable;
+    }
+
+    public void setRotatable(boolean rotatable) {
+        this.rotatable = rotatable;
     }
 }
