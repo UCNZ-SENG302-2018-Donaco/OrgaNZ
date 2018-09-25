@@ -6,7 +6,7 @@
 .list-cell {
   -fx-padding: 2px;
   -fx-background-color: transparent, -fx-background;
-  -fx-background-insets: 4px, 8px;
+  -fx-background-insets: 2px, 4px;
 }
 
 .list-cell:empty {

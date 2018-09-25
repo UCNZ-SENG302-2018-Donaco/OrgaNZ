@@ -20,6 +20,7 @@ public class PotentialRecipientCell extends ListCell<TransplantRequest> {
 
     private final List<TransplantRequest> potentialRecipientList;
     private final Client donor;
+    private ReceiverOverviewController recipientOverview;
 
     public PotentialRecipientCell(List<TransplantRequest> potentialRecipientList, Client donor) {
         this.potentialRecipientList = potentialRecipientList;
@@ -34,11 +35,11 @@ public class PotentialRecipientCell extends ListCell<TransplantRequest> {
             try {
                 FXMLLoader loader = new FXMLLoader(
                         PotentialRecipientCell.class.getResource(Page.RECEIVER_OVERVIEW.getPath()));
-                Node node = loader.load();
-                ReceiverOverviewController controller = loader.getController();
-                controller.setup(request, donor);
-                controller.setPriority(potentialRecipientList.indexOf(request) + 1);
-                setGraphic(node);
+                Node recipientPane = loader.load();
+                recipientOverview = loader.getController();
+                recipientOverview.setup(request, donor);
+                recipientOverview.setPriority(potentialRecipientList.indexOf(request) + 1);
+                setGraphic(recipientPane);
 
             } catch (IOException e) {
                 LOGGER.log(Level.SEVERE, e.getMessage(), e);
@@ -46,4 +47,7 @@ public class PotentialRecipientCell extends ListCell<TransplantRequest> {
         }
     }
 
+    public ReceiverOverviewController getRecipientOverview() {
+        return recipientOverview;
+    }
 }

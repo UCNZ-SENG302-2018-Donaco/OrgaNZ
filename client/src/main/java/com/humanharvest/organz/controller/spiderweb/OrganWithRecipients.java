@@ -2,7 +2,10 @@ package com.humanharvest.organz.controller.spiderweb;
 
 import static com.humanharvest.organz.controller.spiderweb.LineFormatters.*;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -10,11 +13,16 @@ import javafx.animation.Timeline;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Orientation;
+import javafx.scene.Node;
 import javafx.scene.control.ListView;
+import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.Glow;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Transform;
@@ -24,12 +32,14 @@ import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.DonatedOrgan.OrganState;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.controller.client.ReceiverOverviewController;
 import com.humanharvest.organz.controller.components.ExpiryBarUtils;
 import com.humanharvest.organz.controller.components.PotentialRecipientCell;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.touch.FocusArea;
 import com.humanharvest.organz.touch.MultitouchHandler;
 import com.humanharvest.organz.touch.OrganFocusArea;
+import com.humanharvest.organz.touch.PointUtils;
 import com.humanharvest.organz.utilities.DurationFormatter.DurationFormat;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
@@ -46,8 +56,8 @@ public class OrganWithRecipients {
 
     private OrganImageController organImageController;
     private Pane organPane;
-    private FocusArea organFocus;
     private Pane matchesPane;
+    private List<PotentialRecipientCell> recipientCells = new ArrayList<>();
 
     private Line deceasedToOrganConnector;
     private Line organToRecipientConnector;
@@ -196,6 +206,29 @@ public class OrganWithRecipients {
         };
     }
 
+    public void handleOrganPaneTouchReleased() {
+        Optional<PotentialRecipientCell> closestCell = recipientCells.stream()
+                .filter(cell -> organIntersectsCell(organPane, cell))
+                .min(Comparator.comparing(cell -> PointUtils.distance(PointUtils.getCentreOfNode(cell),
+                        PointUtils.getCentreOfNode(organPane))));
+
+        if (closestCell.isPresent()) {
+            ReceiverOverviewController recipientOverview = closestCell.get().getRecipientOverview();
+//            System.out.println(recipientOverview.getRecipient().getFullName());
+            System.out.println("Do something");
+        }
+    }
+
+    private boolean organIntersectsCell(Node organPane, Node recipientCell) {
+        Bounds cellBounds = recipientCell.localToScene(recipientCell.getBoundsInLocal());
+        cellBounds = new BoundingBox(
+                cellBounds.getMinX() + cellBounds.getWidth() / 4,
+                cellBounds.getMinY() + cellBounds.getHeight() / 4,
+                cellBounds.getWidth() / 2,
+                cellBounds.getHeight() / 2);
+        return organPane.localToScene(organPane.getBoundsInLocal()).intersects(cellBounds);
+    }
+
     public ChangeListener<Transform> handleOrganPaneTransformed() {
         return (observable, oldValue, newValue) -> {
             Bounds bounds = organPane.getBoundsInParent();
@@ -204,6 +237,16 @@ public class OrganWithRecipients {
             updateConnectorText(durationText, organ, deceasedToOrganConnector);
 
             updateMatchesListPosition(matchesPane, newValue);
+
+            for (Node cell : recipientCells) {
+                if (organIntersectsCell(organPane, cell)) {
+                    DropShadow dropShadow = new DropShadow(15, Color.PALEGOLDENROD);
+                    dropShadow.setInput(new Glow(0.5));
+                    cell.setEffect(dropShadow);
+                } else {
+                    cell.setEffect(null);
+                }
+            }
 
             setRecipientConnectorStart(bounds);
             setRecipientConnectorEnd(matchesPane.getBoundsInParent());
@@ -247,8 +290,11 @@ public class OrganWithRecipients {
 
         matchesList.setItems(potentialMatches);
 
-        matchesList.setCellFactory(param -> new PotentialRecipientCell(
-                param.getItems(), organ.getDonor()));
+        matchesList.setCellFactory(param -> {
+            PotentialRecipientCell cell = new PotentialRecipientCell(param.getItems(), organ.getDonor());
+            recipientCells.add(cell);
+            return cell;
+        });
 
         matchesList.setOrientation(Orientation.HORIZONTAL);
         matchesList.setMinWidth(380);
