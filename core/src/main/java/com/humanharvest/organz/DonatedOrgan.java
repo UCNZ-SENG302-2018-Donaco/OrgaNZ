@@ -246,7 +246,18 @@ public class DonatedOrgan {
      * @return The current state of the organ
      */
     public OrganState getState() {
-        if (!available) {
+        return getState(true);
+    }
+
+    /**
+     * Get the organs current state from the OrganState ENUM for easier checks
+     *
+     * @param includeTransplantStatus If the status should include the transplant status, or if it should only check
+     * the expiry status
+     * @return The current state of the organ
+     */
+    public OrganState getState(boolean includeTransplantStatus) {
+        if (!available && includeTransplantStatus) {
             if (receiver == null) {
                 return OrganState.TRANSPLANT_PLANNED;
             } else {
