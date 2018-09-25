@@ -60,6 +60,7 @@ public class SidebarController extends SubController  {
 
             if (windowContext.isClinViewClientWindow()) {
                 showButtons(clinicianViewClientButtons);
+
                 if (windowContext.getViewClient().isDead() && windowContext.getViewClient().isDonor()) {
                     showButton(spiderwebButton);
                 }
