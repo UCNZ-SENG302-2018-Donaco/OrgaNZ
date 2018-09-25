@@ -48,6 +48,7 @@ public class MenuBarController extends SubController {
 
     private static final String ERROR_SAVING_MESSAGE = "There was an error saving to the file specified.";
     private static final String ERROR_LOADING_MESSAGE = "There was an error loading the file specified.";
+
     public MenuItem viewClientItem;
     public MenuItem searchClientItem;
     public MenuItem donateOrganItem;
@@ -587,6 +588,11 @@ public class MenuBarController extends SubController {
             PageNavigator.showAlert(AlertType.ERROR, "Error duplicating page",
                     "The new page could not be created", mainController.getStage());
         }
+    }
+
+    @FXML
+    private void projectWindow() {
+        ProjectionHelper.createNewProjection(mainController);
     }
 
     /**

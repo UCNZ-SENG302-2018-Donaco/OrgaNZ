@@ -20,6 +20,7 @@
             <MenuItem mnemonicParsing="false" onAction="#logout" text="Log Out" fx:id="logOutItem"/>
             <SeparatorMenuItem mnemonicParsing="false"/>
             <MenuItem mnemonicParsing="false" onAction="#duplicateWindow" text="Duplicate Window" fx:id="duplicateItem"/>
+            <MenuItem mnemonicParsing="false" onAction="#projectWindow" text="Project Window" fx:id="projectWindow"/>
             <MenuItem mnemonicParsing="false" onAction="#closeWindow" text="Close Window" fx:id="closeItem"/>
             <MenuItem mnemonicParsing="false" onAction="#quitProgram" text="Quit" fx:id="quitItem"/>
           </items>
