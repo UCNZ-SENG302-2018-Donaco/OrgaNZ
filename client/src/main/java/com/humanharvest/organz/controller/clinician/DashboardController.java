@@ -87,7 +87,7 @@ public class DashboardController extends SubController {
      */
     @FXML
     private void initialize() {
-        deceasedDonorsList.getItems().setAll(State.getClientManager().getViableDeceasedDonors());
+        //deceasedDonorsList.getItems().setAll(State.getClientManager().getViableDeceasedDonors());
         //deceasedDonorsList.setTitle("Recently deceased donors");
 
     }
