@@ -6,6 +6,8 @@ import javafx.fxml.FXML;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.PieChart.Data;
 import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.control.ListView;
 
 import com.humanharvest.organz.Client;
@@ -13,6 +15,7 @@ import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.DashboardStatistics;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
+import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.State;
 
@@ -21,8 +24,11 @@ public class DashboardController extends SubController {
     private final Session session;
     private Clinician clinician;
     private DashboardStatistics statistics;
+    private final ClientManager manager;
 
 
+    @FXML
+    private Pane menuBarPane;
 
 
 
@@ -37,7 +43,8 @@ public class DashboardController extends SubController {
 
     public DashboardController() {
         session = State.getSession();
-
+        manager = State.getClientManager();
+        // TODO make work with either admin or clinician
         clinician = session.getLoggedInClinician();
     }
 
@@ -47,6 +54,8 @@ public class DashboardController extends SubController {
     public void setup(MainController mainController) {
         super.setup(mainController);
         mainController.setTitle("Dashboard");
+        mainController.loadNavigation(menuBarPane);
+
 
         refresh();
     }
