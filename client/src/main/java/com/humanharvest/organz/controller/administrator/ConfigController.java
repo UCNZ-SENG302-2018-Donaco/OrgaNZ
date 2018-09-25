@@ -32,6 +32,8 @@ import com.humanharvest.organz.utilities.view.PageNavigator;
 
 public class ConfigController extends SubController {
 
+    private final Map<Hospital, Set<Organ>> modifiedHospitalPrograms = new HashMap<>();
+
     @FXML
     private HBox menuBarPane;
     @FXML
@@ -41,7 +43,6 @@ public class ConfigController extends SubController {
     @FXML
     private CheckListView<Organ> organSelector;
 
-    private final Map<Hospital, Set<Organ>> modifiedHospitalPrograms = new HashMap<>();
     private final ListChangeListener<? super Organ> programsChangeListener = change -> onTransplantProgramsChanged();
 
     public ConfigController() {

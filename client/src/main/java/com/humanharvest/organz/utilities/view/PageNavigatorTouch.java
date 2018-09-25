@@ -7,25 +7,24 @@ import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javafx.beans.property.Property;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Transform;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
-import com.humanharvest.organz.touch.MultitouchHandler;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.controller.components.TouchAlertController;
 import com.humanharvest.organz.controller.components.TouchAlertTextController;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.touch.MultitouchHandler;
 
 /**
  * Utility class for controlling navigation between pages.
@@ -64,9 +63,10 @@ public class PageNavigatorTouch implements IPageNavigator {
      *
      * @param page the Page (enum including path to fxml file) to be loaded.
      * @param controller the MainController to load this page on to.
+     * @return The SubController for the new age, or null if the new page could not be loaded.
      */
     @Override
-    public void loadPage(Page page, MainController controller) {
+    public SubController loadPage(Page page, MainController controller) {
         try {
             LOGGER.info("Loading page: " + page);
             FXMLLoader loader = new FXMLLoader(PageNavigatorTouch.class.getResource(page.getPath()));
@@ -76,11 +76,13 @@ public class PageNavigatorTouch implements IPageNavigator {
             controller.setSubController(subController);
 
             controller.setPage(page, loadedPage);
+            return subController;
 
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Couldn't load the page", e);
             showAlert(Alert.AlertType.ERROR, "Could not load page: " + page,
                     "The page loader failed to load the layout for the page.", controller.getStage(), null);
+            return null;
         }
     }
 
@@ -119,6 +121,18 @@ public class PageNavigatorTouch implements IPageNavigator {
                 State.deleteMainController(mainController);
                 MultitouchHandler.removePane(mainPane);
             });
+
+            newStage.setWidth(width);
+            newStage.setHeight(height);
+            newStage.setMinWidth(width);
+            newStage.setMinHeight(height);
+
+            mainPane.setPrefWidth(width);
+            mainPane.setPrefHeight(height);
+
+            StackPane stackPane = (StackPane) mainPane.getChildren().get(0);
+            stackPane.setPrefWidth(width);
+            stackPane.setPrefHeight(height);
 
             MultitouchHandler.addPane(mainPane);
 

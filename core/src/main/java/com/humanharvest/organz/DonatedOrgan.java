@@ -26,10 +26,18 @@ import com.fasterxml.jackson.annotation.JsonView;
 
 @JsonAutoDetect(fieldVisibility = Visibility.ANY,
         getterVisibility = Visibility.NONE,
-        setterVisibility = Visibility.NONE)
+        setterVisibility = Visibility.NONE,
+        isGetterVisibility = Visibility.NONE)
 @Entity
 @Table
 public class DonatedOrgan {
+
+    public enum OrganState {
+        CURRENT,
+        NO_EXPIRY,
+        EXPIRED,
+        OVERRIDDEN
+    }
 
     @Id
     @GeneratedValue
@@ -67,6 +75,33 @@ public class DonatedOrgan {
         this.donor = donor;
         this.dateTimeOfDonation = dateTimeOfDonation;
         this.id = id;
+    }
+
+    /**
+     * Returns the comparator that matches the sort option
+     *
+     * @param sortOption the sort option
+     * @return the comparator that matches the sort option
+     */
+    public static Comparator<DonatedOrgan> getComparator(DonatedOrganSortOptionsEnum sortOption) {
+        if (sortOption == null) {
+            sortOption = TIME_UNTIL_EXPIRY;
+        }
+
+        switch (sortOption) {
+            case CLIENT:
+                return Comparator.comparing(organ -> organ.getDonor().getFullName());
+            case ORGAN_TYPE:
+                return Comparator.comparing(organ -> organ.getOrganType().toString());
+            case REGION_OF_DEATH:
+                return Comparator.comparing(organ -> organ.getDonor().getRegionOfDeath());
+            case TIME_OF_DEATH:
+                return Comparator.comparing(organ -> organ.getDonor().getDateOfDeath());
+            default:
+            case TIME_UNTIL_EXPIRY:
+                return Comparator.comparing(DonatedOrgan::getDurationUntilExpiry,
+                        Comparator.nullsLast(Comparator.naturalOrder()));
+        }
     }
 
     public Organ getOrganType() {
@@ -185,29 +220,37 @@ public class DonatedOrgan {
     }
 
     /**
-     * Returns the comparator that matches the sort option
-     *
-     * @param sortOption the sort option
-     * @return the comparator that matches the sort option
+     * @return true if the organ has expired by time
      */
-    public static Comparator<DonatedOrgan> getComparator(DonatedOrganSortOptionsEnum sortOption) {
-        if (sortOption == null) {
-            sortOption = TIME_UNTIL_EXPIRY;
+    public boolean hasExpiredNaturally() {
+        if (organType.getMaxExpiration() == null) {
+            return false;
         }
+        Duration timeToExpiry = organType.getMaxExpiration().minus(getTimeSinceDonation());
+        return timeToExpiry.isNegative() || timeToExpiry.isZero();
+    }
 
-        switch (sortOption) {
-            case CLIENT:
-                return Comparator.comparing(organ -> organ.getDonor().getFullName());
-            case ORGAN_TYPE:
-                return Comparator.comparing(organ -> organ.getOrganType().toString());
-            case REGION_OF_DEATH:
-                return Comparator.comparing(organ -> organ.getDonor().getRegionOfDeath());
-            case TIME_OF_DEATH:
-                return Comparator.comparing(organ -> organ.getDonor().getDateOfDeath());
-            default:
-            case TIME_UNTIL_EXPIRY:
-                return Comparator.comparing(DonatedOrgan::getDurationUntilExpiry,
-                        Comparator.nullsLast(Comparator.naturalOrder()));
+    /**
+     * Get the organs current state from the OrganState ENUM for easier checks
+     *
+     * @return The current state of the organ
+     */
+    public OrganState getState() {
+        if (overrideReason != null) {
+            return OrganState.OVERRIDDEN;
+        } else if (organType.getMaxExpiration() == null) {
+            return OrganState.NO_EXPIRY;
+        } else {
+            Duration duration = getDurationUntilExpiry();
+            if (duration == null ||
+                    duration.isZero() ||
+                    duration.isNegative() ||
+                    duration.equals(Duration.ZERO) ||
+                    duration.minusSeconds(1).isNegative()) {
+                return OrganState.EXPIRED;
+            } else {
+                return OrganState.CURRENT;
+            }
         }
     }
 

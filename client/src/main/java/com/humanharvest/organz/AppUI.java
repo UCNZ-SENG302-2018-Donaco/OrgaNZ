@@ -13,6 +13,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.controller.clinician.StaffLoginController;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.state.State.DataStorageType;
 import com.humanharvest.organz.touch.MultitouchHandler;
@@ -35,7 +36,7 @@ import org.tuiofx.internal.base.TuioFXCanvas;
 public class AppUI extends Application {
 
     static {
-        // Must be done here, since getting the property happends before the class is created
+        // Must be done here, since getting the property happens before the class is created
         if (System.getProperty("prism.maxvram") == null) {
             ReflectionUtils.setStaticField(PrismSettings.class, "maxVram", 2L * 1024 * 1024 * 1024); //2GB
         }
@@ -67,6 +68,26 @@ public class AppUI extends Application {
 
     private static void addCss(Scene scene) {
         scene.getStylesheets().add(AppUI.class.getResource("/css/validation.css").toExternalForm());
+    }
+
+    /**
+     * Initialises the touch components, namely the MultitouchHandler and various panes.
+     */
+    private static void startTouch(Stage primaryStage) throws IOException {
+        Pane root = new TuioFXCanvas();
+        Scene scene = new Scene(root);
+
+        loadBackPane(root);
+        MultitouchHandler.initialise(root);
+
+        loadTouchMainPane();
+
+        primaryStage.setScene(scene);
+
+        primaryStage.setFullScreen(true);
+        primaryStage.setOnCloseRequest(event -> {
+            MultitouchHandler.stageClosing();
+        });
     }
 
     /**
@@ -115,26 +136,13 @@ public class AppUI extends Application {
 
         primaryStage.setMinHeight(639);
         primaryStage.setMinWidth(1016);
-    }
 
-    /**
-     * Initialises the touch components, namely the MultitouchHandler and various panes.
-     */
-    private static void startTouch(Stage primaryStage) throws IOException {
-        Pane root = new TuioFXCanvas();
-        Scene scene = new Scene(root);
-
-        loadBackPane(root);
-        MultitouchHandler.initialise(root);
-
-        loadTouchMainPane();
-
-        primaryStage.setScene(scene);
-
-        primaryStage.setFullScreen(true);
-        primaryStage.setOnCloseRequest(event -> {
-            MultitouchHandler.stageClosing();
-        });
+        // Skips login page if arguments contains --login & --password
+        if (parameters.containsKey("login")) {
+            StaffLoginController.handleSignIn(parameters.get("login"),
+                    parameters.getOrDefault("password", ""),
+                    State.getMainControllers().get(0));
+        }
     }
 
     /**

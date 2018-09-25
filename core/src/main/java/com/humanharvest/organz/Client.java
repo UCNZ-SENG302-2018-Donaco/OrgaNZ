@@ -816,7 +816,7 @@ public class Client implements ConcurrencyControlledEntity {
         return Collections.unmodifiableList(procedures.stream()
                 .filter(record -> {
                     if (record instanceof TransplantRecord) {
-                        return !((TransplantRecord)record).isCompleted();
+                        return !((TransplantRecord) record).isCompleted();
                     }
                     return record.getDate().isAfter(LocalDate.now());
                 })
@@ -832,16 +832,24 @@ public class Client implements ConcurrencyControlledEntity {
         return Collections.unmodifiableList(procedures.stream()
                 .filter(record -> {
                     if (record instanceof TransplantRecord) {
-                        return ((TransplantRecord)record).isCompleted();
+                        return ((TransplantRecord) record).isCompleted();
                     }
                     return !record.getDate().isAfter(LocalDate.now());
                 })
                 .collect(Collectors.toList()));
     }
 
-
     public List<TransplantRequest> getTransplantRequests() {
         return Collections.unmodifiableList(transplantRequests);
+    }
+
+    public void setTransplantRequests(List<TransplantRequest> requests) {
+        transplantRequests = new ArrayList<>(requests);
+        for (TransplantRequest request : requests) {
+            request.setClient(this);
+        }
+        isReceiver = !transplantRequests.isEmpty();
+        updateModifiedTimestamp();
     }
 
     /**
@@ -852,6 +860,7 @@ public class Client implements ConcurrencyControlledEntity {
      * @return the transplant request that is for the passed in organ
      */
     public TransplantRequest getTransplantRequest(Organ organ) {
+        //TODO: This shouldn't really happen because there can be multiple transplants with same organ
         for (TransplantRequest transplantRequest : transplantRequests) {
             if (transplantRequest.getRequestedOrgan() == organ) {
                 return transplantRequest;
@@ -862,13 +871,15 @@ public class Client implements ConcurrencyControlledEntity {
         return null;
     }
 
-    public void setTransplantRequests(List<TransplantRequest> requests) {
-        transplantRequests = new ArrayList<>(requests);
-        for (TransplantRequest request : requests) {
-            request.setClient(this);
-        }
-        isReceiver = !transplantRequests.isEmpty();
-        updateModifiedTimestamp();
+    /**
+     * Returns the transplant request by id
+     * If there is no such transplant request, returns null.
+     *
+     * @param id the transplant id
+     * @return the transplant request with the given id or null if none exists
+     */
+    public TransplantRequest getTransplantRequest(long id) {
+        return transplantRequests.stream().filter(request -> request.getId() == id).findFirst().orElse(null);
     }
 
     /**
@@ -1016,6 +1027,7 @@ public class Client implements ConcurrencyControlledEntity {
      */
     @Override
     public boolean equals(Object o) {
+
         if (this == o) {
             return true;
         }
@@ -1042,6 +1054,7 @@ public class Client implements ConcurrencyControlledEntity {
 
     public void addTransplantRequest(TransplantRequest request) {
         transplantRequests.add(request);
+
         request.setClient(this);
         isReceiver = !transplantRequests.isEmpty();
     }

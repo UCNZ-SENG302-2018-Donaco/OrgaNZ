@@ -293,6 +293,13 @@ public class RequestOrgansController extends SubController {
                     AlertType.ERROR,
                     "Request already exists",
                     "Client already has a waiting request for this organ.", mainController.getStage());
+        } else if (client.getTransplantRequests().stream()
+                .anyMatch(request -> request.getRequestedOrgan() == selectedOrgan &&
+                        request.getStatus() == TransplantRequestStatus.SCHEDULED)) {
+            PageNavigator.showAlert(
+                    AlertType.ERROR,
+                    "Transplant already scheduled",
+                    "Client already has a scheduled transplant for this organ.", mainController.getStage());
         } else if (client.isDead()) { // Client is dead, they can't request an organ
             PageNavigator.showAlert(
                     AlertType.ERROR,
@@ -399,7 +406,9 @@ public class RequestOrgansController extends SubController {
                         "Do you want to go to the medical history page to mark the disease that was cured?",
                         mainController.getStage(),
                         isOk -> {
-                            PageNavigator.loadPage(Page.VIEW_MEDICAL_HISTORY, mainController);
+                            if (isOk) {
+                                PageNavigator.loadPage(Page.VIEW_MEDICAL_HISTORY, mainController);
+                            }
                         });
             }
         }

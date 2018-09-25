@@ -37,6 +37,20 @@ public class ConfigControllerTest extends ControllerTest {
         return Page.ADMIN_CONFIG;
     }
 
+    @Test
+    public void hospitalListHasAllHospitals() {
+        verifyThat("#hospitalSelector", hasItems(hospitals.size()));
+    }
+
+    @Test
+    public void hospitalDetailsCanBeOpened() {
+        String hospitalName = firstHospital.getName();
+
+        // Double click on the hospital and check it generates a popup about that hospital.
+        doubleClickOn(hospitalName);
+        alertDialogHasHeaderAndContainsContent(hospitalName, firstHospital.getAddress());
+    }
+
     @Override
     protected void initState() {
         State.reset();
@@ -65,20 +79,6 @@ public class ConfigControllerTest extends ControllerTest {
         hospitalList.sort(Comparator.comparing(Hospital::getName));
         firstHospital = hospitalList.get(0);
         secondHospital = hospitalList.get(1);
-    }
-
-    @Test
-    public void hospitalListHasAllHospitals() {
-        verifyThat("#hospitalSelector", hasItems(hospitals.size()));
-    }
-
-    @Test
-    public void hospitalDetailsCanBeOpened() {
-        String hospitalName = firstHospital.getName();
-
-        // Double click on the hospital and check it generates a popup about that hospital.
-        doubleClickOn(hospitalName);
-        alertDialogHasHeaderAndContainsContent(hospitalName, firstHospital.getAddress());
     }
 
     @Test

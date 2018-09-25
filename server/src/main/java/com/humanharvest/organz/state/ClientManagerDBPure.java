@@ -143,7 +143,7 @@ public class ClientManagerDBPure implements ClientManager {
                 //Use the TIMESTAMPDIFF (MySQL only) function to calculate age
                 whereJoiner.add(
                         "CASE WHEN dateOfDeath IS NULL THEN TIMESTAMPDIFF(YEAR, c.dateOfBirth, NOW()) >= :minimumAge "
-                        + "ELSE TIMESTAMPDIFF(YEAR, c.dateOfBirth, c.dateOfDeath) >= :minimumAge END");
+                                + "ELSE TIMESTAMPDIFF(YEAR, c.dateOfBirth, c.dateOfDeath) >= :minimumAge END");
                 params.put("minimumAge", minimumAge);
             }
 

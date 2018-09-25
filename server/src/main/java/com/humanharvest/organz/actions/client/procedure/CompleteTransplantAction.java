@@ -17,6 +17,7 @@ import com.humanharvest.organz.utilities.exceptions.DateOutOfBoundsException;
 public class CompleteTransplantAction extends ClientAction {
 
     private final TransplantRecord record;
+    private LocalDate recordDate;
 
     /**
      * Create a new complete action. The date of the record cannot be in the future
@@ -42,6 +43,7 @@ public class CompleteTransplantAction extends ClientAction {
 
         TransplantRequest request = record.getRequest();
         request.setResolvedReason("The transplant has been completed");
+        recordDate = record.getDate();
         if (record.getDate().isAfter(LocalDate.now())) {
             record.setDate(LocalDate.now());
         }
@@ -58,6 +60,7 @@ public class CompleteTransplantAction extends ClientAction {
 
         record.setCompleted(false);
         record.getOrgan().setReceiver(null);
+        record.setDate(recordDate);
 
         TransplantRequest request = record.getRequest();
         request.setStatus(TransplantRequestStatus.SCHEDULED);

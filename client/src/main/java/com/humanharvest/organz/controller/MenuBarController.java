@@ -25,15 +25,14 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 import org.controlsfx.control.Notifications;
 
 import com.humanharvest.organz.AppUI;
+import com.humanharvest.organz.controller.spiderweb.SpiderWebController;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.state.State.UiType;
-import com.humanharvest.organz.touch.MultitouchHandler;
 import com.humanharvest.organz.utilities.CacheManager;
 import com.humanharvest.organz.utilities.exceptions.BadRequestException;
 import com.humanharvest.organz.utilities.view.Page;
@@ -76,6 +75,7 @@ public class MenuBarController extends SubController {
     public MenuItem settingsItem;
     public MenuItem quitItem;
     public MenuItem duplicateItem;
+    public MenuItem organWebItem;
 
     public SeparatorMenuItem topSeparator;
 
@@ -119,6 +119,7 @@ public class MenuBarController extends SubController {
      */
     private static void exit() {
         Platform.exit();
+        System.exit(0);
     }
 
     @Override
@@ -149,6 +150,8 @@ public class MenuBarController extends SubController {
         // Menus to hide from clients (aka all menus)
         Menu[] allMenus = {filePrimaryItem, editPrimaryItem, clientPrimaryItem, organPrimaryItem,
                 medicationsPrimaryItem, staffPrimaryItem, profilePrimaryItem};
+
+        organWebItem.setVisible(windowContext.isClinViewClientWindow() && windowContext.getViewClient().isDead());
 
         // Duplicate item is exclusively for the touch screen interface
         if (State.getUiType() == UiType.TOUCH) {
@@ -539,6 +542,11 @@ public class MenuBarController extends SubController {
         new Thread(task).start();
     }
 
+    @FXML
+    private void openOrganWeb() {
+        new SpiderWebController(windowContext.getViewClient());
+    }
+
     /**
      * Refreshes the undo/redo buttons based on if there are changes to be made
      */
@@ -586,12 +594,7 @@ public class MenuBarController extends SubController {
      */
     @FXML
     private void closeWindow() {
-        if (State.getUiType() == UiType.TOUCH) {
-            MultitouchHandler.removePane(mainController.getPane());
-        } else {
-            Stage stage = (Stage) menuBar.getScene().getWindow();
-            stage.close();
-        }
+        mainController.closeWindow();
     }
 
     /**

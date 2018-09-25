@@ -121,6 +121,33 @@ public class ViewProceduresController extends SubController {
         return true;
     }
 
+    private static TableCell<ProcedureRecord, String> formatOutOfDate() {
+        return new TextFieldTableCell<ProcedureRecord, String>(new DefaultStringConverter()) {
+            @Override
+            public void updateItem(String item, boolean empty) {
+                TransplantRecord record = getTableRow().getItem() instanceof TransplantRecord ?
+                        (TransplantRecord) getTableRow().getItem() : null;
+                super.updateItem(item, empty);
+
+                if (record != null) {
+                    if (record.isCompleted()) {
+                        if (record.getDate().isAfter(LocalDate.now())) {
+                            setStyle("-fx-text-fill: red;");
+                        } else {
+                            setStyle("");
+                        }
+                    } else {
+                        if (record.getDate().isBefore(LocalDate.now())) {
+                            setStyle("-fx-text-fill: red;");
+                        } else {
+                            setStyle("");
+                        }
+                    }
+                }
+            }
+        };
+    }
+
     /**
      * Handles the edit event when a procedure summary cell is edited.
      *
@@ -237,9 +264,9 @@ public class ViewProceduresController extends SubController {
         descriptionPendCol.setCellValueFactory(new PropertyValueFactory<>("description"));
 
         // Setup the cell factories (these generate the editable cells)
-        summaryPastCol.setCellFactory(TextFieldTableCell.forTableColumn());
+        summaryPastCol.setCellFactory(cell -> formatOutOfDate());
         summaryPendCol.setCellFactory(cell -> formatOutOfDate());
-        descriptionPastCol.setCellFactory(TextFieldTableCell.forTableColumn());
+        descriptionPastCol.setCellFactory(cell -> formatOutOfDate());
         descriptionPendCol.setCellFactory(cell -> formatOutOfDate());
         datePastCol.setCellFactory(DatePickerCell::new);
         datePendCol.setCellFactory(DatePickerCell::new);
@@ -278,23 +305,6 @@ public class ViewProceduresController extends SubController {
 
         // Setup the "new procedure" affected organs input with all organ values
         affectedOrgansField.getItems().setAll(Organ.values());
-    }
-
-    private static TableCell<ProcedureRecord, String> formatOutOfDate() {
-        return new TextFieldTableCell<ProcedureRecord, String>(new DefaultStringConverter()) {
-            @Override
-            public void updateItem(String item, boolean empty) {
-                TransplantRecord record = getTableRow().getItem() instanceof TransplantRecord ?
-                        (TransplantRecord) getTableRow().getItem() : null;
-                super.updateItem(item, empty);
-
-                if (record != null && record.getDate().isBefore(LocalDate.now())) {
-                    setStyle("-fx-text-fill: red;");
-                } else {
-                    setStyle("");
-                }
-            }
-        };
     }
 
     /**
