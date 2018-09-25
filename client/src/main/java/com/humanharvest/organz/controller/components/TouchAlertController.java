@@ -1,8 +1,7 @@
 package com.humanharvest.organz.controller.components;
 
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.Property;
-import javafx.beans.property.SimpleObjectProperty;
+import java.util.function.Consumer;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -13,8 +12,6 @@ import javafx.stage.Stage;
 import com.humanharvest.organz.touch.MultitouchHandler;
 
 public class TouchAlertController {
-
-    private final ObjectProperty<Boolean> resultProperty = new SimpleObjectProperty<>();
 
     @FXML
     private Text title;
@@ -27,17 +24,20 @@ public class TouchAlertController {
 
     private Stage stage;
     private Pane pane;
+    private Consumer<Boolean> onResponse;
 
     @FXML
     public void initialize() {
         pageHolder.getStyleClass().add("window");
     }
 
-    public void setup(Alert.AlertType alertType, String title, String body, Stage stage, Pane pane) {
+    public void setup(Alert.AlertType alertType, String title, String body, Stage stage, Pane pane,
+            Consumer<Boolean> onResponse) {
         this.title.setText(alertType + ": " + title);
         this.body.setText(body);
         this.stage = stage;
         this.pane = pane;
+        this.onResponse = onResponse;
 
         if (alertType != Alert.AlertType.CONFIRMATION) {
             cancelButton.setVisible(false);
@@ -45,20 +45,20 @@ public class TouchAlertController {
         }
     }
 
-    public Property<Boolean> getResultProperty() {
-        return resultProperty;
-    }
-
     @FXML
     private void ok() {
-        resultProperty.setValue(true);
+        if (onResponse != null) {
+            onResponse.accept(true);
+        }
         MultitouchHandler.removePane(pane);
         stage.close();
     }
 
     @FXML
     private void cancel() {
-        resultProperty.setValue(false);
+        if (onResponse != null) {
+            onResponse.accept(false);
+        }
         MultitouchHandler.removePane(pane);
         stage.close();
     }

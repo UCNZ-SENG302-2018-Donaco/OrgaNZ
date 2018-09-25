@@ -20,7 +20,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javafx.beans.property.Property;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -52,6 +51,7 @@ import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.state.State.UiType;
 import com.humanharvest.organz.utilities.enums.BloodType;
 import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Gender;
@@ -84,7 +84,7 @@ public class ViewClientController extends ViewBaseController {
     private Client viewedClient;
 
     @FXML
-    private Pane sidebarPane, menuBarPane, deathDetailsPane;
+    private Pane menuBarPane, sidebarPane, deathDetailsPane;
     @FXML
     private Label creationDate, lastModified, legalNameLabel, dobLabel, heightLabel, weightLabel, ageDisplayLabel,
             ageLabel, bmiLabel, fullName, dodLabel, timeOfDeathLabel, countryOfDeathLabel, regionOfDeathLabel,
@@ -174,10 +174,10 @@ public class ViewClientController extends ViewBaseController {
         gender.setItems(FXCollections.observableArrayList(Gender.values()));
         genderIdentity.setItems(FXCollections.observableArrayList(Gender.values()));
         btype.setItems(FXCollections.observableArrayList(BloodType.values()));
-        Set<Hospital> hospitalSet = State.getConfigManager().getHospitals();
-        ObservableList<Hospital> hospitals = FXCollections.observableArrayList(new ArrayList<>(hospitalSet));
-        hospital.setItems(hospitals);
-        hospital.getItems().sort(Comparator.comparing(Hospital::getName));
+//        Set<Hospital> hospitalSet = State.getConfigManager().getHospitals();
+//        ObservableList<Hospital> hospitals = FXCollections.observableArrayList(new ArrayList<>(hospitalSet));
+//        hospital.setItems(hospitals);
+//        hospital.getItems().sort(Comparator.comparing(Hospital::getName));
         regionCB.setItems(FXCollections.observableArrayList(Region.values()));
         deathRegionCB.setItems(FXCollections.observableArrayList(Region.values()));
         setEnabledCountries();
@@ -215,12 +215,11 @@ public class ViewClientController extends ViewBaseController {
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
+        mainController.loadNavigation(menuBarPane);
         if (session.getLoggedInUserType() == Session.UserType.CLIENT) {
             viewedClient = session.getLoggedInClient();
-            mainController.loadSidebar(sidebarPane);
         } else if (windowContext.isClinViewClientWindow()) {
             viewedClient = windowContext.getViewClient();
-            mainController.loadMenuBar(menuBarPane);
         }
         refresh();
     }
@@ -634,19 +633,12 @@ public class ViewClientController extends ViewBaseController {
      * @param modifyClientObject The object to pass along that changes are applied to.
      */
     private void promptMarkAsDead(ModifyClientObject modifyClientObject) {
-        Property<Boolean> response = PageNavigator.showAlert(AlertType.CONFIRMATION,
+        PageNavigator.showAlert(AlertType.CONFIRMATION,
                 "Are you sure you want to mark this client as dead?",
-                "This will cancel all waiting transplant requests for this client.", mainController.getStage());
-
-        if (response.getValue() != null) {
-            updateDeathFields(modifyClientObject);
-        } else {
-            response.addListener((observable, oldValue, newValue) -> {
-                if (newValue) {
+                "This will cancel all waiting transplant requests for this client.", mainController.getStage(),
+                isOk -> {
                     updateDeathFields(modifyClientObject);
-                }
-            });
-        }
+                });
     }
 
     /**

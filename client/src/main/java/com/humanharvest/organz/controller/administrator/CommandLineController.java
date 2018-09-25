@@ -11,6 +11,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.Clipboard;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
@@ -22,7 +23,7 @@ public class CommandLineController extends SubController {
     private final List<String> commandHistoryList = new ArrayList<>();
 
     @FXML
-    private HBox menuBarPane;
+    private Pane menuBarPane;
 
     private TextField inputTextField;
 

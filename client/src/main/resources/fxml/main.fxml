@@ -1,17 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import com.jfoenix.controls.JFXDrawer?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<AnchorPane xmlns:fx="http://javafx.com/fxml/1" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
-  prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.121"
-  fx:controller="com.humanharvest.organz.controller.MainController">
-  <children>
-    <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-      AnchorPane.topAnchor="0.0" VBox.vgrow="ALWAYS">
-      <children>
-        <StackPane VBox.vgrow="ALWAYS" fx:id="pageHolder"/>
-      </children>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.MainController">
+    <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" VBox.vgrow="ALWAYS">
+        <StackPane fx:id="pageHolder" VBox.vgrow="ALWAYS" />
+
     </VBox>
-  </children>
+    <JFXDrawer fx:id="drawer" defaultDrawerSize="230.0" layoutY="39.0" prefHeight="561.0" prefWidth="250.0" />
 </AnchorPane>

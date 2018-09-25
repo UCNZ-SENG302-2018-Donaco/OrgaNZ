@@ -5,6 +5,7 @@ import static com.humanharvest.organz.utilities.enums.DonatedOrganSortOptionsEnu
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Comparator;
+import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -31,6 +32,13 @@ import com.fasterxml.jackson.annotation.JsonView;
 @Table
 public class DonatedOrgan {
 
+    public enum OrganState {
+        CURRENT,
+        NO_EXPIRY,
+        EXPIRED,
+        OVERRIDDEN
+    }
+
     @Id
     @GeneratedValue
     @JsonView(Views.Overview.class)
@@ -50,6 +58,8 @@ public class DonatedOrgan {
     private LocalDateTime dateTimeOfDonation;
     @JsonView(Views.Overview.class)
     private String overrideReason;  // If null this implies the organ was not manually overriden
+    @JsonView(Views.Overview.class)
+    private boolean available = true;
 
     protected DonatedOrgan() {
     }
@@ -65,6 +75,33 @@ public class DonatedOrgan {
         this.donor = donor;
         this.dateTimeOfDonation = dateTimeOfDonation;
         this.id = id;
+    }
+
+    /**
+     * Returns the comparator that matches the sort option
+     *
+     * @param sortOption the sort option
+     * @return the comparator that matches the sort option
+     */
+    public static Comparator<DonatedOrgan> getComparator(DonatedOrganSortOptionsEnum sortOption) {
+        if (sortOption == null) {
+            sortOption = TIME_UNTIL_EXPIRY;
+        }
+
+        switch (sortOption) {
+            case CLIENT:
+                return Comparator.comparing(organ -> organ.getDonor().getFullName());
+            case ORGAN_TYPE:
+                return Comparator.comparing(organ -> organ.getOrganType().toString());
+            case REGION_OF_DEATH:
+                return Comparator.comparing(organ -> organ.getDonor().getRegionOfDeath());
+            case TIME_OF_DEATH:
+                return Comparator.comparing(organ -> organ.getDonor().getDateOfDeath());
+            default:
+            case TIME_UNTIL_EXPIRY:
+                return Comparator.comparing(DonatedOrgan::getDurationUntilExpiry,
+                        Comparator.nullsLast(Comparator.naturalOrder()));
+        }
     }
 
     public Organ getOrganType() {
@@ -107,25 +144,6 @@ public class DonatedOrgan {
      */
     public boolean hasExpired() {
         return getDurationUntilExpiry() == Duration.ZERO;
-    }
-
-    /**
-     * @return true if the organ has expired by time
-     */
-    public boolean hasExpiredNaturally() {
-        if (organType.getMaxExpiration() == null) {
-            return false;
-        }
-        Duration timeToExpiry = organType.getMaxExpiration().minus(getTimeSinceDonation());
-        return timeToExpiry.isNegative() || timeToExpiry.isZero();
-    }
-
-    /**
-     * Returns whether this organ is able to be donated (i.e. has not expired or been manually overriden.
-     * @return True if this donated organ is available, false otherwise.
-     */
-    public boolean isAvailable() {
-        return !hasExpired() && getOverrideReason() == null;
     }
 
     /**
@@ -173,6 +191,10 @@ public class DonatedOrgan {
         return id;
     }
 
+    public void setId(long id) {
+        this.id = id;
+    }
+
     public String getOverrideReason() {
         return overrideReason;
     }
@@ -198,37 +220,14 @@ public class DonatedOrgan {
     }
 
     /**
-     * Returns the comparator that matches the sort option
-     *
-     * @param sortOption the sort option
-     * @return the comparator that matches the sort option
+     * @return true if the organ has expired by time
      */
-    public static Comparator<DonatedOrgan> getComparator(DonatedOrganSortOptionsEnum sortOption) {
-        if (sortOption == null) {
-            sortOption = TIME_UNTIL_EXPIRY;
+    public boolean hasExpiredNaturally() {
+        if (organType.getMaxExpiration() == null) {
+            return false;
         }
-
-        switch (sortOption) {
-            case CLIENT:
-                return Comparator.comparing(organ -> organ.getDonor().getFullName());
-            case ORGAN_TYPE:
-                return Comparator.comparing(organ -> organ.getOrganType().toString());
-            case REGION_OF_DEATH:
-                return Comparator.comparing(organ -> organ.getDonor().getRegionOfDeath());
-            case TIME_OF_DEATH:
-                return Comparator.comparing(organ -> organ.getDonor().getDateOfDeath());
-            default:
-            case TIME_UNTIL_EXPIRY:
-                return Comparator.comparing(DonatedOrgan::getDurationUntilExpiry,
-                        Comparator.nullsLast(Comparator.naturalOrder()));
-        }
-    }
-
-    public enum OrganState {
-        CURRENT,
-        NO_EXPIRY,
-        EXPIRED,
-        OVERRIDDEN
+        Duration timeToExpiry = organType.getMaxExpiration().minus(getTimeSinceDonation());
+        return timeToExpiry.isNegative() || timeToExpiry.isZero();
     }
 
     /**
@@ -253,5 +252,32 @@ public class DonatedOrgan {
                 return OrganState.CURRENT;
             }
         }
+    }
+
+    public boolean isAvailable() {
+        return available;
+    }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
+
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof DonatedOrgan)) {
+            return false;
+        }
+        DonatedOrgan that = (DonatedOrgan) o;
+        return Objects.equals(id, that.id) &&
+                organType == that.organType;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, organType);
     }
 }

@@ -2,6 +2,7 @@ package com.humanharvest.organz;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
@@ -60,10 +61,10 @@ public class TransplantRequest {
         requestDateTime = LocalDateTime.now();
     }
 
-    public TransplantRequest(Client client, Organ requestedOrgan, LocalDateTime requestDate) {
+    public TransplantRequest(Client client, Organ requestedOrgan, LocalDateTime requestDateTime) {
         this.client = client;
         this.requestedOrgan = requestedOrgan;
-        this.requestDateTime = requestDate;
+        this.requestDateTime = requestDateTime;
     }
 
     public Long getId() {
@@ -80,7 +81,6 @@ public class TransplantRequest {
 
     /**
      * This method should be called only when this record is added to/removed from a client's collection.
-     * Therefore it is package-private so it may only be called from Client.
      *
      * @param client The client to set this record as belonging to.
      */
@@ -105,8 +105,8 @@ public class TransplantRequest {
         return resolvedDateTime;
     }
 
-    public void setResolvedDateTime(LocalDateTime resolvedDate) {
-        this.resolvedDateTime = resolvedDate;
+    public void setResolvedDateTime(LocalDateTime resolvedDateTime) {
+        this.resolvedDateTime = resolvedDateTime;
     }
 
     public TransplantRequestStatus getStatus() {
@@ -128,5 +128,29 @@ public class TransplantRequest {
      */
     public void setResolvedReason(String resolvedReason) {
         this.resolvedReason = resolvedReason;
+    }
+
+    public void resolveRequest(LocalDateTime dateTime, String resolvedReason, TransplantRequestStatus status) {
+        this.resolvedDateTime = dateTime;
+        this.resolvedReason = resolvedReason;
+        this.status = status;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof TransplantRequest)) {
+            return false;
+        }
+        TransplantRequest request = (TransplantRequest) o;
+        return Objects.equals(id, request.id) &&
+                requestedOrgan == request.requestedOrgan;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, requestedOrgan);
     }
 }

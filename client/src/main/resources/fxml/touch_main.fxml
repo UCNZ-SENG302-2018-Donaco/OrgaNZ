@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import com.jfoenix.controls.JFXDrawer?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<Pane xmlns:fx="http://javafx.com/fxml/1" prefHeight="600.0"
-  prefWidth="1000.0"
-  xmlns="http://javafx.com/javafx/8.0.121"
-  fx:controller="com.humanharvest.organz.controller.MainController">
-  <StackPane VBox.vgrow="ALWAYS" prefHeight="600" prefWidth="1000" fx:id="pageHolder"/>
+
+<Pane prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.MainController">
+  <StackPane fx:id="pageHolder" prefHeight="600" prefWidth="1000" VBox.vgrow="ALWAYS" />
+  <JFXDrawer fx:id="drawer" defaultDrawerSize="230.0" layoutY="50.0" prefHeight="561.0" prefWidth="250.0" />
 </Pane>

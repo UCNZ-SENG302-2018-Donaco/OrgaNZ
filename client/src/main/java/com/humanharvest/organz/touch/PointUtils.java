@@ -43,7 +43,6 @@ public final class PointUtils {
         return getCentreOfBounds(node.getBoundsInParent());
     }
 
-
     public static Point2D getCentreOfBounds(Bounds bounds) {
         Point2D min = new Point2D(bounds.getMinX(), bounds.getMinY());
         Point2D max = new Point2D(bounds.getMaxX(), bounds.getMaxY());
