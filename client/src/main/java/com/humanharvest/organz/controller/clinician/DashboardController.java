@@ -35,7 +35,6 @@ public class DashboardController extends SubController {
     public DashboardController() {
         session = State.getSession();
 
-        // TODO make work with either admin or clinician
         clinician = session.getLoggedInClinician();
     }
 
@@ -45,12 +44,7 @@ public class DashboardController extends SubController {
         super.setup(mainController);
         mainController.setTitle("Dashboard");
 
-        statistics = State.getClientManager().getStatistics();
-        totalClientsNum.setText(String.valueOf(statistics.getClientCount()));
-        organsNum.setText(String.valueOf(statistics.getOrganCount()));
-        matchesNum.setText(String.valueOf(statistics.getRequestCount()));
-
-        generatePieChartData();
+        refresh();
     }
 
     public void generatePieChartData(){
@@ -63,6 +57,16 @@ public class DashboardController extends SubController {
 
         );
         pieChart.setData(pieChartData);
+    }
+
+    @Override
+    public void refresh() {
+        statistics = State.getClientManager().getStatistics();
+        totalClientsNum.setText(String.valueOf(statistics.getClientCount()));
+        organsNum.setText(String.valueOf(statistics.getOrganCount()));
+        matchesNum.setText(String.valueOf(statistics.getRequestCount()));
+
+        generatePieChartData();
     }
 
     /**
