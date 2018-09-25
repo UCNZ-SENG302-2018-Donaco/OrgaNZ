@@ -89,6 +89,7 @@ public class OrganWithRecipients {
 
         drawMatchesPane();
         MultitouchHandler.addPane(matchesPane);
+        ((FocusArea) matchesPane.getUserData()).setScalable(false);
 
         enableHandlers();
 
