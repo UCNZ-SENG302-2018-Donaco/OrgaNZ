@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import javax.swing.text.html.ImageView;
-
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -78,8 +76,6 @@ public class SpiderWebController extends SubController {
 
         // Setup spider web physics
         MultitouchHandler.setPhysicsHandler(new SpiderPhysicsHandler(MultitouchHandler.getRootPane()));
-
-//        ImageView goBackImage =
 
         Button exitButton = new Button("Exit Spider Web");
         canvas.getChildren().add(exitButton);

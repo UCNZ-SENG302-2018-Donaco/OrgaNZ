@@ -84,7 +84,6 @@ public class TouchActionsBarController extends SubController {
             closeSidebar(drawer);
         } else {
             openSidebar(drawer);
-            drawer.toFront();
         }
 
     }
@@ -94,7 +93,6 @@ public class TouchActionsBarController extends SubController {
      * @param drawer the item to close
      */
     public void closeSidebar(Pane drawer) {
-//        drawer.close();
         drawer.setDisable(true);
         drawer.setVisible(false);
     }
@@ -104,7 +102,6 @@ public class TouchActionsBarController extends SubController {
      * @param drawer the item to open
      */
     private void openSidebar(Pane drawer) {
-//        drawer.open();
         drawer.setDisable(false);
         drawer.setVisible(true);
     }

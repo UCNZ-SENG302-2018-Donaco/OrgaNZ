@@ -136,12 +136,9 @@ public class MainController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(Page.SIDEBAR.getPath()));
             VBox sidebar = loader.load();
-
             SidebarController sidebarController = loader.getController();
             sidebarController.setup(this);
-//            drawer.setSidePane(sidebar);
             drawer.getChildren().setAll(sidebar);
-//            drawer.getChildren().setOverLayVisible(false);
 
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Couldn't load sidebar from fxml file.", e);
@@ -149,8 +146,7 @@ public class MainController {
     }
 
     /**
-     * Method that can be
-            this.getPane().getChildren().addAll(hamburger);called from other controllers to load the sidebar into that page.
+     * Method that can be called from other controllers to load the sidebar into that page.
      * Will set the sidebar as the child of the pane given.
      *
      * @param menuBarPane The container pane for the menu bar, given by the importer.
@@ -177,7 +173,6 @@ public class MainController {
             HBox touch_action_bar = loader.load();
             touchActionsBarController = loader.getController();
             touchActionsBarController.setup(this);
-//            pane.toFront();
             pane.getChildren().setAll(touch_action_bar);
             loadSidebar();
         } catch (IOException e) {
@@ -186,7 +181,8 @@ public class MainController {
     }
 
     /**
-     * Sets up the navigation type for the given pane
+     * Sets up the navigation type for the given pane. The menu bar is given for admins/clinicians using the
+     * desktop application. Otherwise a touch actions bar is used.
      * @param pane type of pane to setup navigation for
      */
     public void loadNavigation(Pane pane) {
