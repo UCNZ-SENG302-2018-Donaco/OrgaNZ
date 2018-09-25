@@ -45,7 +45,7 @@ public class MainController {
     @FXML
     private StackPane pageHolder;
     @FXML
-    private JFXDrawer drawer; // = new JFXDrawer();
+    private JFXDrawer drawer;
 
     @FXML
     public void initialize() {
@@ -134,6 +134,9 @@ public class MainController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(Page.SIDEBAR.getPath()));
             VBox sidebar = loader.load();
+
+            SidebarController sidebarController = loader.getController();
+            sidebarController.setup(this);
             drawer.setSidePane(sidebar);
             drawer.setOverLayVisible(false);
 
