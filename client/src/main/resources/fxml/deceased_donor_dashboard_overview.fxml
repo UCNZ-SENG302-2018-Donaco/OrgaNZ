@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<HBox maxHeight="50.0" prefHeight="50.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.client.DeceasedDonorDashboardOverviewController">
+  <children>
+   <ImageView fx:id="profilePicture" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" />
+   <Label fx:id="nameLabel" prefHeight="50.0" text="Loading name..." HBox.hgrow="ALWAYS" />
+      <Region prefHeight="50.0" />
+   <VBox GridPane.columnIndex="1">
+     <children>
+       <Label fx:id="organsLabel" prefHeight="25.0" text="Loading organ count..." />
+       <Label fx:id="deathLabel" prefHeight="25.0" text="Loading death date..." />
+     </children>
+   </VBox>
+   <ImageView fx:id="spiderWeb" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2" />
+  </children>
+</HBox>

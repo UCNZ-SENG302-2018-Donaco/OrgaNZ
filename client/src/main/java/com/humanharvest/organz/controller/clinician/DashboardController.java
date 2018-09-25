@@ -14,6 +14,7 @@ import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.DashboardStatistics;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
+import com.humanharvest.organz.controller.components.DeceasedDonorCell;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.State;
@@ -80,6 +81,8 @@ public class DashboardController extends SubController {
 
         deceasedDonorsList.getItems().setAll(State.getClientManager().getViableDeceasedDonors());
 
+
+
         generatePieChartData();
     }
 
@@ -88,7 +91,19 @@ public class DashboardController extends SubController {
      */
     @FXML
     private void initialize() {
-        deceasedDonorsList.getItems().setAll(State.getClientManager().getViableDeceasedDonors());
+        deceasedDonorsList.setItems((FXCollections.observableArrayList(State.getClientManager().getViableDeceasedDonors())));
+
+        deceasedDonorsList.setCellFactory(param -> {
+            DeceasedDonorCell item = new DeceasedDonorCell();
+            item.setMaxWidth(deceasedDonorsList.getWidth());
+            System.out.println(deceasedDonorsList.getWidth());
+
+            return item;
+        });
+
+       // deceasedDonorsList.wi(450);
+
+
 
     }
 }
