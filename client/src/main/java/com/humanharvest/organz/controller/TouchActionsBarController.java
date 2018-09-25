@@ -2,7 +2,7 @@ package com.humanharvest.organz.controller;
 
 import java.util.logging.Logger;
 
-
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -184,11 +184,13 @@ public class TouchActionsBarController extends SubController {
      * Exit the pane that is currently open
      */
     public void exit() {
-        if (State.getUiType() == UiType.TOUCH) {
+        if (State.getUiType() == UiType.TOUCH && windowContext.isClinViewClientWindow()) {
             MultitouchHandler.removePane(mainController.getPane());
-        } else {
+        } else if (!windowContext.isClinViewClientWindow()) {
             Stage stage = (Stage) mainController.getStage().getScene().getWindow();
             stage.close();
+            Platform.exit();
+            System.exit(0);
         }
     }
 }
