@@ -41,7 +41,7 @@ import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.DurationFormatter;
-import com.humanharvest.organz.utilities.DurationFormatter.Format;
+import com.humanharvest.organz.utilities.DurationFormatter.DurationFormat;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.exceptions.BadRequestException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
@@ -538,7 +538,7 @@ public class ViewProceduresController extends SubController {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d MMMM yyyy");
             String dayDifference = DurationFormatter.getFormattedDuration(
                     Duration.between(LocalDateTime.now(), LocalDateTime.of(record.getDate(), LocalTime.now())),
-                    Format.DAYS);
+                    DurationFormat.DAYS);
             String date;
             if (record.hasHappened()) {
                 date = "Date: ";
