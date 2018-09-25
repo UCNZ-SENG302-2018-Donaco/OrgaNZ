@@ -1,5 +1,7 @@
 package com.humanharvest.organz;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * Class to store statistics used on the dashboard
  */
@@ -77,6 +79,7 @@ public class DashboardStatistics {
         this.donorReceiverCount = donorReceiverCount;
     }
 
+    @JsonIgnore
     public int getNeitherCount() {
         return clientCount - (donorCount + receiverCount + donorReceiverCount);
     }
