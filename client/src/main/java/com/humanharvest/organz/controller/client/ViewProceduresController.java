@@ -86,7 +86,7 @@ public class ViewProceduresController extends SubController {
     @FXML
     private TableColumn<ProcedureRecord, Set<Organ>> affectedPastCol, affectedPendCol;
     @FXML
-    private Button deleteButton;
+    private Button deleteButton, viewDetailsButton;
     @FXML
     private Button completeTransplantButton;
 
@@ -397,10 +397,12 @@ public class ViewProceduresController extends SubController {
                 pendingProcedureView.getSelectionModel().getSelectedItem() == null) {
             // Nothing is selected
             deleteButton.setDisable(true);
+            viewDetailsButton.setDisable(true);
             completeTransplantButton.setDisable(true);
         } else {
             // Something is selected
             deleteButton.setDisable(false);
+            viewDetailsButton.setDisable(false);
             setCompleteTransplantButton();
         }
     }
