@@ -11,7 +11,7 @@
 
 <HBox fx:id="entireMenubarPane" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.TouchActionsBarController">
    <children>
-      <GridPane hgap="5.0" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" prefHeight="35.0" HBox.hgrow="ALWAYS">
+      <GridPane hgap="5.0" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" prefHeight="35.0" styleClass="menubox" HBox.hgrow="ALWAYS">
         <columnConstraints>
           <ColumnConstraints hgrow="NEVER" minWidth="10.0" />
           <ColumnConstraints hgrow="NEVER" maxWidth="50.0" minWidth="10.0" />
@@ -27,7 +27,7 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
          <children>
-            <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="35.0" prefWidth="43.0" style="-fx-background-color: #CFC7FA;">
+            <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="35.0" prefWidth="43.0">
                <graphic>
                   <JFXHamburger fx:id="hamburger" style="-fx-background-radius: 30;"> </JFXHamburger>
                </graphic>

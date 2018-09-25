@@ -47,6 +47,7 @@ public class TouchActionsBarController extends SubController {
     @FXML
     private Pane entireMenubarPane;
 
+    // todo Fix undo-redo
 
     private static final Logger LOGGER = Logger.getLogger(TouchActionsBarController.class.getName());
 
@@ -61,14 +62,15 @@ public class TouchActionsBarController extends SubController {
         if (State.getSession().getLoggedInUserType() == UserType.CLIENT) {
             homeButton.setVisible(false);
             duplicateButton.setVisible(false);
-            entireMenubarPane.setStyle("-fx-background-color: rgb(176, 255, 137)");
+            entireMenubarPane.setStyle("-fx-background-color: rgb(137, 186, 255)");
+
         } else {
             entireMenubarPane.setStyle("-fx-background-color: rgb(137, 186, 255)");
         }
 
         if (windowContext.isClinViewClientWindow()) {
             homeButton.setDisable(true);
-            entireMenubarPane.setStyle("-fx-background-color: #EFC8DD");
+            entireMenubarPane.setStyle("-fx-background-color: #D9B3FF");
         }
 
         hamburger.addEventHandler(MouseEvent.MOUSE_CLICKED, (e) -> toggleSidebar(controller.getDrawer()));

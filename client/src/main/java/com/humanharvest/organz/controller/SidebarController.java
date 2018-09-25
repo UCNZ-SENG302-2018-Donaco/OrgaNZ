@@ -48,7 +48,7 @@ public class SidebarController extends SubController  {
         Button[] clinicianButtons = {searchButton, createClientButton, organsToDonateButton, transplantsButton, actionHistory};
 
         Button[] clinicianViewClientButtons = {registerOrganDonationButton, requestOrganDonationButton,
-                viewMedicationsButton, illnessHistoryButton, viewProceduresButton, viewClientButton, spiderwebButton};
+                viewMedicationsButton, illnessHistoryButton, viewProceduresButton, viewClientButton};
 
 
         // Hide all buttons then only show buttons relevant to that user type.
@@ -60,6 +60,10 @@ public class SidebarController extends SubController  {
 
             if (windowContext.isClinViewClientWindow()) {
                 showButtons(clinicianViewClientButtons);
+                if (windowContext.getViewClient().isDead() && windowContext.getViewClient().isDonor()) {
+                    showButton(spiderwebButton);
+                }
+
             } else {
                 showButtons(clinicianButtons);
             }
@@ -184,6 +188,6 @@ public class SidebarController extends SubController  {
 
     public void goToSpiderweb() {
         State.setSpiderwebDonor(windowContext.getViewClient());
-        SpiderWebController spiderWebController = new SpiderWebController(windowContext.getViewClient());
+        new SpiderWebController(windowContext.getViewClient());
     }
 }

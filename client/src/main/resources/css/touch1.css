@@ -1,0 +1,64 @@
+.backdrop {
+  -fx-background-color: #005073;
+}
+
+.window {
+  -fx-font-family: Lato;
+  -fx-border-insets: 10;
+  -fx-background-color: #C6DBF0;
+  -fx-background-radius: 15;
+  -fx-border-radius: 7;
+  -fx-border-color: #C6DBF0;
+  -fx-border-style: solid;
+  -fx-border-width: 3;
+  -fx-effect: dropshadow(three-pass-box, rgba(100, 100, 100, 1), 24, 0.5, 0, 0);
+  -fx-background-insets: 10;
+}
+
+.window .label {
+  -fx-text-fill: #282828;
+}
+
+.split-pane {
+  -fx-background-color: #C6DBF0;
+}
+
+.tooltip .text {
+  -fx-fill: #C6DBF0;
+}
+
+/* MENU BUTTONS */
+.menubox .button {
+  -fx-background-color: #CFC7FA;
+  -fx-border-color: #CFC7FA;
+}
+
+.menubox .button:hover {
+  -fx-background-color: #BFB4FA;
+}
+
+.menubox .hamburger:hover {
+  -fx-background-color: #BFB4FA;
+}
+
+
+/* DRAWER */
+.jfx-drawer .button {
+  -fx-background-color: #d6e5ff;
+  -fx-border-color: #9FB3D6;
+  -fx-border-style: solid;
+  -fx-border-width: 0.5;
+}
+
+.jfx-drawer .button:hover {
+  -fx-background-color: #BDD5FF;
+  -fx-border-color: #9FB3D6;
+  -fx-border-style: solid;
+  -fx-border-width: 0.5;
+}
+
+
+.jfx-drawer {
+  -fx-padding: 0px 0px 0px 10px; /*Need to include this line to set the drawer inline with the pane*/
+}
+
