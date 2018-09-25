@@ -1,14 +1,14 @@
 package com.humanharvest.organz.controller.clinician;
 
-import java.util.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.PieChart.Data;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
+import javafx.scene.control.ListView;
 
+import com.humanharvest.organz.Client;
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.DashboardStatistics;
 import com.humanharvest.organz.controller.MainController;
@@ -32,11 +32,15 @@ public class DashboardController extends SubController {
     @FXML
     private PieChart pieChart;
 
+    @FXML
+    private ListView<Client> deceasedDonorsList;
+
     public DashboardController() {
         session = State.getSession();
 
         clinician = session.getLoggedInClinician();
     }
+
 
 
     @Override
@@ -74,6 +78,8 @@ public class DashboardController extends SubController {
      */
     @FXML
     private void initialize() {
+        deceasedDonorsList.getItems().setAll(State.getClientManager().getViableDeceasedDonors());
+        //deceasedDonorsList.setTitle("Recently deceased donors");
 
     }
 }
