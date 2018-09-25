@@ -359,7 +359,7 @@ public class ClientManagerMemory implements ClientManager {
     @Override
     public DashboardStatistics getStatistics() {
         DashboardStatistics statistics = new DashboardStatistics();
-        statistics.setClientsTotal(clients.size());
+        statistics.setClientCount(clients.size());
 
         int donorReceiverCount = (int) clients.stream().filter(client -> client.isDonor() && client.isReceiver())
                 .count();
@@ -368,12 +368,12 @@ public class ClientManagerMemory implements ClientManager {
         int receiverCount = (int) clients.stream().filter(client -> !client.isDonor() && client.isReceiver())
                 .count();
 
-        statistics.setDonorsTotal(donorCount);
-        statistics.setReceiversTotal(receiverCount);
-        statistics.setDonorReceiverTotal(donorReceiverCount);
+        statistics.setDonorCount(donorCount);
+        statistics.setReceiverCount(receiverCount);
+        statistics.setDonorReceiverCount(donorReceiverCount);
 
-        statistics.setOrgansTotal(getAllOrgansToDonate().size());
-        statistics.setRequestsTotal(getAllTransplantRequests().size());
+        statistics.setOrganCount(getAllOrgansToDonate().size());
+        statistics.setRequestCount(getAllTransplantRequests().size());
 
         return statistics;
     }

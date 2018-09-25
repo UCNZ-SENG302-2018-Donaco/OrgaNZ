@@ -5,59 +5,60 @@ package com.humanharvest.organz;
  */
 public class DashboardStatistics {
 
-    private int clientsTotal;
-    private int donorsTotal;
-    private int receiversTotal;
-    private int donorReceiverTotal;
+    private int clientCount;
+    private int donorCount;
+    private int receiverCount;
+    private int donorReceiverCount;
 
-    private int requestsTotal;
-    private int organsTotal;
+    private int organCount;
+    private int requestCount;
 
-    public int getClientsTotal() {
-        return clientsTotal;
+
+    public int getClientCount() {
+        return clientCount;
     }
 
-    public void setClientsTotal(int clientsTotal) {
-        this.clientsTotal = clientsTotal;
+    public void setClientCount(int clientCount) {
+        this.clientCount = clientCount;
     }
 
-    public int getDonorsTotal() {
-        return donorsTotal;
+    public int getDonorCount() {
+        return donorCount;
     }
 
-    public void setDonorsTotal(int donorsTotal) {
-        this.donorsTotal = donorsTotal;
+    public void setDonorCount(int donorCount) {
+        this.donorCount = donorCount;
     }
 
-    public int getReceiversTotal() {
-        return receiversTotal;
+    public int getReceiverCount() {
+        return receiverCount;
     }
 
-    public void setReceiversTotal(int receiversTotal) {
-        this.receiversTotal = receiversTotal;
+    public void setReceiverCount(int receiverCount) {
+        this.receiverCount = receiverCount;
     }
 
-    public int getRequestsTotal() {
-        return requestsTotal;
+    public int getRequestCount() {
+        return requestCount;
     }
 
-    public void setRequestsTotal(int requestsTotal) {
-        this.requestsTotal = requestsTotal;
+    public void setRequestCount(int requestCount) {
+        this.requestCount = requestCount;
     }
 
-    public int getOrgansTotal() {
-        return organsTotal;
+    public int getOrganCount() {
+        return organCount;
     }
 
-    public void setOrgansTotal(int organsTotal) {
-        this.organsTotal = organsTotal;
+    public void setOrganCount(int organCount) {
+        this.organCount = organCount;
     }
 
-    public int getDonorReceiverTotal() {
-        return donorReceiverTotal;
+    public int getDonorReceiverCount() {
+        return donorReceiverCount;
     }
 
-    public void setDonorReceiverTotal(int donorReceiverTotal) {
-        this.donorReceiverTotal = donorReceiverTotal;
+    public void setDonorReceiverCount(int donorReceiverCount) {
+        this.donorReceiverCount = donorReceiverCount;
     }
 }

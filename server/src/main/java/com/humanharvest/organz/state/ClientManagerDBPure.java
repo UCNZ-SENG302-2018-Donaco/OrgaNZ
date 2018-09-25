@@ -1,6 +1,7 @@
 package com.humanharvest.organz.state;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
@@ -526,7 +527,7 @@ public class ClientManagerDBPure implements ClientManager {
 
         // Gets statistics for counts of clients, organs, and requests from the DB
         String query = "SELECT (SELECT count(*)"
-                + "        FROM Client) AS clientCount\n"
+                + "        FROM Client) AS clientCount,\n"
                 + "       (SELECT count(*)\n"
                 + "        FROM Client\n"
                 + "        WHERE Client.isDonor = 1 and Client.isReceiver = 0\n"
@@ -554,15 +555,20 @@ public class ClientManagerDBPure implements ClientManager {
                 + "        \n"
                 + "FROM dual";
 
-        try (Session session = dbManager.getDBSession()) {
-            trns = session.beginTransaction();
+        try (Connection session = dbManager.getStandardSqlConnection()) {
 
-            Query<DashboardStatistics> countQuery = session.createNativeQuery(query);
-            countQuery.getSingleResult();
+            Statement stmt = session.createStatement();
+            ResultSet result = stmt.executeQuery(query);
+            result.next();
 
+            statistics.setClientCount(result.getInt("clientCount"));
+            statistics.setDonorCount(result.getInt("donorCount"));
+            statistics.setReceiverCount(result.getInt("receiverCount"));
+            statistics.setDonorReceiverCount(result.getInt("donorReceiverCount"));
+            statistics.setOrganCount(result.getInt("organCount"));
+            statistics.setRequestCount(result.getInt("requestCount"));
 
-
-        } catch (RollbackException e) {
+        } catch (SQLException e) {
             LOGGER.log(Level.WARNING, e.getMessage(), e);
             if (trns != null) {
                 trns.rollback();
