@@ -1,26 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.chart.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.chart.PieChart?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.SplitPane?>
-<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.clinician.DashboardController">
+<VBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.clinician.DashboardController">
    <children>
       <VBox fx:id="menuBarPane" maxWidth="1.7976931348623157E308" />
       <VBox spacing="10.0" VBox.vgrow="ALWAYS">
@@ -165,17 +156,6 @@
                   <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
-                  <TableView fx:id="clientTable" layoutX="173.0" layoutY="63.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                    <columns>
-                      <TableColumn fx:id="nameCol" prefWidth="270.0" text="Name" />
-                      <TableColumn fx:id="ageCol" prefWidth="56.0" text="Age" />
-                        <TableColumn fx:id="donorCol" prefWidth="74.0" text="Donor" />
-                        <TableColumn fx:id="receiverCol" prefWidth="73.0" text="Receiver" />
-                    </columns>
-                     <columnResizePolicy>
-                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-                     </columnResizePolicy>
-                  </TableView>
                   <ListView fx:id="deceasedDonorsList" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.rowIndex="1" GridPane.vgrow="ALWAYS" HBox.hgrow="ALWAYS" />
                   <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="Recently Deceased Donors" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
                      <GridPane.margin>
@@ -185,7 +165,7 @@
                         <Font size="22.0" />
                      </font>
                   </Label>
-                  <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="All Clients" GridPane.columnIndex="1" GridPane.vgrow="ALWAYS">
+                  <Label alignment="CENTER" maxWidth="1.7976931348623157E308" text="Expiring Organs" GridPane.columnIndex="1" GridPane.vgrow="ALWAYS">
                      <GridPane.margin>
                         <Insets bottom="10.0" left="5.0" right="5.0" top="10.0" />
                      </GridPane.margin>
@@ -193,6 +173,7 @@
                         <Font size="22.0" />
                      </font>
                   </Label>
+                  <ListView fx:id="expiringOrgansList" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                </children>
             </GridPane>
          </children>
