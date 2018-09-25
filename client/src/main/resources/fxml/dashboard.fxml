@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.clinician.DashboardController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.clinician.DashboardController">
    <left>
       <VBox prefHeight="153.0" prefWidth="300.0" BorderPane.alignment="CENTER">
          <children>
@@ -43,11 +43,7 @@
                   <Label layoutX="119.0" layoutY="187.0" prefHeight="50.0" prefWidth="183.0" text="Deceased donors  go here (placeholder panel)" wrapText="true" />
                </children>
             </Pane>
-            <Pane prefHeight="200.0" prefWidth="450.0">
-               <children>
-                  <Label layoutX="119.0" layoutY="180.0" prefHeight="68.0" prefWidth="183.0" text="Search clients go here (placeholder pane)" wrapText="true" />
-               </children>
-            </Pane>
+            <VBox prefHeight="411.0" prefWidth="450.0" />
          </children>
       </HBox>
    </bottom>
@@ -71,7 +67,7 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
                <children>
-                  <Label prefHeight="13.0" prefWidth="195.0" text="Matches made:">
+                  <Label prefHeight="13.0" prefWidth="195.0" text="Current requests:">
                      <GridPane.margin>
                         <Insets left="15.0" />
                      </GridPane.margin>
@@ -87,7 +83,7 @@
                         <Font size="16.0" />
                      </font>
                   </Label>
-                  <Label fx:id="matchesNum" prefHeight="16.0" prefWidth="136.0" text="NUM" GridPane.columnIndex="1">
+                  <Label fx:id="requestNum" prefHeight="16.0" prefWidth="136.0" text="NUM" GridPane.columnIndex="1">
                      <font>
                         <Font size="22.0" />
                      </font>

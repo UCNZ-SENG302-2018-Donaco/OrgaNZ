@@ -9,7 +9,6 @@ public class DashboardStatistics {
     private int donorCount;
     private int receiverCount;
     private int donorReceiverCount;
-    private int neitherCount;
 
     private int organCount;
     private int requestCount;
@@ -19,6 +18,7 @@ public class DashboardStatistics {
         this.clientCount = clientCount;
         this.donorCount = donorCount;
         this.receiverCount = receiverCount;
+        this.donorReceiverCount = donorReceiverCount;
 
         this.organCount = organCount;
         this.requestCount = requestCount;
