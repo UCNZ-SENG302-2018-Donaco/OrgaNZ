@@ -200,6 +200,11 @@ public class ReceiverOverviewController extends ViewBaseController {
         }
     }
 
+    public void setPriority(String text) {
+        priority.setVisible(true);
+        priority.setText(text);
+    }
+
     public TransplantRequest getRequest() {
         return request;
     }

@@ -53,6 +53,7 @@ import com.humanharvest.organz.touch.OrganFocusArea;
 import com.humanharvest.organz.touch.PointUtils;
 import com.humanharvest.organz.utilities.DurationFormatter.DurationFormat;
 import com.humanharvest.organz.utilities.enums.Region;
+import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
@@ -73,6 +74,7 @@ public class OrganWithRecipients {
     private OrganImageController organImageController;
     private Pane organPane;
     private List<PotentialRecipientCell> recipientCells = new ArrayList<>();
+    private TransplantRecord transplantRecord;
 
     private Line deceasedToOrganConnector;
     private Line organToRecipientConnector;
@@ -172,9 +174,9 @@ public class OrganWithRecipients {
 
             case TRANSPLANT_COMPLETED:
             case TRANSPLANT_PLANNED:
-                TransplantRecord record = State.getClientManager().getMatchingOrganTransplantRecord(organ);
+                transplantRecord = State.getClientManager().getMatchingOrganTransplantRecord(organ);
 
-                setMatchPane(createMatchPane(record));
+                setMatchPane(createMatchPane(transplantRecord));
                 break;
 
             default:
@@ -257,6 +259,35 @@ public class OrganWithRecipients {
     }
 
     public void handleOrganPaneTouchReleased() {
+        switch (organ.getState()) {
+            case CURRENT:
+            case NO_EXPIRY:
+                tryScheduleTransplant();
+                break;
+            case TRANSPLANT_PLANNED:
+                tryCancelTransplant();
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void tryCancelTransplant() {
+        if (PointUtils.distance(PointUtils.getCentreOfNode(organPane), PointUtils.getCentreOfNode(matchesPane)) > 100) {
+            try {
+                State.getClientResolver().deleteProcedureRecord(transplantRecord.getClient(), transplantRecord);
+                this.organ = State.getClientManager().getMatchingOrganTransplantRecord(organ).getOrgan();
+                refresh();
+            } catch (ServerRestException | NotFoundException exc) {
+                Notifications.create()
+                        .title("Server Error")
+                        .text("An error occurred when trying to remove the transplant.")
+                        .showError();
+            }
+        }
+    }
+
+    private void tryScheduleTransplant() {
         Optional<PotentialRecipientCell> closestCell = recipientCells.stream()
                 .filter(cell -> organIntersectsCell(organPane, cell))
                 .filter(cell -> !cell.isEmpty())
@@ -412,6 +443,13 @@ public class OrganWithRecipients {
                 Node node = loader.load();
                 ReceiverOverviewController controller = loader.getController();
                 controller.setup(record, organ.getDonor());
+                if (organ.getState() == OrganState.TRANSPLANT_PLANNED) {
+                    controller.setPriority("Scheduled");
+                } else if (organ.getState() == OrganState.TRANSPLANT_COMPLETED) {
+                    controller.setPriority("Completed");
+                } else {
+                    controller.setPriority(-1);
+                }
                 pane.getChildren().add(node);
             } catch (IOException e) {
                 LOGGER.log(Level.SEVERE, e.getMessage(), e);
