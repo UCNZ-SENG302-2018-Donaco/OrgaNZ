@@ -364,6 +364,7 @@ public class ClientManagerMemory implements ClientManager {
                 .collect(Collectors.toList());
     }
 
+
     @Override
     public PaginatedTransplantList getAllCurrentTransplantRequests(Integer offset, Integer count,
             Set<String> regions, Set<Organ> organs) {
