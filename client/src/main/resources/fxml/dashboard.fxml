@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.chart.PieChart?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -12,7 +13,6 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-
 <VBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.clinician.DashboardController">
    <VBox fx:id="menuBarPane" maxWidth="1.7976931348623157E308" />
    <SplitPane prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
@@ -40,7 +40,7 @@
          <bottom>
             <HBox prefHeight="406.0" prefWidth="900.0" BorderPane.alignment="CENTER">
                <Pane prefHeight="200.0" prefWidth="450.0">
-                  <Label layoutX="119.0" layoutY="187.0" prefHeight="50.0" prefWidth="183.0" text="Deceased donors go here (placeholder panel)" wrapText="true" />
+                  <ListView fx:id="deceasedDonorsList" maxWidth="1.7976931348623157E308" prefWidth="450.0" />
                </Pane>
                <Pane prefHeight="200.0" prefWidth="450.0">
                   <Label layoutX="119.0" layoutY="180.0" prefHeight="68.0" prefWidth="183.0" text="Search clients go here (placeholder pane)" wrapText="true" />

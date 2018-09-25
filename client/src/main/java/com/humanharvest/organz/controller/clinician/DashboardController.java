@@ -6,9 +6,8 @@ import javafx.fxml.FXML;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.PieChart.Data;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.control.ListView;
+import javafx.scene.layout.Pane;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.Clinician;
@@ -79,6 +78,8 @@ public class DashboardController extends SubController {
         organsNum.setText(String.valueOf(statistics.getOrganCount()));
         matchesNum.setText(String.valueOf(statistics.getRequestCount()));
 
+        deceasedDonorsList.getItems().setAll(State.getClientManager().getViableDeceasedDonors());
+
         generatePieChartData();
     }
 
@@ -87,8 +88,7 @@ public class DashboardController extends SubController {
      */
     @FXML
     private void initialize() {
-        //deceasedDonorsList.getItems().setAll(State.getClientManager().getViableDeceasedDonors());
-        //deceasedDonorsList.setTitle("Recently deceased donors");
+        deceasedDonorsList.getItems().setAll(State.getClientManager().getViableDeceasedDonors());
 
     }
 }
