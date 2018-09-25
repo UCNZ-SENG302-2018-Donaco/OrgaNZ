@@ -1,10 +1,10 @@
-.split-pane {
-  -fx-background-color: grey !important;
+.backdrop {
+  -fx-background-color: grey;
 }
 
 .window {
   -fx-border-insets: 10;
-  -fx-background-color: grey;
+  -fx-background-color: #d6e5ff;
   -fx-background-radius: 3;
   -fx-border-radius: 3;
   -fx-border-color: white;
