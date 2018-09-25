@@ -39,6 +39,8 @@ import com.humanharvest.organz.touch.PointUtils;
 import com.humanharvest.organz.utilities.DurationFormatter.DurationFormat;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
+import com.humanharvest.organz.utilities.view.WindowContext;
+import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
 
 /**
  * The Spider web controller which handles everything to do with displaying panes in the spider web stage.
@@ -80,6 +82,11 @@ public class SpiderWebController extends SubController {
         Button exitButton = new Button("Exit Spider Web");
         canvas.getChildren().add(exitButton);
         exitButton.setOnAction(event -> closeSpiderWeb());
+
+        Button homeButton = new Button("Home");
+        homeButton.setTranslateX(200);
+        canvas.getChildren().add(homeButton);
+        homeButton.setOnAction(event -> goToDashboard());
 
         displayDonatingClient();
         displayOrgans();
@@ -290,5 +297,14 @@ public class SpiderWebController extends SubController {
             canvas.getChildren().add(mainController.getPane());
             mainController.showWindow();
         }
+    }
+
+    @FXML
+    private void goToDashboard() {
+        closeSpiderWeb();
+        MainController newMain = PageNavigator.openNewWindow();
+        newMain.setWindowContext(WindowContext.defaultContext());
+        PageNavigator.loadPage(Page.DASHBOARD, newMain);
+
     }
 }
