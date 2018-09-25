@@ -113,7 +113,7 @@ public class TouchActionsBarController extends SubController {
     @FXML
     private void navigateHome() {
         // We need to navigate to our dashboard (for now we're just loading the search clients page).
-        PageNavigator.loadPage(Page.SEARCH, mainController);
+        PageNavigator.loadPage(Page.DASHBOARD, mainController);
     }
 
     /**

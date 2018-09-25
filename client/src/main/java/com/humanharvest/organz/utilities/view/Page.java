@@ -37,7 +37,8 @@ public enum Page {
     ORGAN_IMAGE("/fxml/organ_image.fxml"),
     TOUCH_ACTIONS_BAR("/fxml/touch_actions_bar.fxml"),
     RECEIVER_OVERVIEW("/fxml/receiver_overview.fxml"),
-    DECEASED_DONOR_OVERVIEW("/fxml/deceased_donor_overview.fxml");
+    DECEASED_DONOR_OVERVIEW("/fxml/deceased_donor_overview.fxml"),
+    DECEASED_DONOR_DASHBOARD_OVERVIEW("/fxml/deceased_donor_dashboard_overview.fxml");
 
     private final String path;
 

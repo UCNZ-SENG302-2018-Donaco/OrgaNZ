@@ -117,7 +117,7 @@ public class Client implements ConcurrencyControlledEntity {
 
     @JsonView(Views.Overview.class)
     private LocalDate dateOfDeath;
-    @JsonView(Views.Details.class)
+    @JsonView(Views.Overview.class)
     private LocalTime timeOfDeath;
     @JsonView(Views.Overview.class)
     private String regionOfDeath;
