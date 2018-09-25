@@ -12,7 +12,7 @@
 <?import javafx.scene.text.Font?>
 <VBox xmlns:fx="http://javafx.com/fxml/1" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="250.0" prefWidth="169.0" xmlns="http://javafx.com/javafx/8.0.121" fx:controller="com.humanharvest.organz.controller.client.ReceiverOverviewController" fx:id="receiverVBox">
   <children>
-    <Label style="-fx-background-color: lightgrey;" alignment="CENTER" prefHeight="25.0" prefWidth="201.0" text="#1" fx:id="priority">
+    <Label fx:id="priority" alignment="CENTER" prefHeight="25.0" prefWidth="201.0" style="-fx-background-color: lightgrey;" text="#1" visible="false">
       <font>
         <Font size="20.0"/>
       </font>

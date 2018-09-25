@@ -70,7 +70,7 @@ public class ReceiverOverviewController extends ViewBaseController {
 
         // Set name, age, weight, and height
         name.setText(recipient.getPreferredNameFormatted());
-        Double nameSize = Math.min(name.getFont().getSize(), 300 / name.getText().length());
+        Double nameSize = Math.min(name.getFont().getSize(), 300.0 / name.getText().length());
         Font nameFont = Font.font(null, FontWeight.SEMI_BOLD, nameSize);
         name.setFont(nameFont);
 
@@ -192,6 +192,11 @@ public class ReceiverOverviewController extends ViewBaseController {
     }
 
     public void setPriority(int priority) {
-        this.priority.setText("#" + Integer.toString(priority));
+        if (priority == -1) {
+            this.priority.setVisible(false);
+        } else {
+            this.priority.setVisible(true);
+            this.priority.setText("#" + Integer.toString(priority));
+        }
     }
 }
