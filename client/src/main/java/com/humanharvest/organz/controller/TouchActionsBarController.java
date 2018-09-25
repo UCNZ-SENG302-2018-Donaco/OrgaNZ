@@ -1,5 +1,6 @@
 package com.humanharvest.organz.controller;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javafx.application.Platform;
@@ -47,13 +48,11 @@ public class TouchActionsBarController extends SubController {
     @FXML
     private Pane entireMenubarPane;
 
-    // todo Fix undo-redo
-
     private static final Logger LOGGER = Logger.getLogger(TouchActionsBarController.class.getName());
 
     /**
      * Setup the menu bar colours, buttons, and hamburger.
-     * @param controller
+     * @param controller the controller to setup
      */
     @Override
     public void setup(MainController controller) {
@@ -72,7 +71,6 @@ public class TouchActionsBarController extends SubController {
             homeButton.setDisable(true);
             entireMenubarPane.setStyle("-fx-background-color: #D9B3FF");
         }
-
         hamburger.addEventHandler(MouseEvent.MOUSE_CLICKED, (e) -> toggleSidebar(controller.getDrawer()));
         refresh();
     }
@@ -81,11 +79,12 @@ public class TouchActionsBarController extends SubController {
      * Open the drawer if closed. Close the drawer if open
      * @param drawer the item to toggle
      */
-    private void toggleSidebar(JFXDrawer drawer) {
-        if (drawer.isOpened()) {
+    private void toggleSidebar(Pane drawer) {
+        if (drawer.isVisible()) {
             closeSidebar(drawer);
         } else {
             openSidebar(drawer);
+            drawer.toFront();
         }
 
     }
@@ -94,8 +93,8 @@ public class TouchActionsBarController extends SubController {
      * If the draw item is open, it will be closed.
      * @param drawer the item to close
      */
-    private void closeSidebar(JFXDrawer drawer) {
-        drawer.close();
+    public void closeSidebar(Pane drawer) {
+//        drawer.close();
         drawer.setDisable(true);
         drawer.setVisible(false);
     }
@@ -104,9 +103,10 @@ public class TouchActionsBarController extends SubController {
      * If the draw item is closed, it will be opened.
      * @param drawer the item to open
      */
-    private void openSidebar(JFXDrawer drawer) {
-        drawer.open();
+    private void openSidebar(Pane drawer) {
+//        drawer.open();
         drawer.setDisable(false);
+        drawer.setVisible(true);
     }
 
     /**
@@ -160,6 +160,7 @@ public class TouchActionsBarController extends SubController {
         } else {
             PageNavigator.showAlert(AlertType.ERROR, "Error duplicating page",
                     "The new page could not be created", mainController.getStage());
+            LOGGER.log(Level.SEVERE, "Unable to duplicate page");
         }
     }
 

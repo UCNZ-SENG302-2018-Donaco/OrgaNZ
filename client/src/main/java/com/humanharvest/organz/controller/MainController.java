@@ -45,18 +45,19 @@ public class MainController {
     @FXML
     private StackPane pageHolder;
     @FXML
-    private JFXDrawer drawer;
+    private Pane drawer;
 
     @FXML
     public void initialize() {
         pageHolder.getStyleClass().add("window");
         drawer.setDisable(true);
         drawer.setVisible(false);
-        drawer.setOnDrawerOpened(EventListener -> drawer.setVisible(true));
-
+//        drawer.setOnDrawerOpened(EventListener -> drawer.setVisible(true));
+        drawer.toFront();
+        pageHolder.setPickOnBounds(false);
     }
 
-    public JFXDrawer getDrawer() {
+    public Pane getDrawer() {
         return drawer;
     }
 
@@ -97,6 +98,7 @@ public class MainController {
     public void setPage(Page page, Node node) {
         currentPage = page;
         pageHolder.getChildren().setAll(node);
+//        pageHolder.setOnMouseClicked(event -> touchActionsBarController.closeSidebar(drawer));
     }
 
     void resetWindowContext() {
@@ -137,8 +139,9 @@ public class MainController {
 
             SidebarController sidebarController = loader.getController();
             sidebarController.setup(this);
-            drawer.setSidePane(sidebar);
-            drawer.setOverLayVisible(false);
+//            drawer.setSidePane(sidebar);
+            drawer.getChildren().setAll(sidebar);
+//            drawer.getChildren().setOverLayVisible(false);
 
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Couldn't load sidebar from fxml file.", e);
@@ -174,6 +177,7 @@ public class MainController {
             HBox touch_action_bar = loader.load();
             touchActionsBarController = loader.getController();
             touchActionsBarController.setup(this);
+//            pane.toFront();
             pane.getChildren().setAll(touch_action_bar);
             loadSidebar();
         } catch (IOException e) {
