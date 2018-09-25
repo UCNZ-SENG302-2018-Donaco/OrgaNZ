@@ -20,7 +20,7 @@ public class DashboardController extends SubController {
 
 
     @FXML
-    private Label totalClientsNum, organsNum, matchesNum, clinicianName;
+    private Label totalClientsNum, organsNum, matchesNum;
 
     public DashboardController() {
         session = State.getSession();
@@ -34,6 +34,11 @@ public class DashboardController extends SubController {
     public void setup(MainController mainController) {
         super.setup(mainController);
         mainController.setTitle("Dashboard");
+
+        statistics = State.getClientManager().getStatistics();
+        totalClientsNum.setText(String.valueOf(statistics.getClientCount()));
+        organsNum.setText(String.valueOf(statistics.getOrganCount()));
+        matchesNum.setText(String.valueOf(statistics.getRequestCount()));
     }
 
     /**
@@ -41,6 +46,6 @@ public class DashboardController extends SubController {
      */
     @FXML
     private void initialize() {
-        //clinicianName.setText(clinician.getFullName());
+
     }
 }
