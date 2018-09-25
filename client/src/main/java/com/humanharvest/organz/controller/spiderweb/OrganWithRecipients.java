@@ -185,8 +185,6 @@ public class OrganWithRecipients {
 
     private void enableHandlers() {
         // Redraws lines when organs or donor pane is moved
-        deceasedDonorPane.localToParentTransformProperty().addListener(
-                (__, ___, ____) -> handleDeceasedDonorTransformed());
 
         organPane.localToParentTransformProperty().addListener(
                 (__, ___, newValue) -> handleOrganPaneTransformed(newValue));
@@ -235,12 +233,6 @@ public class OrganWithRecipients {
         }
 
         organImageController.matchCountIsVisible(false);
-        updateDonorConnector(organ, deceasedToOrganConnector, organPane);
-        updateConnectorText(durationText, organ, deceasedToOrganConnector);
-    }
-
-    public void handleDeceasedDonorTransformed() {
-        setDonorConnectorStart(deceasedDonorPane.getBoundsInParent());
         updateDonorConnector(organ, deceasedToOrganConnector, organPane);
         updateConnectorText(durationText, organ, deceasedToOrganConnector);
     }
@@ -321,7 +313,7 @@ public class OrganWithRecipients {
         organToRecipientConnector.setEndY(bounds.getMinY() + bounds.getHeight() / 2);
     }
 
-    private void setDonorConnectorStart(Bounds bounds) {
+    public void setDonorConnectorStart(Bounds bounds) {
         deceasedToOrganConnector.setStartX(bounds.getMinX() + bounds.getWidth() / 2);
         deceasedToOrganConnector.setStartY(bounds.getMinY() + bounds.getHeight() / 2);
     }

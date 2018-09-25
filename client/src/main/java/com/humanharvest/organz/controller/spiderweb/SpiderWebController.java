@@ -143,6 +143,11 @@ public class SpiderWebController extends SubController {
         double centerX = (Screen.getPrimary().getVisualBounds().getWidth() - bounds.getWidth()) / 2;
         double centerY = (Screen.getPrimary().getVisualBounds().getHeight() - bounds.getHeight()) / 2;
         setPositionUsingTransform(deceasedDonorPane, centerX, centerY, 0, 0.6);
+
+        // We need to register this so when the deceasedDonorPane gets properly positioned it updates the lines
+        deceasedDonorPane.boundsInLocalProperty().addListener(
+                (__, ___, ____) -> organWithRecipientsList.forEach(
+                        organ -> organ.setDonorConnectorStart(deceasedDonorPane.getBoundsInParent())));
     }
 
     @FXML
