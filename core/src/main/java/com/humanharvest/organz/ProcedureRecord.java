@@ -125,6 +125,19 @@ public class ProcedureRecord {
         affectedOrgans.add(organ);
     }
 
+    /**
+     * Returns true if the procedure has happened.
+     */
+    public boolean hasHappened() {
+        if (this instanceof TransplantRecord) {
+            TransplantRecord transplantRecord = (TransplantRecord) this;
+            return transplantRecord.isCompleted();
+        } else {
+            // normal procedure record - it is in the past if it happened today or before today
+            return date.isEqual(LocalDate.now()) || date.isBefore(LocalDate.now());
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
