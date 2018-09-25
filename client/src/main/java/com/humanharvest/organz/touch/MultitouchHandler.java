@@ -36,7 +36,6 @@ public final class MultitouchHandler {
     private static final Timer physicsTimer = new Timer();
 
     private static Pane rootPane;
-    private static Pane canvas;
     private static PhysicsHandler physicsHandler;
 
     private MultitouchHandler() {
@@ -47,7 +46,6 @@ public final class MultitouchHandler {
      */
     public static void initialise(Pane root) {
         rootPane = root;
-        canvas = (Pane) rootPane.getChildren().get(0);
 
         root.addEventFilter(TouchEvent.ANY, MultitouchHandler::handleTouchEvent);
 
@@ -265,10 +263,6 @@ public final class MultitouchHandler {
      */
     public static Collection<FocusArea> getFocusAreas() {
         return Collections.unmodifiableCollection(focusAreas);
-    }
-
-    public static Pane getCanvas() {
-        return canvas;
     }
 
     public static Pane getRootPane() {
