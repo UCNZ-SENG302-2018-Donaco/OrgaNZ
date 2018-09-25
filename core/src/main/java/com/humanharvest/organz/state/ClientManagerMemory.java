@@ -19,6 +19,7 @@ import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.ProcedureRecord;
+import com.humanharvest.organz.TransplantRecord;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.utilities.ClientNameSorter;
 import com.humanharvest.organz.utilities.algorithms.MatchOrganToRecipients;
@@ -485,4 +486,20 @@ public class ClientManagerMemory implements ClientManager {
     public List<TransplantRequest> getMatchingOrganTransplants(DonatedOrgan donatedOrgan) {
         return MatchOrganToRecipients.getListOfPotentialTransplants(donatedOrgan, getAllCurrentTransplantRequests());
     }
+
+    /**
+     * @param donatedOrgan available organ to find potential matches for
+     * @return The matching TransplantRecord for the given organ
+     */
+    @Override
+    public TransplantRecord getMatchingOrganTransplantRecord(DonatedOrgan donatedOrgan) {
+        return clients.stream()
+                .map(Client::getProcedures)
+                .flatMap(Collection::stream)
+                .filter(procedureRecord -> procedureRecord instanceof TransplantRecord)
+                .map(procedureRecord -> (TransplantRecord) procedureRecord)
+                .filter(transplantRecord -> transplantRecord.getOrgan().equals(donatedOrgan))
+                .findFirst().orElse(null);
+    }
+
 }

@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.HistoryItem;
+import com.humanharvest.organz.TransplantRecord;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.utilities.enums.ClientSortOptionsEnum;
 import com.humanharvest.organz.utilities.enums.ClientType;
@@ -313,5 +314,24 @@ public class ClientManagerRest implements ClientManager {
         } else {
             return new ArrayList<>();
         }
+    }
+
+    /**
+     * @param donatedOrgan available organ to find potential matches for
+     * @return The matching TransplantRecord for the given organ
+     */
+    @Override
+    public TransplantRecord getMatchingOrganTransplantRecord(DonatedOrgan donatedOrgan) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.set("X-Auth-Token", State.getToken());
+
+        HttpEntity<String> entity = new HttpEntity<>(httpHeaders);
+
+        ResponseEntity<TransplantRecord> responseEntity = State.getRestTemplate()
+                .exchange(State.getBaseUri() +
+                                "/matchOrganToTransplantRecord/" + donatedOrgan.getId(), HttpMethod.GET, entity,
+                        TransplantRecord.class);
+
+        return responseEntity.getBody();
     }
 }

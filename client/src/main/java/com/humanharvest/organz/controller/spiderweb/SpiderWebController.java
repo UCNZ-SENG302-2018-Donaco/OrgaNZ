@@ -19,7 +19,6 @@ import javafx.stage.Screen;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
-import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.state.State;
@@ -41,6 +40,7 @@ public class SpiderWebController extends SubController {
     private final Client client;
 
     private final List<MainController> previouslyOpenWindows = new ArrayList<>();
+    private final Pane rootPane;
     private final Pane canvas;
     private Pane deceasedDonorPane;
 
@@ -49,8 +49,10 @@ public class SpiderWebController extends SubController {
         client.setDonatedOrgans(State.getClientResolver().getDonatedOrgans(client));
         State.setSpiderwebDonor(client);
 
-        canvas = MultitouchHandler.getCanvas();
-        canvas.getChildren().clear();
+        rootPane = MultitouchHandler.getRootPane();
+        rootPane.getChildren().clear();
+        canvas = new Pane();
+        rootPane.getChildren().add(canvas);
 
         // Close existing windows, but save them for later
         // Copy to a new list to prevent concurrent modification
@@ -63,10 +65,12 @@ public class SpiderWebController extends SubController {
         // Setup spider web physics
         MultitouchHandler.setPhysicsHandler(new SpiderPhysicsHandler(MultitouchHandler.getRootPane()));
 
+        // Add exit button
         Button exitButton = new Button("Exit Spider Web");
         canvas.getChildren().add(exitButton);
         exitButton.setOnAction(event -> closeSpiderWeb());
 
+        // Setup page
         displayDonatingClient();
         displayOrgans();
     }
@@ -116,9 +120,7 @@ public class SpiderWebController extends SubController {
     }
 
     private void addOrganNode(DonatedOrgan organ, double xPos, double yPos, double rotation) {
-        List<TransplantRequest> potentialMatches = State.getClientManager().getMatchingOrganTransplants(organ);
-
-        OrganWithRecipients organWithRecipients = new OrganWithRecipients(organ, potentialMatches, deceasedDonorPane,
+        OrganWithRecipients organWithRecipients = new OrganWithRecipients(organ, deceasedDonorPane,
                 canvas);
 
         setPositionUsingTransform(organWithRecipients.getOrganPane(), xPos, yPos, rotation, 1);
@@ -147,12 +149,9 @@ public class SpiderWebController extends SubController {
         // Copy to a new list to prevent concurrent modification
         List<MainController> toClose = new ArrayList<>(State.getMainControllers());
         toClose.forEach(MainController::closeWindow);
-        canvas.getChildren().clear();
+        rootPane.getChildren().clear();
 
         // Open all the previously open windows again
-        for (MainController mainController : previouslyOpenWindows) {
-            canvas.getChildren().add(mainController.getPane());
-            mainController.showWindow();
-        }
+        previouslyOpenWindows.forEach(MainController::showWindow);
     }
 }

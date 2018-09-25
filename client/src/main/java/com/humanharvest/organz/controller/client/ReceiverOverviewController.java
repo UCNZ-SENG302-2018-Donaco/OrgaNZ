@@ -21,6 +21,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.TransplantRecord;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.clinician.ViewBaseController;
@@ -128,6 +129,13 @@ public class ReceiverOverviewController extends ViewBaseController {
     public void setup(TransplantRequest request, Client donor) {
         this.request = request;
         this.recipient = request.getClient();
+        this.donor = donor;
+        refresh();
+    }
+
+    public void setup(TransplantRecord record, Client donor) {
+        this.request = record.getRequest();
+        this.recipient = record.getReceiver();
         this.donor = donor;
         refresh();
     }

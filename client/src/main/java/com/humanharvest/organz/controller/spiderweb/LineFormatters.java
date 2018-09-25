@@ -83,32 +83,11 @@ public class LineFormatters {
         durationText.setTranslateY(line.getEndY());
     }
 
-    public static void updateRecipientConnector(DonatedOrgan donatedOrgan, Line line) {
-        OrganState organState = donatedOrgan.getState();
-        switch (organState) {
-            case OVERRIDDEN:
-                line.setStroke(Color.BLACK);
-                break;
-            case EXPIRED:
-                line.setStroke(ExpiryBarUtils.darkGreyColour);
-                break;
-            case NO_EXPIRY:
-                line.setStroke(ExpiryBarUtils.noExpiryGreenColour);
-                break;
-            case CURRENT:
-                line.setStroke(Color.WHITE);
-                break;
-            case TRANSPLANT_COMPLETED:
-                //TODO
-                break;
-        }
-    }
-
     public static void updateMatchesListPosition(Pane matchesPane, Transform newTransform) {
         FocusArea focusArea = (FocusArea) matchesPane.getUserData();
 
         // If not currently touching the matches pane
-        if (MultitouchHandler.findPaneTouches(matchesPane).isEmpty()) {
+        if (focusArea != null && MultitouchHandler.findPaneTouches(matchesPane).isEmpty()) {
             Affine transform = new Affine();
             transform.prepend(new Scale(0.5, 0.5));
             transform.prepend(new Translate(-50, 90));
