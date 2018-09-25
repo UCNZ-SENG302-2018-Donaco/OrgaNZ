@@ -23,6 +23,7 @@ public class DonatedOrganView {
     public DonatedOrganView(DonatedOrgan donatedOrgan) {
         this.donatedOrgan = donatedOrgan;
         this.donor = donatedOrgan.getDonor();
+        this.receiver = donatedOrgan.getReceiver();
     }
 
     public DonatedOrgan getDonatedOrgan() {
