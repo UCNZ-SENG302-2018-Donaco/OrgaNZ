@@ -34,7 +34,7 @@ public class SidebarControllerClinicianViewClientTest extends ControllerTest {
     protected void initState() {
         client.addTransplantRequest(new TransplantRequest(client, Organ.LIVER));
         State.reset();
-
+        State.getClientManager().addClient(client);
         State.login(clinician);
         mainController.setWindowContext(new WindowContext.WindowContextBuilder()
                 .setAsClinicianViewClientWindow()
@@ -51,7 +51,6 @@ public class SidebarControllerClinicianViewClientTest extends ControllerTest {
         verifyThat("#viewMedicationsButton", isVisible());
         verifyThat("#illnessHistoryButton", isVisible());
         verifyThat("#viewProceduresButton", isVisible());
-        verifyThat("#spiderwebButton", isVisible());
 
 
         verifyThat("#searchButton", isInvisible());
