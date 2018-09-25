@@ -29,6 +29,7 @@ import com.humanharvest.organz.views.client.DonatedOrganView;
 import com.humanharvest.organz.views.client.PaginatedClientList;
 import com.humanharvest.organz.views.client.PaginatedDonatedOrgansList;
 import com.humanharvest.organz.views.client.PaginatedTransplantList;
+import com.humanharvest.organz.views.client.TransplantRecordView;
 import com.humanharvest.organz.views.client.TransplantRequestView;
 
 import org.springframework.core.ParameterizedTypeReference;
@@ -327,11 +328,15 @@ public class ClientManagerRest implements ClientManager {
 
         HttpEntity<String> entity = new HttpEntity<>(httpHeaders);
 
-        ResponseEntity<TransplantRecord> responseEntity = State.getRestTemplate()
+        ResponseEntity<TransplantRecordView> responseEntity = State.getRestTemplate()
                 .exchange(State.getBaseUri() +
                                 "/matchOrganToTransplantRecord/" + donatedOrgan.getId(), HttpMethod.GET, entity,
-                        TransplantRecord.class);
+                        TransplantRecordView.class);
 
-        return responseEntity.getBody();
+        if (responseEntity.getBody() == null) {
+            return null;
+        } else {
+            return responseEntity.getBody().getTransplantRecord();
+        }
     }
 }

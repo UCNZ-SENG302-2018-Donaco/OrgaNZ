@@ -87,6 +87,7 @@ public class OrganWithRecipients {
         createLines();
 
         drawMatchesPane();
+        MultitouchHandler.addPane(matchesPane);
 
         enableHandlers();
 
@@ -139,7 +140,6 @@ public class OrganWithRecipients {
             case NO_EXPIRY:
                 List<TransplantRequest> potentialMatches = State.getClientManager().getMatchingOrganTransplants(organ);
                 matchesPane = createMatchesPane(FXCollections.observableArrayList(potentialMatches));
-                MultitouchHandler.addPane(matchesPane);
                 organImageController.setMatchCount(potentialMatches.size());
 
                 if (potentialMatches.isEmpty() && !organ.hasExpired()) {
@@ -186,7 +186,7 @@ public class OrganWithRecipients {
     }
 
     public void handleOrganSingleClick() {
-        if (organ.getState() == OrganState.CURRENT) {
+        if (organ.getState() == OrganState.CURRENT || organ.getState() == OrganState.NO_EXPIRY) {
             matchesPane.setVisible(!matchesPane.isVisible());
             organImageController.matchCountIsVisible(!matchesPane.isVisible());
         }

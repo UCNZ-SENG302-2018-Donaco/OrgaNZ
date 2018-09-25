@@ -11,6 +11,7 @@ import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
 import com.humanharvest.organz.utilities.validators.client.DonatedOrganValidator;
+import com.humanharvest.organz.views.client.TransplantRecordView;
 import com.humanharvest.organz.views.client.TransplantRequestView;
 
 import org.springframework.http.HttpStatus;
@@ -120,7 +121,7 @@ public class MatchOrgansToRecipientsController {
      * @throws AuthenticationException If the auth token does not belong to a clinician/admin.
      */
     @GetMapping("/matchOrganToTransplantRecord/{id}")
-    public ResponseEntity<TransplantRecord> getTransplantRecordForOrgan(
+    public ResponseEntity<TransplantRecordView> getTransplantRecordForOrgan(
             @PathVariable Long id,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
             throws AuthenticationException {
@@ -146,7 +147,10 @@ public class MatchOrgansToRecipientsController {
         }
 
         TransplantRecord record = State.getClientManager().getMatchingOrganTransplantRecord(donatedOrgan);
-
-        return new ResponseEntity<>(record, HttpStatus.OK);
+        if (record == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } else {
+            return new ResponseEntity<>(new TransplantRecordView(record), HttpStatus.OK);
+        }
     }
 }
