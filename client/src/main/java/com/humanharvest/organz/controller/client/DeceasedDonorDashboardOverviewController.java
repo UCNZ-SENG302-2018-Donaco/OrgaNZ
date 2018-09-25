@@ -3,7 +3,8 @@ package com.humanharvest.organz.controller.client;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.time.format.DateTimeFormatter;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,6 +24,8 @@ import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.DonatedOrgan.OrganState;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.DurationFormatter;
+import com.humanharvest.organz.utilities.DurationFormatter.DurationFormat;
 import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.PageNavigator;
@@ -37,7 +40,10 @@ public class DeceasedDonorDashboardOverviewController extends SubController {
     private ImageView profilePicture, spiderWeb;
 
     @FXML
-    private Label nameLabel, organsLabel, deathLabel;
+    private Label nameLabel, deathLabel, organCount;
+
+    //@FXML
+    //private Text organCount, organsAvailable;
 
     Client donor;
 
@@ -54,9 +60,22 @@ public class DeceasedDonorDashboardOverviewController extends SubController {
         Collection<DonatedOrgan> availableOrgans = State.getClientResolver().getDonatedOrgans(donor).stream()
                 .filter(organ -> organ.getState() == OrganState.CURRENT || organ.getState() == OrganState.NO_EXPIRY)
                 .collect(Collectors.toSet());
-        organsLabel.setText(String.valueOf(availableOrgans.size()) + " organs available");
 
-        deathLabel.setText(donor.getDateOfDeath().format(DateTimeFormatter.ofPattern("dd MMMM yyyy")));
+        //organCount.setText());
+        if (availableOrgans.size() == 1) {
+            organCount.setText("1 organ available ");
+        } else {
+            organCount.setText(String.valueOf(availableOrgans.size()) + " organs available");
+/*
+        Text text1 = new Text(String.valueOf(availableOrgans.size()));
+        text1.setFont(Font.font());
+        textFlow.set
+
+        organsLabel.setText( + " organs available");*/
+        }
+        Duration daysSinceDeath = Duration.between(LocalDateTime.now(), donor.getDatetimeOfDeath());
+        deathLabel.setText("Died " + DurationFormatter.getFormattedDuration(daysSinceDeath, DurationFormat.DAYS));
+        System.out.println(daysSinceDeath);
 
         try (InputStream in = getClass().getResourceAsStream("/images/pages/spiderweb.png")) {
             byte[] spiderWebImageBytes = IOUtils.toByteArray(in);
@@ -66,11 +85,13 @@ public class DeceasedDonorDashboardOverviewController extends SubController {
         }
 
     }
+
     static final Text helper;
     static final double DEFAULT_WRAPPING_WIDTH;
     static final double DEFAULT_LINE_SPACING;
     static final String DEFAULT_TEXT;
     static final TextBoundsType DEFAULT_BOUNDS_TYPE;
+
     static {
         helper = new Text();
         DEFAULT_WRAPPING_WIDTH = helper.getWrappingWidth();
