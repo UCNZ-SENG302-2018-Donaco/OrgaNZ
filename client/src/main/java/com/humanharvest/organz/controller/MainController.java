@@ -1,5 +1,6 @@
 package com.humanharvest.organz.controller;
 
+
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
@@ -14,10 +15,14 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.state.Session.UserType;
+import com.humanharvest.organz.state.State.UiType;
 import com.humanharvest.organz.touch.MultitouchHandler;
+import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
+
+import com.jfoenix.controls.JFXDrawer;
 
 /**
  * Main controller class for the application window.
@@ -34,16 +39,25 @@ public class MainController {
     private SidebarController sidebarController;
     private MenuBarController menuBarController;
     private SubController subController;
-
     /**
      * Holder of a switchable page.
      */
     @FXML
     private StackPane pageHolder;
+    @FXML
+    private JFXDrawer drawer; // = new JFXDrawer();
 
     @FXML
     public void initialize() {
         pageHolder.getStyleClass().add("window");
+        drawer.setDisable(true);
+        drawer.setVisible(false);
+        drawer.setOnDrawerOpened(EventListener -> drawer.setVisible(true));
+
+    }
+
+    public JFXDrawer getDrawer() {
+        return drawer;
     }
 
     public Stage getStage() {
@@ -111,26 +125,29 @@ public class MainController {
         }
     }
 
+
     /**
      * Method that can be called from other controllers to load the sidebar into that page.
      * Will set the sidebar as the child of the pane given.
-     *
-     * @param sidebarPane The container pane for the sidebar, given by the importer.
      */
-    public void loadSidebar(Pane sidebarPane) {
+    private void loadSidebar() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(Page.SIDEBAR.getPath()));
             VBox sidebar = loader.load();
+
             sidebarController = loader.getController();
             sidebarController.setup(this);
-            sidebarPane.getChildren().setAll(sidebar);
+            drawer.setSidePane(sidebar);
+            drawer.setOverLayVisible(false);
+
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Couldn't load sidebar from fxml file.", e);
         }
     }
 
     /**
-     * Method that can be called from other controllers to load the sidebar into that page.
+     * Method that can be
+            this.getPane().getChildren().addAll(hamburger);called from other controllers to load the sidebar into that page.
      * Will set the sidebar as the child of the pane given.
      *
      * @param menuBarPane The container pane for the menu bar, given by the importer.
@@ -146,6 +163,37 @@ public class MainController {
             LOGGER.log(Level.SEVERE, "Couldn't load sidebar from fxml file.", e);
         }
     }
+
+    /**
+     * Loads the touch actions bar and uses the sidebars fxml as the content
+     * @param pane the pane to load the touch actions bar for
+     */
+    public void loadTouchActionsBar(Pane pane) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(Page.TOUCH_ACTIONS_BAR.getPath()));
+            HBox touch_action_bar = loader.load();
+            TouchActionsBarController touchActionsBarController = loader.getController();
+            touchActionsBarController.setup(this);
+            pane.getChildren().setAll(touch_action_bar);
+            loadSidebar();
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Couldn't load touch actions bar from fxml file.", e);
+        }
+    }
+
+    /**
+     * Sets up the navigation type for the given pane
+     * @param pane type of pane to setup navigation for
+     */
+    public void loadNavigation(Pane pane) {
+        if (State.getUiType() == UiType.TOUCH || State.getSession().getLoggedInUserType() == UserType.CLIENT) {
+            loadTouchActionsBar(pane);
+        } else {
+            loadMenuBar(pane);
+        }
+
+    }
+
 
     public void setSubController(SubController subController) {
         this.subController = subController;

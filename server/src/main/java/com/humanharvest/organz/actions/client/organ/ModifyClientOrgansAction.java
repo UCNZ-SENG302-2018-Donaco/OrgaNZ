@@ -1,4 +1,4 @@
-package com.humanharvest.organz.actions.client;
+package com.humanharvest.organz.actions.client.organ;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.actions.client.ClientAction;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;

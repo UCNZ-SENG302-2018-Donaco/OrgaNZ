@@ -14,7 +14,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javafx.application.Platform;
-import javafx.beans.property.Property;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -438,22 +437,13 @@ public class MenuBarController extends SubController {
     private void load() {
 
         // Confirm that the user wants to overwrite current data with data from a file
-        Property<Boolean> response = PageNavigator.showAlert(AlertType.CONFIRMATION,
+        PageNavigator.showAlert(AlertType.CONFIRMATION,
                 "Confirm load from file",
                 "Loading from a file will overwrite all current data. Would you like to proceed?",
-                mainController.getStage());
-
-        if (response.getValue() != null) {
-            if (response.getValue()) {
-                loadFile();
-            }
-        } else {
-            response.addListener((observable, oldValue, newValue) -> {
-                if (newValue) {
+                mainController.getStage(),
+                isOk -> {
                     loadFile();
-                }
-            });
-        }
+                });
     }
 
     private void loadFile() {

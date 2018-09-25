@@ -8,6 +8,7 @@ import com.humanharvest.organz.BaseTest;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.actions.ActionInvoker;
+import com.humanharvest.organz.actions.client.medication.AddMedicationRecordAction;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.ClientManagerMemory;
 

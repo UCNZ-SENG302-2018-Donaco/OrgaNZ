@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javafx.beans.property.Property;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -65,7 +64,7 @@ public class CreateClientController extends SubController {
         mainController.setTitle("Create a client");
 
         if (State.getSession() != null) { //they're a clinician or admin
-            mainController.loadMenuBar(menuBarPane);
+            mainController.loadTouchActionsBar(menuBarPane);
             goBackButton.setVisible(false);
         }
 
@@ -92,21 +91,13 @@ public class CreateClientController extends SubController {
                     "The date of birth cannot be after today.", mainController.getStage());
         } else {
             if (manager.doesClientExist(firstNameFld.getText(), lastNamefld.getText(), dobFld.getValue())) {
-                //Duplicate user warning alert
-                Property<Boolean> response = PageNavigator.showAlert(AlertType.CONFIRMATION,
+                PageNavigator.showAlert(AlertType.CONFIRMATION,
                         "Duplicate Client Warning",
                         "This client is a duplicate of one that already exists. Would you still like to create it?",
-                        mainController.getStage());
-
-                if (response.getValue()) {
-                    createClientLogic();
-                } else if (response.getValue() == null) {
-                    response.addListener((observable, oldValue, newValue) -> {
-                        if (newValue) {
+                        mainController.getStage(),
+                        isOk -> {
                             createClientLogic();
-                        }
-                    });
-                }
+                        });
             } else {
                 createClientLogic();
             }

@@ -227,16 +227,14 @@ public class ViewMedicalHistoryController extends SubController {
 
         if (session.getLoggedInUserType() == UserType.CLIENT) {
             client = session.getLoggedInClient();
-            mainController.loadSidebar(sidebarPane);
             newIllnessPane.setVisible(false);
             newIllnessPane.setManaged(false);
             illnessButtonsPane.setVisible(false);
             illnessButtonsPane.setManaged(false);
         } else if (windowContext.isClinViewClientWindow()) {
             client = windowContext.getViewClient();
-            mainController.loadMenuBar(menuBarPane);
         }
-
+        mainController.loadNavigation(menuBarPane);
         refresh();
         enableAppropriateButtons();
     }
