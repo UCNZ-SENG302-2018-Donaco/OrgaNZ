@@ -522,8 +522,6 @@ public class ClientManagerDBPure implements ClientManager {
 
     @Override
     public DashboardStatistics getStatistics() {
-        DashboardStatistics statistics = new DashboardStatistics();
-        Transaction trns = null;
 
         // Gets statistics for counts of clients, organs, and requests from the DB
         String query = "SELECT (SELECT count(*)"
@@ -561,21 +559,17 @@ public class ClientManagerDBPure implements ClientManager {
             ResultSet result = stmt.executeQuery(query);
             result.next();
 
-            statistics.setClientCount(result.getInt("clientCount"));
-            statistics.setDonorCount(result.getInt("donorCount"));
-            statistics.setReceiverCount(result.getInt("receiverCount"));
-            statistics.setDonorReceiverCount(result.getInt("donorReceiverCount"));
-            statistics.setOrganCount(result.getInt("organCount"));
-            statistics.setRequestCount(result.getInt("requestCount"));
+            DashboardStatistics statistics = new DashboardStatistics(result.getInt("clientCount"),
+                    result.getInt("donorCount"), result.getInt("receiverCount"),
+                    result.getInt("donorReceiverCount"), result.getInt("organCount"),
+                    result.getInt("requestCount"));
+
+            return statistics;
 
         } catch (SQLException e) {
             LOGGER.log(Level.WARNING, e.getMessage(), e);
-            if (trns != null) {
-                trns.rollback();
-            }
         }
-
-        return statistics;
+        return null;
     }
 
     /**

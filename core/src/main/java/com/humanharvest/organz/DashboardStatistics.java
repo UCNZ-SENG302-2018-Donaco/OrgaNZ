@@ -9,9 +9,21 @@ public class DashboardStatistics {
     private int donorCount;
     private int receiverCount;
     private int donorReceiverCount;
+    private int neitherCount;
 
     private int organCount;
     private int requestCount;
+
+    public DashboardStatistics(int clientCount, int donorCount, int receiverCount, int donorReceiverCount, int
+            organCount, int requestCount) {
+        this.clientCount = clientCount;
+        this.donorCount = donorCount;
+        this.receiverCount = receiverCount;
+        this.neitherCount = clientCount - (donorCount + receiverCount + donorReceiverCount);
+
+        this.organCount = organCount;
+        this.requestCount = requestCount;
+    }
 
 
     public int getClientCount() {
@@ -60,5 +72,13 @@ public class DashboardStatistics {
 
     public void setDonorReceiverCount(int donorReceiverCount) {
         this.donorReceiverCount = donorReceiverCount;
+    }
+
+    public int getNeitherCount() {
+        return neitherCount;
+    }
+
+    public void setNeitherCount(int neitherCount) {
+        this.neitherCount = neitherCount;
     }
 }
