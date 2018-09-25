@@ -40,6 +40,7 @@ public class SpiderWebController extends SubController {
     private final Client client;
 
     private final List<MainController> previouslyOpenWindows = new ArrayList<>();
+    private final List<OrganWithRecipients> organWithRecipientsList = new ArrayList<>();
     private final Pane rootPane;
     private final Pane canvas;
     private Pane deceasedDonorPane;
@@ -95,6 +96,7 @@ public class SpiderWebController extends SubController {
         transform.append(new Scale(scale, scale));
         transform.append(new Rotate(angle, centre.getX(), centre.getY()));
         focusArea.setTransform(transform);
+
         node.setCacheHint(CacheHint.QUALITY);
     }
 
@@ -122,6 +124,8 @@ public class SpiderWebController extends SubController {
     private void addOrganNode(DonatedOrgan organ, double xPos, double yPos, double rotation) {
         OrganWithRecipients organWithRecipients = new OrganWithRecipients(organ, deceasedDonorPane,
                 canvas);
+
+        organWithRecipientsList.add(organWithRecipients);
 
         setPositionUsingTransform(organWithRecipients.getOrganPane(), xPos, yPos, rotation, 1);
     }

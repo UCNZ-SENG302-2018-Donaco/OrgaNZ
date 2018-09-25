@@ -28,6 +28,9 @@ public class LineFormatters {
 
     public static void updateDonorConnector(DonatedOrgan donatedOrgan, Line line, Pane organPane) {
         OrganState organState = donatedOrgan.getState();
+        if (organState == OrganState.TRANSPLANT_PLANNED) {
+            organState = donatedOrgan.getState(false);
+        }
         switch (organState) {
             case OVERRIDDEN:
                 line.setStroke(Color.BLACK);
@@ -36,10 +39,6 @@ public class LineFormatters {
             case EXPIRED:
                 line.setStroke(ExpiryBarUtils.darkGreyColour);
                 organPane.setEffect(EXPIRED_COLOR);
-                break;
-            case NO_EXPIRY:
-                line.setStroke(ExpiryBarUtils.noExpiryGreenColour);
-                organPane.setEffect(null);
                 break;
             case CURRENT:
                 LinearGradient linearGradient = ExpiryBarUtils.getLinearGradient(
@@ -50,7 +49,13 @@ public class LineFormatters {
                 organPane.setEffect(null);
                 break;
             case TRANSPLANT_COMPLETED:
-                //TODO
+                line.setStroke(Color.BLUE);
+                organPane.setEffect(null);
+                break;
+            case NO_EXPIRY:
+            default:
+                line.setStroke(ExpiryBarUtils.noExpiryGreenColour);
+                organPane.setEffect(null);
                 break;
         }
     }

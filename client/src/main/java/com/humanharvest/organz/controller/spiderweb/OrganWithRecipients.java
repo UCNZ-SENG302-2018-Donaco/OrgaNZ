@@ -15,7 +15,6 @@ import java.util.logging.Logger;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXMLLoader;
@@ -59,15 +58,14 @@ public class OrganWithRecipients {
     private static final DurationFormat durationFormat = DurationFormat.X_HRS_Y_MINS_SECS;
     private static final int ORGAN_SIZE = 70;
 
-    private Pane deceasedDonorPane;
-
-    private DonatedOrgan organ;
+    private final Pane deceasedDonorPane;
+    private final DonatedOrgan organ;
+    private final Pane matchesPane;
+    private final Pane canvas;
 
     private OrganImageController organImageController;
     private Pane organPane;
-    private Pane matchesPane;
     private List<PotentialRecipientCell> recipientCells = new ArrayList<>();
-    private Pane canvas;
 
     private Line deceasedToOrganConnector;
     private Line organToRecipientConnector;
@@ -87,14 +85,10 @@ public class OrganWithRecipients {
 
         createLines();
 
-        drawMatchesPane();
+        matchesPane = new Pane();
         MultitouchHandler.addPane(matchesPane);
 
         enableHandlers();
-
-        setDonorConnectorStart(deceasedDonorPane.getBoundsInParent());
-        updateDonorConnector(organ, deceasedToOrganConnector, organPane);
-        updateConnectorText(durationText, organ, deceasedToOrganConnector);
 
         // Attach timer to update connector each second (for time until expiration)
         Timeline clock = new Timeline(new KeyFrame(
@@ -105,6 +99,16 @@ public class OrganWithRecipients {
                 }));
         clock.setCycleCount(Animation.INDEFINITE);
         clock.play();
+
+        refresh();
+    }
+
+    public void refresh() {
+        drawMatchesPane();
+        setDonorConnectorStart(deceasedDonorPane.getBoundsInParent());
+        updateDonorConnector(organ, deceasedToOrganConnector, organPane);
+        updateConnectorText(durationText, organ, deceasedToOrganConnector);
+        handleOrganPaneTransformed(organPane.getLocalToParentTransform());
     }
 
     private void createOrganImage(MainController newMain) {
@@ -135,12 +139,15 @@ public class OrganWithRecipients {
     }
 
     private void drawMatchesPane() {
+        organImageController.matchCountIsVisible(false);
         // Create match pane or matches list pane
         switch (organ.getState()) {
             case CURRENT:
             case NO_EXPIRY:
                 List<TransplantRequest> potentialMatches = State.getClientManager().getMatchingOrganTransplants(organ);
-                matchesPane = createMatchesPane(FXCollections.observableArrayList(potentialMatches));
+
+                setMatchPane(createMatchesPane(FXCollections.observableArrayList(potentialMatches)));
+
                 organImageController.setMatchCount(potentialMatches.size());
 
                 if (potentialMatches.isEmpty() && !organ.hasExpired()) {
@@ -151,14 +158,24 @@ public class OrganWithRecipients {
             case TRANSPLANT_COMPLETED:
             case TRANSPLANT_PLANNED:
                 TransplantRecord record = State.getClientManager().getMatchingOrganTransplantRecord(organ);
-                matchesPane = createMatchPane(record);
+
+                setMatchPane(createMatchPane(record));
                 break;
 
             default:
-                matchesPane = new Pane();
-                matchesPane.setVisible(false);
+                removeMatchPane();
         }
+
         updateRecipientConnector();
+    }
+
+    private void removeMatchPane() {
+        matchesPane.getChildren().clear();
+    }
+
+    private void setMatchPane(Pane pane) {
+        removeMatchPane();
+        matchesPane.getChildren().add(pane);
     }
 
     public Pane getOrganPane() {
@@ -167,9 +184,17 @@ public class OrganWithRecipients {
 
     private void enableHandlers() {
         // Redraws lines when organs or donor pane is moved
-        deceasedDonorPane.localToParentTransformProperty().addListener(handleDeceasedDonorTransformed());
-        organPane.localToParentTransformProperty().addListener(handleOrganPaneTransformed());
-        matchesPane.localToParentTransformProperty().addListener(handlePotentialMatchesTransformed());
+        deceasedDonorPane.localToParentTransformProperty().addListener(
+                (__, ___, ____) -> handleDeceasedDonorTransformed());
+
+        organPane.localToParentTransformProperty().addListener(
+                (__, ___, newValue) -> handleOrganPaneTransformed(newValue));
+
+        matchesPane.localToParentTransformProperty().addListener(
+                (__, ___, ____) -> handlePotentialMatchesTransformed());
+
+        matchesPane.boundsInLocalProperty().addListener(
+                (__, ___, newValue) -> handleOrganPaneTransformed(organPane.getLocalToParentTransform()));
 
         organPane.setOnMouseClicked(this::handleOrganPaneClick);
     }
@@ -199,7 +224,7 @@ public class OrganWithRecipients {
             State.getClientResolver().manuallyOverrideOrgan(organ, reason);
             organ.manuallyOverride(reason);
 
-            matchesPane = null;
+            removeMatchPane();
 
         } else if (organ.getState() == OrganState.OVERRIDDEN) {
             State.getClientResolver().cancelManualOverrideForOrgan(organ);
@@ -213,12 +238,10 @@ public class OrganWithRecipients {
         updateConnectorText(durationText, organ, deceasedToOrganConnector);
     }
 
-    public ChangeListener<Transform> handleDeceasedDonorTransformed() {
-        return (observable, oldValue, newValue) -> {
-            setDonorConnectorStart(deceasedDonorPane.getBoundsInParent());
-            updateDonorConnector(organ, deceasedToOrganConnector, organPane);
-            updateConnectorText(durationText, organ, deceasedToOrganConnector);
-        };
+    public void handleDeceasedDonorTransformed() {
+        setDonorConnectorStart(deceasedDonorPane.getBoundsInParent());
+        updateDonorConnector(organ, deceasedToOrganConnector, organPane);
+        updateConnectorText(durationText, organ, deceasedToOrganConnector);
     }
 
     public void handleOrganPaneTouchReleased() {
@@ -244,36 +267,32 @@ public class OrganWithRecipients {
         return organPane.localToScene(organPane.getBoundsInLocal()).intersects(cellBounds);
     }
 
-    public ChangeListener<Transform> handleOrganPaneTransformed() {
-        return (observable, oldValue, newValue) -> {
-            Bounds bounds = organPane.getBoundsInParent();
-            updateDonorConnector(organ, deceasedToOrganConnector, organPane);
-            setDonorConnectorEnd(bounds);
-            updateConnectorText(durationText, organ, deceasedToOrganConnector);
+    public void handleOrganPaneTransformed(Transform newValue) {
+        Bounds bounds = organPane.getBoundsInParent();
+        updateDonorConnector(organ, deceasedToOrganConnector, organPane);
+        setDonorConnectorEnd(bounds);
+        updateConnectorText(durationText, organ, deceasedToOrganConnector);
 
-            updateMatchesListPosition(matchesPane, newValue, ORGAN_SIZE);
+        updateMatchesListPosition(matchesPane, newValue, ORGAN_SIZE);
 
-            for (Node cell : recipientCells) {
-                if (organIntersectsCell(organPane, cell)) {
-                    DropShadow dropShadow = new DropShadow(15, Color.PALEGOLDENROD);
-                    dropShadow.setInput(new Glow(0.5));
-                    cell.setEffect(dropShadow);
-                } else {
-                    cell.setEffect(null);
-                }
+        for (Node cell : recipientCells) {
+            if (organIntersectsCell(organPane, cell)) {
+                DropShadow dropShadow = new DropShadow(15, Color.PALEGOLDENROD);
+                dropShadow.setInput(new Glow(0.5));
+                cell.setEffect(dropShadow);
+            } else {
+                cell.setEffect(null);
             }
+        }
 
-            setRecipientConnectorStart(bounds);
-            setRecipientConnectorEnd(matchesPane.getBoundsInParent());
+        setRecipientConnectorStart(bounds);
+        setRecipientConnectorEnd(matchesPane.getBoundsInParent());
 
-            organPane.toFront();
-        };
+        organPane.toFront();
     }
 
-    public ChangeListener<Transform> handlePotentialMatchesTransformed() {
-        return (observable, oldValue, newValue) -> {
-            setRecipientConnectorEnd(matchesPane.getBoundsInParent());
-        };
+    public void handlePotentialMatchesTransformed() {
+        setRecipientConnectorEnd(matchesPane.getBoundsInParent());
     }
 
     public void updateRecipientConnector() {
