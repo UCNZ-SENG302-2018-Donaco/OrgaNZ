@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.clinician.DashboardController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.clinician.DashboardController">
    <left>
       <VBox prefHeight="153.0" prefWidth="300.0" BorderPane.alignment="CENTER">
          <children>
@@ -54,8 +54,7 @@
    <center>
       <Pane prefHeight="153.0" prefWidth="300.0" BorderPane.alignment="CENTER">
          <children>
-            <Label layoutX="82.0" layoutY="61.0" prefHeight="16.0" prefWidth="154.0" text="Graph goes here :)" />
-            <PieChart layoutX="1.0" layoutY="-13.0" prefHeight="164.0" prefWidth="251.0" />
+            <PieChart fx:id="pieChart" layoutX="1.0" layoutY="1.0" prefHeight="191.0" prefWidth="296.0" />
          </children>
       </Pane>
    </center>
