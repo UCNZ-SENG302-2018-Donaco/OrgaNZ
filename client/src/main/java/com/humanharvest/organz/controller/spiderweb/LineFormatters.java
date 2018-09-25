@@ -83,14 +83,17 @@ public class LineFormatters {
         durationText.setTranslateY(line.getEndY());
     }
 
-    public static void updateMatchesListPosition(Pane matchesPane, Transform newTransform) {
+    public static void updateMatchesListPosition(Pane matchesPane, Transform newTransform, int organDiameter) {
         FocusArea focusArea = (FocusArea) matchesPane.getUserData();
+
+        double scale = 0.5;
+        double xDelta = (organDiameter / 2) - scale * matchesPane.getBoundsInLocal().getWidth() / 2;
 
         // If not currently touching the matches pane
         if (focusArea != null && MultitouchHandler.findPaneTouches(matchesPane).isEmpty()) {
             Affine transform = new Affine();
-            transform.prepend(new Scale(0.5, 0.5));
-            transform.prepend(new Translate(-50, 90));
+            transform.prepend(new Scale(scale, scale));
+            transform.prepend(new Translate(xDelta, 90));
             transform.prepend(newTransform);
             focusArea.setTransform(transform);
         }

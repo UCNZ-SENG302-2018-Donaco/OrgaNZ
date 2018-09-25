@@ -57,6 +57,7 @@ public class OrganWithRecipients {
     private static final Logger LOGGER = Logger.getLogger(OrganWithRecipients.class.getName());
 
     private static final DurationFormat durationFormat = DurationFormat.X_HRS_Y_MINS_SECS;
+    private static final int ORGAN_SIZE = 70;
 
     private Pane deceasedDonorPane;
 
@@ -79,7 +80,7 @@ public class OrganWithRecipients {
         this.canvas = canvas;
 
         MainController newMain = ((PageNavigatorTouch) PageNavigator.getInstance())
-                .openNewWindow(70, 70, pane -> new OrganFocusArea(pane, this));
+                .openNewWindow(ORGAN_SIZE, ORGAN_SIZE, pane -> new OrganFocusArea(pane, this));
         newMain.getStyles().clear();
 
         createOrganImage(newMain);
@@ -250,7 +251,7 @@ public class OrganWithRecipients {
             setDonorConnectorEnd(bounds);
             updateConnectorText(durationText, organ, deceasedToOrganConnector);
 
-            updateMatchesListPosition(matchesPane, newValue);
+            updateMatchesListPosition(matchesPane, newValue, ORGAN_SIZE);
 
             for (Node cell : recipientCells) {
                 if (organIntersectsCell(organPane, cell)) {
