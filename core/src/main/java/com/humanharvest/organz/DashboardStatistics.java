@@ -19,10 +19,13 @@ public class DashboardStatistics {
         this.clientCount = clientCount;
         this.donorCount = donorCount;
         this.receiverCount = receiverCount;
-        this.neitherCount = clientCount - (donorCount + receiverCount + donorReceiverCount);
 
         this.organCount = organCount;
         this.requestCount = requestCount;
+    }
+
+    public DashboardStatistics() {
+
     }
 
 
@@ -75,10 +78,6 @@ public class DashboardStatistics {
     }
 
     public int getNeitherCount() {
-        return neitherCount;
-    }
-
-    public void setNeitherCount(int neitherCount) {
-        this.neitherCount = neitherCount;
+        return clientCount - (donorCount + receiverCount + donorReceiverCount);
     }
 }
