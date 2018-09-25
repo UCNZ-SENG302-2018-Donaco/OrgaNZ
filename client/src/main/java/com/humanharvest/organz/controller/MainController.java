@@ -36,8 +36,8 @@ public class MainController {
     private Pane pane;
     private WindowContext windowContext;
     private String title;
-    private SidebarController sidebarController;
     private MenuBarController menuBarController;
+    private TouchActionsBarController touchActionsBarController;
     private SubController subController;
     /**
      * Holder of a switchable page.
@@ -134,9 +134,6 @@ public class MainController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(Page.SIDEBAR.getPath()));
             VBox sidebar = loader.load();
-
-            sidebarController = loader.getController();
-            sidebarController.setup(this);
             drawer.setSidePane(sidebar);
             drawer.setOverLayVisible(false);
 
@@ -172,7 +169,7 @@ public class MainController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(Page.TOUCH_ACTIONS_BAR.getPath()));
             HBox touch_action_bar = loader.load();
-            TouchActionsBarController touchActionsBarController = loader.getController();
+            touchActionsBarController = loader.getController();
             touchActionsBarController.setup(this);
             pane.getChildren().setAll(touch_action_bar);
             loadSidebar();
@@ -214,8 +211,8 @@ public class MainController {
     public void refreshNavigation() {
         if (menuBarController != null) {
             menuBarController.refresh();
-        } else if (sidebarController != null) {
-            sidebarController.refresh();
+        } else if (touchActionsBarController != null) {
+            touchActionsBarController.refresh();
         }
     }
 

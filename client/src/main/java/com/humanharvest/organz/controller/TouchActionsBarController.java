@@ -123,7 +123,7 @@ public class TouchActionsBarController extends SubController {
      */
     @FXML
     private void undoAction() {
-        ActionResponseView responseView = State.getActionResolver().executeUndo(null);
+        ActionResponseView responseView = State.getActionResolver().executeUndo(State.getRecentEtag());
         Notifications.create().title("Undo").text(responseView.getResultText()).showInformation();
         PageNavigator.refreshAllWindows();
     }
@@ -133,7 +133,7 @@ public class TouchActionsBarController extends SubController {
      */
     @FXML
     private void redoAction() {
-        ActionResponseView responseView = State.getActionResolver().executeRedo(null);
+        ActionResponseView responseView = State.getActionResolver().executeRedo(State.getRecentEtag());
         Notifications.create().title("Redo").text(responseView.getResultText()).showInformation();
         PageNavigator.refreshAllWindows();
     }

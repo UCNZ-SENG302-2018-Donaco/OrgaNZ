@@ -23,8 +23,6 @@
 <VBox xmlns:fx="http://javafx.com/fxml/1" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.121" fx:controller="com.humanharvest.organz.controller.clinician.OrgansToDonateController">
   <children>
     <VBox fx:id="menuBarPane" maxWidth="1.7976931348623157E308"/>
-        <SplitPane prefHeight="600.0">
-          <items>
             <BorderPane>
               <bottom>
                 <VBox BorderPane.alignment="CENTER" alignment="CENTER" prefWidth="200.0">
@@ -150,7 +148,5 @@
                 </VBox>
               </right>
             </BorderPane>
-          </items>
-        </SplitPane>
   </children>
 </VBox>

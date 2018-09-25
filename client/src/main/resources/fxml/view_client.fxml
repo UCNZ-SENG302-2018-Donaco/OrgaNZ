@@ -23,9 +23,6 @@
 
 <VBox prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.client.ViewClientController">
   <VBox fx:id="menuBarPane" maxWidth="1.7976931348623157E308" />
-    <SplitPane dividerPositions="0.29797979797979796" VBox.vgrow="ALWAYS">
-      <HBox fx:id="sidebarPane" maxWidth="-Infinity" />
-      <VBox prefHeight="600.0" prefWidth="800.0">
         <BorderPane VBox.vgrow="ALWAYS">
           <bottom>
             <HBox BorderPane.alignment="CENTER">
@@ -311,6 +308,4 @@
             </GridPane>
           </center>
         </BorderPane>
-      </VBox>
-    </SplitPane>
 </VBox>
