@@ -5,10 +5,13 @@ import static com.humanharvest.organz.controller.spiderweb.LineFormatters.update
 import static com.humanharvest.organz.controller.spiderweb.LineFormatters.updateMatchesListPosition;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -32,9 +35,11 @@ import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Transform;
 import javafx.util.Duration;
+import org.controlsfx.control.Notifications;
 
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.DonatedOrgan.OrganState;
+import com.humanharvest.organz.Hospital;
 import com.humanharvest.organz.TransplantRecord;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.controller.MainController;
@@ -47,6 +52,8 @@ import com.humanharvest.organz.touch.MultitouchHandler;
 import com.humanharvest.organz.touch.OrganFocusArea;
 import com.humanharvest.organz.touch.PointUtils;
 import com.humanharvest.organz.utilities.DurationFormatter.DurationFormat;
+import com.humanharvest.organz.utilities.enums.Region;
+import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.utilities.view.PageNavigatorTouch;
@@ -59,7 +66,7 @@ public class OrganWithRecipients {
     private static final int ORGAN_SIZE = 70;
 
     private final Pane deceasedDonorPane;
-    private final DonatedOrgan organ;
+    private DonatedOrgan organ;
     private final Pane matchesPane;
     private final Pane canvas;
 
@@ -87,7 +94,10 @@ public class OrganWithRecipients {
 
         matchesPane = new Pane();
         MultitouchHandler.addPane(matchesPane);
-        ((FocusArea) matchesPane.getUserData()).setScalable(false);
+        FocusArea matchesPaneFocus = (FocusArea) matchesPane.getUserData();
+        matchesPaneFocus.setScalable(false);
+        matchesPaneFocus.setRotatable(false);
+        matchesPaneFocus.setTranslatable(false);
 
         enableHandlers();
 
@@ -109,6 +119,11 @@ public class OrganWithRecipients {
         updateDonorConnector(organ, deceasedToOrganConnector, organPane);
         updateConnectorText(durationText, organ, deceasedToOrganConnector);
         handleOrganPaneTransformed(organPane.getLocalToParentTransform());
+    }
+
+    public void refresh(DonatedOrgan organ) {
+        this.organ = organ;
+        refresh();
     }
 
     private void createOrganImage(MainController newMain) {
@@ -182,6 +197,10 @@ public class OrganWithRecipients {
         return organPane;
     }
 
+    public DonatedOrgan getOrgan() {
+        return organ;
+    }
+
     private void enableHandlers() {
         // Redraws lines when organs or donor pane is moved
 
@@ -240,13 +259,72 @@ public class OrganWithRecipients {
     public void handleOrganPaneTouchReleased() {
         Optional<PotentialRecipientCell> closestCell = recipientCells.stream()
                 .filter(cell -> organIntersectsCell(organPane, cell))
+                .filter(cell -> !cell.isEmpty())
                 .min(Comparator.comparing(cell -> PointUtils.distance(PointUtils.getCentreOfNode(cell),
                         PointUtils.getCentreOfNode(organPane))));
 
         if (closestCell.isPresent()) {
-            ReceiverOverviewController recipientOverview = closestCell.get().getRecipientOverview();
-//            System.out.println(recipientOverview.getRecipient().getFullName());
-            System.out.println("Do something");
+            TransplantRequest request = closestCell.get().getTransplantRequest();
+            scheduleTransplant(organ, request);
+        }
+    }
+    
+    private void scheduleTransplant(DonatedOrgan organ, TransplantRequest request) {
+        Set<Hospital> hospitals = State.getConfigManager().getHospitals();
+        
+        Hospital nearestHospital;
+        if (request.getClient().getHospital() != null) {
+            // Recipient has a hospital
+            nearestHospital = request.getClient().getHospital()
+                    .getNearestWithTransplantProgram(organ.getOrganType(), hospitals);
+        } else {
+            try {
+                // Recipient has no hospital, but has a region
+                final Region region = Region.fromString(request.getClient().getRegion());
+                nearestHospital = hospitals.stream()
+                        .filter(hospital -> hospital.getTransplantPrograms().contains(organ.getOrganType()))
+                        .min(Comparator.comparing(hospital -> hospital.calculateDistanceTo(region)))
+                        .orElse(null);
+            } catch (IllegalArgumentException exc) {
+                // Neither hospital nor region, so get nearest to the organ's donor
+                Hospital organHospital = organ.getDonor().getHospital();
+                if (organHospital == null) {
+                    nearestHospital = hospitals.stream()
+                            .filter(hospital -> hospital.getTransplantPrograms().contains(organ.getOrganType()))
+                            .findAny().orElse(null);
+                } else {
+                    nearestHospital = organ.getDonor().getHospital()
+                            .getNearestWithTransplantProgram(organ.getOrganType(), hospitals);
+                }
+            }
+        }
+
+        if (nearestHospital == null) {
+            Notifications.create()
+                    .title("No Valid Hospital")
+                    .text(String.format("There is no hospital that can transplant %s.",
+                            organ.getOrganType().toString()))
+                    .showError();
+        } else {
+            final LocalDate transplantDate = LocalDateTime.now()
+                    .plus(nearestHospital.calculateTimeTo(organ.getDonor().getHospital()))
+                    .toLocalDate();
+            try {
+                State.getClientResolver().scheduleTransplantProcedure(organ, request, nearestHospital, transplantDate);
+                Notifications.create()
+                        .title("Scheduled Transplant")
+                        .text(String.format("A transplant for %s from %s to %s has been scheduled on %s.",
+                                request.getRequestedOrgan(), organ.getDonor().getFullName(),
+                                request.getClient().getFullName(), transplantDate))
+                        .showInformation();
+                this.organ = State.getClientManager().getMatchingOrganTransplantRecord(organ).getOrgan();
+                refresh();
+            } catch (ServerRestException exc) {
+                Notifications.create()
+                        .title("Server Error")
+                        .text("An error occurred when trying to schedule the transplant.")
+                        .showError();
+            }
         }
     }
 
@@ -325,6 +403,7 @@ public class OrganWithRecipients {
 
     private Pane createMatchPane(TransplantRecord record) {
         Pane pane = new Pane();
+        pane.getStylesheets().add(getClass().getResource("/css/matched-recipient.css").toExternalForm());
 
         if (record != null) {
             try {

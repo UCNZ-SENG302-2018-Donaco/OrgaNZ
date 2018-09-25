@@ -2,6 +2,7 @@ package com.humanharvest.organz.controller.spiderweb;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 import javafx.fxml.FXML;
@@ -16,6 +17,9 @@ import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
 import javafx.scene.transform.Translate;
 import javafx.stage.Screen;
+import javafx.stage.Stage;
+
+import org.controlsfx.control.Notifications;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
@@ -28,6 +32,7 @@ import com.humanharvest.organz.touch.PhysicsHandler;
 import com.humanharvest.organz.touch.PointUtils;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
+import com.humanharvest.organz.utilities.view.WindowContext;
 
 /**
  * The Spider web controller which handles everything to do with displaying panes in the spider web stage.
@@ -62,6 +67,14 @@ public class SpiderWebController extends SubController {
             mainController.closeWindow();
             previouslyOpenWindows.add(mainController);
         }
+
+        // Need to do this to be able to refresh the spider web
+        mainController = new MainController();
+        mainController.setStage(new Stage());
+        mainController.setPane(new Pane());
+        mainController.setSubController(this);
+        mainController.setWindowContext(WindowContext.defaultContext());
+        State.addMainController(mainController);
 
         // Setup spider web physics
         MultitouchHandler.setPhysicsHandler(new SpiderPhysicsHandler(MultitouchHandler.getRootPane()));
@@ -162,5 +175,25 @@ public class SpiderWebController extends SubController {
 
         // Open all the previously open windows again
         previouslyOpenWindows.forEach(MainController::showWindow);
+    }
+
+    @Override
+    public void refresh() {
+
+        client.setDonatedOrgans(State.getClientResolver().getDonatedOrgans(client));
+        for (OrganWithRecipients page : organWithRecipientsList) {
+            Optional<DonatedOrgan> newOrgan = client.getDonatedOrgans().stream()
+                    .filter(organ -> organ.getOrganType() == page.getOrgan().getOrganType())
+                    .findFirst();
+            if (!newOrgan.isPresent()) {
+                Notifications.create()
+                        .title("Server Error")
+                        .text("An error occurred when trying to schedule the transplant.")
+                        .showError();
+            } else {
+                page.refresh(newOrgan.get());
+            }
+        }
+        organWithRecipientsList.forEach(OrganWithRecipients::refresh);
     }
 }

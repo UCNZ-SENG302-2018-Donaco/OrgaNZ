@@ -199,4 +199,8 @@ public class ReceiverOverviewController extends ViewBaseController {
             this.priority.setText("#" + Integer.toString(priority));
         }
     }
+
+    public TransplantRequest getRequest() {
+        return request;
+    }
 }
