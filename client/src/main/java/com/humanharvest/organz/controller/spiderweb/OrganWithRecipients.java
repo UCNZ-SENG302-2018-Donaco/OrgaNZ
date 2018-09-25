@@ -87,6 +87,7 @@ public class OrganWithRecipients {
 
         matchesPane = new Pane();
         MultitouchHandler.addPane(matchesPane);
+        ((FocusArea) matchesPane.getUserData()).setScalable(false);
 
         enableHandlers();
 
@@ -340,7 +341,6 @@ public class OrganWithRecipients {
                 Node node = loader.load();
                 ReceiverOverviewController controller = loader.getController();
                 controller.setup(record, organ.getDonor());
-                controller.setPriority(-1);
                 pane.getChildren().add(node);
             } catch (IOException e) {
                 LOGGER.log(Level.SEVERE, e.getMessage(), e);

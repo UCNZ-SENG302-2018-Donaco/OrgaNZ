@@ -89,10 +89,13 @@ public class LineFormatters {
     }
 
     public static void updateMatchesListPosition(Pane matchesPane, Transform newTransform, int organDiameter) {
+        if (matchesPane == null) {
+            return;
+        }
         FocusArea focusArea = (FocusArea) matchesPane.getUserData();
 
         double scale = 0.5;
-        double xDelta = (organDiameter / 2) - scale * matchesPane.getBoundsInLocal().getWidth() / 2;
+        double xDelta = (organDiameter / 2.0) - scale * matchesPane.getBoundsInLocal().getWidth() / 2;
 
         // If not currently touching the matches pane
         if (focusArea != null && MultitouchHandler.findPaneTouches(matchesPane).isEmpty()) {
