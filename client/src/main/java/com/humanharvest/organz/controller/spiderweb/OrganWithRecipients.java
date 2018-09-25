@@ -116,7 +116,6 @@ public class OrganWithRecipients {
 
     public void refresh() {
         drawMatchesPane();
-        setDonorConnectorStart(deceasedDonorPane.getBoundsInParent());
         updateDonorConnector(organ, deceasedToOrganConnector, organPane);
         updateConnectorText(durationText, organ, deceasedToOrganConnector);
         handleOrganPaneTransformed(organPane.getLocalToParentTransform());
@@ -211,10 +210,11 @@ public class OrganWithRecipients {
         matchesPane.localToParentTransformProperty().addListener(
                 (__, ___, ____) -> handlePotentialMatchesTransformed());
 
+        organPane.setOnMouseClicked(this::handleOrganPaneClick);
+
+        // This listener is only used to handle the initial reposition
         matchesPane.boundsInLocalProperty().addListener(
                 (__, ___, newValue) -> handleOrganPaneTransformed(organPane.getLocalToParentTransform()));
-
-        organPane.setOnMouseClicked(this::handleOrganPaneClick);
     }
 
     public void handleOrganPaneClick(MouseEvent event) {
