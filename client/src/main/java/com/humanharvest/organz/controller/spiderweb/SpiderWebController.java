@@ -19,7 +19,6 @@ import javafx.stage.Screen;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
-import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.state.State;
@@ -121,9 +120,7 @@ public class SpiderWebController extends SubController {
     }
 
     private void addOrganNode(DonatedOrgan organ, double xPos, double yPos, double rotation) {
-        List<TransplantRequest> potentialMatches = State.getClientManager().getMatchingOrganTransplants(organ);
-
-        OrganWithRecipients organWithRecipients = new OrganWithRecipients(organ, potentialMatches, deceasedDonorPane,
+        OrganWithRecipients organWithRecipients = new OrganWithRecipients(organ, deceasedDonorPane,
                 canvas);
 
         setPositionUsingTransform(organWithRecipients.getOrganPane(), xPos, yPos, rotation, 1);

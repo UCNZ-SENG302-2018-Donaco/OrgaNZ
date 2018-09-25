@@ -9,6 +9,7 @@ import java.util.Set;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.HistoryItem;
+import com.humanharvest.organz.TransplantRecord;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.utilities.enums.ClientSortOptionsEnum;
 import com.humanharvest.organz.utilities.enums.ClientType;
@@ -100,6 +101,8 @@ public interface ClientManager {
     List<Client> getOrganMatches(DonatedOrgan donatedOrgan);
 
     List<TransplantRequest> getMatchingOrganTransplants(DonatedOrgan donatedOrgan);
+
+    TransplantRecord getMatchingOrganTransplantRecord(DonatedOrgan donatedOrgan);
 
     List<HistoryItem> getAllHistoryItems();
 }
