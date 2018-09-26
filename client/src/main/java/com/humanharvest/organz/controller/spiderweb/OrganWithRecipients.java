@@ -307,16 +307,20 @@ public class OrganWithRecipients {
     }
 
     private void tryScheduleTransplant() {
-        Optional<PotentialRecipientCell> closestCell = recipientCells.stream()
-                .filter(cell -> organIntersectsCell(organPane, cell))
-                .filter(cell -> !cell.isEmpty())
-                .min(Comparator.comparing(cell -> PointUtils.distance(PointUtils.getCentreOfNode(cell),
-                        PointUtils.getCentreOfNode(organPane))));
+        Optional<PotentialRecipientCell> closestCell = getNearestCell();
 
         if (closestCell.isPresent()) {
             TransplantRequest request = closestCell.get().getTransplantRequest();
             scheduleTransplant(organ, request);
         }
+    }
+
+    private Optional<PotentialRecipientCell> getNearestCell() {
+        return recipientCells.stream()
+                .filter(cell -> organIntersectsCell(organPane, cell))
+                .filter(cell -> !cell.isEmpty())
+                .min(Comparator.comparing(cell -> PointUtils.distance(PointUtils.getCentreOfNode(cell),
+                        PointUtils.getCentreOfNode(organPane))));
     }
 
     private void scheduleTransplant(DonatedOrgan organ, TransplantRequest request) {
@@ -374,14 +378,16 @@ public class OrganWithRecipients {
 
         updateMatchesListPosition(matchesPane, newValue, ORGAN_SIZE);
 
+        // Remove the cell effects if any were previously applied
         for (Node cell : recipientCells) {
-            if (organIntersectsCell(organPane, cell)) {
-                DropShadow dropShadow = new DropShadow(15, Color.PALEGOLDENROD);
-                dropShadow.setInput(new Glow(0.5));
-                cell.setEffect(dropShadow);
-            } else {
-                cell.setEffect(null);
-            }
+            cell.setEffect(null);
+        }
+        // Set the
+        Optional<PotentialRecipientCell> closestCell = getNearestCell();
+        if (closestCell.isPresent()) {
+            DropShadow dropShadow = new DropShadow(15, Color.PALEGOLDENROD);
+            dropShadow.setInput(new Glow(0.5));
+            closestCell.get().setEffect(dropShadow);
         }
 
         setRecipientConnectorStart(bounds);
