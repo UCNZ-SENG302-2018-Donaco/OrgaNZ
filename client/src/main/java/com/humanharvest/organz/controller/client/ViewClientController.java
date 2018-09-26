@@ -174,10 +174,10 @@ public class ViewClientController extends ViewBaseController {
         gender.setItems(FXCollections.observableArrayList(Gender.values()));
         genderIdentity.setItems(FXCollections.observableArrayList(Gender.values()));
         btype.setItems(FXCollections.observableArrayList(BloodType.values()));
-//        Set<Hospital> hospitalSet = State.getConfigManager().getHospitals();
-//        ObservableList<Hospital> hospitals = FXCollections.observableArrayList(new ArrayList<>(hospitalSet));
-//        hospital.setItems(hospitals);
-//        hospital.getItems().sort(Comparator.comparing(Hospital::getName));
+        Set<Hospital> hospitalSet = State.getConfigManager().getHospitals();
+        ObservableList<Hospital> hospitals = FXCollections.observableArrayList(new ArrayList<>(hospitalSet));
+        hospital.setItems(hospitals);
+        hospital.getItems().sort(Comparator.comparing(Hospital::getName));
         regionCB.setItems(FXCollections.observableArrayList(Region.values()));
         deathRegionCB.setItems(FXCollections.observableArrayList(Region.values()));
         setEnabledCountries();
@@ -636,9 +636,7 @@ public class ViewClientController extends ViewBaseController {
         PageNavigator.showAlert(AlertType.CONFIRMATION,
                 "Are you sure you want to mark this client as dead?",
                 "This will cancel all waiting transplant requests for this client.", mainController.getStage(),
-                isOk -> {
-                    updateDeathFields(modifyClientObject);
-                });
+                isOk -> updateDeathFields(modifyClientObject));
     }
 
     /**
@@ -734,17 +732,4 @@ public class ViewClientController extends ViewBaseController {
         ageLabel.setText(String.valueOf(viewedClient.getAge()));
     }
 
-    @FXML
-    private void openRecDetForLiver() {
-
-        MainController newMain = PageNavigator.openNewWindow(200, 400);
-        if (newMain != null) {
-            newMain.setWindowContext(new WindowContext.WindowContextBuilder()
-                    .setAsClinicianViewClientWindow()
-                    .viewClient(viewedClient)
-                    .build());
-            PageNavigator.loadPage(Page.RECEIVER_OVERVIEW, newMain);
-        }
-
-    }
 }

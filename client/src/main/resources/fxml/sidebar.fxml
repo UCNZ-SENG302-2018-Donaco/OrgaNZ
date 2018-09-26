@@ -8,7 +8,7 @@
 
 <VBox prefHeight="600.0" prefWidth="250.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.SidebarController">
   <children>
-    <VBox prefHeight="911.0" prefWidth="221.0" VBox.vgrow="ALWAYS">
+    <VBox maxHeight="-Infinity" prefHeight="580.0" prefWidth="221.0" VBox.vgrow="ALWAYS">
 
       <children>
         <Button fx:id="viewClientButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToViewClient" style="-fx-alignment: CENTER_LEFT;" text="Personal Details" VBox.vgrow="ALWAYS">

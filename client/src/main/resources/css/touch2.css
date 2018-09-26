@@ -73,11 +73,11 @@ Colors:
     -fx-fill: #282828;
 }
 
-.jfx-drawer .button {
-  -fx-background-color: #9AA4B3;
-}
+/*.jfx-drawer .button {*/
+  /*-fx-background-color: #9AA4B3;*/
+/*}*/
 
-.jfx-drawer {
-  -fx-padding: 0px 0px 0px 10px;
-}
+/*.jfx-drawer {*/
+  /*-fx-padding: 0px 0px 0px 10px;*/
+/*}*/
 
