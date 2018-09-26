@@ -70,6 +70,7 @@ public class OrganWithRecipients {
     private DonatedOrgan organ;
     private final Pane matchesPane;
     private final Pane canvas;
+    private Timeline refresher;
 
     private OrganImageController organImageController;
     private Pane organPane;
@@ -103,29 +104,40 @@ public class OrganWithRecipients {
 
         enableHandlers();
 
-        // Attach timer to update connector each second (for time until expiration)
-        Timeline clock = new Timeline(new KeyFrame(
-                Duration.seconds(1),
-                event -> {
-                    updateDonorConnector(organ, deceasedToOrganConnector, organPane);
-                    updateConnectorText(durationText, organ, deceasedToOrganConnector);
-                }));
-        clock.setCycleCount(Animation.INDEFINITE);
-        clock.play();
+
 
         refresh();
     }
 
     public void refresh() {
         drawMatchesPane();
-        updateDonorConnector(organ, deceasedToOrganConnector, organPane);
-        updateConnectorText(durationText, organ, deceasedToOrganConnector);
-        handleOrganPaneTransformed(organPane.getLocalToParentTransform());
+        createRefresher();
     }
 
     public void refresh(DonatedOrgan organ) {
         this.organ = organ;
         refresh();
+    }
+
+    private void createRefresher() {
+        updateDonorConnector(organ, deceasedToOrganConnector, organPane);
+        updateConnectorText(durationText, organ, deceasedToOrganConnector);
+        // Attach timer to update connector each second (for time until expiration)
+        if (organ.getState() == OrganState.TRANSPLANT_COMPLETED) {
+            if (refresher != null) {
+                refresher.stop();
+            }
+            refresher = null;
+        } else {
+            refresher = new Timeline(new KeyFrame(
+                    Duration.seconds(1),
+                    event -> {
+                        updateDonorConnector(organ, deceasedToOrganConnector, organPane);
+                        updateConnectorText(durationText, organ, deceasedToOrganConnector);
+                    }));
+            refresher.setCycleCount(Animation.INDEFINITE);
+            refresher.play();
+        }
     }
 
     private void createOrganImage(MainController newMain) {
@@ -273,7 +285,7 @@ public class OrganWithRecipients {
     }
 
     private void tryCancelTransplant() {
-        if (PointUtils.distance(PointUtils.getCentreOfNode(organPane), PointUtils.getCentreOfNode(matchesPane)) > 100) {
+        if (PointUtils.distance(PointUtils.getCentreOfNode(organPane), PointUtils.getCentreOfNode(matchesPane)) > 400) {
             try {
                 State.getClientResolver().deleteProcedureRecord(transplantRecord.getClient(), transplantRecord);
                 this.organ = State.getClientManager().getMatchingOrganTransplantRecord(organ).getOrgan();
@@ -340,14 +352,9 @@ public class OrganWithRecipients {
             final LocalDate transplantDate = LocalDateTime.now()
                     .plus(nearestHospital.calculateTimeTo(organ.getDonor().getHospital()))
                     .toLocalDate();
+            //TODO: This fails if the Donor has no hospital
             try {
                 State.getClientResolver().scheduleTransplantProcedure(organ, request, nearestHospital, transplantDate);
-                Notifications.create()
-                        .title("Scheduled Transplant")
-                        .text(String.format("A transplant for %s from %s to %s has been scheduled on %s.",
-                                request.getRequestedOrgan(), organ.getDonor().getFullName(),
-                                request.getClient().getFullName(), transplantDate))
-                        .showInformation();
                 this.organ = State.getClientManager().getMatchingOrganTransplantRecord(organ).getOrgan();
                 refresh();
             } catch (ServerRestException exc) {
