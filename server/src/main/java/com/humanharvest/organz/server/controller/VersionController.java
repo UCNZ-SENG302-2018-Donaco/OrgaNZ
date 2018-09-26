@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
 @RestController
 public class VersionController {
@@ -33,5 +34,11 @@ public class VersionController {
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+
+    @GetMapping("/")
+    public ModelAndView method() {
+        return new ModelAndView("redirect:https://eng-git.canterbury.ac.nz/seng302-2018/team-700/blob/development/doc/user_manual.md#organz-user-manual");
+
     }
 }
