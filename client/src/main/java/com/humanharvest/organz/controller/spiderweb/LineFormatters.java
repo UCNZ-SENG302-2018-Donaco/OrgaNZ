@@ -61,6 +61,11 @@ public class LineFormatters {
     }
 
     public static void updateConnectorText(Text durationText, DonatedOrgan donatedOrgan, Line line) {
+        if (donatedOrgan.getState() == OrganState.TRANSPLANT_COMPLETED) {
+            durationText.setVisible(false);
+            return;
+        }
+
         // Set the text
         durationText.setText(ExpiryBarUtils.getDurationString(donatedOrgan, durationFormat));
 
