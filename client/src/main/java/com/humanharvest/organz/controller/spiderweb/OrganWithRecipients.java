@@ -111,8 +111,6 @@ public class OrganWithRecipients {
 
     public void refresh() {
         drawMatchesPane();
-        updateDonorConnector(organ, deceasedToOrganConnector, organPane);
-        updateConnectorText(durationText, organ, deceasedToOrganConnector);
         createRefresher();
     }
 
@@ -122,8 +120,10 @@ public class OrganWithRecipients {
     }
 
     private void createRefresher() {
+        updateDonorConnector(organ, deceasedToOrganConnector, organPane);
+        updateConnectorText(durationText, organ, deceasedToOrganConnector);
         // Attach timer to update connector each second (for time until expiration)
-        if (organ.getState() == OrganState.OVERRIDDEN || organ.getState() == OrganState.TRANSPLANT_COMPLETED) {
+        if (organ.getState() == OrganState.TRANSPLANT_COMPLETED) {
             if (refresher != null) {
                 refresher.stop();
             }
