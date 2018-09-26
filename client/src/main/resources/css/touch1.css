@@ -64,3 +64,10 @@
   -fx-effect: dropshadow(gaussian, #1d1d1d, 4, 0, 3, 3);
 }
 
+.menu-bar-clinician {
+  -fx-background-color: rgb(137, 186, 255);
+}
+
+.menu-bar-view-client {
+  -fx-background-color: #D9B3FF;
+}

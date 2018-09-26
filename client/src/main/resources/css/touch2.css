@@ -192,3 +192,11 @@ Colors:
     -fx-background-color: linear-gradient(#6a7069 0%, #484744 100%);
     -fx-text-fill: #ffffff;
 }
+
+.menu-bar-clinician {
+    -fx-background-color: linear-gradient(rgba(124,37,39,0.81) 0%, rgb(89,30,32) 100%);
+}
+
+.menu-bar-view-client {
+    -fx-background-color: linear-gradient(rgba(47,60,162,0.81) 0%, rgb(38,49,127) 100%);
+}
