@@ -51,6 +51,7 @@ import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.state.State.UiType;
 import com.humanharvest.organz.utilities.enums.BloodType;
 import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Gender;
@@ -83,7 +84,7 @@ public class ViewClientController extends ViewBaseController {
     private Client viewedClient;
 
     @FXML
-    private Pane sidebarPane, menuBarPane, deathDetailsPane;
+    private Pane menuBarPane, sidebarPane, deathDetailsPane;
     @FXML
     private Label creationDate, lastModified, legalNameLabel, dobLabel, heightLabel, weightLabel, ageDisplayLabel,
             ageLabel, bmiLabel, fullName, dodLabel, timeOfDeathLabel, countryOfDeathLabel, regionOfDeathLabel,
@@ -214,12 +215,11 @@ public class ViewClientController extends ViewBaseController {
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
+        mainController.loadNavigation(menuBarPane);
         if (session.getLoggedInUserType() == Session.UserType.CLIENT) {
             viewedClient = session.getLoggedInClient();
-            mainController.loadSidebar(sidebarPane);
         } else if (windowContext.isClinViewClientWindow()) {
             viewedClient = windowContext.getViewClient();
-            mainController.loadMenuBar(menuBarPane);
         }
         refresh();
     }
@@ -636,9 +636,7 @@ public class ViewClientController extends ViewBaseController {
         PageNavigator.showAlert(AlertType.CONFIRMATION,
                 "Are you sure you want to mark this client as dead?",
                 "This will cancel all waiting transplant requests for this client.", mainController.getStage(),
-                isOk -> {
-                    updateDeathFields(modifyClientObject);
-                });
+                isOk -> updateDeathFields(modifyClientObject));
     }
 
     /**
@@ -734,17 +732,4 @@ public class ViewClientController extends ViewBaseController {
         ageLabel.setText(String.valueOf(viewedClient.getAge()));
     }
 
-    @FXML
-    private void openRecDetForLiver() {
-
-        MainController newMain = PageNavigator.openNewWindow(200, 400);
-        if (newMain != null) {
-            newMain.setWindowContext(new WindowContext.WindowContextBuilder()
-                    .setAsClinicianViewClientWindow()
-                    .viewClient(viewedClient)
-                    .build());
-            PageNavigator.loadPage(Page.RECEIVER_OVERVIEW, newMain);
-        }
-
-    }
 }
