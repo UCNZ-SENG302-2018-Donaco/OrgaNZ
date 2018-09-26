@@ -162,7 +162,7 @@ public class AppUI extends Application {
             // the skins required for multi touch
             Application.setUserAgentStylesheet("MODENA");
             StyleManager.getInstance().addUserAgentStylesheet("/css/multifocus.css");
-            StyleManager.getInstance().addUserAgentStylesheet("/css/touch1.css");
+            StyleManager.getInstance().addUserAgentStylesheet("/css/touch2.css");
         } else {
             State.setUiType(State.UiType.STANDARD);
             PageNavigator.setPageNavigator(new PageNavigatorStandard());

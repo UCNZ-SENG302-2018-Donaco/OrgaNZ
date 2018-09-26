@@ -60,14 +60,14 @@ public class TouchActionsBarController extends SubController {
         if (State.getSession().getLoggedInUserType() == UserType.CLIENT) {
             homeButton.setVisible(false);
             duplicateButton.setVisible(false);
-            entireMenubarPane.setStyle("-fx-background-color: rgb(137, 186, 255)");
+            entireMenubarPane.setStyle("-fx-background-color: linear-gradient(rgba(124,37,39,0.81) 0%, rgb(89,30,32) 100%);");
 
         } else {
-            entireMenubarPane.setStyle("-fx-background-color: rgb(137, 186, 255)");
+            entireMenubarPane.setStyle("-fx-background-color: linear-gradient(rgba(124,37,39,0.81) 0%, rgb(89,30,32) 100%);");
         }
 
         if (windowContext.isClinViewClientWindow()) {
-            entireMenubarPane.setStyle("-fx-background-color: #D9B3FF");
+            entireMenubarPane.setStyle("-fx-background-color: linear-gradient(rgba(47,60,162,0.81) 0%, rgb(38,49,127) 100%);");
         }
         hamburger.addEventHandler(MouseEvent.MOUSE_CLICKED, (e) -> toggleSidebar(controller.getDrawer()));
         refresh();
