@@ -299,7 +299,7 @@ public class OrganWithRecipients {
             organ.cancelManualOverride();
             donorOverviewController.fetchOrgans();
 
-            drawMatchesPane(false);
+            drawMatchesPane(true);
         }
 
         organImageController.matchCountIsVisible(false);
