@@ -22,12 +22,12 @@ public class FormattedLocalDateCell<S> extends TableCell<S, LocalDate> {
     }
 
     @Override
-    protected void updateItem(LocalDate item, boolean empty) {
-        super.updateItem(item, empty);
-        if (empty) {
+    protected void updateItem(LocalDate date, boolean empty) {
+        super.updateItem(date, empty);
+        if (empty || date == null) {
             setText(null);
         } else {
-            setText(item.format(dateTimeFormat));
+            setText(date.format(dateTimeFormat));
         }
     }
 
