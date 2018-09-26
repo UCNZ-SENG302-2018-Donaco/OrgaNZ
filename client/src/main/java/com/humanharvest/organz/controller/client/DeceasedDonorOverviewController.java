@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Collection;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -92,60 +93,83 @@ public class DeceasedDonorOverviewController extends SubController {
             }
         });
 
-        displayData();
+        updateClientDetails();
         updateImage();
     }
 
     @Override
     public void refresh() {
-        updateClientData();
+        fetchClient();
+        fetchOrgans();
         updateImage();
     }
 
-    private void displayData() {
-        nameLabel.setText(deceasedDonor.getFullName());
-        timeOfDeathLabel.setText(formatTimeOfDeath(deceasedDonor.getDatetimeOfDeath()));
-        hospitalLabel.setText(deceasedDonor.getHospital() == null ? "Location Unknown" :
-                deceasedDonor.getHospital().getName());
-        if (deceasedDonor.getDonatedOrgans() == null) {
-            numOrgansLabel.setText("Number of donated organs unknown.");
-        } else {
-            long numAvailableOrgans = deceasedDonor.getDonatedOrgans().stream()
-                    .filter(DonatedOrgan::isAvailable)
-                    .count();
-            numOrgansLabel.setText("Number of available organs: " + numAvailableOrgans);
-        }
-    }
-
-    private void updateClientData() {
-        Task<Optional<Client>> task = new Task<Optional<Client>>() {
+    private void fetchClient() {
+        Task<Optional<Client>> clientTask = new Task<Optional<Client>>() {
             @Override
             protected Optional<Client> call() throws ServerRestException {
                 return com.humanharvest.organz.state.State.getClientManager().getClientByID(deceasedDonor.getUid());
             }
         };
 
-        task.setOnSucceeded(event -> {
-            Optional<Client> optionalClient = task.getValue();
+        clientTask.setOnSucceeded(event -> {
+            Optional<Client> optionalClient = clientTask.getValue();
             if (optionalClient.isPresent()) {
                 deceasedDonor = optionalClient.get();
-                displayData();
+                updateClientDetails();
             } else {
-                Notifications.create()
-                        .title("Server Error")
-                        .text("Could not refresh the information for the donor.")
-                        .showError();
+                handleError();
             }
         });
 
-        task.setOnFailed(event -> {
-            Notifications.create()
-                    .title("Server Error")
-                    .text("Could not refresh the information for the donor.")
-                    .showError();
-        });
+        clientTask.setOnFailed(err -> handleError());
 
-        new Thread(task).start();
+        new Thread(clientTask).start();
+    }
+
+    private void updateClientDetails() {
+        nameLabel.setText(deceasedDonor.getFullName());
+
+        timeOfDeathLabel.setText(formatTimeOfDeath(deceasedDonor.getDatetimeOfDeath()));
+
+        if (deceasedDonor.getHospital() == null) {
+            hospitalLabel.setText("Location Unknown");
+        } else {
+            hospitalLabel.setText(deceasedDonor.getHospital().getName());
+        }
+    }
+
+    private void fetchOrgans() {
+        Task<Collection<DonatedOrgan>> organsTask = new Task<Collection<DonatedOrgan>>() {
+            @Override
+            protected Collection<DonatedOrgan> call() throws ServerRestException {
+                return com.humanharvest.organz.state.State.getClientResolver().getDonatedOrgans(deceasedDonor);
+            }
+        };
+
+        organsTask.setOnSucceeded(event -> updateOrgans(organsTask.getValue()));
+
+        organsTask.setOnFailed(err -> handleError());
+
+        new Thread(organsTask).start();
+    }
+
+    private void updateOrgans(Collection<DonatedOrgan> donatedOrgans) {
+        if (donatedOrgans == null) {
+            numOrgansLabel.setText("Number of donated organs unknown.");
+        } else {
+            long numAvailableOrgans = donatedOrgans.stream()
+                    .filter(DonatedOrgan::isAvailable)
+                    .count();
+            numOrgansLabel.setText("Number of available organs: " + numAvailableOrgans);
+        }
+    }
+
+    private void handleError() {
+        Notifications.create()
+                .title("Server Error")
+                .text("Could not refresh the information for the donor.")
+                .showError();
     }
 
     private void updateImage() {
