@@ -81,7 +81,7 @@ public class ClientManagerRest implements ClientManager {
                 .queryParam("maximumAge", maximumAge)
                 .queryParam("regions", String.join(",", regions))
                 .queryParam("birthGenders", EnumSetToString.convert(birthGenders))
-                .queryParam("clientType", clientType)
+                .queryParam("clientType", clientType.name())
                 .queryParam("donating", EnumSetToString.convert(donating))
                 .queryParam("requesting", EnumSetToString.convert(requesting))
                 .queryParam("sortOption", sortOption)
@@ -120,6 +120,16 @@ public class ClientManagerRest implements ClientManager {
 
     @Override
     public void applyChangesTo(Client client) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void applyChangesTo(DonatedOrgan donatedOrgan) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void applyChangesTo(TransplantRequest request) {
         throw new UnsupportedOperationException();
     }
 
@@ -271,6 +281,25 @@ public class ClientManagerRest implements ClientManager {
 
         ResponseEntity<List<Client>> responseEntity = State.getRestTemplate().exchange(State.getBaseUri() +
                 "/matchOrganToRecipients/" + donatedOrgan.getId(), HttpMethod.GET, entity, new
+                ParameterizedTypeReference<List<Client>>() {
+                });
+
+        return responseEntity.getBody();
+    }
+
+    /**
+     * Uses endpoint to get list of viable deceased donors
+     * @return list of viable deceased donors
+     */
+    @Override
+    public List<Client> getViableDeceasedDonors() {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.set("X-Auth-Token", State.getToken());
+
+        HttpEntity<String> entity = new HttpEntity<>(httpHeaders);
+
+        ResponseEntity<List<Client>> responseEntity = State.getRestTemplate().exchange(State.getBaseUri() +
+                "/viableDeceasedDonors", HttpMethod.GET, entity, new
                 ParameterizedTypeReference<List<Client>>() {
                 });
 

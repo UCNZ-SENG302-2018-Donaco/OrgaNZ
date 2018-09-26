@@ -30,6 +30,8 @@ import com.humanharvest.organz.utilities.enums.ClientType;
 import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
+import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
+import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
 import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.validators.client.ClientBornAndDiedDatesValidator;
 import com.humanharvest.organz.utilities.validators.client.CreateClientValidator;
@@ -318,6 +320,15 @@ public class ClientController {
 
     }
 
+    /**
+     * Gets the image that matches the given client based on their uid. If it does not match then the default photo will
+     * be sent. All images are transferred using byte arrays.
+     *
+     * @param uid the id of the client
+     * @param authToken id token
+     * @return a byte array of the image
+     * @throws InvalidRequestException Generic 400 exception if fields are malformed or inconsistent
+     */
     @GetMapping("clients/{uid}/image")
     public ResponseEntity<byte[]> getClientImage(
             @PathVariable int uid,
@@ -328,7 +339,6 @@ public class ClientController {
         File directory = new File(State.getImageDirectory());
         if (!directory.exists()) {
             throw new NotFoundException();
-
         }
 
         // Get the relevant client
@@ -355,6 +365,14 @@ public class ClientController {
         }
     }
 
+    /**
+     * Saves the given image under the uid.
+     *
+     * @param uid id of the client
+     * @param image the image to save
+     * @param authToken id token
+     * @return the status of success/failure of the image posting
+     */
     @PostMapping("clients/{uid}/image")
     public ResponseEntity<?> postClientImage(
             @PathVariable int uid,
@@ -364,7 +382,7 @@ public class ClientController {
         // Create the directory if it doesn't exist
         File directory = new File(State.getImageDirectory());
         if (!directory.exists()) {
-            directory.mkdir();
+            directory.mkdirs();
         }
 
         // Get the relevant client
@@ -389,6 +407,14 @@ public class ClientController {
         }
     }
 
+    /**
+     * Deletes an image that matches the client.
+     *
+     * @param uid id of the client
+     * @param authToken id tokenn
+     * @return the status on whether or not the image was successfully deleted
+     * @throws InvalidRequestException Generic 400 exception if fields are malformed or inconsistent
+     */
     @DeleteMapping("clients/{uid}/image")
     public ResponseEntity<?> deleteClientImage(
             @PathVariable int uid,
@@ -418,6 +444,38 @@ public class ClientController {
             LOGGER.log(Level.INFO, e.getMessage(), e);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Gets an image which matches the type of organ requested.
+     *
+     * @param organType type of organ
+     * @return a byte array of the organ which matches the organ type.
+     * @throws InvalidRequestException Generic 400 exception if fields are malformed or inconsisten
+     */
+    @GetMapping("organimage/{organType}")
+    public ResponseEntity<byte[]> getOrganImage(
+            @PathVariable Organ organType)
+            throws InvalidRequestException {
+
+        // Check if the directory exists. If not, then clearly the image doesn't
+        File directory = new File(State.getImageDirectory());
+        if (!directory.exists()) {
+            throw new NotFoundException();
+        }
+
+        // Get the organ image
+        try (InputStream in = new FileInputStream(State.getImageDirectory() + organType.toString() + ".png")) {
+            byte[] out = IOUtils.toByteArray(in);
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Content-Type", "image/png");
+            return new ResponseEntity<>(out, headers, HttpStatus.OK);
+        } catch (FileNotFoundException ex) {
+            throw new NotFoundException(ex);
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

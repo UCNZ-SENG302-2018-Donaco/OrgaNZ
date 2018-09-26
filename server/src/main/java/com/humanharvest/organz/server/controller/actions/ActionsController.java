@@ -1,7 +1,5 @@
 package com.humanharvest.organz.server.controller.actions;
 
-import java.util.EmptyStackException;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.humanharvest.organz.actions.ActionInvoker;
@@ -27,15 +25,14 @@ public class ActionsController {
         //Get the next Action to undo
         ActionInvoker actionInvoker = State.getActionInvoker(authToken);
 
-        String actionText;
-        try {
-            actionText = actionInvoker.nextUndo().getUnexecuteText();
-        } catch (EmptyStackException e) {
-            LOGGER.log(Level.INFO, e.getMessage(), e);
-            actionText = "No more actions to undo";
-        }
         boolean canUndo = actionInvoker.canUndo();
         boolean canRedo = actionInvoker.canRedo();
+        String actionText;
+        if (canUndo) {
+            actionText = actionInvoker.nextUndo().getUnexecuteText();
+        } else {
+            actionText = "No more actions to undo";
+        }
 
         ActionResponseView responseView = new ActionResponseView(actionText, canUndo, canRedo);
         return new ResponseEntity<>(responseView, HttpStatus.OK);
@@ -64,14 +61,13 @@ public class ActionsController {
         ActionInvoker actionInvoker = State.getActionInvoker(authToken);
 
         String actionText;
-        try {
-            actionText = actionInvoker.nextRedo().getExecuteText();
-        } catch (EmptyStackException e) {
-            LOGGER.log(Level.INFO, e.getMessage(), e);
-            actionText = "No more actions to redo";
-        }
         boolean canUndo = actionInvoker.canUndo();
         boolean canRedo = actionInvoker.canRedo();
+        if (canRedo) {
+            actionText = actionInvoker.nextRedo().getExecuteText();
+        } else {
+            actionText = "No more actions to redo";
+        }
 
         ActionResponseView responseView = new ActionResponseView(actionText, canUndo, canRedo);
         return new ResponseEntity<>(responseView, HttpStatus.OK);

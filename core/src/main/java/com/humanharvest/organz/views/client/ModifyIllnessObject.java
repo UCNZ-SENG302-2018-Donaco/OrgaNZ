@@ -15,7 +15,7 @@ public class ModifyIllnessObject extends ModifyBaseObject {
     private String illnessName;
     private LocalDate diagnosisDate;
     private LocalDate curedDate;
-    private boolean isChronic;
+    private Boolean isChronic;
 
     public String getIllnessName() {
         return illnessName;
@@ -44,25 +44,12 @@ public class ModifyIllnessObject extends ModifyBaseObject {
         this.curedDate = curedDate;
     }
 
-    public boolean isChronic() {
+    public Boolean getIsChronic() {
         return isChronic;
     }
 
-    public void setChronic(boolean chronic) {
+    public void setIsChronic(boolean chronic) {
         registerChange("isChronic");
         isChronic = chronic;
-    }
-
-    public String toString() {
-        if (curedDate == null && !isChronic) {
-            return String.format("%s Diagnosed on: %s", illnessName, diagnosisDate.format(dateFormat));
-        }
-        if (isChronic) {
-            return String.format("%s (Chronic Disease) Diagnosed on: %s", illnessName,
-                    diagnosisDate.format(dateFormat));
-        } else {
-            return String.format("%s Diagnosed on: %s, Cured on: %s)", illnessName,
-                    diagnosisDate.format(dateFormat), curedDate.format(dateFormat));
-        }
     }
 }

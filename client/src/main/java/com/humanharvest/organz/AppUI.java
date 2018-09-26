@@ -13,6 +13,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.controller.clinician.StaffLoginController;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.state.State.DataStorageType;
 import com.humanharvest.organz.touch.MultitouchHandler;
@@ -35,7 +36,7 @@ import org.tuiofx.internal.base.TuioFXCanvas;
 public class AppUI extends Application {
 
     static {
-        // Must be done here, since getting the property happends before the class is created
+        // Must be done here, since getting the property happens before the class is created
         if (System.getProperty("prism.maxvram") == null) {
             ReflectionUtils.setStaticField(PrismSettings.class, "maxVram", 2L * 1024 * 1024 * 1024); //2GB
         }
@@ -62,11 +63,31 @@ public class AppUI extends Application {
     private static void loadTouchMainPane() {
         MainController mainController = PageNavigator.openNewWindow();
         mainController.setWindowContext(WindowContext.defaultContext());
-        PageNavigator.loadPage(Page.LANDING, mainController);
+        PageNavigator.loadPage(Page.LOGIN_STAFF, mainController);
     }
 
     private static void addCss(Scene scene) {
         scene.getStylesheets().add(AppUI.class.getResource("/css/validation.css").toExternalForm());
+    }
+
+    /**
+     * Initialises the touch components, namely the MultitouchHandler and various panes.
+     */
+    private static void startTouch(Stage primaryStage) throws IOException {
+        Pane root = new TuioFXCanvas();
+        Scene scene = new Scene(root);
+
+        loadBackPane(root);
+        MultitouchHandler.initialise(root);
+
+        loadTouchMainPane();
+
+        primaryStage.setScene(scene);
+
+        primaryStage.setFullScreen(true);
+        primaryStage.setOnCloseRequest(event -> {
+            MultitouchHandler.stageClosing();
+        });
     }
 
     /**
@@ -78,7 +99,7 @@ public class AppUI extends Application {
      */
     @Override
     public void start(Stage primaryStage) throws IOException {
-        LoggerSetup.setup(Level.INFO);
+        LoggerSetup.setup("organz.log", Level.INFO);
         LoggerSetup.enableConsole(Level.WARNING);
 
         processArguments();
@@ -115,26 +136,13 @@ public class AppUI extends Application {
 
         primaryStage.setMinHeight(639);
         primaryStage.setMinWidth(1016);
-    }
 
-    /**
-     * Initialises the touch components, namely the MultitouchHandler and various panes.
-     */
-    private static void startTouch(Stage primaryStage) throws IOException {
-        Pane root = new TuioFXCanvas();
-        Scene scene = new Scene(root);
-
-        loadBackPane(root);
-        MultitouchHandler.initialise(root);
-
-        loadTouchMainPane();
-
-        primaryStage.setScene(scene);
-
-        primaryStage.setFullScreen(true);
-        primaryStage.setOnCloseRequest(event -> {
-            MultitouchHandler.stageClosing();
-        });
+        // Skips login page if arguments contains --login & --password
+        if (parameters.containsKey("login")) {
+            StaffLoginController.handleSignIn(parameters.get("login"),
+                    parameters.getOrDefault("password", ""),
+                    State.getMainControllers().get(0));
+        }
     }
 
     /**
@@ -154,7 +162,7 @@ public class AppUI extends Application {
             // the skins required for multi touch
             Application.setUserAgentStylesheet("MODENA");
             StyleManager.getInstance().addUserAgentStylesheet("/css/multifocus.css");
-            StyleManager.getInstance().addUserAgentStylesheet("/css/touch.css");
+            StyleManager.getInstance().addUserAgentStylesheet("/css/touch1.css");
         } else {
             State.setUiType(State.UiType.STANDARD);
             PageNavigator.setPageNavigator(new PageNavigatorStandard());

@@ -3,10 +3,13 @@ package com.humanharvest.organz;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.Objects;
 import java.util.Set;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -20,10 +23,19 @@ import javax.persistence.Table;
 import com.humanharvest.organz.utilities.enums.Organ;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 @Entity
 @Table
 @Access(AccessType.FIELD)
+@DiscriminatorColumn(name = "recordType")
+@DiscriminatorValue("base")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = TransplantRecord.class),
+        @JsonSubTypes.Type(value = ProcedureRecord.class)
+})
 public class ProcedureRecord {
 
     @Id
@@ -111,5 +123,39 @@ public class ProcedureRecord {
 
     public void addAffectedOrgan(Organ organ) {
         affectedOrgans.add(organ);
+    }
+
+    /**
+     * Returns true if the procedure has happened.
+     */
+    public boolean hasHappened() {
+        if (this instanceof TransplantRecord) {
+            TransplantRecord transplantRecord = (TransplantRecord) this;
+            return transplantRecord.isCompleted();
+        } else {
+            // normal procedure record - it is in the past if it happened today or before today
+            return date.isEqual(LocalDate.now()) || date.isBefore(LocalDate.now());
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof ProcedureRecord)) {
+            return false;
+        }
+        ProcedureRecord record = (ProcedureRecord) o;
+        return Objects.equals(id, record.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
+    public ProcedureRecord cloneWithoutId() {
+        return new ProcedureRecord(getSummary(), getDescription(), getDate());
     }
 }

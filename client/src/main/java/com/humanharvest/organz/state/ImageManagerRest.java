@@ -42,6 +42,11 @@ public class ImageManagerRest implements ImageManager {
         return responseEntity.getBody();
     }
 
+    /**
+     * Gets the default user image
+     *
+     * @return a byte array of the default image
+     */
     @Override
     public byte[] getDefaultImage() throws IOException {
         byte[] res;

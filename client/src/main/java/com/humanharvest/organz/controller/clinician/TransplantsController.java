@@ -15,7 +15,6 @@ import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Pagination;
-import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
@@ -31,6 +30,7 @@ import com.humanharvest.organz.Client;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
+import com.humanharvest.organz.controller.components.FormattedLocalDateTimeCell;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
@@ -50,7 +50,7 @@ public class TransplantsController extends SubController {
     private static final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("d MMM yyyy hh:mm a");
 
     @FXML
-    private HBox menuBarPane;
+    private Pane menuBarPane;
 
     @FXML
     private TableView<TransplantRequest> tableView;
@@ -65,7 +65,7 @@ public class TransplantsController extends SubController {
     private TableColumn<TransplantRequest, String> regionCol;
 
     @FXML
-    private TableColumn<TransplantRequest, LocalDateTime> dateCol;
+    private TableColumn<TransplantRequest, LocalDateTime> dateTimeCol;
 
     @FXML
     private Pagination pagination;
@@ -90,25 +90,6 @@ public class TransplantsController extends SubController {
      */
     public TransplantsController() {
         manager = State.getClientManager();
-    }
-
-    /**
-     * Formats a table cell that holds a {@link LocalDateTime} value to display that value in the date time format.
-     *
-     * @return The cell with the date time formatter set.
-     */
-    private static TableCell<TransplantRequest, LocalDateTime> formatDateTimeCell() {
-        return new TableCell<TransplantRequest, LocalDateTime>() {
-            @Override
-            protected void updateItem(LocalDateTime item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty) {
-                    setText(null);
-                } else {
-                    setText(item.format(dateTimeFormat));
-                }
-            }
-        };
     }
 
     /**
@@ -145,7 +126,7 @@ public class TransplantsController extends SubController {
     public void setup(MainController mainController) {
         super.setup(mainController);
         mainController.setTitle("Transplant requests");
-        mainController.loadMenuBar(menuBarPane);
+        mainController.loadNavigation(menuBarPane);
         refresh();
     }
 
@@ -208,10 +189,10 @@ public class TransplantsController extends SubController {
         organCol.setCellValueFactory(new PropertyValueFactory<>("requestedOrgan"));
         regionCol.setCellValueFactory(cellData -> new SimpleStringProperty(
                 cellData.getValue().getClient().getRegion()));
-        dateCol.setCellValueFactory(new PropertyValueFactory<>("requestDateTime"));
+        dateTimeCol.setCellValueFactory(new PropertyValueFactory<>("requestDateTime"));
 
         // Format all the datetime cells
-        dateCol.setCellFactory(cell -> formatDateTimeCell());
+        dateTimeCol.setCellFactory(cell -> new FormattedLocalDateTimeCell<>(dateTimeFormat));
 
         // Colour each row if it is a request for an organ that the client is also registered to donate.
         tableView.setRowFactory(row -> colourIfDonatedAndRequested());

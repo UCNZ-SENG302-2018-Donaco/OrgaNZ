@@ -15,8 +15,6 @@ public class DistanceCalculationTest {
     private double lat2 = -43.5336199;
     private double lon2 = 172.626228;
 
-
-
     @Test
     public void distanceBetweenTest() {
 

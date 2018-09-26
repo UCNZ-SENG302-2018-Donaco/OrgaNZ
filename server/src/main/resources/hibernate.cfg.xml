@@ -19,7 +19,7 @@
     <!-- Database Connection Settings -->
     <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
     <property name="hibernate.connection.url">
-      jdbc:mysql://mysql2.csse.canterbury.ac.nz/seng302-2018-team700-prod?characterEncoding=UTF-8
+      jdbc:mysql://mysql2.csse.canterbury.ac.nz/seng302-2018-team700-test?characterEncoding=UTF-8
     </property>
     <property name="hibernate.connection.username">seng302-team700</property>
     <property name="hibernate.connection.password">FormulaCadres2252</property>
@@ -42,6 +42,7 @@
     <mapping class="com.humanharvest.organz.MedicationRecord"/>
     <mapping class="com.humanharvest.organz.IllnessRecord"/>
     <mapping class="com.humanharvest.organz.ProcedureRecord"/>
+    <mapping class="com.humanharvest.organz.TransplantRecord"/>
     <mapping class="com.humanharvest.organz.DonatedOrgan"/>
     <mapping class="com.humanharvest.organz.Clinician"/>
     <mapping class="com.humanharvest.organz.Administrator"/>

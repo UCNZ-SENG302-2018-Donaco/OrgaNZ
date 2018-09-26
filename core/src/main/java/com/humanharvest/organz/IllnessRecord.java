@@ -33,7 +33,7 @@ public class IllnessRecord {
     private String illnessName;
     private LocalDate diagnosisDate;
     private LocalDate curedDate;
-    private boolean isChronic;
+    private Boolean isChronic;
 
     protected IllnessRecord() {
     }
@@ -46,7 +46,7 @@ public class IllnessRecord {
      * @param curedDate The date the illness was cured.
      * @param isChronic Whether the illness is chronic or not.
      */
-    public IllnessRecord(String illnessName, LocalDate diagnosisDate, LocalDate curedDate, boolean isChronic) {
+    public IllnessRecord(String illnessName, LocalDate diagnosisDate, LocalDate curedDate, Boolean isChronic) {
         this.illnessName = illnessName;
         this.diagnosisDate = diagnosisDate;
         this.curedDate = curedDate;
@@ -60,7 +60,7 @@ public class IllnessRecord {
      * @param diagnosisDate The date the illness was diagnosed for the client.
      * @param isChronic Whether the illness is chronic or not.
      */
-    public IllnessRecord(String illnessName, LocalDate diagnosisDate, boolean isChronic) {
+    public IllnessRecord(String illnessName, LocalDate diagnosisDate, Boolean isChronic) {
         this.illnessName = illnessName;
         this.diagnosisDate = diagnosisDate;
         this.curedDate = null;
@@ -81,7 +81,6 @@ public class IllnessRecord {
 
     /**
      * This method should be called only when this record is added to/removed from a client's collection.
-     * Therefore it is package-private so it may only be called from Client.
      *
      * @param client The client to set this record as belonging to.
      */
@@ -109,11 +108,11 @@ public class IllnessRecord {
         this.curedDate = curedDate;
     }
 
-    public boolean isChronic() {
+    public Boolean getIsChronic() {
         return isChronic;
     }
 
-    public void setChronic(boolean chronic) {
+    public void setChronic(Boolean chronic) {
         isChronic = chronic;
     }
 

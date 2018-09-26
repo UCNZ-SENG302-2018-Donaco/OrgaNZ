@@ -48,6 +48,10 @@ public interface ClientManager {
 
     void applyChangesTo(Client client);
 
+    void applyChangesTo(DonatedOrgan organ);
+
+    void applyChangesTo(TransplantRequest request);
+
     /**
      * Returns the client that has the given id.
      *
@@ -93,7 +97,18 @@ public interface ClientManager {
     PaginatedDonatedOrgansList getAllOrgansToDonate(Integer offset, Integer count, Set<String> regions, Set<Organ>
             organType, DonatedOrganSortOptionsEnum sortOption, Boolean reversed);
 
+    /**
+     * Gets a list of potential recipients of the given donated organ
+     * @param donatedOrgan available organ to find potential matches for
+     * @return list of clients who are a potential match for the donated organ
+     */
     List<Client> getOrganMatches(DonatedOrgan donatedOrgan);
+
+    /**
+     * Gets all deceased donors that are viable (have non expired organs)
+     * @return list of deceased donors viable to donate organs
+     */
+    List<Client> getViableDeceasedDonors();
 
     List<HistoryItem> getAllHistoryItems();
 }
