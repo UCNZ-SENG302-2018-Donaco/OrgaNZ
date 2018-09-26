@@ -67,7 +67,6 @@ public class TouchActionsBarController extends SubController {
         }
 
         if (windowContext.isClinViewClientWindow()) {
-            homeButton.setDisable(true);
             entireMenubarPane.setStyle("-fx-background-color: #D9B3FF");
         }
         hamburger.addEventHandler(MouseEvent.MOUSE_CLICKED, (e) -> toggleSidebar(controller.getDrawer()));
