@@ -296,6 +296,9 @@ public class ViewClientController extends SubController {
         height.setText(String.valueOf(viewedClient.getHeight()));
         weight.setText(String.valueOf(viewedClient.getWeight()));
         btype.setValue(viewedClient.getBloodType());
+        if (!country.getItems().contains(viewedClient.getCountry())) {
+            country.getItems().add(viewedClient.getCountry());
+        }
         country.setValue(viewedClient.getCountry());
         if (viewedClient.getHospital() == null) {
             hospital.setValue(null);
@@ -332,6 +335,9 @@ public class ViewClientController extends SubController {
             aliveToggleBtn.setDisable(true);
             deathDatePicker.setValue(viewedClient.getDateOfDeath());
             deathTimeField.setText(viewedClient.getTimeOfDeath().toString());
+            if (!deathCountry.getItems().contains(viewedClient.getCountryOfDeath())) {
+                deathCountry.getItems().add(viewedClient.getCountryOfDeath());
+            }
             deathCountry.setValue(viewedClient.getCountryOfDeath());
             if (viewedClient.getCountryOfDeath() == Country.NZ && viewedClient.getRegionOfDeath() != null) {
                 deathRegionCB.setValue(Region.fromString(viewedClient.getRegionOfDeath()));
@@ -742,5 +748,4 @@ public class ViewClientController extends SubController {
         }
         ageLabel.setText(String.valueOf(viewedClient.getAge()));
     }
-
 }

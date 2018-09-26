@@ -22,7 +22,6 @@ public abstract class DonatedOrganValidator {
      * @return True if all validity checks pass
      */
     public static boolean isValid(DonatedOrgan donatedOrgan) {
-        System.out.println(donatedOrgan);
         return donatedOrgan != null
                 && donatedOrgan.getOrganType() != null
                 && donatedOrgan.getDonor() != null

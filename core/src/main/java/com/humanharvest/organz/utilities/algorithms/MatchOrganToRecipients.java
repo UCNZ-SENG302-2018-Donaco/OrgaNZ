@@ -258,11 +258,22 @@ public abstract class MatchOrganToRecipients {
 
         List<Client> potentialMatches = new ArrayList<>();
 
+        // Create the list of matches from the list of transplant requests
+        for (TransplantRequest transplantRequest : getListOfPotentialTransplants(donatedOrgan, transplantRequests)) {
+            potentialMatches.add(transplantRequest.getClient());
+        }
+
+        return potentialMatches;
+    }
+
+    public static List<TransplantRequest> getListOfPotentialTransplants(DonatedOrgan donatedOrgan,
+            Iterable<TransplantRequest> transplantRequests) {
+
         Client donor = donatedOrgan.getDonor();
 
         // If the organ trying to be matched has expired then return an empty list.
         if (donatedOrgan.hasExpired()) {
-            return potentialMatches;
+            return new ArrayList<>();
         }
 
         // Create a list of eligible transplant requests
@@ -295,11 +306,6 @@ public abstract class MatchOrganToRecipients {
             }
         });
 
-        // Create the list of matches from the list of transplant requests
-        for (TransplantRequest transplantRequest : potentialTransplantRequests) {
-            potentialMatches.add(transplantRequest.getClient());
-        }
-
-        return potentialMatches;
+        return potentialTransplantRequests;
     }
 }
