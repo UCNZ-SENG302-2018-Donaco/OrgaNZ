@@ -748,5 +748,4 @@ public class ViewClientController extends SubController {
         }
         ageLabel.setText(String.valueOf(viewedClient.getAge()));
     }
-
 }

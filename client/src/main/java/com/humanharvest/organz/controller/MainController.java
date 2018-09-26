@@ -1,6 +1,5 @@
 package com.humanharvest.organz.controller;
 
-
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
@@ -16,9 +15,9 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import com.humanharvest.organz.state.Session.UserType;
+import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.state.State.UiType;
 import com.humanharvest.organz.touch.MultitouchHandler;
-import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
 
@@ -37,6 +36,7 @@ public class MainController {
     private MenuBarController menuBarController;
     private TouchActionsBarController touchActionsBarController;
     private SubController subController;
+    private boolean isProjecting;
     /**
      * Holder of a switchable page.
      */
@@ -53,6 +53,7 @@ public class MainController {
 //        drawer.setOnDrawerOpened(EventListener -> drawer.setVisible(true));
         drawer.toFront();
         pageHolder.setPickOnBounds(false);
+        isProjecting = false;
     }
 
     public Pane getDrawer() {
@@ -189,9 +190,11 @@ public class MainController {
         } else {
             loadMenuBar(pane);
         }
-
     }
 
+    public SubController getSubController() {
+        return subController;
+    }
 
     public void setSubController(SubController subController) {
         this.subController = subController;
@@ -244,5 +247,13 @@ public class MainController {
 
     public List<String> getStyles() {
         return pageHolder.getStyleClass();
+    }
+
+    public boolean isProjecting() {
+        return isProjecting;
+    }
+
+    public void setProjecting(boolean projecting) {
+        isProjecting = projecting;
     }
 }

@@ -1,7 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<VBox xmlns:fx="http://javafx.com/fxml/1" maxHeight="80.0" maxWidth="80.0" prefHeight="80.0" prefWidth="80.0" xmlns="http://javafx.com/javafx/8.0.121" fx:controller="com.humanharvest.organz.controller.spiderweb.OrganImageController">
-  <ImageView fitHeight="80.0" fitWidth="80.0" pickOnBounds="true" preserveRatio="true" fx:id="organImage"/>
+<?import javafx.scene.shape.Circle?>
+<VBox xmlns:fx="http://javafx.com/fxml/1" maxHeight="70.0" maxWidth="70.0" prefHeight="70.0" prefWidth="70.0" xmlns="http://javafx.com/javafx/8.0.121" fx:controller="com.humanharvest.organz.controller.spiderweb.OrganImageController">
+  <Pane>
+    <children>
+      <ImageView fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true" fx:id="organImage"/>
+      <StackPane layoutX="46.0">
+        <children>
+          <Circle fill="#a5acb2" radius="12.0" stroke="BLACK" strokeType="INSIDE" fx:id="countCircle"/>
+          <Label text="2" fx:id="matchCount"/>
+        </children>
+      </StackPane>
+    </children>
+  </Pane>
 </VBox>

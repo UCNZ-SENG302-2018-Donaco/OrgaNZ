@@ -133,7 +133,7 @@ public final class ExpiryBarUtils {
 
     public static String getDurationString(DonatedOrgan donatedOrgan, DurationFormat format) {
         Duration durationUntilExpiry = donatedOrgan.getDurationUntilExpiry();
-        OrganState organState = donatedOrgan.getState();
+        OrganState organState = donatedOrgan.getState(false);
         switch (organState) {
             case OVERRIDDEN:
                 return "Overridden";
@@ -145,19 +145,9 @@ public final class ExpiryBarUtils {
                         donatedOrgan.getDateTimeOfDonation()
                                 .plus(donatedOrgan.getOrganType().getMaxExpiration()), LocalDateTime.now());
                 return String.format("Expired (%s ago)", getFormattedDuration(timeSinceExpiry, format));
-            case CURRENT:
-                return getFormattedDuration(durationUntilExpiry, format);
             default:
-                return "Could not calculate duration";
+                return getFormattedDuration(durationUntilExpiry, format);
         }
-    }
-
-    public static boolean isDurationZero(Duration duration) {
-        return duration == null ||
-                duration.isZero() ||
-                duration.isNegative() ||
-                duration.equals(Duration.ZERO) ||
-                duration.minusSeconds(1).isNegative();
     }
 }
 
