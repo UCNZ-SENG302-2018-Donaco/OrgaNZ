@@ -93,7 +93,14 @@ public interface ClientManager {
     Collection<DonatedOrgan> getAllOrgansToDonate();
 
     /**
-     * Returns a collection of all the organs that are available to donate from dead peop[e.
+     * A paginated list of all organs that are available for donation
+     * @param offset How many results to skip (default: 0)
+     * @param count How many results to return (default: all)
+     * @param regions Only return organs withing the given regions (default: all)
+     * @param organType Only return organs of the given types (default: all)
+     * @param sortOption Sort by the given option (default: time until expiry)
+     * @param reversed If the results should be reversed (default: false)
+     * @return A paginated list of donated organs matching the given filters
      */
     PaginatedDonatedOrgansList getAllOrgansToDonate(Integer offset, Integer count, Set<String> regions, Set<Organ>
             organType, DonatedOrganSortOptionsEnum sortOption, Boolean reversed);

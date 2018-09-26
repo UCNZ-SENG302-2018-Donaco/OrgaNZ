@@ -1,6 +1,7 @@
 package com.humanharvest.organz.state;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -14,7 +15,6 @@ import com.humanharvest.organz.DashboardStatistics;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.TransplantRequest;
-import com.humanharvest.organz.state.State.DataStorageType;
 import com.humanharvest.organz.utilities.enums.ClientSortOptionsEnum;
 import com.humanharvest.organz.utilities.enums.ClientType;
 import com.humanharvest.organz.utilities.enums.DonatedOrganSortOptionsEnum;
@@ -239,9 +239,13 @@ public class ClientManagerRest implements ClientManager {
                 HttpMethod.GET,
                 entity, PaginatedDonatedOrgansList.class);
 
-        return responseEntity.getBody().getDonatedOrgans().stream()
-                .map(DonatedOrganView::getDonatedOrgan)
-                .collect(Collectors.toList());
+        if (responseEntity.getBody() == null) {
+            return new ArrayList<>();
+        } else {
+            return responseEntity.getBody().getDonatedOrgans().stream()
+                    .map(DonatedOrganView::getDonatedOrgan)
+                    .collect(Collectors.toList());
+        }
     }
 
     /**

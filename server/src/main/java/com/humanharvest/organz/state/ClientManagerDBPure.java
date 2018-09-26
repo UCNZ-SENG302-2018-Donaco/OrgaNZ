@@ -42,7 +42,6 @@ import com.humanharvest.organz.views.client.PaginatedTransplantList;
 import org.hibernate.ReplicationMode;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.query.NativeQuery;
 import org.hibernate.query.Query;
 
 /**
@@ -611,7 +610,14 @@ public class ClientManagerDBPure implements ClientManager {
     }
 
     /**
-     * @return a list of all organs available for donation
+     * A paginated list of all organs that are available for donation
+     * @param offset How many results to skip (default: 0)
+     * @param count How many results to return (default: all)
+     * @param regionsToFilter Only return organs withing the given regions (default: all)
+     * @param organType Only return organs of the given types (default: all)
+     * @param sortOption Sort by the given option (default: time until expiry)
+     * @param reversed If the results should be reversed (default: false)
+     * @return A paginated list of donated organs matching the given filters
      */
     @Override
     public PaginatedDonatedOrgansList getAllOrgansToDonate(Integer offset, Integer count, Set<String> regionsToFilter,
