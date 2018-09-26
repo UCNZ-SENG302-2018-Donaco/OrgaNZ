@@ -10,7 +10,7 @@ import java.time.temporal.ChronoUnit;
 public abstract class DurationFormatter {
 
     public enum DurationFormat {
-        X_HOURS_Y_MINUTES_SECONDS, BIGGEST, X_HRS_Y_MINS_SECS, DAYS
+        X_HOURS_Y_MINUTES_SECONDS, BIGGEST, X_HRS_Y_MINS_SECS, DAYS, X_HRS_Y_MINS
     }
 
     /**
@@ -38,6 +38,8 @@ public abstract class DurationFormatter {
                 return getDurationFormattedXHrsYMinsSecs(duration);
             case DAYS:
                 return getDurationFormattedDays(duration);
+            case X_HRS_Y_MINS:
+                return getDurationFormattedXHrsYMins(duration);
             default:
                 throw new UnsupportedOperationException("Unknown format for duration.");
         }
@@ -131,6 +133,16 @@ public abstract class DurationFormatter {
             String singleHour, String multipleHours,
             String oneSecond, String multipleSeconds,
             String oneMinute, String multipleMinutes) {
+        return getDurationHoursMinsSecsString(duration,
+                singleHour, multipleHours,
+                oneSecond, multipleSeconds,
+                oneMinute, multipleMinutes, true);
+    }
+
+        private static String getDurationHoursMinsSecsString(Duration duration,
+                String singleHour, String multipleHours,
+                String oneSecond, String multipleSeconds,
+                String oneMinute, String multipleMinutes, boolean useSeconds) {
 
         String formattedDuration;
         long hours = duration.toHours();
@@ -140,7 +152,7 @@ public abstract class DurationFormatter {
             formattedDuration = hours + multipleHours;
         }
         long minutes = duration.toMinutes() % 60;
-        if (minutes == 0) { // no minutes, just seconds (and perhaps hours)
+        if (minutes == 0 && useSeconds) { // no minutes, just seconds (and perhaps hours)
             long seconds = duration.getSeconds() % 3600;
             if (seconds == 1) {
                 formattedDuration += "1" + oneSecond;
@@ -153,6 +165,14 @@ public abstract class DurationFormatter {
             formattedDuration += minutes + multipleMinutes;
         }
         return formattedDuration;
+    }
+
+    private static String getDurationFormattedXHrsYMins(Duration duration) {
+
+        return getDurationHoursMinsSecsString(duration,
+                "hr ", "hrs ",
+                "sec", "secs",
+                "min", "mins", false);
     }
 
 }
