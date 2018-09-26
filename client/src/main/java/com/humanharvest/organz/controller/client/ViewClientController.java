@@ -732,17 +732,4 @@ public class ViewClientController extends ViewBaseController {
         ageLabel.setText(String.valueOf(viewedClient.getAge()));
     }
 
-    @FXML
-    private void openRecDetForLiver() {
-
-        MainController newMain = PageNavigator.openNewWindow(200, 400);
-        if (newMain != null) {
-            newMain.setWindowContext(new WindowContext.WindowContextBuilder()
-                    .setAsClinicianViewClientWindow()
-                    .viewClient(viewedClient)
-                    .build());
-            PageNavigator.loadPage(Page.RECEIVER_OVERVIEW, newMain);
-        }
-
-    }
 }
