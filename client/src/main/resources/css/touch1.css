@@ -1,14 +1,24 @@
+.root {
+  --backdrop-bg-col: #005073;
+  --window-bg-col: #C6DBF0;
+  --menu-btn-bg-col: #CFC7FA;
+  --menu-btn-bg-hover-col: #BFB4FA;
+  --drawer-btn-border-col: #9FB3D6;
+  --drawer-btn-bg-col: #D6E5ff;
+  --drawer-btn-bg-hover-col: #BDD5FF;
+}
+
 .backdrop {
-  -fx-background-color: #005073;
+  -fx-background-color: var(--backdrop-bg-col);
 }
 
 .window {
   -fx-font-family: Lato;
   -fx-border-insets: 10;
-  -fx-background-color: #C6DBF0;
+  -fx-background-color: var(--window-bg-col);
   -fx-background-radius: 15;
   -fx-border-radius: 7;
-  -fx-border-color: #C6DBF0;
+  -fx-border-color: var(--window-bg-col);
   -fx-border-style: solid;
   -fx-border-width: 3;
   -fx-effect: dropshadow(three-pass-box, rgba(100, 100, 100, 1), 24, 0.5, 0, 0);
@@ -20,47 +30,44 @@
 }
 
 .split-pane {
-  -fx-background-color: #C6DBF0;
+  -fx-background-color: var(--window-bg-col);
 }
 
 .tooltip .text {
-  -fx-fill: #C6DBF0;
+  -fx-fill: var(--window-bg-col);
 }
 
 /* MENU BUTTONS */
 .menubox .button {
-  -fx-background-color: #CFC7FA;
-  -fx-border-color: #CFC7FA;
+  -fx-background-color: var(--menu-btn-bg-col);
+  -fx-border-color: var(--menu-btn-bg-col);
 }
 
 .menubox .button:hover {
-  -fx-background-color: #BFB4FA;
+  -fx-background-color: var(--menu-btn-bg-hover-col);
 }
 
 .menubox .hamburger:hover {
-  -fx-background-color: #BFB4FA;
+  -fx-background-color: var(--menu-btn-bg-hover-col);
 }
 
 
 /* DRAWER */
 .drawer-pane .button {
-  -fx-background-color: #d6e5ff;
-  -fx-border-color: #9FB3D6;
+  -fx-background-color: var(--drawer-btn-bg-col);
+  -fx-border-color: var(--drawer-btn-border-col);
   -fx-border-style: solid;
   -fx-border-width: 0.5;
 }
 
 .drawer-pane .button:hover {
-  -fx-background-color: #BDD5FF;
-  -fx-border-color: #9FB3D6;
+  -fx-background-color: var(--drawer-btn-bg-hover-col);
+  -fx-border-color: var(--drawer-btn-border-col);
   -fx-border-style: solid;
   -fx-border-width: 0.5;
 }
-
-
 
 .drawer-pane {
   -fx-padding: 0px 0px 0px 10px; /*Need to include this line to set the drawer inline with the pane*/
   -fx-effect: dropshadow(gaussian, #1d1d1d, 4, 0, 3, 3);
 }
-
