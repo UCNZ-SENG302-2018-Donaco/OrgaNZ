@@ -48,6 +48,7 @@ import com.humanharvest.organz.controller.components.ExpiryBarUtils;
 import com.humanharvest.organz.controller.components.PotentialRecipientCell;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.touch.FocusArea;
+import com.humanharvest.organz.touch.MatchesFocusArea;
 import com.humanharvest.organz.touch.MultitouchHandler;
 import com.humanharvest.organz.touch.OrganFocusArea;
 import com.humanharvest.organz.touch.PointUtils;
@@ -95,11 +96,11 @@ public class OrganWithRecipients {
         createLines();
 
         matchesPane = new Pane();
-        MultitouchHandler.addPane(matchesPane);
-        FocusArea matchesPaneFocus = (FocusArea) matchesPane.getUserData();
-        matchesPaneFocus.setScalable(false);
-        matchesPaneFocus.setRotatable(false);
-        matchesPaneFocus.setTranslatable(false);
+        MatchesFocusArea matchesFocusArea = new MatchesFocusArea(matchesPane, this);
+        MultitouchHandler.addPane(matchesPane, matchesFocusArea);
+        matchesFocusArea.setScalable(false);
+        matchesFocusArea.setRotatable(false);
+        matchesFocusArea.setTranslatable(false);
 
         enableHandlers();
 
@@ -267,8 +268,7 @@ public class OrganWithRecipients {
         updateConnectorText(durationText, organ, deceasedToOrganConnector);
     }
 
-    public void handleOrganPaneTouchReleased() {
-        System.out.println("Released");
+    public void handleTouchReleased() {
         switch (organ.getState()) {
             case CURRENT:
             case NO_EXPIRY:
@@ -281,6 +281,7 @@ public class OrganWithRecipients {
             default:
                 break;
         }
+        handleOrganPaneTransformed(organPane.getLocalToParentTransform());
     }
 
     private void tryCancelTransplant() {
