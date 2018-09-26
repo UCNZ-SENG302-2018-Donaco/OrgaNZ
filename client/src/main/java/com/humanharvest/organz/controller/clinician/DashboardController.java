@@ -12,6 +12,7 @@ import javafx.scene.chart.PieChart;
 import javafx.scene.chart.PieChart.Data;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
 
 import com.humanharvest.organz.Client;
@@ -24,6 +25,9 @@ import com.humanharvest.organz.controller.components.DonatedOrganCell;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.view.Page;
+import com.humanharvest.organz.utilities.view.PageNavigator;
+import com.humanharvest.organz.utilities.view.WindowContext;
 
 public class DashboardController extends SubController {
 
@@ -109,6 +113,22 @@ public class DashboardController extends SubController {
             return item;
         });
 
+        deceasedDonorsList.setOnMouseClicked(mouseEvent -> {
+            if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 2) {
+                Client client = deceasedDonorsList.getSelectionModel().getSelectedItem();
+                if (client != null) {
+                    MainController newMain = PageNavigator.openNewWindow();
+                    if (newMain != null) {
+                        newMain.setWindowContext(new WindowContext.WindowContextBuilder()
+                                .setAsClinicianViewClientWindow()
+                                .viewClient(client)
+                                .build());
+                        PageNavigator.loadPage(Page.VIEW_CLIENT, newMain);
+                    }
+                }
+            }
+        });
+
         expiringOrgansList.setItems(observableOrgansToDonate);
 
         expiringOrgansList.setCellFactory(param -> {
@@ -136,5 +156,7 @@ public class DashboardController extends SubController {
     private void updateOrgansToDonateList() {
         observableOrgansToDonate = FXCollections.observableArrayList(manager.getAllOrgansToDonate
                 ().stream().filter(o -> o.getDurationUntilExpiry() != null).collect(Collectors.toList()));
+
+
     }
 }

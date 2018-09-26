@@ -84,7 +84,7 @@ public class SpiderWebController extends SubController {
         exitButton.setOnAction(event -> closeSpiderWeb());
 
         Button homeButton = new Button("Home");
-        homeButton.setTranslateX(200);
+        homeButton.setTranslateX(120);
         canvas.getChildren().add(homeButton);
         homeButton.setOnAction(event -> goToDashboard());
 
