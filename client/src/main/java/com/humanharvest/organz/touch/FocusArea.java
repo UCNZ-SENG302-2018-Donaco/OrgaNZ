@@ -8,7 +8,10 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
@@ -37,6 +40,7 @@ import com.humanharvest.organz.utilities.ReflectionException;
 import com.humanharvest.organz.utilities.ReflectionUtils;
 
 import com.sun.javafx.scene.NodeEventDispatcher;
+import com.sun.javafx.scene.control.skin.VirtualFlow;
 import org.tuiofx.widgets.controls.KeyboardPane;
 import org.tuiofx.widgets.skin.ChoiceBoxSkinAndroid;
 import org.tuiofx.widgets.skin.KeyboardManager;
@@ -48,6 +52,8 @@ import org.tuiofx.widgets.skin.TextFieldSkinAndroid;
 import org.tuiofx.widgets.utils.Util;
 
 public class FocusArea implements InvalidationListener {
+
+    private static final Logger LOGGER = Logger.getLogger(FocusArea.class.getName());
 
     private final Collection<Consumer<EventTarget>> skinHandlers = new ArrayList<>();
     private final Collection<Consumer<EventTarget>> popupHandlers = new ArrayList<>();
@@ -65,6 +71,8 @@ public class FocusArea implements InvalidationListener {
     private List<CurrentTouch> paneTouches;
     private Point2D velocity = Point2D.ZERO;
     private boolean disableHinting;
+
+    private Optional<VirtualFlow<?>> currentScrollingPane;
 
     public FocusArea(Pane pane) {
         this.pane = pane;
@@ -256,7 +264,11 @@ public class FocusArea implements InvalidationListener {
         TouchPoint touchPoint = event.getTouchPoint();
         currentTouch.setCurrentScreenPoint(new Point2D(touchPoint.getX(), touchPoint.getY()));
 
-        pane.toFront();
+        try {
+            pane.toFront();
+        } catch (RuntimeException e) {
+            LOGGER.log(Level.WARNING, "Runtime exception when setting pane to front", e);
+        }
 
         OnScreenKeyboard<?> keyboard = KeyboardManager.getInstance().getKeyboard(pane);
         ReflectionUtils.<KeyboardPane>getField(keyboard.getSkin(), "keyboardPane").toFront();
@@ -266,10 +278,15 @@ public class FocusArea implements InvalidationListener {
             NodeEventDispatcher eventDispatcher = (NodeEventDispatcher) node.getEventDispatcher();
             eventDispatcher.dispatchCapturingEvent(event);
         });
+
         if (paneTouches.size() == 1) {
             // Informs the focus area nodes of a touch event
             setLastPosition(System.nanoTime(), PointUtils.getCentreOfNode(pane));
             propagateEvent(event.getTarget());
+
+            currentScrollingPane = MultitouchHandler.getVirtualFlow(touchPoint.getPickResult().getIntersectedNode());
+        } else {
+            currentScrollingPane = Optional.empty();
         }
     }
 
@@ -279,6 +296,12 @@ public class FocusArea implements InvalidationListener {
         currentTouch.getImportantElement().ifPresent(node -> {
             NodeEventDispatcher eventDispatcher = (NodeEventDispatcher) node.getEventDispatcher();
             eventDispatcher.dispatchCapturingEvent(event);
+        });
+
+        currentScrollingPane.ifPresent(virtualFlow -> {
+            if (virtualFlow.isPannable()) {
+
+            }
         });
 
         if (paneTouches.isEmpty()) {
@@ -310,6 +333,10 @@ public class FocusArea implements InvalidationListener {
             CurrentTouch otherTouch = getOtherTouch(currentTouch);
             handleDoubleTouch(touchPointPosition, touchPoint, currentTouch, otherTouch);
         }
+
+        currentScrollingPane.ifPresent(virtualFlow -> {
+
+        });
     }
 
     /**

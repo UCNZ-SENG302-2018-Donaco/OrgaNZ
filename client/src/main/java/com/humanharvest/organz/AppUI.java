@@ -14,7 +14,6 @@ import javafx.stage.Stage;
 
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.clinician.StaffLoginController;
-import com.humanharvest.organz.controller.spiderweb.SpiderWebController;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.state.State.DataStorageType;
 import com.humanharvest.organz.touch.MultitouchHandler;
@@ -144,7 +143,7 @@ public class AppUI extends Application {
                     parameters.getOrDefault("password", ""),
                     State.getMainControllers().get(0));
 
-            new SpiderWebController(State.getClientManager().getClientByID(9096).orElseThrow(RuntimeException::new));
+//            new SpiderWebController(State.getClientManager().getClientByID(9096).orElseThrow(RuntimeException::new));
         }
     }
 
