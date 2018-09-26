@@ -146,8 +146,10 @@ public class OrganWithRecipients {
     }
 
     public void closeRefresher() {
-        refresher.stop();
-        refresher = null;
+        if (refresher != null) {
+            refresher.stop();
+            refresher = null;
+        }
     }
 
     private void createOrganImage(MainController newMain) {
