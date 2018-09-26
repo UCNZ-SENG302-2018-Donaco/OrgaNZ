@@ -10,7 +10,18 @@ import java.time.temporal.ChronoUnit;
 public abstract class DurationFormatter {
 
     public enum DurationFormat {
-        X_HOURS_Y_MINUTES_SECONDS, BIGGEST, X_HRS_Y_MINS_SECS
+        X_HOURS_Y_MINUTES_SECONDS, BIGGEST, X_HRS_Y_MINS_SECS, DAYS
+    }
+
+    private static String getDurationFormattedDays(Duration duration) {
+        long days = duration.toDays();
+        if (days == 0) {
+            return "today";
+        } else if (days < 0) {
+            return days * -1 + " days ago";
+        } else {
+            return "in " + days + " days";
+        }
     }
 
     private static String getDurationFormattedBiggest(Duration duration) {
@@ -71,6 +82,8 @@ public abstract class DurationFormatter {
                 return getDurationFormattedBiggest(duration);
             case X_HRS_Y_MINS_SECS:
                 return getDurationFormattedXHrsYMinsSecs(duration);
+            case DAYS:
+                return getDurationFormattedDays(duration);
             default:
                 throw new UnsupportedOperationException("Unknown format for duration.");
         }
