@@ -323,6 +323,11 @@ public class FocusArea implements InvalidationListener {
             return;
         }
 
+        currentScrollingPane.ifPresent(virtualFlow -> {
+            Point2D delta = touchPointPosition.subtract(currentTouch.getCurrentScreenPoint());
+            System.out.println(delta);
+        });
+
         setLastPosition(System.nanoTime(), PointUtils.getCentreOfNode(pane));
 
         // Find other touches belonging to this pane.
@@ -333,10 +338,6 @@ public class FocusArea implements InvalidationListener {
             CurrentTouch otherTouch = getOtherTouch(currentTouch);
             handleDoubleTouch(touchPointPosition, touchPoint, currentTouch, otherTouch);
         }
-
-        currentScrollingPane.ifPresent(virtualFlow -> {
-
-        });
     }
 
     /**

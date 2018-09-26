@@ -54,7 +54,6 @@ public final class MultitouchHandler {
             if (event.isDirect()) {
                 event.consume();
             }
-            int a345 = 134;
         });
         root.addEventFilter(RotateEvent.ANY, Event::consume);
 
