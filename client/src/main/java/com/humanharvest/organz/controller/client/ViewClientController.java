@@ -1,5 +1,7 @@
 package com.humanharvest.organz.controller.client;
 
+import static com.humanharvest.organz.views.ModifyBaseObject.addChangeIfDifferent;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -46,7 +48,7 @@ import com.humanharvest.organz.Client;
 import com.humanharvest.organz.Hospital;
 import com.humanharvest.organz.controller.AlertHelper;
 import com.humanharvest.organz.controller.MainController;
-import com.humanharvest.organz.controller.clinician.ViewBaseController;
+import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
@@ -71,7 +73,7 @@ import org.apache.commons.io.IOUtils;
 /**
  * Controller for the view/edit client page.
  */
-public class ViewClientController extends ViewBaseController {
+public class ViewClientController extends SubController {
 
     private static final Logger LOGGER = Logger.getLogger(ViewClientController.class.getName());
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
