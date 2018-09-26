@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.Duration;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -38,10 +39,10 @@ public class DonatedOrganOverviewController extends SubController {
 
     DonatedOrgan donatedOrgan;
 
-    public void setup(DonatedOrgan organ) {
+    public void setup(DonatedOrgan organ, Map<Organ, Image> organPictureStore) {
         donatedOrgan = organ;
 
-        Image organImage = getOrganImage(organ.getOrganType());
+        Image organImage = getOrganImage(organ.getOrganType(), organPictureStore);
         if (organPicture != null) {
             organPicture.setImage(organImage);
         }
@@ -67,17 +68,10 @@ public class DonatedOrganOverviewController extends SubController {
         new SpiderWebController(donatedOrgan.getDonor());
     }
 
-    private Image getOrganImage(Organ organ) {
-        byte[] bytes;
+    private Image getOrganImage(Organ organ, Map<Organ, Image> organPictureStore) {
 
-        try (InputStream in = getClass().getResourceAsStream("/images/" + organ.toString() + ".png")) {
-            bytes = IOUtils.toByteArray(in);
-
-            return new Image(new ByteArrayInputStream(bytes));
-        } catch (Exception ex) {
-            LOGGER.log(Level.SEVERE, "Organ image failed to load");
-            return null;
-        }
+        // Get it from the store
+        return organPictureStore.get(organ);
     }
 
     public void updateTime() {

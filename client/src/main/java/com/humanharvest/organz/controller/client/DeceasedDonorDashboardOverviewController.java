@@ -94,7 +94,7 @@ public class DeceasedDonorDashboardOverviewController extends SubController {
 
         // Try and get it from the store
         Image profilePicture = profilePictureStore.get(client);
-        System.out.println("Picture" + profilePicture);
+
         if (profilePicture == null) {
 
             byte[] bytes;
