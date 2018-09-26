@@ -299,7 +299,7 @@ public class OrganWithRecipients {
             organ.cancelManualOverride();
             donorOverviewController.fetchOrgans();
 
-            drawMatchesPane(false);
+            drawMatchesPane(true);
         }
 
         organImageController.matchCountIsVisible(false);
@@ -388,6 +388,13 @@ public class OrganWithRecipients {
             travelTime = donorHospital.calculateTimeTo(transplantHospital);
         }
         LocalDate transplantDate = LocalDateTime.now().plus(travelTime).toLocalDate();
+
+        if (transplantHospital == null) {
+            Notifications.create()
+                    .title("No eligible hospital")
+                    .text("There are no hospitals that can transplant that organ.")
+                    .showError();
+        }
 
         try {
             State.getClientResolver().scheduleTransplantProcedure(organ, request, transplantHospital, transplantDate);
