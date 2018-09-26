@@ -24,14 +24,22 @@ public final class ProjectionHelper {
 
     private static final Logger LOGGER = Logger.getLogger(ProjectionHelper.class.getName());
 
+    /**
+     * The non primary screens.
+     */
     private static List<Screen> otherScreens;
 
+    /**
+     * The stages of the projection views.
+     */
     private static Stage[] stages;
 
     private ProjectionHelper() {
-
     }
 
+    /**
+     * Sets up the projection helper to keep track of what screens are non-primary.
+     */
     public static void initialise(Pane rootPane) {
 
         List<Screen> screens = Screen.getScreens();
@@ -50,11 +58,15 @@ public final class ProjectionHelper {
         stages = new Stage[otherScreens.size()];
     }
 
+    /**
+     * Projects the controller to the non-primary screens.
+     */
     public static void createNewProjection(MainController originalMainController) {
 
         for (int i = 0; i < stages.length; i++) {
             if (stages[i] != null) {
                 stages[i].close();
+                stages[i] = null;
             }
 
             Screen screen = otherScreens.get(i);
@@ -97,5 +109,24 @@ public final class ProjectionHelper {
                 LOGGER.log(Level.SEVERE, "Error loading new window\n", e);
             }
         }
+    }
+
+    /**
+     * Closes down all the projection screens.
+     */
+    public static void stageClosing() {
+        for (int i = 0; i < stages.length; i++) {
+            if (stages[i] != null) {
+                stages[i].close();
+                stages[i] = null;
+            }
+        }
+    }
+
+    /**
+     * Returns true if there are other screens to project to.
+     */
+    public static boolean canProject() {
+        return otherScreens != null && !otherScreens.isEmpty();
     }
 }

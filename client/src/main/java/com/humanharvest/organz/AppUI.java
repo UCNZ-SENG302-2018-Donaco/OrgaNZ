@@ -87,6 +87,7 @@ public class AppUI extends Application {
 
         primaryStage.setFullScreen(true);
         primaryStage.setOnCloseRequest(event -> {
+            ProjectionHelper.stageClosing();
             MultitouchHandler.stageClosing();
         });
     }

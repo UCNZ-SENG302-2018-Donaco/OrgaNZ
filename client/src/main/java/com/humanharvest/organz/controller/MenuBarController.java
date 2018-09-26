@@ -592,7 +592,9 @@ public class MenuBarController extends SubController {
 
     @FXML
     private void projectWindow() {
-        ProjectionHelper.createNewProjection(mainController);
+        if (ProjectionHelper.canProject()) {
+            ProjectionHelper.createNewProjection(mainController);
+        }
     }
 
     /**
