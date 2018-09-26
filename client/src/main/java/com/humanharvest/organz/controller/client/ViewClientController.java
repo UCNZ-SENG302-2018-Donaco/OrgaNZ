@@ -53,7 +53,6 @@ import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.state.State.UiType;
 import com.humanharvest.organz.utilities.enums.BloodType;
 import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Gender;
@@ -63,9 +62,7 @@ import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.validators.NotEmptyStringValidator;
 import com.humanharvest.organz.utilities.validators.client.ClientBornAndDiedDatesValidator;
-import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
-import com.humanharvest.organz.utilities.view.WindowContext;
 import com.humanharvest.organz.views.client.ModifyClientObject;
 
 import org.apache.commons.io.IOUtils;
@@ -84,6 +81,7 @@ public class ViewClientController extends SubController {
     private final Session session;
     private final ClientManager manager;
     private Client viewedClient;
+    private File imageToUpload;
 
     @FXML
     private Pane menuBarPane, sidebarPane, deathDetailsPane;
@@ -250,9 +248,12 @@ public class ViewClientController extends SubController {
             deathDetailsPane.setDisable(true);
         } else if (windowContext.isClinViewClientWindow()) {
             mainController.setTitle("View Client: " + viewedClient.getFullName());
-            // date of death is not editable - disable all the things
-            aliveToggleBtn.setDisable(!viewedClient.getDateOfDeathIsEditable());
-            deadToggleBtn.setDisable(!viewedClient.getDateOfDeathIsEditable());
+
+            // client is dead - disable resurrecting
+            aliveToggleBtn.setDisable(viewedClient.isDead());
+            deadToggleBtn.setDisable(viewedClient.isDead());
+
+            // date of death is not editable - disable editing of date and time
             deathDatePicker.setDisable(!viewedClient.getDateOfDeathIsEditable());
             deathTimeField.setDisable(!viewedClient.getDateOfDeathIsEditable());
             if (!viewedClient.getDateOfDeathIsEditable()) {
@@ -392,11 +393,11 @@ public class ViewClientController extends SubController {
     }
 
     /**
-     * Prompts a user with a file chooser which is restricted to png's and jpg's. If a valid file of correct size is
-     * input, this photo is uploaded as the viewed clients new profile photo.
+     * Prompts a user with a file chooser which is restricted to PNGs. If a valid file of correct size is
+     * input, this photo is set as the client's profile picture (and will be uploaded when the user clicks Apply).
      */
     @FXML
-    public void uploadPhoto() {
+    public void choosePhoto() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Upload Profile Image");
         fileChooser.getExtensionFilters().addAll(
@@ -404,40 +405,41 @@ public class ViewClientController extends SubController {
         );
 
         File selectedFile = fileChooser.showOpenDialog(State.getPrimaryStage());
-        boolean uploadSuccess = false;
         if (selectedFile != null) {
             if (selectedFile.length() > MAX_FILE_SIZE) {
                 PageNavigator.showAlert(AlertType.WARNING, "Image Size Too Large",
-                        "The image size is too large. It must be under 2MB.", mainController.getStage());
+                        "The image is too large. It must be under 2 megabytes.", mainController.getStage());
             } else if (!selectedFile.canRead()) {
                 PageNavigator.showAlert(AlertType.WARNING, "File Couldn't Be Read",
-                        "This file could not be read. Ensure you are uploading a valid .png or .jpg",
+                        "This file could not be read. Ensure you are uploading a valid png file.",
                         mainController.getStage());
             } else {
-                try (InputStream in = new FileInputStream(selectedFile)) {
-                    uploadSuccess = State.getImageManager()
-                            .postClientImage(viewedClient.getUid(), IOUtils.toByteArray(in));
+                imageToUpload = selectedFile;
+                deletePhotoButton.setDisable(false);
+                imageView.setImage(new Image(imageToUpload.toURI().toString()));
 
-                } catch (FileNotFoundException e) {
-                    LOGGER.log(Level.INFO, e.getMessage(), e);
-                    PageNavigator.showAlert(AlertType.WARNING, "File Couldn't Be Found",
-                            "This file was not found.", mainController.getStage());
-                } catch (IOException e) {
-                    LOGGER.log(Level.INFO, e.getMessage(), e);
-                    PageNavigator.showAlert(AlertType.WARNING, "File Couldn't Be Read",
-                            "This file could not be read. Ensure you are uploading a valid .png or .jpg",
-                            mainController.getStage());
-                } catch (ServerRestException e) {
-                    LOGGER.log(Level.SEVERE, e.getMessage(), e);
-                    PageNavigator.showAlert(AlertType.ERROR, "Server Error", "Something went wrong with the server. "
-                            + "Please try again later.", mainController.getStage());
-                }
             }
         }
-        if (uploadSuccess) {
-            refresh();
-            PageNavigator.showAlert(AlertType.CONFIRMATION, "Success", "The image has been posted.",
+
+    }
+
+    public void uploadImage() {
+        try (InputStream in = new FileInputStream(imageToUpload)) {
+            State.getImageManager().postClientImage(viewedClient.getUid(), IOUtils.toByteArray(in));
+
+        } catch (FileNotFoundException e) {
+            LOGGER.log(Level.INFO, e.getMessage(), e);
+            PageNavigator.showAlert(AlertType.WARNING, "File Couldn't Be Found",
+                    "This file was not found.", mainController.getStage());
+        } catch (IOException e) {
+            LOGGER.log(Level.INFO, e.getMessage(), e);
+            PageNavigator.showAlert(AlertType.WARNING, "File Couldn't Be Read",
+                    "This file could not be read. Ensure you are uploading a valid .png or .jpg",
                     mainController.getStage());
+        } catch (ServerRestException e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+            PageNavigator.showAlert(AlertType.ERROR, "Server Error", "Something went wrong with the server. "
+                    + "Please try again later.", mainController.getStage());
         }
     }
 
@@ -462,6 +464,7 @@ public class ViewClientController extends SubController {
     @FXML
     private void cancel() {
         refresh();
+        imageToUpload = null;
     }
 
     /**
@@ -683,7 +686,7 @@ public class ViewClientController extends SubController {
      * @param modifyClientObject The object to apply the changes from.
      */
     private void applyChanges(ModifyClientObject modifyClientObject) {
-        if (modifyClientObject.getModifiedFields().isEmpty()) {
+        if (modifyClientObject.getModifiedFields().isEmpty() && imageToUpload == null) {
             // Literally nothing was changed
             Notifications.create()
                     .title("No changes were made.")
@@ -693,6 +696,12 @@ public class ViewClientController extends SubController {
             try {
                 State.getClientResolver().modifyClientDetails(viewedClient, modifyClientObject);
                 String actionText = modifyClientObject.toString();
+
+                if (imageToUpload != null) {
+                    uploadImage();
+                    imageToUpload = null;
+                    actionText += "\nChanged profile picture.";
+                }
                 Notifications.create()
                         .title("Updated Client")
                         .text(actionText)
