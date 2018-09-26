@@ -1,6 +1,7 @@
 package com.humanharvest.organz.controller.spiderweb;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -43,7 +44,7 @@ public class SpiderWebController extends SubController {
     private static final Logger LOGGER = Logger.getLogger(SpiderWebController.class.getName());
     private static final double RADIUS = 300;
 
-    private final Client client;
+    private Client client;
 
     private final List<MainController> previouslyOpenWindows = new ArrayList<>();
     private final List<OrganWithRecipients> organWithRecipientsList = new ArrayList<>();
@@ -217,7 +218,10 @@ public class SpiderWebController extends SubController {
     @Override
     public void refresh() {
 
-        client.setDonatedOrgans(State.getClientResolver().getDonatedOrgans(client));
+        Collection<DonatedOrgan> donatedOrgans = State.getClientResolver().getDonatedOrgans(client);
+        client = donatedOrgans.iterator().next().getDonor();
+        client.setDonatedOrgans(donatedOrgans);
+
         for (OrganWithRecipients page : organWithRecipientsList) {
             Optional<DonatedOrgan> newOrgan = client.getDonatedOrgans().stream()
                     .filter(organ -> organ.getOrganType() == page.getOrgan().getOrganType())
