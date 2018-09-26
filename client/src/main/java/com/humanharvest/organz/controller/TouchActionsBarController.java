@@ -5,24 +5,19 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import javafx.stage.Stage;
 import org.controlsfx.control.Notifications;
 
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.state.State.UiType;
-import com.humanharvest.organz.touch.MultitouchHandler;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.views.ActionResponseView;
 
-import com.jfoenix.controls.JFXHamburger;
 
 /**
  * A class to handle everything to do with the navigation of both clients using the desktop application and
@@ -46,7 +41,7 @@ public class TouchActionsBarController extends SubController {
     private Button exitButton;
 
     @FXML
-    private JFXHamburger hamburger;
+    private Button hamburger;
 
     @FXML
     private Pane entireMenubarPane;
@@ -95,7 +90,7 @@ public class TouchActionsBarController extends SubController {
      * If the draw item is open, it will be closed.
      * @param drawer the item to close
      */
-    public void closeSidebar(Pane drawer) {
+    private void closeSidebar(Pane drawer) {
         drawer.setDisable(true);
         drawer.setVisible(false);
     }

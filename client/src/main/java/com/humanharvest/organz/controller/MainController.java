@@ -22,8 +22,6 @@ import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
 
-import com.jfoenix.controls.JFXDrawer;
-
 /**
  * Main controller class for the application window.
  */
