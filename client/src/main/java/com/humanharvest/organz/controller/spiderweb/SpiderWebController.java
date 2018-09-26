@@ -112,6 +112,10 @@ public class SpiderWebController extends SubController {
         node.setCacheHint(CacheHint.QUALITY);
     }
 
+    private static void killVelocity(Node node) {
+        ((FocusArea) node.getUserData()).setVelocity(Point2D.ZERO);
+    }
+
     /**
      * Setup the basic buttons in the top left corner
      */
@@ -195,6 +199,7 @@ public class SpiderWebController extends SubController {
 
             setPositionUsingTransform(organWithRecipients.getOrganPane(), 0, 0, 0, 0);
             setPositionUsingTransform(organWithRecipients.getOrganPane(), xPos, yPos, angle, 1);
+            killVelocity(organWithRecipients.getOrganPane());
         }
     }
 
