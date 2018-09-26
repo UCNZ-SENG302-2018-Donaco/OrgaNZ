@@ -56,6 +56,10 @@ public class SidebarController extends SubController  {
 
         if (userType == UserType.CLIENT) {
             showButtons(clientButtons);
+            // If they're not requesting any organs, don't show them the request organs button
+            if (session.getLoggedInClient().getCurrentlyRequestedOrgans().isEmpty()) {
+                hideButton(requestOrganDonationButton);
+            }
         } else {
 
             if (windowContext.isClinViewClientWindow()) {
