@@ -162,9 +162,11 @@ public class TouchActionsBarController extends SubController {
     }
 
     /**
-     * Log out of the currently logged in user and take them back to the landing page
+     * Log out of the currently logged in user and take them back to the landing page if they're a client,
+     * otherwise take them back to the staff login page.
      */
     public void logout() {
+        UserType userType = State.getSession().getLoggedInUserType();
         State.logout();
         for (MainController controller : State.getMainControllers()) {
             if (controller != mainController) {
@@ -174,8 +176,13 @@ public class TouchActionsBarController extends SubController {
         State.clearMainControllers();
         State.addMainController(mainController);
         mainController.resetWindowContext();
-        PageNavigator.loadPage(Page.LOGIN_STAFF, mainController);
+
         closeSidebar(mainController.getDrawer());
+        if (userType == UserType.CLIENT) {
+            PageNavigator.loadPage(Page.LANDING, mainController);
+        } else {
+            PageNavigator.loadPage(Page.LOGIN_STAFF, mainController);
+        }
     }
 
     /**
