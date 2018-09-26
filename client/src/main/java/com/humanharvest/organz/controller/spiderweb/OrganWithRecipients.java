@@ -104,8 +104,6 @@ public class OrganWithRecipients {
 
         enableHandlers();
 
-
-
         refresh();
     }
 
@@ -271,12 +269,14 @@ public class OrganWithRecipients {
     }
 
     public void handleOrganPaneTouchReleased() {
+        System.out.println("Released");
         switch (organ.getState()) {
             case CURRENT:
             case NO_EXPIRY:
                 tryScheduleTransplant();
                 break;
             case TRANSPLANT_PLANNED:
+            case TRANSPLANT_COMPLETED:
                 tryCancelTransplant();
                 break;
             default:
@@ -285,11 +285,19 @@ public class OrganWithRecipients {
     }
 
     private void tryCancelTransplant() {
-        if (PointUtils.distance(PointUtils.getCentreOfNode(organPane), PointUtils.getCentreOfNode(matchesPane)) > 400) {
+        if (PointUtils.distance(PointUtils.getCentreOfNode(organPane), PointUtils.getCentreOfNode(matchesPane)) > 200) {
             try {
                 State.getClientResolver().deleteProcedureRecord(transplantRecord.getClient(), transplantRecord);
-                this.organ = State.getClientManager().getMatchingOrganTransplantRecord(organ).getOrgan();
-                refresh();
+                Optional<DonatedOrgan> optionalOrgan = State.getClientResolver().getDonatedOrgans(organ.getDonor())
+                        .stream()
+                        .filter(newOrgan -> newOrgan.getId().equals(organ.getId()))
+                        .findFirst();
+                if (optionalOrgan.isPresent()) {
+                    this.organ = optionalOrgan.get();
+                    refresh();
+                } else {
+                    throw new NotFoundException();
+                }
             } catch (ServerRestException | NotFoundException exc) {
                 Notifications.create()
                         .title("Server Error")
@@ -311,10 +319,10 @@ public class OrganWithRecipients {
             scheduleTransplant(organ, request);
         }
     }
-    
+
     private void scheduleTransplant(DonatedOrgan organ, TransplantRequest request) {
         Set<Hospital> hospitals = State.getConfigManager().getHospitals();
-        
+
         Hospital nearestHospital;
         if (request.getClient().getHospital() != null) {
             // Recipient has a hospital
