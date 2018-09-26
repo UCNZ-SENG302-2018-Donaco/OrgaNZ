@@ -177,9 +177,8 @@ public class OrganWithRecipients {
 
                 organImageController.setMatchCount(potentialMatches.size());
 
-                if (potentialMatches.isEmpty() && !organ.hasExpired()) {
-                    organImageController.matchCountIsVisible(true);
-                }
+                matchesPane.setVisible(false);
+                organImageController.matchCountIsVisible(true);
                 break;
 
             case TRANSPLANT_COMPLETED:
