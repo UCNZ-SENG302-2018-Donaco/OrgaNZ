@@ -1,6 +1,6 @@
 package com.humanharvest.organz.controller.client;
 
-import static com.humanharvest.organz.controller.clinician.ViewBaseController.addChangeIfDifferent;
+import static com.humanharvest.organz.views.ModifyBaseObject.addChangeIfDifferent;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
