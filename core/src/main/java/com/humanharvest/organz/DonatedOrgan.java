@@ -209,7 +209,7 @@ public class DonatedOrgan {
     }
 
     public boolean isAvailable() {
-        return available;
+        return getState() == OrganState.CURRENT || getState() == OrganState.NO_EXPIRY;
     }
 
     public void setAvailable(boolean available) {
