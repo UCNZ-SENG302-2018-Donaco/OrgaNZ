@@ -1,6 +1,8 @@
 .list-view {
   -fx-padding: 3px;
   -fx-background-color: transparent;
+  -fx-border-color: black;
+  -fx-bored-width: 3px;
 }
 
 .list-cell {
