@@ -64,7 +64,6 @@ public class DeceasedDonorDashboardOverviewController extends SubController {
         }
         Duration daysSinceDeath = Duration.between(LocalDateTime.now(), donor.getDatetimeOfDeath());
         deathLabel.setText("Died " + DurationFormatter.getFormattedDuration(daysSinceDeath, DurationFormat.DAYS));
-        System.out.println(daysSinceDeath);
 
         try (InputStream in = getClass().getResourceAsStream("/images/pages/spiderweb.png")) {
             byte[] spiderWebImageBytes = IOUtils.toByteArray(in);

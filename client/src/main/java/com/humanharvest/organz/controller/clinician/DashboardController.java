@@ -102,6 +102,8 @@ public class DashboardController extends SubController {
 
         generatePieChartData();
         updateOrgansToDonateList();
+
+        profilePictureStore.clear();
     }
 
     /**
@@ -117,7 +119,6 @@ public class DashboardController extends SubController {
         deceasedDonorsList.setCellFactory(param -> {
             DeceasedDonorCell item = new DeceasedDonorCell(profilePictureStore);
             item.setMaxWidth(deceasedDonorsList.getWidth());
-            System.out.println(deceasedDonorsList.getWidth());
 
             return item;
         });

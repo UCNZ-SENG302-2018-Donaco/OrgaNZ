@@ -29,10 +29,6 @@ public class DeceasedDonorCell extends ListCell<Client> {
     @Override
     protected void updateItem(Client donor, boolean empty) {
         super.updateItem(donor, empty);
-//        System.out.println(String.format("Old value: %s, New value: %s, Empty: %s",
-//                this.donor != null ? this.donor.getFullName() : null,
-//                donor != null ? donor.getFullName() : null,
-//                empty));
 
         if (empty || donor == null) {
             setText(null);

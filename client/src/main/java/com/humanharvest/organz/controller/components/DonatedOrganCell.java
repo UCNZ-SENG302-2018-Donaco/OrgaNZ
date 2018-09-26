@@ -33,7 +33,6 @@ public class DonatedOrganCell extends ListCell<DonatedOrgan> {
 
     @Override
     protected void updateItem(DonatedOrgan donatedOrgan, boolean empty) {
-//        System.out.println("updating cell do");
         super.updateItem(donatedOrgan, empty);
 
         if (empty || donatedOrgan == null) {
@@ -49,10 +48,6 @@ public class DonatedOrganCell extends ListCell<DonatedOrgan> {
                 // the same organ, we just need to refresh the time
                 controller.updateTime();
             } else {
-//            System.out.println(String.format("Old value: %s, New value: %s, Empty: %s",
-//                    this.donatedOrgan != null ? this.donatedOrgan.getDonor().getFullName() : null,
-//                    donatedOrgan.getDonor().getFullName(),
-//                    empty));
                 this.donatedOrgan = donatedOrgan;
                 this.donatedOrgan.setDonor(optionalDonor.get());
 
@@ -70,7 +65,7 @@ public class DonatedOrganCell extends ListCell<DonatedOrgan> {
                 }
             }
         } else {
-            System.out.println("np");
+            LOGGER.log(Level.INFO, "Donor was deleted when the DonatedOrganCell tried to update.");
             setGraphic(null);
         }
     }
