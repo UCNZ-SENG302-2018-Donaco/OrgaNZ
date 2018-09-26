@@ -389,6 +389,13 @@ public class OrganWithRecipients {
         }
         LocalDate transplantDate = LocalDateTime.now().plus(travelTime).toLocalDate();
 
+        if (transplantHospital == null) {
+            Notifications.create()
+                    .title("No eligible hospital")
+                    .text("There are no hospitals that can transplant that organ.")
+                    .showError();
+        }
+
         try {
             State.getClientResolver().scheduleTransplantProcedure(organ, request, transplantHospital, transplantDate);
             this.organ = State.getClientManager().getMatchingOrganTransplantRecord(organ).getOrgan();
