@@ -19,6 +19,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import org.controlsfx.control.CheckListView;
 import org.controlsfx.control.Notifications;
 
@@ -35,7 +36,7 @@ public class ConfigController extends SubController {
     private final Map<Hospital, Set<Organ>> modifiedHospitalPrograms = new HashMap<>();
 
     @FXML
-    private HBox menuBarPane;
+    private Pane menuBarPane;
     @FXML
     private CheckListView<Country> allowedCountries;
     @FXML

@@ -62,7 +62,7 @@ public class CreateClinicianController extends SubController {
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
-        mainController.loadMenuBar(menuBarPane);
+        mainController.loadNavigation(menuBarPane);
         mainController.setTitle("Create a new Clinician");
     }
 
