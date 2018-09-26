@@ -1,16 +1,13 @@
 package com.humanharvest.organz.controller.clinician;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
-import javafx.animation.Animation;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -30,7 +27,6 @@ import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.controller.components.DeceasedDonorCell;
 import com.humanharvest.organz.controller.components.DonatedOrganCell;
 import com.humanharvest.organz.state.ClientManager;
-import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.view.Page;
@@ -43,7 +39,6 @@ public class DashboardController extends SubController {
 
     private static final Logger LOGGER = Logger.getLogger(DashboardController.class.getName());
 
-    private final Session session;
     private DashboardStatistics statistics;
     private final ClientManager manager;
 
@@ -62,12 +57,12 @@ public class DashboardController extends SubController {
     @FXML
     private ListView<DonatedOrgan> expiringOrgansList;
 
-    private ObservableList<DonatedOrgan> observableOrgansToDonate = FXCollections.observableArrayList();
+    private final ObservableList<DonatedOrgan> observableOrgansToDonate = FXCollections.observableArrayList();
+
     private Map<Client, Image> profilePictureStore = new HashMap<>();
     private Map<Organ, Image> organImageMap = generateOrganPictureStore();
 
     public DashboardController() {
-        session = State.getSession();
         manager = State.getClientManager();
     }
 
@@ -101,6 +96,7 @@ public class DashboardController extends SubController {
         deceasedDonorsList.getItems().setAll(manager.getViableDeceasedDonors());
 
         generatePieChartData();
+
         updateOrgansToDonateList();
 
         profilePictureStore.clear();
@@ -112,9 +108,20 @@ public class DashboardController extends SubController {
     @FXML
     private void initialize() {
 
+        // Organs to donate setup
         updateOrgansToDonateList();
 
-        deceasedDonorsList.setItems((FXCollections.observableArrayList(manager.getViableDeceasedDonors())));
+        expiringOrgansList.setItems(observableOrgansToDonate);
+
+        expiringOrgansList.setCellFactory(param -> {
+            DonatedOrganCell item = new DonatedOrganCell(organImageMap);
+            item.setMaxWidth(expiringOrgansList.getWidth());
+            return item;
+        });
+
+        // Recently deceased donors setup
+
+        deceasedDonorsList.setItems(FXCollections.observableArrayList(manager.getViableDeceasedDonors()));
 
         deceasedDonorsList.setCellFactory(param -> {
             DeceasedDonorCell item = new DeceasedDonorCell(profilePictureStore);
@@ -138,36 +145,10 @@ public class DashboardController extends SubController {
                 }
             }
         });
-
-        expiringOrgansList.setItems(observableOrgansToDonate);
-
-        expiringOrgansList.setCellFactory(param -> {
-            DonatedOrganCell item = new DonatedOrganCell(organImageMap);
-            item.setMaxWidth(expiringOrgansList.getWidth());
-
-            return item;
-        });
-
-        // Attach timer to update table each second (for time until expiration)
-//        Timeline clock = new Timeline(new KeyFrame(
-//                javafx.util.Duration.millis(1000),
-//                event -> {
-////                    expiringOrgansList.refresh();
-//                    observableOrgansToDonate.removeIf(donatedOrgan ->
-//                            donatedOrgan.getOverrideReason() != null ||
-//                                    donatedOrgan.getDurationUntilExpiry() != null &&
-//                                            donatedOrgan.getDurationUntilExpiry().minusSeconds(1).isNegative());
-//                }));
-//        clock.setCycleCount(Animation.INDEFINITE);
-//        clock.play();
-        updateOrgansToDonateList();
     }
 
     private void updateOrgansToDonateList() {
-        observableOrgansToDonate = FXCollections.observableArrayList(manager.getAllOrgansToDonate
-                ().stream().filter(o -> o.getDurationUntilExpiry() != null).collect(Collectors.toList()));
-        expiringOrgansList.getItems().setAll(observableOrgansToDonate);
-
+        observableOrgansToDonate.setAll(manager.getAllOrgansToDonate());
     }
 
     private Map<Organ, Image> generateOrganPictureStore() {
@@ -187,7 +168,7 @@ public class DashboardController extends SubController {
             bytes = IOUtils.toByteArray(in);
             return new Image(new ByteArrayInputStream(bytes));
 
-        } catch (Exception ex) {
+        } catch (IOException ex) {
             LOGGER.log(Level.SEVERE, "Organ image failed to load");
             return null;
         }
