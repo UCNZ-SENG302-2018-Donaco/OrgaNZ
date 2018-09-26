@@ -16,30 +16,30 @@ Colors:
 .window {
     -fx-font-family: Lato;
     -fx-border-insets: 10;
-    -fx-background-color: #bdbfc1;
+    -fx-background-color: #5e8a5c;
     -fx-background-radius: 15;
     -fx-border-radius: 3;
     -fx-border-color: rgba(255, 255, 255, 0);
     -fx-border-style: solid;
     -fx-border-width: 2;
-    -fx-effect: dropshadow(three-pass-box, rgba(100, 100, 100, 1), 24, 0.5, 0, 0);
+    -fx-effect: dropshadow(three-pass-box, rgb(152, 157, 95), 24, 0.5, 0, 0);
     -fx-background-insets: 10;
 }
 
 .window .label {
-    -fx-text-fill: #282828;
+    -fx-text-fill: #000000;
 }
 
 .split-pane {
-    -fx-background-color: #737980;
+    -fx-background-color: #5e8a5c;
     -fx-background-radius: 15 30 15 15;
     -fx-font-family: Lato;
 }
 
 
 .button, .choice-box, .text-field, .toggle-button, .text-area .date-picker .text-field {
-    -fx-control-inner-background: #9AA4B3;
-    -fx-background-color: #9AA4B3;
+    -fx-control-inner-background: #afadb2;
+    -fx-background-color: #afadb2;
     -fx-background-radius: 5;
     -fx-font-family: Lato;
     -fx-effect: dropshadow(three-pass-box, rgba(100, 100, 100, 0.2), 3, 0.5, 2, 0);
@@ -64,6 +64,10 @@ Colors:
     -fx-font-family: Lato;
 }
 
+.table-view .column-header, .table-view .filler {
+    -fx-background-color: #58a336;
+}
+
 .table-row-cell{
     -fx-border-color: #9AA4B3;
     -fx-background-color: #bdbfc1;
@@ -73,6 +77,16 @@ Colors:
     -fx-fill: #282828;
 }
 
+.table-view .scroll-bar {
+    -fx-background-color: #3f6a2f;
+}
+
+.table-view .scroll-bar .thumb {
+    -fx-background-color: #58a336;
+    -fx-background-radius: 90;
+}
+
+
 /*.jfx-drawer .button {*/
   /*-fx-background-color: #9AA4B3;*/
 /*}*/
@@ -81,3 +95,96 @@ Colors:
   /*-fx-padding: 0px 0px 0px 10px;*/
 /*}*/
 
+
+.titled-pane
+{
+    -fx-text-fill: -fx-text-base-color;
+}
+.titled-pane:focused
+{
+    -fx-text-fill: #000000;
+}
+.titled-pane > .title
+{
+    -fx-background-color: #58a336;
+    -fx-background-insets: 0, 1, 2;
+    -fx-background-radius: 5 5 0 0, 4 4 0 0, 3 3 0 0;
+    -fx-padding: 0.166667em 0.833333em 0.25em 0.833333em; /* 2 10 3 10 */
+}
+
+.titled-pane:focused > .title
+{
+    -fx-color: -fx-focus-color;
+}
+
+.titled-pane > .title > .arrow-button
+{
+    -fx-background-color: null;
+    -fx-background-insets: 0;
+    -fx-background-radius: 0;
+    -fx-padding: 0.0em 0.25em 0.0em 0.0em; /* 0 3 0 0 */
+}
+
+.titled-pane > .title > .arrow-button .arrow
+{
+    -fx-background-color: #000000;
+    -fx-background-insets: 1 0 -1 0, 0;
+    -fx-padding: 0.25em 0.3125em 0.25em 0.3125em; /* 3 3.75 3 3.75 */
+    -fx-shape: "M 0 0 h 7 l -3.5 4 z";
+}
+
+.titled-pane:collapsed > .title > .arrow-button .arrow
+{
+    -fx-rotate: -90;
+}
+
+.titled-pane > *.content
+{
+    -fx-background-color: #c2fd41;
+    -fx-background-insets: 0, 0 1 1 1;
+    -fx-padding: 0.167em;
+}
+
+.titled-pane:focused > .title > .arrow-button .arrow
+{
+    -fx-background-color: #000000;
+}
+
+
+/* Remove spacing */
+.pagination > .pagination-control > .control-box {
+    -fx-spacing: 0;
+}
+
+/* You can control the actual button sizes here */
+.pagination > .pagination-control > .control-box > .number-button,
+.pagination > .pagination-control > .control-box > .bullet-button
+ {
+    -fx-background-insets: 0, 1;
+    -fx-background-color: #58a336, #c2fd41;
+    -fx-background-radius: 30;
+    -fx-min-width: 30;
+    -fx-min-height: 30;
+}
+
+.pagination > .pagination-control > .control-box > .left-arrow-button,
+.pagination > .pagination-control > .control-box > .right-arrow-button {
+    -fx-background-color: #58a336, #c2fd41;
+}
+
+/* Colors on hover */
+.pagination > .pagination-control > .control-box > .number-button:hover,
+.pagination > .pagination-control > .control-box > .bullet-button:hover,
+.pagination > .pagination-control > .control-box > .left-arrow-button:hover,
+.pagination > .pagination-control > .control-box > .right-arrow-button:hover {
+    -fx-background-insets: 0;
+    -fx-background-color: #78cb5d;
+}
+
+/* Selected toggle color */
+.pagination > .pagination-control > .control-box > .number-button:selected,
+.pagination > .pagination-control > .control-box > .bullet-button:selected{
+    -fx-background-insets: 0;
+    -fx-background-color: #37622f;
+    -fx-text-fill: #000000;
+}
