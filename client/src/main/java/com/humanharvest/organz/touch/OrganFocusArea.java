@@ -34,6 +34,8 @@ public class OrganFocusArea extends FocusArea {
     protected void onTouchPressed(TouchEvent event, CurrentTouch currentTouch) {
         super.onTouchPressed(event, currentTouch);
 
+        organWithRecipients.getOrganPane().toFront();
+
         if (getPaneTouches().size() == 1) {
             originalTouchPoint = new Point2D(event.getTouchPoint().getScreenX(), event.getTouchPoint().getScreenY());
             countsAsClick = true;
@@ -67,7 +69,7 @@ public class OrganFocusArea extends FocusArea {
             organWithRecipients.handleOrganSingleClick();
         }
 
-        organWithRecipients.handleOrganPaneTouchReleased();
+        organWithRecipients.handleTouchReleased();
     }
 
     @Override

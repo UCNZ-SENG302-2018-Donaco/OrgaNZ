@@ -36,7 +36,7 @@ public final class PageNavigator {
     }
 
     /**
-     * Refreshes all windows, to be used when an update occurs. Only refreshes titles and sidebars
+     * Refreshes all windows, to be used when an update occurs.
      */
     public static void refreshAllWindows() {
         instance.refreshAllWindows();
@@ -89,6 +89,7 @@ public final class PageNavigator {
      * @param alertType the type of alert to show (can determine its style and button options).
      * @param title the text to show as the title and heading of the alert.
      * @param bodyText the text to show within the body of the alert.
+     * @param window The window to translate the new alert to
      * @param onResponse a callback for when an ok/cancel button is clicked.
      */
     public static void showAlert(Alert.AlertType alertType, String title, String bodyText, Window window,

@@ -32,11 +32,9 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Pagination;
-import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.SortType;
 import javafx.scene.control.TableView;
@@ -54,7 +52,9 @@ import com.humanharvest.organz.Hospital;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
+import com.humanharvest.organz.controller.components.ClientFullNameCell;
 import com.humanharvest.organz.controller.components.DurationUntilExpiryCell;
+import com.humanharvest.organz.controller.components.FormattedLocalDateTimeCell;
 import com.humanharvest.organz.controller.components.TouchAlertTextController;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
@@ -138,25 +138,6 @@ public class OrgansToDonateController extends SubController {
     // ---------------- Setup methods ----------------
 
     /**
-     * Formats a table cell that holds a {@link LocalDateTime} value to display that value in the date time format.
-     *
-     * @return The cell with the date time formatter set.
-     */
-    private static TableCell<DonatedOrgan, LocalDateTime> formatDateTimeCell() {
-        return new TableCell<DonatedOrgan, LocalDateTime>() {
-            @Override
-            protected void updateItem(LocalDateTime item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty) {
-                    setText(null);
-                } else {
-                    setText(item.format(dateTimeFormat));
-                }
-            }
-        };
-    }
-
-    /**
      * Sets up the page, setting its title, loading the menu bar and doing the first refresh of the data.
      *
      * @param mainController The main controller that defines which window this subcontroller belongs to.
@@ -237,20 +218,10 @@ public class OrgansToDonateController extends SubController {
         timeUntilExpiryCol.setCellValueFactory(new PropertyValueFactory<>("durationUntilExpiry"));
 
         // Format all the datetime cells
-        timeOfDeathCol.setCellFactory(cell -> formatDateTimeCell());
+        timeOfDeathCol.setCellFactory(cell -> new FormattedLocalDateTimeCell<>(dateTimeFormat));
         timeUntilExpiryCol.setCellFactory(DurationUntilExpiryCell::new);
 
-        potentialRecipients.setCellFactory(listView -> new ListCell<Client>() {
-            @Override
-            public void updateItem(Client item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                } else {
-                    setText(item.getFullName());
-                }
-            }
-        });
+        potentialRecipients.setCellFactory(listView -> new ClientFullNameCell());
 
         // Open the client profile when double-clicked
         potentialRecipients.setOnMouseClicked(mouseEvent -> {

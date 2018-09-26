@@ -21,6 +21,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
@@ -43,11 +44,13 @@ import com.humanharvest.organz.Hospital;
 import com.humanharvest.organz.TransplantRecord;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.controller.client.DeceasedDonorOverviewController;
 import com.humanharvest.organz.controller.client.ReceiverOverviewController;
 import com.humanharvest.organz.controller.components.ExpiryBarUtils;
 import com.humanharvest.organz.controller.components.PotentialRecipientCell;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.touch.FocusArea;
+import com.humanharvest.organz.touch.MatchesFocusArea;
 import com.humanharvest.organz.touch.MultitouchHandler;
 import com.humanharvest.organz.touch.OrganFocusArea;
 import com.humanharvest.organz.touch.PointUtils;
@@ -65,9 +68,11 @@ public class OrganWithRecipients {
     private static final DurationFormat durationFormat = DurationFormat.X_HRS_Y_MINS_SECS;
     private static final int ORGAN_SIZE = 70;
 
-    private final Pane deceasedDonorPane;
+    private final DropShadow hoveredGlow;
+
     private final Pane matchesPane;
     private final Pane canvas;
+    private final DeceasedDonorOverviewController donorOverviewController;
     private DonatedOrgan organ;
     private Timeline refresher;
 
@@ -80,11 +85,15 @@ public class OrganWithRecipients {
     private Line organToRecipientConnector;
     private Text durationText;
 
-    public OrganWithRecipients(DonatedOrgan organ, Pane deceasedDonorPane,
+    public OrganWithRecipients(DonatedOrgan organ, DeceasedDonorOverviewController donorOverviewController,
             Pane canvas) {
         this.organ = organ;
-        this.deceasedDonorPane = deceasedDonorPane;
+        this.donorOverviewController = donorOverviewController;
         this.canvas = canvas;
+
+        // Create the hovered glow effect for creating transplants
+        hoveredGlow = new DropShadow(15, Color.PALEGOLDENROD);
+        hoveredGlow.setInput(new Glow(0.5));
 
         MainController newMain = ((PageNavigatorTouch) PageNavigator.getInstance())
                 .openNewWindow(ORGAN_SIZE, ORGAN_SIZE, pane -> new OrganFocusArea(pane, this));
@@ -95,19 +104,20 @@ public class OrganWithRecipients {
         createLines();
 
         matchesPane = new Pane();
-        MultitouchHandler.addPane(matchesPane);
-        FocusArea matchesPaneFocus = (FocusArea) matchesPane.getUserData();
-        matchesPaneFocus.setScalable(false);
-        matchesPaneFocus.setRotatable(false);
-        matchesPaneFocus.setTranslatable(false);
+        MatchesFocusArea matchesFocusArea = new MatchesFocusArea(matchesPane, this);
+        MultitouchHandler.addPane(matchesPane, matchesFocusArea);
+        matchesFocusArea.setScalable(false);
+        matchesFocusArea.setRotatable(false);
+        matchesFocusArea.setTranslatable(false);
 
         enableHandlers();
 
-        refresh();
+        drawMatchesPane(true);
+        createRefresher();
     }
 
     public void refresh() {
-        drawMatchesPane();
+        drawMatchesPane(false);
         createRefresher();
     }
 
@@ -120,12 +130,9 @@ public class OrganWithRecipients {
         updateDonorConnector(organ, deceasedToOrganConnector, organPane);
         updateConnectorText(durationText, organ, deceasedToOrganConnector);
         // Attach timer to update connector each second (for time until expiration)
-        if (organ.getState() == OrganState.TRANSPLANT_COMPLETED) {
-            if (refresher != null) {
-                refresher.stop();
-            }
-            refresher = null;
-        } else {
+
+        closeRefresher();
+        if (organ.getState() != OrganState.TRANSPLANT_COMPLETED) {
             refresher = new Timeline(new KeyFrame(
                     javafx.util.Duration.seconds(1),
                     event -> {
@@ -134,6 +141,13 @@ public class OrganWithRecipients {
                     }));
             refresher.setCycleCount(Animation.INDEFINITE);
             refresher.play();
+        }
+    }
+
+    public void closeRefresher() {
+        if (refresher != null) {
+            refresher.stop();
+            refresher = null;
         }
     }
 
@@ -164,35 +178,59 @@ public class OrganWithRecipients {
         canvas.getChildren().add(0, durationText);
     }
 
-    private void drawMatchesPane() {
+    private void drawMatchesPane(boolean isInit) {
         organImageController.matchCountIsVisible(false);
+
         // Create match pane or matches list pane
         switch (organ.getState()) {
             case CURRENT:
             case NO_EXPIRY:
-                List<TransplantRequest> potentialMatches = State.getClientManager().getMatchingOrganTransplants(organ);
+                Task<List<TransplantRequest>> matchesTask = new Task<List<TransplantRequest>>() {
+                    @Override
+                    protected List<TransplantRequest> call() throws ServerRestException {
+                        return com.humanharvest.organz.state.State.getClientManager()
+                                .getMatchingOrganTransplants(organ);
+                    }
+                };
 
-                setMatchPane(createMatchesPane(FXCollections.observableArrayList(potentialMatches)));
+                matchesTask.setOnSucceeded(event -> {
+                    List<TransplantRequest> potentialMatches = matchesTask.getValue();
+                    setMatchPane(createMatchesPane(FXCollections.observableArrayList(potentialMatches)));
+                    organImageController.setMatchCount(potentialMatches.size());
+                    updateRecipientConnector();
 
-                organImageController.setMatchCount(potentialMatches.size());
+                    if (isInit) {
+                        matchesPane.setVisible(false);
+                        organImageController.matchCountIsVisible(true);
+                    }
+                });
 
-                if (potentialMatches.isEmpty() && !organ.hasExpired()) {
-                    organImageController.matchCountIsVisible(true);
-                }
+                new Thread(matchesTask).start();
                 break;
 
             case TRANSPLANT_COMPLETED:
             case TRANSPLANT_PLANNED:
-                transplantRecord = State.getClientManager().getMatchingOrganTransplantRecord(organ);
+                Task<TransplantRecord> transplantTask = new Task<TransplantRecord>() {
+                    @Override
+                    protected TransplantRecord call() throws ServerRestException {
+                        return com.humanharvest.organz.state.State.getClientManager()
+                                .getMatchingOrganTransplantRecord(organ);
+                    }
+                };
 
-                setMatchPane(createMatchPane(transplantRecord));
+                transplantTask.setOnSucceeded(event -> {
+                    transplantRecord = transplantTask.getValue();
+                    setMatchPane(createMatchPane(transplantRecord));
+                    updateRecipientConnector();
+                });
+
+                new Thread(transplantTask).start();
                 break;
 
             default:
                 removeMatchPane();
+                updateRecipientConnector();
         }
-
-        updateRecipientConnector();
     }
 
     private void removeMatchPane() {
@@ -225,7 +263,7 @@ public class OrganWithRecipients {
 
         // This listener is only used to handle the initial reposition
         matchesPane.boundsInLocalProperty().addListener(
-                (__, ___, newValue) -> handleOrganPaneTransformed(organPane.getLocalToParentTransform()));
+                (__, ___, ____) -> handleOrganPaneTransformed(organPane.getLocalToParentTransform()));
     }
 
     public void handleOrganPaneClick(MouseEvent event) {
@@ -252,14 +290,16 @@ public class OrganWithRecipients {
             String reason = "Manually Overridden by Doctor using WebView";
             State.getClientResolver().manuallyOverrideOrgan(organ, reason);
             organ.manuallyOverride(reason);
+            donorOverviewController.fetchOrgans();
 
             removeMatchPane();
 
         } else if (organ.getState() == OrganState.OVERRIDDEN) {
             State.getClientResolver().cancelManualOverrideForOrgan(organ);
             organ.cancelManualOverride();
+            donorOverviewController.fetchOrgans();
 
-            drawMatchesPane();
+            drawMatchesPane(true);
         }
 
         organImageController.matchCountIsVisible(false);
@@ -267,8 +307,7 @@ public class OrganWithRecipients {
         updateConnectorText(durationText, organ, deceasedToOrganConnector);
     }
 
-    public void handleOrganPaneTouchReleased() {
-        System.out.println("Released");
+    public void handleTouchReleased() {
         switch (organ.getState()) {
             case CURRENT:
             case NO_EXPIRY:
@@ -281,6 +320,7 @@ public class OrganWithRecipients {
             default:
                 break;
         }
+        handleOrganPaneTransformed(organPane.getLocalToParentTransform());
     }
 
     private void tryCancelTransplant() {
@@ -291,6 +331,7 @@ public class OrganWithRecipients {
                         .stream()
                         .filter(newOrgan -> newOrgan.getId().equals(organ.getId()))
                         .findFirst();
+                donorOverviewController.refresh();
                 if (optionalOrgan.isPresent()) {
                     this.organ = optionalOrgan.get();
                     refresh();
@@ -307,16 +348,20 @@ public class OrganWithRecipients {
     }
 
     private void tryScheduleTransplant() {
-        Optional<PotentialRecipientCell> closestCell = recipientCells.stream()
-                .filter(cell -> organIntersectsCell(organPane, cell))
-                .filter(cell -> !cell.isEmpty())
-                .min(Comparator.comparing(cell -> PointUtils.distance(PointUtils.getCentreOfNode(cell),
-                        PointUtils.getCentreOfNode(organPane))));
+        Optional<PotentialRecipientCell> closestCell = getNearestCell();
 
         if (closestCell.isPresent()) {
             TransplantRequest request = closestCell.get().getTransplantRequest();
             scheduleTransplant(organ, request);
         }
+    }
+
+    private Optional<PotentialRecipientCell> getNearestCell() {
+        return recipientCells.stream()
+                .filter(cell -> organIntersectsCell(organPane, cell))
+                .filter(cell -> !cell.isEmpty())
+                .min(Comparator.comparing(cell -> PointUtils.distance(PointUtils.getCentreOfNode(cell),
+                        PointUtils.getCentreOfNode(organPane))));
     }
 
     private void scheduleTransplant(DonatedOrgan organ, TransplantRequest request) {
@@ -344,9 +389,17 @@ public class OrganWithRecipients {
         }
         LocalDate transplantDate = LocalDateTime.now().plus(travelTime).toLocalDate();
 
+        if (transplantHospital == null) {
+            Notifications.create()
+                    .title("No eligible hospital")
+                    .text("There are no hospitals that can transplant that organ.")
+                    .showError();
+        }
+
         try {
             State.getClientResolver().scheduleTransplantProcedure(organ, request, transplantHospital, transplantDate);
             this.organ = State.getClientManager().getMatchingOrganTransplantRecord(organ).getOrgan();
+            donorOverviewController.refresh();
             refresh();
         } catch (ServerRestException exc) {
             Notifications.create()
@@ -374,15 +427,12 @@ public class OrganWithRecipients {
 
         updateMatchesListPosition(matchesPane, newValue, ORGAN_SIZE);
 
+        // Remove the cell effects if any were previously applied
         for (Node cell : recipientCells) {
-            if (organIntersectsCell(organPane, cell)) {
-                DropShadow dropShadow = new DropShadow(15, Color.PALEGOLDENROD);
-                dropShadow.setInput(new Glow(0.5));
-                cell.setEffect(dropShadow);
-            } else {
-                cell.setEffect(null);
-            }
+            cell.setEffect(null);
         }
+        // Set the hovered glow effect on the nearest hovered cell if it exists
+        getNearestCell().ifPresent(cell -> cell.setEffect(hoveredGlow));
 
         setRecipientConnectorStart(bounds);
         setRecipientConnectorEnd(matchesPane.getBoundsInParent());
@@ -443,7 +493,7 @@ public class OrganWithRecipients {
                         PotentialRecipientCell.class.getResource(Page.RECEIVER_OVERVIEW.getPath()));
                 Node node = loader.load();
                 ReceiverOverviewController controller = loader.getController();
-                controller.setup(record, organ.getDonor());
+                controller.setup(record, organ.getDonor(), refresher);
                 if (organ.getState() == OrganState.TRANSPLANT_PLANNED) {
                     controller.setPriority("Scheduled");
                 } else if (organ.getState() == OrganState.TRANSPLANT_COMPLETED) {
@@ -467,7 +517,7 @@ public class OrganWithRecipients {
         matchesList.setItems(potentialMatches);
 
         matchesList.setCellFactory(param -> {
-            PotentialRecipientCell cell = new PotentialRecipientCell(param.getItems(), organ.getDonor());
+            PotentialRecipientCell cell = new PotentialRecipientCell(param.getItems(), organ.getDonor(), refresher);
             recipientCells.add(cell);
             return cell;
         });
@@ -486,7 +536,6 @@ public class OrganWithRecipients {
                 matchesList.setMinWidth(380);
                 break;
             default:
-                System.out.println(potentialMatches.size());
                 matchesList.setMinWidth(450);
                 break;
         }

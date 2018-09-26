@@ -1,6 +1,7 @@
 package com.humanharvest.organz.controller.spiderweb;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -11,6 +12,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.CacheHint;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Rotate;
@@ -23,7 +25,9 @@ import org.controlsfx.control.Notifications;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.controller.ProjectionHelper;
 import com.humanharvest.organz.controller.SubController;
+import com.humanharvest.organz.controller.client.DeceasedDonorOverviewController;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.touch.FocusArea;
 import com.humanharvest.organz.touch.MultitouchHandler;
@@ -41,13 +45,14 @@ public class SpiderWebController extends SubController {
     private static final Logger LOGGER = Logger.getLogger(SpiderWebController.class.getName());
     private static final double RADIUS = 300;
 
-    private final Client client;
+    private Client client;
 
     private final List<MainController> previouslyOpenWindows = new ArrayList<>();
     private final List<OrganWithRecipients> organWithRecipientsList = new ArrayList<>();
     private final Pane rootPane;
     private final Pane canvas;
     private Pane deceasedDonorPane;
+    private DeceasedDonorOverviewController donorOverviewController;
 
     public SpiderWebController(Client viewedClient) {
         client = viewedClient;
@@ -78,12 +83,8 @@ public class SpiderWebController extends SubController {
         // Setup spider web physics
         MultitouchHandler.setPhysicsHandler(new SpiderPhysicsHandler(MultitouchHandler.getRootPane()));
 
-        // Add exit button
-        Button exitButton = new Button("Exit Spider Web");
-        canvas.getChildren().add(exitButton);
-        exitButton.setOnAction(event -> closeSpiderWeb());
-
         // Setup page
+        setupButtons();
         displayDonatingClient();
         displayOrgans();
     }
@@ -112,6 +113,26 @@ public class SpiderWebController extends SubController {
         node.setCacheHint(CacheHint.QUALITY);
     }
 
+    private static void killVelocity(Node node) {
+        ((FocusArea) node.getUserData()).setVelocity(Point2D.ZERO);
+    }
+
+    /**
+     * Setup the basic buttons in the top left corner
+     */
+    private void setupButtons() {
+        Button exitButton = new Button("Exit Spider Web");
+        exitButton.setOnAction(__ -> closeSpiderWeb());
+
+        Button resetButton = new Button("Reset");
+        resetButton.setOnAction(__ -> resetLayout());
+
+        HBox buttons = new HBox();
+        buttons.setSpacing(10);
+        buttons.getChildren().addAll(exitButton, resetButton);
+        canvas.getChildren().add(buttons);
+    }
+
     /**
      * Loads a window for each non expired organ.
      */
@@ -134,7 +155,7 @@ public class SpiderWebController extends SubController {
     }
 
     private void addOrganNode(DonatedOrgan organ, double xPos, double yPos, double rotation) {
-        OrganWithRecipients organWithRecipients = new OrganWithRecipients(organ, deceasedDonorPane,
+        OrganWithRecipients organWithRecipients = new OrganWithRecipients(organ, donorOverviewController,
                 canvas);
 
         organWithRecipientsList.add(organWithRecipients);
@@ -144,7 +165,8 @@ public class SpiderWebController extends SubController {
 
     private void displayDonatingClient() {
         MainController newMain = PageNavigator.openNewWindow(200, 320);
-        PageNavigator.loadPage(Page.DECEASED_DONOR_OVERVIEW, newMain);
+        donorOverviewController = (DeceasedDonorOverviewController)
+                PageNavigator.loadPage(Page.DECEASED_DONOR_OVERVIEW, newMain);
 
         deceasedDonorPane = newMain.getPane();
 
@@ -163,6 +185,25 @@ public class SpiderWebController extends SubController {
                         organ -> organ.setDonorConnectorStart(deceasedDonorPane.getBoundsInParent())));
     }
 
+    private void resetLayout() {
+        Bounds donorBounds = deceasedDonorPane.getBoundsInParent();
+        double centreX = donorBounds.getMinX() + donorBounds.getWidth() / 2;
+        double centreY = donorBounds.getMinY() + donorBounds.getHeight() / 2;
+        double angleSize = (Math.PI * 2) / organWithRecipientsList.size();
+
+        for (int i = 0; i < organWithRecipientsList.size(); i++) {
+            OrganWithRecipients organWithRecipients = organWithRecipientsList.get(i);
+
+            double xPos = centreX + RADIUS * Math.sin(angleSize * i);
+            double yPos = centreY + RADIUS * Math.cos(angleSize * i);
+            double angle = 360.01 - Math.toDegrees(angleSize * i);
+
+            setPositionUsingTransform(organWithRecipients.getOrganPane(), 0, 0, 0, 0);
+            setPositionUsingTransform(organWithRecipients.getOrganPane(), xPos, yPos, angle, 1);
+            killVelocity(organWithRecipients.getOrganPane());
+        }
+    }
+
     @FXML
     private void closeSpiderWeb() {
         MultitouchHandler.setPhysicsHandler(new PhysicsHandler(MultitouchHandler.getRootPane()));
@@ -173,14 +214,25 @@ public class SpiderWebController extends SubController {
         toClose.forEach(MainController::closeWindow);
         rootPane.getChildren().clear();
 
+        // We need to close the Timeline to clear resources
+        organWithRecipientsList.forEach(OrganWithRecipients::closeRefresher);
+
         // Open all the previously open windows again
-        previouslyOpenWindows.forEach(MainController::showWindow);
+        for (MainController mainController : previouslyOpenWindows) {
+            mainController.showWindow();
+            if (mainController.isProjecting()) {
+                ProjectionHelper.createNewProjection(mainController);
+            }
+        }
     }
 
     @Override
     public void refresh() {
 
-        client.setDonatedOrgans(State.getClientResolver().getDonatedOrgans(client));
+        Collection<DonatedOrgan> donatedOrgans = State.getClientResolver().getDonatedOrgans(client);
+        client = donatedOrgans.iterator().next().getDonor();
+        client.setDonatedOrgans(donatedOrgans);
+
         for (OrganWithRecipients page : organWithRecipientsList) {
             Optional<DonatedOrgan> newOrgan = client.getDonatedOrgans().stream()
                     .filter(organ -> organ.getOrganType() == page.getOrgan().getOrganType())
@@ -194,6 +246,5 @@ public class SpiderWebController extends SubController {
                 page.refresh(newOrgan.get());
             }
         }
-        organWithRecipientsList.forEach(OrganWithRecipients::refresh);
     }
 }
