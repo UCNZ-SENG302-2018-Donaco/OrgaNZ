@@ -25,6 +25,7 @@ import org.controlsfx.control.Notifications;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.controller.ProjectionHelper;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.controller.client.DeceasedDonorOverviewController;
 import com.humanharvest.organz.state.State;
@@ -217,7 +218,12 @@ public class SpiderWebController extends SubController {
         organWithRecipientsList.forEach(OrganWithRecipients::closeRefresher);
 
         // Open all the previously open windows again
-        previouslyOpenWindows.forEach(MainController::showWindow);
+        for (MainController mainController : previouslyOpenWindows) {
+            mainController.showWindow();
+            if (mainController.isProjecting()) {
+                ProjectionHelper.createNewProjection(mainController);
+            }
+        }
     }
 
     @Override

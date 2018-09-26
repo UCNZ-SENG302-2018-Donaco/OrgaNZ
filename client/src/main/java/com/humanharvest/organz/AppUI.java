@@ -13,6 +13,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.controller.ProjectionHelper;
 import com.humanharvest.organz.controller.clinician.StaffLoginController;
 import com.humanharvest.organz.controller.spiderweb.SpiderWebController;
 import com.humanharvest.organz.state.State;
@@ -87,6 +88,7 @@ public class AppUI extends Application {
 
         primaryStage.setFullScreen(true);
         primaryStage.setOnCloseRequest(event -> {
+            ProjectionHelper.stageClosing();
             MultitouchHandler.stageClosing();
         });
     }
@@ -137,6 +139,11 @@ public class AppUI extends Application {
 
         primaryStage.setMinHeight(639);
         primaryStage.setMinWidth(1016);
+
+        // Only enable projection helper on touch screen
+        if (MultitouchHandler.getRootPane() != null) {
+            ProjectionHelper.initialise();
+        }
 
         // Skips login page if arguments contains --login & --password
         if (parameters.containsKey("login")) {
