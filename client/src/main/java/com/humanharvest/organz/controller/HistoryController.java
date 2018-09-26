@@ -7,13 +7,13 @@ import java.util.logging.Logger;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
 
 import com.humanharvest.organz.HistoryItem;
+import com.humanharvest.organz.controller.components.FormattedLocalDateTimeCell;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
@@ -42,25 +42,6 @@ public class HistoryController extends SubController {
     }
 
     /**
-     * Formats a table cell that holds a {@link LocalDateTime} value to display that value in the date time format.
-     *
-     * @return The cell with the date time formatter set.
-     */
-    private static TableCell<HistoryItem, LocalDateTime> formatDateTimeCell() {
-        return new TableCell<HistoryItem, LocalDateTime>() {
-            @Override
-            protected void updateItem(LocalDateTime item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                } else {
-                    setText(item.format(dateTimeFormat));
-                }
-            }
-        };
-    }
-
-    /**
      * Initializes the UI for this page.
      * - Loads the sidebar.
      * - Sets up cell factories to generate the values for the history table.
@@ -69,7 +50,7 @@ public class HistoryController extends SubController {
     @FXML
     private void initialize() {
         timestampCol.setCellValueFactory(new PropertyValueFactory<>("timestamp"));
-        timestampCol.setCellFactory(cell -> formatDateTimeCell());
+        timestampCol.setCellFactory(cell -> new FormattedLocalDateTimeCell<>(dateTimeFormat));
         typeCol.setCellValueFactory(new PropertyValueFactory<>("type"));
         detailsCol.setCellValueFactory(new PropertyValueFactory<>("details"));
     }
