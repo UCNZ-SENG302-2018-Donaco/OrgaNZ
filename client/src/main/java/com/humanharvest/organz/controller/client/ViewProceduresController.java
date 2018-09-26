@@ -1,6 +1,10 @@
 package com.humanharvest.organz.controller.client;
 
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.Set;
 import java.util.logging.Level;
@@ -36,6 +40,8 @@ import com.humanharvest.organz.controller.components.OrganCheckComboBoxCell;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.DurationFormatter;
+import com.humanharvest.organz.utilities.DurationFormatter.DurationFormat;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.exceptions.BadRequestException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
@@ -80,7 +86,7 @@ public class ViewProceduresController extends SubController {
     @FXML
     private TableColumn<ProcedureRecord, Set<Organ>> affectedPastCol, affectedPendCol;
     @FXML
-    private Button deleteButton;
+    private Button deleteButton, viewDetailsButton;
     @FXML
     private Button completeTransplantButton;
 
@@ -320,14 +326,14 @@ public class ViewProceduresController extends SubController {
             client = session.getLoggedInClient();
             newProcedurePane.setVisible(false);
             newProcedurePane.setManaged(false);
-            procedureButtonsPane.setVisible(false);
-            procedureButtonsPane.setManaged(false);
             pendingProcedureView.setEditable(false);
             pastProcedureView.setEditable(false);
             datePendCol.setEditable(false);
             datePastCol.setEditable(false);
             affectedPendCol.setEditable(false);
             affectedPastCol.setEditable(false);
+            deleteButton.setVisible(false);
+            deleteButton.setManaged(false);
             deleteButton.setDisable(true);
             completeTransplantButton.setDisable(true);
         } else if (windowContext.isClinViewClientWindow()) {
@@ -400,10 +406,12 @@ public class ViewProceduresController extends SubController {
                 pendingProcedureView.getSelectionModel().getSelectedItem() == null) {
             // Nothing is selected
             deleteButton.setDisable(true);
+            viewDetailsButton.setDisable(true);
             completeTransplantButton.setDisable(true);
         } else {
             // Something is selected
             deleteButton.setDisable(false);
+            viewDetailsButton.setDisable(false);
             setCompleteTransplantButton();
         }
     }
@@ -496,6 +504,55 @@ public class ViewProceduresController extends SubController {
                         mainController.getStage());
             }
         }
+    }
+
+    /**
+     * Generates a popup that displays all information on a procedure
+     */
+    @FXML
+    private void viewDetails() {
+        ProcedureRecord record = getSelectedRecord();
+        //todo disable this button (and delete button) if nothing is selected
+        System.out.println(record);
+        if (record != null) {
+            String title = "";
+            if (record instanceof TransplantRecord) {
+                title += "Transplant ";
+            }
+            title += "Procedure: " + record.getSummary();
+
+            String description = "";
+            if (!record.getDescription().isEmpty()) {
+                description = record.getDescription() + "\n\n";
+            }
+
+            String affectedOrgans;
+            if (record.getAffectedOrgans().isEmpty()) {
+                affectedOrgans = "No affected organs";
+            } else {
+                affectedOrgans = record.getAffectedOrgans().toString();
+                affectedOrgans = "Affected organs: " + affectedOrgans.substring(1, affectedOrgans.length() - 1);
+            }
+
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d MMMM yyyy");
+            String dayDifference = DurationFormatter.getFormattedDuration(
+                    Duration.between(LocalDateTime.now(), LocalDateTime.of(record.getDate(), LocalTime.now())),
+                    DurationFormat.DAYS);
+            String date;
+            if (record.hasHappened()) {
+                date = "Date: ";
+            } else {
+                date = "Scheduled date: ";
+            }
+            date += record.getDate().format(formatter) + " (" + dayDifference + ")";
+
+            String information = description
+                    + affectedOrgans + ".\n\n"
+                    + date + ".";
+
+            PageNavigator.showAlert(AlertType.INFORMATION, title, information, mainController.getStage());
+        }
+
     }
 
     @FXML

@@ -1,5 +1,9 @@
 package com.humanharvest.organz.controller;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 
 import java.lang.reflect.Field;
@@ -112,6 +116,33 @@ public abstract class ControllerTest extends ApplicationTest {
             if (parent instanceof DialogPane) {
                 Platform.runLater(stage::close);
             }
+        }
+    }
+
+
+
+    /**
+     * Asserts that header is expectedHeader and content contains expectedContent.
+     */
+    protected static void alertDialogHasHeaderAndContainsContent(String expectedHeader, String expectedContent) {
+        Stage actualAlertDialog = getTopModalStage();
+        assertNotNull(actualAlertDialog);
+
+        DialogPane dialogPane = (DialogPane) actualAlertDialog.getScene().getRoot();
+        assertEquals(expectedHeader, dialogPane.getHeaderText());
+        assertThat(dialogPane.getContentText(), containsString(expectedContent));
+    }
+    /**
+     * Asserts that header is expectedHeader and content contains each String in expectedContents.
+     */
+    protected static void alertDialogHasHeaderAndContainsContents(String expectedHeader, String[] expectedContents) {
+        Stage actualAlertDialog = getTopModalStage();
+        assertNotNull(actualAlertDialog);
+
+        DialogPane dialogPane = (DialogPane) actualAlertDialog.getScene().getRoot();
+        assertEquals(expectedHeader, dialogPane.getHeaderText());
+        for (String expectedContent : expectedContents) {
+            assertThat(dialogPane.getContentText(), containsString(expectedContent));
         }
     }
 
