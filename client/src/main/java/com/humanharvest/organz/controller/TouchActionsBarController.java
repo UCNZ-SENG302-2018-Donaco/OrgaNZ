@@ -22,7 +22,6 @@ import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.views.ActionResponseView;
 
-import com.jfoenix.controls.JFXHamburger;
 
 /**
  * A class to handle everything to do with the navigation of both clients using the desktop application and
@@ -43,7 +42,7 @@ public class TouchActionsBarController extends SubController {
     private Button duplicateButton;
 
     @FXML
-    private JFXHamburger hamburger;
+    private Button hamburger;
 
     @FXML
     private Pane entireMenubarPane;
@@ -92,7 +91,7 @@ public class TouchActionsBarController extends SubController {
      * If the draw item is open, it will be closed.
      * @param drawer the item to close
      */
-    public void closeSidebar(Pane drawer) {
+    private void closeSidebar(Pane drawer) {
         drawer.setDisable(true);
         drawer.setVisible(false);
     }
