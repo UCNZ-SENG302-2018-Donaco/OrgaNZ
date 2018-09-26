@@ -83,7 +83,7 @@ public class SpiderWebController extends SubController {
         canvas.getChildren().add(exitButton);
         exitButton.setOnAction(event -> closeSpiderWeb());
 
-        Button homeButton = new Button("Home");
+        Button homeButton = new Button("Dashboard");
         homeButton.setTranslateX(120);
         canvas.getChildren().add(homeButton);
         homeButton.setOnAction(event -> goToDashboard());
@@ -302,9 +302,12 @@ public class SpiderWebController extends SubController {
     @FXML
     private void goToDashboard() {
         closeSpiderWeb();
-        MainController newMain = PageNavigator.openNewWindow();
-        newMain.setWindowContext(WindowContext.defaultContext());
-        PageNavigator.loadPage(Page.DASHBOARD, newMain);
+        for (MainController newMain : previouslyOpenWindows) {
+            canvas.getChildren().clear();
+            newMain.setWindowContext(WindowContext.defaultContext());
+            PageNavigator.loadPage(Page.DASHBOARD, newMain);
+        }
+
 
     }
 }
