@@ -1,5 +1,7 @@
 package com.humanharvest.organz.controller.clinician;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javafx.animation.Animation;
@@ -12,6 +14,7 @@ import javafx.scene.chart.PieChart;
 import javafx.scene.chart.PieChart.Data;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
 
@@ -52,6 +55,7 @@ public class DashboardController extends SubController {
     private ListView<DonatedOrgan> expiringOrgansList;
 
     private ObservableList<DonatedOrgan> observableOrgansToDonate =  FXCollections.observableArrayList();
+    private Map<Client, Image> profilePictureStore = new HashMap<>();
 
 
     public DashboardController() {
@@ -106,7 +110,7 @@ public class DashboardController extends SubController {
         deceasedDonorsList.setItems((FXCollections.observableArrayList(manager.getViableDeceasedDonors())));
 
         deceasedDonorsList.setCellFactory(param -> {
-            DeceasedDonorCell item = new DeceasedDonorCell();
+            DeceasedDonorCell item = new DeceasedDonorCell(profilePictureStore);
             item.setMaxWidth(deceasedDonorsList.getWidth());
             System.out.println(deceasedDonorsList.getWidth());
 
@@ -142,7 +146,7 @@ public class DashboardController extends SubController {
         Timeline clock = new Timeline(new KeyFrame(
                 javafx.util.Duration.millis(1000),
                 event -> {
-                    expiringOrgansList.refresh();
+//                    expiringOrgansList.refresh();
                     observableOrgansToDonate.removeIf(donatedOrgan ->
                             donatedOrgan.getOverrideReason() != null ||
                                     donatedOrgan.getDurationUntilExpiry() != null &&

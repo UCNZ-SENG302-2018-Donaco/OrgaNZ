@@ -68,7 +68,7 @@ public final class MultitouchHandler {
         root.addEventFilter(GestureEvent.ANY, Event::consume);
         root.addEventFilter(RotateEvent.ANY, Event::consume);
 
-       HackyMouseTouch.initialise(root);
+//        HackyMouseTouch.initialise(root);
 
         physicsHandler = new PhysicsHandler(rootPane);
 

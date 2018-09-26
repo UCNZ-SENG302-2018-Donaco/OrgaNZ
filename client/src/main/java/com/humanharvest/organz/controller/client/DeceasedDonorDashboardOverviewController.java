@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -45,10 +46,10 @@ public class DeceasedDonorDashboardOverviewController extends SubController {
 
     Client donor;
 
-    public void setup(Client donor) {
+    public void setup(Client donor, Map<Client, Image> profilePictureStore) {
         this.donor = donor;
 
-        Image profileImage = getProfilePicture(donor);
+        Image profileImage = getProfilePicture(donor, profilePictureStore);
         if (profilePicture != null) {
             profilePicture.setImage(profileImage);
         }
@@ -89,26 +90,38 @@ public class DeceasedDonorDashboardOverviewController extends SubController {
         new SpiderWebController(donor);
     }
 
-    private Image getProfilePicture(Client client) {
-        byte[] bytes;
-        try {
-            bytes = State.getImageManager().getClientImage(client.getUid());
-        } catch (NotFoundException ignored) {
+    private Image getProfilePicture(Client client, Map<Client, Image> profilePictureStore) {
+
+        // Try and get it from the store
+        Image profilePicture = profilePictureStore.get(client);
+        System.out.println("Picture" + profilePicture);
+        if (profilePicture == null) {
+
+            byte[] bytes;
             try {
-                bytes = State.getImageManager().getDefaultImage();
-            } catch (IOException e) {
-                LOGGER.log(Level.SEVERE, "IO Exception when loading image ", e);
+                bytes = State.getImageManager().getClientImage(client.getUid());
+            } catch (NotFoundException ignored) {
+                try {
+                    bytes = State.getImageManager().getDefaultImage();
+                } catch (IOException e) {
+                    LOGGER.log(Level.SEVERE, "IO Exception when loading image ", e);
+                    return null;
+                }
+            } catch (ServerRestException e) {
+                PageNavigator
+                        .showAlert(AlertType.ERROR, "Server Error", "Something went wrong with the server. "
+                                + "Please try again later.", mainController.getStage());
+                LOGGER.log(Level.SEVERE, e.getMessage(), e);
                 return null;
             }
-        } catch (ServerRestException e) {
-            PageNavigator
-                    .showAlert(AlertType.ERROR, "Server Error", "Something went wrong with the server. "
-                            + "Please try again later.", mainController.getStage());
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
-            return null;
-        }
 
-        return new Image(new ByteArrayInputStream(bytes));
+            profilePicture = new Image(new ByteArrayInputStream(bytes));
+
+            // Save it in the store
+            profilePictureStore.put(client, profilePicture);
+
+        }
+        return profilePicture;
     }
 
 }
