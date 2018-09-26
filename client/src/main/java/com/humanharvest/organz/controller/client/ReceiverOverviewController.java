@@ -25,7 +25,7 @@ import com.humanharvest.organz.Client;
 import com.humanharvest.organz.TransplantRecord;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.controller.MainController;
-import com.humanharvest.organz.controller.clinician.ViewBaseController;
+import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.DurationFormatter;
 import com.humanharvest.organz.utilities.DurationFormatter.DurationFormat;
@@ -35,7 +35,7 @@ import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
 
-public class ReceiverOverviewController extends ViewBaseController {
+public class ReceiverOverviewController extends SubController {
 
     private static final Logger LOGGER = Logger.getLogger(ReceiverOverviewController.class.getName());
 
