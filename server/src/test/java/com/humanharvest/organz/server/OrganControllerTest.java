@@ -15,7 +15,6 @@ import com.humanharvest.organz.state.AuthenticationManagerFake;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Organ;
-import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -37,7 +36,7 @@ public class OrganControllerTest {
     private MockMvc mockMvc;
 
     @Before
-    public void init() {
+    public void init() throws Exception {
         State.reset();
         State.setAuthenticationManager(new AuthenticationManagerFake());
         this.mockMvc = webAppContextSetup(webApplicationContext).build();
@@ -48,15 +47,12 @@ public class OrganControllerTest {
         janMichael.setRegionOfDeath("Auckland");
         michaelShoeMaker.setRegionOfDeath("Canterbury");
         outsider.setRegionOfDeath("Rio");
-        try {
-            janMichael.setOrganDonationStatus(Organ.LIVER, true);
-            janMichael.setOrganDonationStatus(Organ.HEART, true);
-            janMichael.setOrganDonationStatus(Organ.CORNEA, true);
-            michaelShoeMaker.setOrganDonationStatus(Organ.LIVER, true);
-            outsider.setOrganDonationStatus(Organ.BONE, true);
-        } catch (OrganAlreadyRegisteredException ex) {
-            System.out.println("Error setting up organ donation status: " + ex.getMessage());
-        }
+
+        janMichael.setOrganDonationStatus(Organ.LIVER, true);
+        janMichael.setOrganDonationStatus(Organ.HEART, true);
+        janMichael.setOrganDonationStatus(Organ.CORNEA, true);
+        michaelShoeMaker.setOrganDonationStatus(Organ.LIVER, true);
+        outsider.setOrganDonationStatus(Organ.BONE, true);
 
         State.getClientManager().addClient(janMichael);
         State.getClientManager().addClient(michaelShoeMaker);

@@ -1,6 +1,7 @@
 package com.humanharvest.organz.resolvers.client;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -188,7 +189,12 @@ public class ClientResolverRest implements ClientResolver {
                 new ParameterizedTypeReference<Collection<DonatedOrganView>>() {
                 }, client.getUid());
 
-        return responseEntity.getBody().stream().map(DonatedOrganView::getDonatedOrgan).collect(Collectors.toList());
+        if (responseEntity.getBody() == null) {
+            return new ArrayList<>();
+        } else {
+            return responseEntity.getBody().stream()
+                    .map(DonatedOrganView::getDonatedOrgan).collect(Collectors.toList());
+        }
     }
 
     @Override

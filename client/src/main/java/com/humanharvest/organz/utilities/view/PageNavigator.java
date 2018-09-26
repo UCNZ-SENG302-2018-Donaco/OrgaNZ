@@ -15,17 +15,13 @@ import com.humanharvest.organz.controller.components.TouchAlertTextController;
  */
 public final class PageNavigator {
 
-    private static IPageNavigator pageNavigator = new PageNavigatorStandard();
+    private static IPageNavigator instance = new PageNavigatorStandard();
 
     /**
      * Private constructor to prevent instantiation of utility class
      */
     private PageNavigator() {
         throw new IllegalStateException("Utility class");
-    }
-
-    public static void setPageNavigator(IPageNavigator navigator) {
-        pageNavigator = navigator;
     }
 
     /**
@@ -36,14 +32,14 @@ public final class PageNavigator {
      * @return The SubController for the new age, or null if the new page could not be loaded.
      */
     public static SubController loadPage(Page page, MainController controller) {
-        return pageNavigator.loadPage(page, controller);
+        return instance.loadPage(page, controller);
     }
 
     /**
-     * Refreshes all windows, to be used when an update occurs. Only refreshes titles and sidebars
+     * Refreshes all windows, to be used when an update occurs.
      */
     public static void refreshAllWindows() {
-        pageNavigator.refreshAllWindows();
+        instance.refreshAllWindows();
     }
 
     /**
@@ -52,7 +48,7 @@ public final class PageNavigator {
      * @return The MainController for the new window, or null if the new window could not be created.
      */
     public static MainController openNewWindow(int width, int height) {
-        return pageNavigator.openNewWindow(width, height);
+        return instance.openNewWindow(width, height);
     }
 
     /**
@@ -73,7 +69,7 @@ public final class PageNavigator {
      * @return The generated alert.
      */
     public static Alert generateAlert(Alert.AlertType alertType, String title, String bodyText) {
-        return pageNavigator.generateAlert(alertType, title, bodyText);
+        return instance.generateAlert(alertType, title, bodyText);
     }
 
     /**
@@ -84,7 +80,7 @@ public final class PageNavigator {
      * @param bodyText the text to show within the body of the alert.
      */
     public static void showAlert(Alert.AlertType alertType, String title, String bodyText, Window window) {
-        pageNavigator.showAlert(alertType, title, bodyText, window, null);
+        instance.showAlert(alertType, title, bodyText, window, null);
     }
 
     /**
@@ -93,14 +89,23 @@ public final class PageNavigator {
      * @param alertType the type of alert to show (can determine its style and button options).
      * @param title the text to show as the title and heading of the alert.
      * @param bodyText the text to show within the body of the alert.
+     * @param window The window to translate the new alert to
      * @param onResponse a callback for when an ok/cancel button is clicked.
      */
     public static void showAlert(Alert.AlertType alertType, String title, String bodyText, Window window,
             Consumer<Boolean> onResponse) {
-        pageNavigator.showAlert(alertType, title, bodyText, window, onResponse);
+        instance.showAlert(alertType, title, bodyText, window, onResponse);
     }
 
     public static TouchAlertTextController showTextAlert(String title, String bodyText, Window window) {
-        return pageNavigator.showAlertWithText(title, bodyText, window);
+        return instance.showAlertWithText(title, bodyText, window);
+    }
+
+    public static IPageNavigator getInstance() {
+        return instance;
+    }
+
+    public static void setInstance(IPageNavigator navigator) {
+        instance = navigator;
     }
 }

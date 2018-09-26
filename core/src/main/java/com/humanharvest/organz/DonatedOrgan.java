@@ -36,7 +36,9 @@ public class DonatedOrgan {
         CURRENT,
         NO_EXPIRY,
         EXPIRED,
-        OVERRIDDEN
+        OVERRIDDEN,
+        TRANSPLANT_PLANNED,
+        TRANSPLANT_COMPLETED,
     }
 
     @Id
@@ -147,6 +149,17 @@ public class DonatedOrgan {
     }
 
     /**
+     * @return true if the organ has expired by time
+     */
+    public boolean hasExpiredNaturally() {
+        if (organType.getMaxExpiration() == null) {
+            return false;
+        }
+        Duration timeToExpiry = organType.getMaxExpiration().minus(getTimeSinceDonation());
+        return timeToExpiry.isNegative() || timeToExpiry.isZero();
+    }
+
+    /**
      * @return the duration; except if the organ has expired or is overridden, then it returns Duration.ZERO
      */
     public Duration getDurationUntilExpiry() {
@@ -195,6 +208,14 @@ public class DonatedOrgan {
         this.id = id;
     }
 
+    public boolean isAvailable() {
+        return getState() == OrganState.CURRENT || getState() == OrganState.NO_EXPIRY;
+    }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
+    }
+
     public String getOverrideReason() {
         return overrideReason;
     }
@@ -220,22 +241,30 @@ public class DonatedOrgan {
     }
 
     /**
-     * @return true if the organ has expired by time
-     */
-    public boolean hasExpiredNaturally() {
-        if (organType.getMaxExpiration() == null) {
-            return false;
-        }
-        Duration timeToExpiry = organType.getMaxExpiration().minus(getTimeSinceDonation());
-        return timeToExpiry.isNegative() || timeToExpiry.isZero();
-    }
-
-    /**
      * Get the organs current state from the OrganState ENUM for easier checks
      *
      * @return The current state of the organ
      */
     public OrganState getState() {
+        return getState(true);
+    }
+
+    /**
+     * Get the organs current state from the OrganState ENUM for easier checks
+     *
+     * @param includeTransplantStatus If the status should include the transplant status, or if it should only check
+     * the expiry status
+     * @return The current state of the organ
+     */
+    public OrganState getState(boolean includeTransplantStatus) {
+        if (!available && includeTransplantStatus) {
+            if (receiver == null) {
+                return OrganState.TRANSPLANT_PLANNED;
+            } else {
+                return OrganState.TRANSPLANT_COMPLETED;
+            }
+        }
+
         if (overrideReason != null) {
             return OrganState.OVERRIDDEN;
         } else if (organType.getMaxExpiration() == null) {
@@ -252,15 +281,6 @@ public class DonatedOrgan {
                 return OrganState.CURRENT;
             }
         }
-    }
-
-    public boolean isAvailable() {
-        return available;
-    }
-
-    public void setAvailable(boolean available) {
-        this.available = available;
-
     }
 
     @Override
