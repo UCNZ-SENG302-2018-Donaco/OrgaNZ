@@ -40,7 +40,6 @@ import javafx.scene.control.TableColumn.SortType;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
@@ -352,57 +351,50 @@ public class OrgansToDonateController extends SubController {
         setupDisplayingXToYOfZText(newOrgansToDonate.getTotalResults());
     }
 
+    private void scheduleOptionsEnabled(boolean state) {
+        scheduleTransplantBtn.setDisable(!state);
+        transplantDatePicker.setDisable(!state);
+        transplantHospitalChoice.setDisable(!state);
+    }
+
     private void handlePotentialRecipientChange() {
         List<Client> selectedClients = potentialRecipients.getSelectionModel().getSelectedItems();
         if (selectedClients.size() != 1) {
-            scheduleTransplantBtn.setDisable(true);
-            transplantDatePicker.setDisable(true);
-            transplantHospitalChoice.setDisable(true);
+            // Not a single potential recipient selected
+            scheduleOptionsEnabled(false);
 
             transplantHospitalChoice.setValue(null);
             transplantDatePicker.setValue(null);
         } else {
+            // A single recipient is selected
+
             Client selected = potentialRecipients.getSelectionModel().getSelectedItem();
             DonatedOrgan organToDonate = tableView.getSelectionModel().getSelectedItem();
             filteredHospitals.setPredicate(hospital -> hospital.hasTransplantProgram(organToDonate.getOrganType()));
 
-            scheduleTransplantBtn.setDisable(false);
-            transplantDatePicker.setDisable(false);
-            transplantHospitalChoice.setDisable(false);
+            if (filteredHospitals.isEmpty()) {
+                // No valid hospitals for this transplant program
+                scheduleOptionsEnabled(false);
+                return;
+            }
 
-            if (selected.getHospital() == null) {
-                // Recipient has no hospital, try sorting by distance to their region instead
-                Region region;
-                try {
-                    region = Region.fromString(selected.getRegion());
-                } catch (IllegalArgumentException exc) {
-                    region = null;
-                }
-                if (region == null) {
-                    // Recipient has no region, just sort hospitals in alphabetical order instead
-                    sortedHospitals.setComparator(Comparator.comparing(Hospital::getName));
-                } else {
-                    Region finalRegion = region;
-                    sortedHospitals.setComparator(Comparator.comparing(hospital -> hospital.calculateDistanceTo(
-                            finalRegion)));
-                }
+            scheduleOptionsEnabled(true);
+
+            Hospital clientHospital = Hospital.getHospitalForClient(selected, hospitals);
+            if (clientHospital == null) {
+                // Recipient has no region, just sort hospitals in alphabetical order instead
+                sortedHospitals.setComparator(Comparator.comparing(Hospital::getName));
             } else {
-                // Sort choice of hospitals for the transplant by which are nearest to the client
-                sortedHospitals.setComparator(Comparator.comparing(hospital -> hospital.calculateTimeTo(
-                        selected.getHospital())));
+                Hospital nearestWithProgram = clientHospital
+                        .getNearestWithTransplantProgram(organToDonate.getOrganType(), filteredHospitals);
 
-                Hospital nearest = selected.getHospital().getNearestWithTransplantProgram(organToDonate.getOrganType(),
-                        filteredHospitals);
-                if (nearest == null) {
-                    // No hospital that can transplant this organ
-                    transplantHospitalChoice.setDisable(true);
-                    scheduleTransplantBtn.setDisable(true);
-                } else {
-                    // Set the default choice to the nearest hospital (to the recipient) that can do the transplant
-                    transplantHospitalChoice.setValue(nearest);
-                    transplantDatePicker.setValue(LocalDateTime.now()
-                            .plus(nearest.calculateTimeTo(selected.getHospital())).toLocalDate());
-                }
+                transplantHospitalChoice.setValue(nearestWithProgram);
+
+                transplantDatePicker.setValue(LocalDateTime.now()
+                        .plus(nearestWithProgram.calculateTimeTo(selected.getHospital())).toLocalDate());
+
+                sortedHospitals.setComparator(Comparator.comparing(
+                        hospital -> hospital.calculateTimeTo(nearestWithProgram)));
             }
         }
     }

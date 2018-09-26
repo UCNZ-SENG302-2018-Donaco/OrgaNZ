@@ -1,6 +1,5 @@
 package com.humanharvest.organz.controller;
 
-
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
@@ -16,9 +15,9 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import com.humanharvest.organz.state.Session.UserType;
+import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.state.State.UiType;
 import com.humanharvest.organz.touch.MultitouchHandler;
-import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
 
@@ -189,9 +188,11 @@ public class MainController {
         } else {
             loadMenuBar(pane);
         }
-
     }
 
+    public SubController getSubController() {
+        return subController;
+    }
 
     public void setSubController(SubController subController) {
         this.subController = subController;

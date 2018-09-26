@@ -14,6 +14,7 @@ import javafx.stage.Stage;
 
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.clinician.StaffLoginController;
+import com.humanharvest.organz.controller.spiderweb.SpiderWebController;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.state.State.DataStorageType;
 import com.humanharvest.organz.touch.MultitouchHandler;
@@ -142,6 +143,8 @@ public class AppUI extends Application {
             StaffLoginController.handleSignIn(parameters.get("login"),
                     parameters.getOrDefault("password", ""),
                     State.getMainControllers().get(0));
+
+            new SpiderWebController(State.getClientManager().getClientByID(9096).orElseThrow(RuntimeException::new));
         }
     }
 
@@ -155,7 +158,7 @@ public class AppUI extends Application {
         Optional<String> uiType = getArgument("ui");
         if (uiType.isPresent() && "touch".equalsIgnoreCase(uiType.get())) {
             State.setUiType(State.UiType.TOUCH);
-            PageNavigator.setPageNavigator(new PageNavigatorTouch());
+            PageNavigator.setInstance(new PageNavigatorTouch());
 
             // Instead of tuioFX.enableMTWidgets(true)
             // We set our own stylesheet that contains less style changes but still loads
@@ -165,7 +168,7 @@ public class AppUI extends Application {
             StyleManager.getInstance().addUserAgentStylesheet("/css/touch1.css");
         } else {
             State.setUiType(State.UiType.STANDARD);
-            PageNavigator.setPageNavigator(new PageNavigatorStandard());
+            PageNavigator.setInstance(new PageNavigatorStandard());
         }
     }
 

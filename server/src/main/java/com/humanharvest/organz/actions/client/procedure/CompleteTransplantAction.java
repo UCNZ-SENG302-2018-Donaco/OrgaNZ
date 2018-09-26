@@ -50,8 +50,9 @@ public class CompleteTransplantAction extends ClientAction {
         request.setResolvedDateTime(record.getDate().atTime(LocalTime.now()));
         request.setStatus(TransplantRequestStatus.COMPLETED);
 
-        manager.applyChangesTo(request);
         manager.applyChangesTo(client);
+        manager.applyChangesTo(request);
+        manager.applyChangesTo(record.getOrgan());
     }
 
     @Override
@@ -67,8 +68,9 @@ public class CompleteTransplantAction extends ClientAction {
         request.setResolvedDateTime(null);
         request.setResolvedReason(null);
 
-        manager.applyChangesTo(request);
         manager.applyChangesTo(client);
+        manager.applyChangesTo(request);
+        manager.applyChangesTo(record.getOrgan());
     }
 
     @Override
