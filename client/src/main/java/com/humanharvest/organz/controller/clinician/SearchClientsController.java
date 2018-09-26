@@ -248,6 +248,9 @@ public class SearchClientsController extends SubController {
         }
     }
 
+    /**
+     * Refresh the list of clients with the currently selected filters
+     */
     @Override
     public void refresh() {
         // Refresh the client list to ensure any additions or removals are updated

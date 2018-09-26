@@ -93,6 +93,9 @@ public class DeceasedDonorOverviewController extends SubController {
         refresh();
     }
 
+    /**
+     * Refreshes the Donors information and image
+     */
     @Override
     public void refresh() {
         displayData();

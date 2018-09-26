@@ -120,9 +120,6 @@ public class ReceiverOverviewController extends SubController {
         viewedTransplantRequest = viewedClient.getTransplantRequest(organ);
         updateWaitTime();
 
-        // Set image
-        loadImage();
-
         // Track the adding of panes with the spiderweb pane collection.
         receiverVBox.setOnMouseClicked(mouseEvent -> {
             if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 2) {
@@ -159,9 +156,13 @@ public class ReceiverOverviewController extends SubController {
         refresh();
     }
 
+    /**
+     * Refreshes the Recipients information and image
+     */
     @Override
     public void refresh() {
         setClientFields();
+        loadImage();
     }
 
     private void loadImage() {

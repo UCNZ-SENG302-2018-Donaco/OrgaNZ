@@ -91,6 +91,9 @@ public class CommandLineController extends SubController {
         createAndRunCommand("help");
     }
 
+    /**
+     * Does not do anything as page doesn't render anything that could have changed
+     */
     @Override
     public void refresh() {
         //Do not need to do anything as page doesn't render anything that could have changed

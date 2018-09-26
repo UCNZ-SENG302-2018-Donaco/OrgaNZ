@@ -270,8 +270,6 @@ public class RegisterOrganDonationController extends SubController {
             }
             State.getClientResolver().editManualOverrideForOrgan(donatedOrgan, overrideReason.toString());
             PageNavigator.refreshAllWindows();
-        } catch (IfMatchFailedException exc) {
-            // TODO deal with outdated error
         } catch (NotFoundException exc) {
             LOGGER.log(Level.WARNING, "Client/Organ Not Found", exc);
             Notifications.create()

@@ -10,7 +10,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.controller.client.ViewClientController;
 import com.humanharvest.organz.utilities.enums.Organ;
 
 import org.apache.commons.io.IOUtils;
@@ -20,9 +19,17 @@ import org.apache.commons.io.IOUtils;
  */
 public class OrganImageController extends SubController {
 
-    private static final Logger LOGGER = Logger.getLogger(ViewClientController.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(OrganImageController.class.getName());
     @FXML
     private ImageView organImage;
+
+    /**
+     * Does not do anything as page doesn't render anything that could have changed
+     */
+    @Override
+    public void refresh() {
+        //Do not need to do anything as page doesn't render anything that could have changed
+    }
 
     /**
      * Loads the organs icon based on what type of organ it is.
@@ -39,7 +46,5 @@ public class OrganImageController extends SubController {
         } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, "Organ image failed to load");
         }
-
     }
-
 }

@@ -92,7 +92,7 @@ public class StaffListController extends SubController {
     }
 
     /**
-     * Refreshes the page including the staff member list.
+     * Refreshes the list of Clinicians
      */
     @Override
     public void refresh() {

@@ -139,6 +139,9 @@ public class ViewClinicianController extends SubController {
         updateCountries();
     }
 
+    /**
+     * Only refreshes the Clinicians information if the user has not modified any fields
+     */
     @Override
     public void refresh() {
         // Only refresh the page if there have not been any changes made

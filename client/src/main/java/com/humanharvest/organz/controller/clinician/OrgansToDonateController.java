@@ -611,8 +611,8 @@ public class OrgansToDonateController extends SubController {
     }
 
     /**
-     * Refreshes the data in the transplants waiting list table. Should be called whenever any page calls a global
-     * refresh.
+     * Refreshes the data in the transplants waiting list table.
+     * Does not refresh if the PotentialRecipients are focused.
      */
     @Override
     public void refresh() {
