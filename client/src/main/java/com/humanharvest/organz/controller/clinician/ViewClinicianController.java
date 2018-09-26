@@ -133,8 +133,7 @@ public class ViewClinicianController extends SubController {
     public void setup(MainController mainController) {
         super.setup(mainController);
         mainController.setTitle("Clinician profile: " + viewedClinician.getFullName());
-        mainController.loadMenuBar(menuBarPane);
-
+        mainController.loadNavigation(menuBarPane);
         getViewedClinicianData();
         updateCountries();
     }

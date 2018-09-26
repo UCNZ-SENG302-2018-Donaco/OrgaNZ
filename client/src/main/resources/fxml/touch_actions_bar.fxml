@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<HBox fx:id="entireMenubarPane" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.TouchActionsBarController">
+   <children>
+      <GridPane hgap="5.0" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" prefHeight="35.0" styleClass="menubox" HBox.hgrow="ALWAYS">
+        <columnConstraints>
+          <ColumnConstraints hgrow="NEVER" minWidth="10.0" />
+          <ColumnConstraints hgrow="NEVER" maxWidth="50.0" minWidth="10.0" />
+            <ColumnConstraints hgrow="NEVER" minWidth="10.0" />
+            <ColumnConstraints hgrow="NEVER" minWidth="10.0" />
+            <ColumnConstraints hgrow="NEVER" minWidth="10.0" />
+            <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="10.0" />
+            <ColumnConstraints hgrow="NEVER" minWidth="10.0" />
+            <ColumnConstraints hgrow="NEVER" minWidth="10.0" />
+            <ColumnConstraints hgrow="NEVER" minWidth="10.0" />
+            <ColumnConstraints hgrow="NEVER" minWidth="10.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Button fx:id="hamburger" alignment="CENTER" mnemonicParsing="false" GridPane.columnIndex="0">
+               <graphic>
+                   <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                       <image>
+                           <Image url="/images/actions/hamburger.png" />
+                       </image></ImageView>
+               </graphic>
+            </Button>
+            <Button fx:id="homeButton" alignment="CENTER" mnemonicParsing="false" onAction="#navigateHome" GridPane.columnIndex="1">
+               <graphic>
+                  <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="/images/actions/home.png" />
+                     </image></ImageView>
+               </graphic></Button>
+            <Button fx:id="undoButton" mnemonicParsing="false" onAction="#undoAction" GridPane.columnIndex="2">
+               <graphic>
+                  <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="/images/actions/undo.png" />
+                     </image></ImageView>
+               </graphic></Button>
+            <Button fx:id="redoButton" mnemonicParsing="false" onAction="#redoAction" GridPane.columnIndex="3">
+               <graphic>
+                  <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="/images/actions/redo.png" />
+                     </image></ImageView>
+               </graphic></Button>
+            <Button mnemonicParsing="false" onAction="#refreshWindow" GridPane.columnIndex="4">
+               <graphic>
+                  <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="/images/actions/refresh.png" />
+                     </image></ImageView>
+               </graphic></Button>
+            <ToggleButton fx:id="projectButton" mnemonicParsing="false" onAction="#projectWindow" GridPane.columnIndex="6">
+               <graphic>
+                  <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../images/actions/project.png" />
+                     </image>
+                  </ImageView>
+               </graphic>
+            </ToggleButton>
+            <Button fx:id="duplicateButton" mnemonicParsing="false" onAction="#duplicateWindow" GridPane.columnIndex="7">
+               <graphic>
+                  <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="/images/actions/duplicate.png" />
+                     </image></ImageView>
+               </graphic></Button>
+            <Button mnemonicParsing="false" onAction="#logout" GridPane.columnIndex="8">
+               <graphic>
+                  <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="/images/actions/logout.png" />
+                     </image>
+                  </ImageView>
+               </graphic></Button>
+            <Button fx:id="exitButton" mnemonicParsing="false" onAction="#exit" GridPane.columnIndex="9">
+               <graphic>
+                  <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="/images/actions/exit.png" />
+                     </image></ImageView>
+               </graphic></Button>
+         </children>
+      </GridPane>
+   </children>
+</HBox>

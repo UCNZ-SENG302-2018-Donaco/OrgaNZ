@@ -138,13 +138,12 @@ public class RegisterOrganDonationController extends SubController {
 
         if (session.getLoggedInUserType() == Session.UserType.CLIENT) {
             client = session.getLoggedInClient();
-            mainController.loadSidebar(sidebarPane);
             donatedOrgansPane.setVisible(false);
         } else if (windowContext.isClinViewClientWindow()) {
             client = windowContext.getViewClient();
-            mainController.loadMenuBar(menuBarPane);
             donatedOrgansPane.setVisible(true);
         }
+        mainController.loadNavigation(menuBarPane);
         refresh();
     }
 

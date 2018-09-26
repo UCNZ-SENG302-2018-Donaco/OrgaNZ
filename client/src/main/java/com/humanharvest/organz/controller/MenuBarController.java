@@ -12,6 +12,7 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -48,6 +49,7 @@ public class MenuBarController extends SubController {
 
     private static final String ERROR_SAVING_MESSAGE = "There was an error saving to the file specified.";
     private static final String ERROR_LOADING_MESSAGE = "There was an error loading the file specified.";
+
     public MenuItem viewClientItem;
     public MenuItem searchClientItem;
     public MenuItem donateOrganItem;
@@ -496,11 +498,11 @@ public class MenuBarController extends SubController {
     @FXML
     private void logout() {
         State.logout();
-        for (MainController controller : State.getMainControllers()) {
-            if (controller != mainController) {
-                controller.closeWindow();
-            }
-        }
+        List<MainController> toClose = State.getMainControllers().stream()
+                .filter(controller -> controller != mainController)
+                .collect(Collectors.toList());
+        toClose.forEach(MainController::closeWindow);
+
         State.clearMainControllers();
         State.addMainController(mainController);
         mainController.resetWindowContext();
@@ -577,6 +579,9 @@ public class MenuBarController extends SubController {
         PageNavigator.refreshAllWindows();
     }
 
+    /**
+     * Create a copy of the current window
+     */
     @FXML
     private void duplicateWindow() {
         MainController newMain = PageNavigator.openNewWindow();

@@ -13,9 +13,8 @@
 <?import org.controlsfx.control.CheckListView?>
 <VBox xmlns:fx="http://javafx.com/fxml/1" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.121" fx:controller="com.humanharvest.organz.controller.administrator.ConfigController">
   <children>
-    <SplitPane VBox.vgrow="ALWAYS" dividerPositions="0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="200.0">
-      <items>
-        <HBox maxHeight="20.0" minHeight="-Infinity" fx:id="menuBarPane"/>
+    <VBox fx:id="menuBarPane" maxWidth="1.7976931348623157E308" />
+
         <SplitPane VBox.vgrow="ALWAYS">
           <items>
             <VBox prefHeight="600.0" prefWidth="800.0">
@@ -112,8 +111,6 @@
             </VBox>
           </items>
         </SplitPane>
-      </items>
-    </SplitPane>
     <HBox alignment="CENTER_RIGHT" prefHeight="50.0" prefWidth="200.0">
       <children>
         <Button cancelButton="true" mnemonicParsing="false" onAction="#cancel" prefHeight="30.0" prefWidth="100.0" text="Cancel">

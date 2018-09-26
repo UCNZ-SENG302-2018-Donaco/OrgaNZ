@@ -6,11 +6,14 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <VBox xmlns:fx="http://javafx.com/fxml/1" maxHeight="400.0" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="320.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/8.0.121" fx:controller="com.humanharvest.organz.controller.client.DeceasedDonorOverviewController" fx:id="deceasedDonorPane">
   <children>
-    <ImageView fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" fx:id="imageView"/>
+    <StackPane prefHeight="200" prefWidth="200">
+      <ImageView VBox.vgrow="ALWAYS" fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" fx:id="imageView"/>
+    </StackPane>
     <VBox prefWidth="200.0">
       <children>
         <Label maxWidth="1.7976931348623157E308" text="Name" fx:id="nameLabel">

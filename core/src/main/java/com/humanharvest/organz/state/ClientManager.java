@@ -9,6 +9,7 @@ import java.util.Set;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.HistoryItem;
+import com.humanharvest.organz.TransplantRecord;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.utilities.enums.ClientSortOptionsEnum;
 import com.humanharvest.organz.utilities.enums.ClientType;
@@ -97,7 +98,22 @@ public interface ClientManager {
     PaginatedDonatedOrgansList getAllOrgansToDonate(Integer offset, Integer count, Set<String> regions, Set<Organ>
             organType, DonatedOrganSortOptionsEnum sortOption, Boolean reversed);
 
+    /**
+     * Gets a list of potential recipients of the given donated organ
+     * @param donatedOrgan available organ to find potential matches for
+     * @return list of clients who are a potential match for the donated organ
+     */
     List<Client> getOrganMatches(DonatedOrgan donatedOrgan);
+
+    /**
+     * Gets all deceased donors that are viable (have non expired organs)
+     * @return list of deceased donors viable to donate organs
+     */
+    List<Client> getViableDeceasedDonors();
+
+    List<TransplantRequest> getMatchingOrganTransplants(DonatedOrgan donatedOrgan);
+
+    TransplantRecord getMatchingOrganTransplantRecord(DonatedOrgan donatedOrgan);
 
     List<HistoryItem> getAllHistoryItems();
 }

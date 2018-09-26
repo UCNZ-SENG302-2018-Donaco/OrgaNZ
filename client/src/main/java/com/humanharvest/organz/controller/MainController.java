@@ -14,7 +14,9 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.state.State.UiType;
 import com.humanharvest.organz.touch.MultitouchHandler;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
@@ -31,19 +33,31 @@ public class MainController {
     private Pane pane;
     private WindowContext windowContext;
     private String title;
-    private SidebarController sidebarController;
     private MenuBarController menuBarController;
+    private TouchActionsBarController touchActionsBarController;
     private SubController subController;
-
+    private boolean isProjecting;
     /**
      * Holder of a switchable page.
      */
     @FXML
     private StackPane pageHolder;
+    @FXML
+    private Pane drawer;
 
     @FXML
     public void initialize() {
         pageHolder.getStyleClass().add("window");
+        drawer.setDisable(true);
+        drawer.setVisible(false);
+//        drawer.setOnDrawerOpened(EventListener -> drawer.setVisible(true));
+        drawer.toFront();
+        pageHolder.setPickOnBounds(false);
+        isProjecting = false;
+    }
+
+    public Pane getDrawer() {
+        return drawer;
     }
 
     public Stage getStage() {
@@ -83,6 +97,7 @@ public class MainController {
     public void setPage(Page page, Node node) {
         currentPage = page;
         pageHolder.getChildren().setAll(node);
+//        pageHolder.setOnMouseClicked(event -> touchActionsBarController.closeSidebar(drawer));
     }
 
     void resetWindowContext() {
@@ -111,19 +126,19 @@ public class MainController {
         }
     }
 
+
     /**
      * Method that can be called from other controllers to load the sidebar into that page.
      * Will set the sidebar as the child of the pane given.
-     *
-     * @param sidebarPane The container pane for the sidebar, given by the importer.
      */
-    public void loadSidebar(Pane sidebarPane) {
+    private void loadSidebar() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(Page.SIDEBAR.getPath()));
             VBox sidebar = loader.load();
-            sidebarController = loader.getController();
+            SidebarController sidebarController = loader.getController();
             sidebarController.setup(this);
-            sidebarPane.getChildren().setAll(sidebar);
+            drawer.getChildren().setAll(sidebar);
+
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Couldn't load sidebar from fxml file.", e);
         }
@@ -147,6 +162,40 @@ public class MainController {
         }
     }
 
+    /**
+     * Loads the touch actions bar and uses the sidebars fxml as the content
+     * @param pane the pane to load the touch actions bar for
+     */
+    public void loadTouchActionsBar(Pane pane) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(Page.TOUCH_ACTIONS_BAR.getPath()));
+            HBox touch_action_bar = loader.load();
+            touchActionsBarController = loader.getController();
+            touchActionsBarController.setup(this);
+            pane.getChildren().setAll(touch_action_bar);
+            loadSidebar();
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Couldn't load touch actions bar from fxml file.", e);
+        }
+    }
+
+    /**
+     * Sets up the navigation type for the given pane. The menu bar is given for admins/clinicians using the
+     * desktop application. Otherwise a touch actions bar is used.
+     * @param pane type of pane to setup navigation for
+     */
+    public void loadNavigation(Pane pane) {
+        if (State.getUiType() == UiType.TOUCH || State.getSession().getLoggedInUserType() == UserType.CLIENT) {
+            loadTouchActionsBar(pane);
+        } else {
+            loadMenuBar(pane);
+        }
+    }
+
+    public SubController getSubController() {
+        return subController;
+    }
+
     public void setSubController(SubController subController) {
         this.subController = subController;
     }
@@ -166,8 +215,8 @@ public class MainController {
     public void refreshNavigation() {
         if (menuBarController != null) {
             menuBarController.refresh();
-        } else if (sidebarController != null) {
-            sidebarController.refresh();
+        } else if (touchActionsBarController != null) {
+            touchActionsBarController.refresh();
         }
     }
 
@@ -198,5 +247,13 @@ public class MainController {
 
     public List<String> getStyles() {
         return pageHolder.getStyleClass();
+    }
+
+    public boolean isProjecting() {
+        return isProjecting;
+    }
+
+    public void setProjecting(boolean projecting) {
+        isProjecting = projecting;
     }
 }

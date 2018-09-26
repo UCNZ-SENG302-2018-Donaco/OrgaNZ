@@ -23,6 +23,7 @@ import javax.persistence.RollbackException;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.HistoryItem;
+import com.humanharvest.organz.TransplantRecord;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.database.DBManager;
 import com.humanharvest.organz.utilities.algorithms.MatchOrganToRecipients;
@@ -612,5 +613,98 @@ public class ClientManagerDBPure implements ClientManager {
 
         Collection<TransplantRequest> transplantRequests = getAllTransplantRequests();
         return MatchOrganToRecipients.getListOfPotentialRecipients(donatedOrgan, transplantRequests);
+    }
+
+    /**
+     * @param donatedOrgan available organ to find potential matches for
+     * @return list of TransplantRequests that will match the given organ
+     */
+    @Override
+    public List<TransplantRequest> getMatchingOrganTransplants(DonatedOrgan donatedOrgan) {
+
+        Collection<TransplantRequest> transplantRequests = getAllTransplantRequests();
+        return MatchOrganToRecipients.getListOfPotentialTransplants(donatedOrgan, transplantRequests);
+    }
+
+    /**
+     * @param donatedOrgan available organ to find potential matches for
+     * @return The matching TransplantRecord for the given organ
+     */
+    @Override
+    public TransplantRecord getMatchingOrganTransplantRecord(DonatedOrgan donatedOrgan) {
+        Transaction trns = null;
+
+        try (Session session = dbManager.getDBSession()) {
+            trns = session.beginTransaction();
+            TransplantRecord record = session
+                    .createQuery("SELECT req FROM TransplantRecord req WHERE req.organ = :organ",
+                            TransplantRecord.class)
+                    .setParameter("organ", donatedOrgan)
+                    .uniqueResult();
+            trns.commit();
+            return record;
+        } catch (RollbackException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
+            if (trns != null) {
+                trns.rollback();
+            }
+            return null;
+        }
+    }
+
+    /**
+     * Determines whether a donor is deceased and has chosen to donate organs that are currently available (not expired)
+     * @param client client to determine viability of as an organ donor
+     * @return boolean of whether the given client is viable as an organ donor
+     */
+    private boolean isViableDonor(Client client) {
+        if (client.isDead()) {
+            for (DonatedOrgan organ : client.getDonatedOrgans()) {
+                if (!organ.hasExpired() && organ.getOverrideReason() == null) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Fetches viable deceased donors from the database
+     * @return list of viable deceased donors
+     */
+    @Override
+    public List<Client> getViableDeceasedDonors() {
+
+        Transaction trns = null;
+
+        try (Session session = dbManager.getDBSession()) {
+            trns = session.beginTransaction();
+
+            String queryString = "SELECT c.* FROM Client c \n"
+                    + "WHERE EXISTS (SELECT donating.Client_uid \n"
+                    + "              FROM Client_organsDonating AS donating\n"
+                    + "              WHERE donating.Client_uid=c.uid "
+                    + "              LIMIT 1)\n"
+                    + "      AND c.dateOfDeath IS NOT NULL\n"
+                    + "ORDER BY c.dateOfDeath DESC";
+
+            Query<Client> query = session.createNativeQuery(queryString, Client.class);
+
+            List<Client> clients = new ArrayList<>();
+            for (Client client : query.getResultList()) {
+                if (isViableDonor(client)) {
+                    clients.add(client);
+                }
+            }
+
+            return clients;
+
+        }  catch (RollbackException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
+            if (trns != null) {
+                trns.rollback();
+            }
+            return null;
+        }
     }
 }
