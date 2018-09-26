@@ -27,6 +27,7 @@ import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.controller.AlertHelper;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
+import com.humanharvest.organz.controller.components.FormattedLocalDateCell;
 import com.humanharvest.organz.resolvers.client.ClientResolver;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
@@ -102,25 +103,6 @@ public class ViewMedicalHistoryController extends SubController {
     }
 
     /**
-     * Formats a table cell that holds a {@link LocalDate} value to display that value in the date time format.
-     *
-     * @return The cell with the date time formatter set.
-     */
-    private static TableCell<IllnessRecord, LocalDate> formatDateTimeCell() {
-        return new TableCell<IllnessRecord, LocalDate>() {
-            @Override
-            protected void updateItem(LocalDate item, boolean empty) {
-                super.updateItem(item, empty);
-                if (item == null || empty) {
-                    setText(null);
-                } else {
-                    setText(item.format(dateTimeFormat));
-                }
-            }
-        };
-    }
-
-    /**
      * Formats a table cell that holds a {@link Boolean} to display "CHRONIC" in red text if the value is true, or
      * nothing otherwise.
      *
@@ -184,9 +166,9 @@ public class ViewMedicalHistoryController extends SubController {
         curedDatePastCol.setCellValueFactory(new PropertyValueFactory<>("curedDate"));
 
         // Format all the datetime cells
-        diagnosisDateCurrCol.setCellFactory(cell -> formatDateTimeCell());
-        diagnosisDatePastCol.setCellFactory(cell -> formatDateTimeCell());
-        curedDatePastCol.setCellFactory(cell -> formatDateTimeCell());
+        diagnosisDateCurrCol.setCellFactory(cell -> new FormattedLocalDateCell<>(dateTimeFormat));
+        diagnosisDatePastCol.setCellFactory(cell -> new FormattedLocalDateCell<>(dateTimeFormat));
+        curedDatePastCol.setCellFactory(cell -> new FormattedLocalDateCell<>(dateTimeFormat));
 
         // Format chronic cells
         chronicCurrCol.setCellFactory(cell -> formatChronicCell());
@@ -227,16 +209,14 @@ public class ViewMedicalHistoryController extends SubController {
 
         if (session.getLoggedInUserType() == UserType.CLIENT) {
             client = session.getLoggedInClient();
-            mainController.loadSidebar(sidebarPane);
             newIllnessPane.setVisible(false);
             newIllnessPane.setManaged(false);
             illnessButtonsPane.setVisible(false);
             illnessButtonsPane.setManaged(false);
         } else if (windowContext.isClinViewClientWindow()) {
             client = windowContext.getViewClient();
-            mainController.loadMenuBar(menuBarPane);
         }
-
+        mainController.loadNavigation(menuBarPane);
         refresh();
         enableAppropriateButtons();
     }

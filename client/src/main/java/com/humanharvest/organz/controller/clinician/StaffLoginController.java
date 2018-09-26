@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
@@ -15,6 +16,7 @@ import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.state.State.UiType;
 import com.humanharvest.organz.utilities.JSONConverter;
 import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
@@ -31,6 +33,8 @@ public class StaffLoginController extends SubController {
     private static final Pattern IS_NUMBER = Pattern.compile("[0-9]+");
     private static final Logger LOGGER = Logger.getLogger(StaffLoginController.class.getName());
 
+    @FXML
+    private Button backButton;
     @FXML
     private TextField staffId;
     @FXML
@@ -119,6 +123,9 @@ public class StaffLoginController extends SubController {
     public void setup(MainController mainController) {
         super.setup(mainController);
         mainController.setTitle("Staff login");
+        if (State.getUiType() == UiType.TOUCH) {
+            backButton.setVisible(false);
+        }
     }
 
     /**

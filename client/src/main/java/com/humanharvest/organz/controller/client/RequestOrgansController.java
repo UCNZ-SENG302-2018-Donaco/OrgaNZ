@@ -13,7 +13,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
@@ -28,6 +27,7 @@ import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.controller.AlertHelper;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
+import com.humanharvest.organz.controller.components.FormattedLocalDateTimeCell;
 import com.humanharvest.organz.resolvers.client.ClientResolver;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
@@ -98,25 +98,6 @@ public class RequestOrgansController extends SubController {
     }
 
     /**
-     * Formats a table cell that holds a {@link LocalDateTime} value to display that value in the date time format.
-     *
-     * @return The cell with the date time formatter set.
-     */
-    private static TableCell<TransplantRequest, LocalDateTime> formatDateTimeCell() {
-        return new TableCell<TransplantRequest, LocalDateTime>() {
-            @Override
-            protected void updateItem(LocalDateTime item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                } else {
-                    setText(item.format(dateTimeFormat));
-                }
-            }
-        };
-    }
-
-    /**
      * Formats a table row to be coloured if the {@link TransplantRequest} it holds is for an organ that the client
      * is also donating.
      *
@@ -163,9 +144,9 @@ public class RequestOrgansController extends SubController {
         resolvedReasonPastCol.setCellValueFactory(new PropertyValueFactory<>("resolvedReason"));
 
         // Format all the datetime cells
-        requestDateTimeCurrCol.setCellFactory(cell -> formatDateTimeCell());
-        requestDateTimePastCol.setCellFactory(cell -> formatDateTimeCell());
-        resolvedDateTimePastCol.setCellFactory(cell -> formatDateTimeCell());
+        requestDateTimeCurrCol.setCellFactory(cell -> new FormattedLocalDateTimeCell<>(dateTimeFormat));
+        requestDateTimePastCol.setCellFactory(cell -> new FormattedLocalDateTimeCell<>(dateTimeFormat));
+        resolvedDateTimePastCol.setCellFactory(cell -> new FormattedLocalDateTimeCell<>(dateTimeFormat));
 
         // Colour each row if it is a request for an organ that the client is also registered to donate.
         currentRequestsTable.setRowFactory(row -> colourIfDonatedAndRequested());
@@ -208,12 +189,11 @@ public class RequestOrgansController extends SubController {
             newRequestForm.setVisible(false);
             resolveRequestBar.setManaged(false);
             resolveRequestBar.setVisible(false);
-            mainController.loadSidebar(sidebarPane);
         } else if (windowContext.isClinViewClientWindow()) {
             client = windowContext.getViewClient();
-            mainController.loadMenuBar(menuBarPane);
         }
 
+        mainController.loadNavigation(menuBarPane);
         refresh();
         enableAppropriateButtons();
     }

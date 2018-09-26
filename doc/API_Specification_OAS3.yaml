@@ -932,6 +932,7 @@ paths:
           application/json:
             schema:
                 $ref: '#/components/schemas/illnessRecordModify'
+
       responses:
         201:
           description: Updated
@@ -2065,6 +2066,33 @@ paths:
           $ref: '#/components/responses/403Forbidden'
         500:
           $ref: '#/components/responses/500InternalServerError'
+
+  '/viableDeceasedDonors':
+    get:
+      tags:
+        - Algorithms
+      security:
+        - ClinicianAccess: []
+        - AdministratorAccess: []
+      summary: "Returns a list of all viable deceased donors, those that are deceased and have available organs (not expired or overridden)"
+      responses:
+        200:
+          description: List of viable deceased donors
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/clientOverview'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
+
 
 components:
   parameters:
