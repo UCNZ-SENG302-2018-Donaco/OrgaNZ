@@ -43,6 +43,9 @@ public class TouchActionsBarController extends SubController {
     private Button duplicateButton;
 
     @FXML
+    private Button exitButton;
+
+    @FXML
     private JFXHamburger hamburger;
 
     @FXML
@@ -143,6 +146,15 @@ public class TouchActionsBarController extends SubController {
         ActionResponseView responseView = State.getActionResolver().getUndo();
         undoButton.setDisable(!responseView.isCanUndo());
         redoButton.setDisable(!responseView.isCanRedo());
+
+        // Disable exit button if this is the last clinician window
+        if (!windowContext.isClinViewClientWindow() && State.getMainControllers().stream()
+                .filter(controller -> !controller.getWindowContext().isClinViewClientWindow())
+                .count() <= 1) {
+            exitButton.setDisable(true);
+        } else {
+            exitButton.setDisable(false);
+        }
     }
 
     @FXML
@@ -159,6 +171,7 @@ public class TouchActionsBarController extends SubController {
         if (newMain != null) {
             newMain.setWindowContext(mainController.getWindowContext());
             PageNavigator.loadPage(mainController.getCurrentPage(), newMain);
+            State.getMainControllers().forEach(MainController::refreshNavigation);
         } else {
             PageNavigator.showAlert(AlertType.ERROR, "Error duplicating page",
                     "The new page could not be created", mainController.getStage());
@@ -194,13 +207,7 @@ public class TouchActionsBarController extends SubController {
      * Exit the pane that is currently open
      */
     public void exit() {
-        if (State.getUiType() == UiType.TOUCH && windowContext.isClinViewClientWindow()) {
-            MultitouchHandler.removePane(mainController.getPane());
-        } else if (!windowContext.isClinViewClientWindow()) {
-            Stage stage = (Stage) mainController.getStage().getScene().getWindow();
-            stage.close();
-            Platform.exit();
-            System.exit(0);
-        }
+        mainController.closeWindow();
+        State.getMainControllers().forEach(MainController::refreshNavigation);
     }
 }
