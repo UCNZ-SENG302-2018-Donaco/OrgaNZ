@@ -2,10 +2,8 @@ package com.humanharvest.organz.controller;
 
 
 import javafx.fxml.FXML;
-
 import javafx.scene.control.Button;
 
-import com.humanharvest.organz.Client;
 import com.humanharvest.organz.controller.spiderweb.SpiderWebController;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
@@ -74,6 +72,11 @@ public class SidebarController extends SubController  {
             }
         }
         refresh();
+    }
+
+    @Override
+    public void refresh() {
+        //todo should this do something?
     }
 
     private void showButton(Button button) {

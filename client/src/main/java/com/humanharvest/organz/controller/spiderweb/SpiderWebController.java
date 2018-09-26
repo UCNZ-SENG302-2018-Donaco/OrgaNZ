@@ -248,8 +248,4 @@ public class SpiderWebController extends SubController {
         }
     }
 
-    @Override
-    public void refresh() {
-        //TODO: This is implemented in C6 not C5. Accept the C6 version of this function when it's merged
-    }
 }
