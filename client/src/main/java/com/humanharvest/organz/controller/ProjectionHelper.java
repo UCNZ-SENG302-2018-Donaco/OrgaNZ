@@ -34,6 +34,10 @@ public final class ProjectionHelper {
      */
     private static Stage[] stages;
 
+    private static Pane mainPane;
+
+    private static MainController mainController;
+
     private ProjectionHelper() {
     }
 
@@ -63,6 +67,10 @@ public final class ProjectionHelper {
      */
     public static void createNewProjection(MainController originalMainController) {
 
+        if (mainController != null) {
+            mainController.closeWindow();
+        }
+
         for (int i = 0; i < stages.length; i++) {
             if (stages[i] != null) {
                 stages[i].close();
@@ -75,14 +83,12 @@ public final class ProjectionHelper {
                 Stage newStage = new Stage();
                 newStage.setTitle("Organ Client Management System");
                 FXMLLoader loader = new FXMLLoader();
-                Pane mainPane = loader.load(ProjectionHelper.class.getResourceAsStream(Page.MAIN.getPath()));
-                MainController mainController = loader.getController();
+                mainPane = loader.load(ProjectionHelper.class.getResourceAsStream(Page.MAIN.getPath()));
+                mainController = loader.getController();
                 mainController.setStage(newStage);
                 mainController.setPane(mainPane);
                 State.addMainController(mainController);
-                newStage.setOnCloseRequest(e -> {
-                    State.deleteMainController(mainController);
-                });
+                newStage.setOnCloseRequest(e -> mainController.closeWindow());
 
                 Scene scene = new Scene(mainPane);
 
@@ -111,10 +117,21 @@ public final class ProjectionHelper {
         }
     }
 
+    public static void updateProjection(MainController originalMainController) {
+        if (originalMainController != null && mainController != null && mainController.getCurrentPage() != null) {
+            mainController.setWindowContext(originalMainController.getWindowContext());
+            PageNavigator.loadPage(originalMainController.getCurrentPage(), mainController);
+        }
+    }
+
     /**
      * Closes down all the projection screens.
      */
     public static void stageClosing() {
+        if (mainController != null) {
+            mainController.closeWindow();
+        }
+
         for (int i = 0; i < stages.length; i++) {
             if (stages[i] != null) {
                 stages[i].close();

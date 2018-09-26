@@ -54,6 +54,7 @@ public class TouchActionsBarController extends SubController {
 
     private static final Logger LOGGER = Logger.getLogger(TouchActionsBarController.class.getName());
 
+
     /**
      * Setup the menu bar colours, buttons, and hamburger.
      * @param controller the controller to setup
@@ -76,7 +77,11 @@ public class TouchActionsBarController extends SubController {
             homeButton.setDisable(true);
             entireMenubarPane.setStyle("-fx-background-color: #D9B3FF");
         }
+        if (!ProjectionHelper.canProject()) {
+            projectButton.setDisable(true);
+        }
         hamburger.addEventHandler(MouseEvent.MOUSE_CLICKED, (e) -> toggleSidebar(controller.getDrawer()));
+
         refresh();
     }
 
@@ -118,6 +123,7 @@ public class TouchActionsBarController extends SubController {
     private void navigateHome() {
         // We need to navigate to our dashboard (for now we're just loading the search clients page).
         PageNavigator.loadPage(Page.SEARCH, mainController);
+        ProjectionHelper.updateProjection(mainController);
     }
 
     /**
@@ -158,8 +164,7 @@ public class TouchActionsBarController extends SubController {
         } else {
             exitButton.setDisable(false);
         }
-
-        projectButton.setSelected(false);
+        projectButton.setSelected(mainController.isProjecting());
     }
 
     @FXML
@@ -205,6 +210,10 @@ public class TouchActionsBarController extends SubController {
             PageNavigator.loadPage(Page.LANDING, mainController);
         } else {
             PageNavigator.loadPage(Page.LOGIN_STAFF, mainController);
+            if (projectButton.isSelected()) {
+                ProjectionHelper.stageClosing();
+                mainController.setProjecting(false);
+            }
         }
     }
 
@@ -216,6 +225,7 @@ public class TouchActionsBarController extends SubController {
         State.getMainControllers().forEach(MainController::refreshNavigation);
         if (projectButton.isSelected()) {
             ProjectionHelper.stageClosing();
+            mainController.setProjecting(false);
         }
     }
 
@@ -224,14 +234,20 @@ public class TouchActionsBarController extends SubController {
      */
     @FXML
     private void projectWindow() {
-
         if (!projectButton.isSelected()) {
             ProjectionHelper.stageClosing();
+            mainController.setProjecting(false);
         } else {
+
             if (ProjectionHelper.canProject()) {
+                for (MainController controller: State.getMainControllers()) {
+                    if (controller != mainController) {
+                        controller.setProjecting(false);
+                    }
+                }
+                mainController.setProjecting(true);
                 PageNavigator.refreshAllWindows();
                 ProjectionHelper.createNewProjection(mainController);
-                projectButton.setSelected(true);
             }
         }
     }

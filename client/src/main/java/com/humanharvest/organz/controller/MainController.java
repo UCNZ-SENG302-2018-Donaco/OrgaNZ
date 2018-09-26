@@ -37,6 +37,7 @@ public class MainController {
     private MenuBarController menuBarController;
     private TouchActionsBarController touchActionsBarController;
     private SubController subController;
+    private boolean isProjecting;
     /**
      * Holder of a switchable page.
      */
@@ -53,6 +54,7 @@ public class MainController {
 //        drawer.setOnDrawerOpened(EventListener -> drawer.setVisible(true));
         drawer.toFront();
         pageHolder.setPickOnBounds(false);
+        isProjecting = false;
     }
 
     public Pane getDrawer() {
@@ -244,5 +246,13 @@ public class MainController {
 
     public List<String> getStyles() {
         return pageHolder.getStyleClass();
+    }
+
+    public boolean isProjecting() {
+        return isProjecting;
+    }
+
+    public void setProjecting(boolean projecting) {
+        isProjecting = projecting;
     }
 }

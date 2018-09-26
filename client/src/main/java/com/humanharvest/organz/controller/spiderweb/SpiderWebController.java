@@ -29,6 +29,7 @@ import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.DonatedOrgan.OrganState;
 import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.controller.ProjectionHelper;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.controller.components.ExpiryBarUtils;
 import com.humanharvest.organz.state.State;
@@ -289,6 +290,10 @@ public class SpiderWebController extends SubController {
         for (MainController mainController : previouslyOpenWindows) {
             canvas.getChildren().add(mainController.getPane());
             mainController.showWindow();
+            if (mainController.isProjecting()) {
+                ProjectionHelper.createNewProjection(mainController);
+                break;
+            }
         }
     }
 }

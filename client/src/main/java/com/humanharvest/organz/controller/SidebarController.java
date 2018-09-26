@@ -111,6 +111,7 @@ public class SidebarController extends SubController  {
     @FXML
     private void goToViewClient() {
         PageNavigator.loadPage(Page.VIEW_CLIENT, mainController);
+        ProjectionHelper.updateProjection(mainController);
     }
 
     /**
@@ -119,6 +120,7 @@ public class SidebarController extends SubController  {
     @FXML
     private void goToRegisterOrganDonation() {
         PageNavigator.loadPage(Page.REGISTER_ORGAN_DONATIONS, mainController);
+        ProjectionHelper.updateProjection(mainController);
     }
 
     /**
@@ -127,6 +129,7 @@ public class SidebarController extends SubController  {
     @FXML
     private void goToRequestOrganDonation() {
         PageNavigator.loadPage(Page.REQUEST_ORGANS, mainController);
+        ProjectionHelper.updateProjection(mainController);
     }
 
     /**
@@ -135,6 +138,7 @@ public class SidebarController extends SubController  {
     @FXML
     private void goToViewMedications() {
         PageNavigator.loadPage(Page.VIEW_MEDICATIONS, mainController);
+        ProjectionHelper.updateProjection(mainController);
     }
 
     /**
@@ -143,6 +147,7 @@ public class SidebarController extends SubController  {
     @FXML
     private void goToSearch() {
         PageNavigator.loadPage(Page.SEARCH, mainController);
+        ProjectionHelper.updateProjection(mainController);
     }
 
 
@@ -152,6 +157,7 @@ public class SidebarController extends SubController  {
     @FXML
     private void goToTransplants() {
         PageNavigator.loadPage(Page.TRANSPLANTS, mainController);
+        ProjectionHelper.updateProjection(mainController);
     }
 
     /**
@@ -160,6 +166,7 @@ public class SidebarController extends SubController  {
     @FXML
     private void goToHistory() {
         PageNavigator.loadPage(Page.HISTORY, mainController);
+        ProjectionHelper.updateProjection(mainController);
     }
 
     /**
@@ -168,6 +175,7 @@ public class SidebarController extends SubController  {
     @FXML
     private void goToIllnessHistory() {
         PageNavigator.loadPage(Page.VIEW_MEDICAL_HISTORY, mainController);
+        ProjectionHelper.updateProjection(mainController);
     }
 
     /**
@@ -176,19 +184,23 @@ public class SidebarController extends SubController  {
     @FXML
     private void goToViewProcedures() {
         PageNavigator.loadPage(Page.VIEW_PROCEDURES, mainController);
+        ProjectionHelper.updateProjection(mainController);
     }
 
 
     public void goToCreateClient() {
         PageNavigator.loadPage(Page.CREATE_CLIENT, mainController);
+        ProjectionHelper.updateProjection(mainController);
     }
 
     public void goToOrgansToDonate() {
         PageNavigator.loadPage(Page.ORGANS_TO_DONATE, mainController);
+        ProjectionHelper.updateProjection(mainController);
     }
 
     public void goToSpiderweb() {
         State.setSpiderwebDonor(windowContext.getViewClient());
+        ProjectionHelper.stageClosing();
         new SpiderWebController(windowContext.getViewClient());
     }
 }
