@@ -19,6 +19,7 @@ import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.ProcedureRecord;
+import com.humanharvest.organz.TransplantRecord;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.utilities.ClientNameSorter;
 import com.humanharvest.organz.utilities.algorithms.MatchOrganToRecipients;
@@ -239,6 +240,51 @@ public class ClientManagerMemory implements ClientManager {
                 nextId++;
             }
         }
+
+        // Add IDs to each donated organ
+        nextId = client.getDonatedOrgans().stream()
+                .mapToLong(organ -> organ.getId() == null ? 0 : organ.getId())
+                .max().orElse(0) + 1;
+        for (DonatedOrgan organ : client.getDonatedOrgans()) {
+            if (organ.getId() == null) {
+                organ.setId(nextId);
+                nextId++;
+            }
+        }
+    }
+
+    @Override
+    public void applyChangesTo(DonatedOrgan donatedOrgan) {
+        // Ensure that all records associated with the client have an id
+        Client client = donatedOrgan.getDonor();
+
+        // Add IDs to each donated organ
+        long nextId = client.getDonatedOrgans().stream()
+                .mapToLong(organ -> organ.getId() == null ? 0 : organ.getId())
+                .max().orElse(0) + 1;
+        for (DonatedOrgan organ : client.getDonatedOrgans()) {
+            if (organ.getId() == null) {
+                organ.setId(nextId);
+                nextId++;
+            }
+        }
+    }
+
+    @Override
+    public void applyChangesTo(TransplantRequest transplantRequest) {
+        // Ensure that all records associated with the client have an id
+        Client client = transplantRequest.getClient();
+
+        // Add IDs to all transplant requests
+        long nextId = client.getTransplantRequests().stream()
+                .mapToLong(request -> request.getId() == null ? 0 : request.getId())
+                .max().orElse(0) + 1;
+        for (TransplantRequest request : client.getTransplantRequests()) {
+            if (request.getId() == null) {
+                request.setId(nextId);
+                nextId++;
+            }
+        }
     }
 
     /**
@@ -393,6 +439,7 @@ public class ClientManagerMemory implements ClientManager {
                 .map(Client::getDonatedOrgans)
                 .flatMap(Collection::stream)
                 .filter(organ -> organ.getDurationUntilExpiry() == null || !organ.getDurationUntilExpiry().isZero())
+                .filter(DonatedOrgan::isAvailable)
                 .filter(organ -> organ.getOverrideReason() == null)
                 .filter(organ -> regionsToFilter.isEmpty()
                         || regionsToFilter.contains(organ.getDonor().getRegionOfDeath())
@@ -429,5 +476,63 @@ public class ClientManagerMemory implements ClientManager {
     @Override
     public List<Client> getOrganMatches(DonatedOrgan donatedOrgan) {
         return MatchOrganToRecipients.getListOfPotentialRecipients(donatedOrgan, getAllCurrentTransplantRequests());
+    }
+
+    /**
+     * @param donatedOrgan available organ to find potential matches for
+     * @return list of TransplantRequests that will match the given organ
+     */
+    @Override
+    public List<TransplantRequest> getMatchingOrganTransplants(DonatedOrgan donatedOrgan) {
+        return MatchOrganToRecipients.getListOfPotentialTransplants(donatedOrgan, getAllCurrentTransplantRequests());
+    }
+
+    /**
+     * @param donatedOrgan available organ to find potential matches for
+     * @return The matching TransplantRecord for the given organ
+     */
+    @Override
+    public TransplantRecord getMatchingOrganTransplantRecord(DonatedOrgan donatedOrgan) {
+        return clients.stream()
+                .map(Client::getProcedures)
+                .flatMap(Collection::stream)
+                .filter(procedureRecord -> procedureRecord instanceof TransplantRecord)
+                .map(procedureRecord -> (TransplantRecord) procedureRecord)
+                .filter(transplantRecord -> transplantRecord.getOrgan().equals(donatedOrgan))
+                .findFirst().orElse(null);
+    }
+
+
+    /**
+     * Determines whether a donor is deceased and has chosen to donate organs that are currently available (not expired)
+     * @param client client to determine viability of as an organ donor
+     * @return boolean of whether the given client is viable as an organ donor
+     */
+    private boolean isViableDonor(Client client) {
+        if (client.isDead()) {
+            for (DonatedOrgan organ : client.getDonatedOrgans()) {
+                if (!organ.hasExpired()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Gets viable deceased donors (those that have available organs)
+     * @return list of viable deceased donors
+     */
+    @Override
+    public List<Client> getViableDeceasedDonors() {
+        List<Client> viableDeceasedDonors = new ArrayList<>();
+
+        for (Client client : clients) {
+            if (isViableDonor(client)) {
+                viableDeceasedDonors.add(client);
+            }
+        }
+
+        return viableDeceasedDonors;
     }
 }

@@ -1,17 +1,13 @@
 package com.humanharvest.organz.server.controller.client;
 
-import static com.humanharvest.organz.utilities.validators.ClientValidator.checkClientETag;
-
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 
 import com.humanharvest.organz.Client;
-import com.humanharvest.organz.actions.client.ModifyClientOrgansAction;
+import com.humanharvest.organz.actions.client.organ.ModifyClientOrgansAction;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
-import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
-import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
 import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
 
 import org.springframework.http.HttpHeaders;
@@ -41,9 +37,7 @@ public class ClientDonationStatusController {
             //Auth check
             State.getAuthenticationManager().verifyClientAccess(authToken, client);
 
-            //Add the ETag to the headers
             HttpHeaders headers = new HttpHeaders();
-            headers.add("ETag", client.getETag());
 
             return new ResponseEntity<>(client.getOrganDonationStatus(), headers, HttpStatus.OK);
         } else {
@@ -61,12 +55,12 @@ public class ClientDonationStatusController {
     public ResponseEntity<Map<Organ, Boolean>> updateClientDonationStatus(
             @PathVariable int id,
             @RequestBody Map<Organ, Boolean> updatedValues,
-            @RequestHeader(value = "If-Match", required = false) String ETag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
-            throws IfMatchRequiredException, IfMatchFailedException, OrganAlreadyRegisteredException {
+            throws OrganAlreadyRegisteredException {
 
         //Logical steps for a PATCH
         //We set If-Match to false so we can return a better error code than 400 which happens if a required
+        // [UPDATE:etags removed]
         // @RequestHeader is missing, I think this can be improved with an @ExceptionHandler or similar so we don't
         // duplicate code in tons of places but need to work it out
 
@@ -81,9 +75,6 @@ public class ClientDonationStatusController {
         //Auth check
         State.getAuthenticationManager().verifyClientAccess(authToken, client);
 
-        //Check ETag
-        checkClientETag(client, ETag);
-
         //Create the action
         ModifyClientOrgansAction action = new ModifyClientOrgansAction(client, State.getClientManager());
         //Add all the changes. This can throw an OrganAlreadyRegisteredException but we throw it and handle with the
@@ -95,9 +86,7 @@ public class ClientDonationStatusController {
         //Execute action, this would correspond to a specific users invoker in full version
         State.getActionInvoker(authToken).execute(action);
 
-        //Add the new ETag to the headers
         HttpHeaders headers = new HttpHeaders();
-        headers.add("ETag", client.getETag());
 
         //Respond, apparently updates should be 200 not 201 unlike 365 and our spec
         return new ResponseEntity<>(client.getOrganDonationStatus(), headers, HttpStatus.OK);

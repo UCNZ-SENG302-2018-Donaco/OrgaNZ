@@ -25,7 +25,7 @@ public class BloodTypeConverter implements TypeConverter<BloodType> {
             return BloodType.fromString(value.toString());
         } catch (IllegalArgumentException e) {
             LOGGER.log(Level.WARNING, e.getMessage(), e);
-            throw new TypeConversionException(e.getMessage());
+            throw new TypeConversionException(e.getMessage(), e);
         }
     }
 }

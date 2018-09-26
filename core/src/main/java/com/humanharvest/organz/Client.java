@@ -19,6 +19,8 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.persistence.Access;
@@ -62,9 +64,11 @@ import com.fasterxml.jackson.annotation.JsonView;
 @Access(AccessType.FIELD)
 public class Client implements ConcurrencyControlledEntity {
 
-    private static final Pattern whiteSpace = Pattern.compile("\\s+");
+    private static final Logger LOGGER = Logger.getLogger(Client.class.getName());
 
-    @JsonView(Views.Details.class)
+    private static final Pattern WHITE_SPACE = Pattern.compile("(%20|\\s)+");
+
+    @JsonView(Views.Overview.class)
     private final Instant createdTimestamp;
 
     @Id
@@ -84,8 +88,8 @@ public class Client implements ConcurrencyControlledEntity {
     private String currentAddress;
 
     @ManyToOne
-    @JoinColumn(name="Hospital_id")
-    @JsonView(Views.Details.class)
+    @JoinColumn(name = "Hospital_id")
+    @JsonView(Views.Overview.class)
     private Hospital hospital;
 
     @JsonView(Views.Overview.class)
@@ -113,7 +117,7 @@ public class Client implements ConcurrencyControlledEntity {
 
     @JsonView(Views.Overview.class)
     private LocalDate dateOfDeath;
-    @JsonView(Views.Details.class)
+    @JsonView(Views.Overview.class)
     private LocalTime timeOfDeath;
     @JsonView(Views.Overview.class)
     private String regionOfDeath;
@@ -125,7 +129,7 @@ public class Client implements ConcurrencyControlledEntity {
     @JsonView(Views.Details.class)
     private boolean dateOfDeathIsEditable = true;
 
-    @JsonView(Views.Details.class)
+    @JsonView(Views.Overview.class)
     private Instant modifiedTimestamp;
 
     @JsonView(Views.Overview.class)
@@ -220,6 +224,7 @@ public class Client implements ConcurrencyControlledEntity {
     }
 
     private void updateModifiedTimestamp() {
+        LOGGER.log(Level.FINEST, "Timestamp updated", new RuntimeException());
         modifiedTimestamp = Instant.now();
     }
 
@@ -764,17 +769,6 @@ public class Client implements ConcurrencyControlledEntity {
     }
 
     /**
-     * Returns a list of procedures that the client has previously undergone.
-     *
-     * @return A list of past procedures for the client.
-     */
-    public List<ProcedureRecord> getPastProcedures() {
-        return Collections.unmodifiableList(procedures.stream()
-                .filter(record -> record.getDate().isBefore(LocalDate.now()))
-                .collect(Collectors.toList()));
-    }
-
-    /**
      * Adds Illness history to Person
      *
      * @param record IllnessRecord that is wanted to be added
@@ -820,12 +814,42 @@ public class Client implements ConcurrencyControlledEntity {
      */
     public List<ProcedureRecord> getPendingProcedures() {
         return Collections.unmodifiableList(procedures.stream()
-                .filter(record -> !record.getDate().isBefore(LocalDate.now()))
+                .filter(record -> {
+                    if (record instanceof TransplantRecord) {
+                        return !((TransplantRecord) record).isCompleted();
+                    }
+                    return record.getDate().isAfter(LocalDate.now());
+                })
+                .collect(Collectors.toList()));
+    }
+
+    /**
+     * Returns a list of procedures that the client has previously undergone.
+     *
+     * @return A list of past procedures for the client.
+     */
+    public List<ProcedureRecord> getPastProcedures() {
+        return Collections.unmodifiableList(procedures.stream()
+                .filter(record -> {
+                    if (record instanceof TransplantRecord) {
+                        return ((TransplantRecord) record).isCompleted();
+                    }
+                    return !record.getDate().isAfter(LocalDate.now());
+                })
                 .collect(Collectors.toList()));
     }
 
     public List<TransplantRequest> getTransplantRequests() {
         return Collections.unmodifiableList(transplantRequests);
+    }
+
+    public void setTransplantRequests(List<TransplantRequest> requests) {
+        transplantRequests = new ArrayList<>(requests);
+        for (TransplantRequest request : requests) {
+            request.setClient(this);
+        }
+        isReceiver = !transplantRequests.isEmpty();
+        updateModifiedTimestamp();
     }
 
     /**
@@ -836,6 +860,7 @@ public class Client implements ConcurrencyControlledEntity {
      * @return the transplant request that is for the passed in organ
      */
     public TransplantRequest getTransplantRequest(Organ organ) {
+        //TODO: This shouldn't really happen because there can be multiple transplants with same organ
         for (TransplantRequest transplantRequest : transplantRequests) {
             if (transplantRequest.getRequestedOrgan() == organ) {
                 return transplantRequest;
@@ -846,13 +871,15 @@ public class Client implements ConcurrencyControlledEntity {
         return null;
     }
 
-    public void setTransplantRequests(List<TransplantRequest> requests) {
-        transplantRequests = new ArrayList<>(requests);
-        for (TransplantRequest request : requests) {
-            request.setClient(this);
-        }
-        isReceiver = !transplantRequests.isEmpty();
-        updateModifiedTimestamp();
+    /**
+     * Returns the transplant request by id
+     * If there is no such transplant request, returns null.
+     *
+     * @param id the transplant id
+     * @return the transplant request with the given id or null if none exists
+     */
+    public TransplantRequest getTransplantRequest(long id) {
+        return transplantRequests.stream().filter(request -> request.getId() == id).findFirst().orElse(null);
     }
 
     /**
@@ -903,14 +930,16 @@ public class Client implements ConcurrencyControlledEntity {
     }
 
     /**
-     * Takes a string and checks if each space separated string section matches one of the names
+     * Takes a string and checks if each space separated string section matches one of the names.
+     * For example, the search term "Ollie Chick" will match "Ollie Nicholas Chick" but not "Ollie Murs",
+     * and the search term "O Chick" will match "Ollie Chick" and "Oscar Chick" and "Chick O'Sullivan".
      *
      * @param searchParam The string to be checked
      * @return True if all sections of the passed string match any of the names of the client
      */
     public boolean nameContains(String searchParam) {
         String lowerSearch = searchParam.toLowerCase(Locale.UK);
-        String[] splitSearchItems = whiteSpace.split(lowerSearch);
+        String[] splitSearchItems = WHITE_SPACE.split(lowerSearch);
 
         boolean isMatch = true;
         for (String string : splitSearchItems) {
@@ -933,20 +962,20 @@ public class Client implements ConcurrencyControlledEntity {
      */
     private HashSet<String> splitNames() {
 
-        String[] fname = whiteSpace.split(firstName);
-        String[] lname = whiteSpace.split(lastName);
+        String[] fname = WHITE_SPACE.split(firstName);
+        String[] lname = WHITE_SPACE.split(lastName);
         String[] mname;
         String[] pname;
 
         if (middleName == null) {
             mname = new String[0];
         } else {
-            mname = whiteSpace.split(middleName);
+            mname = WHITE_SPACE.split(middleName);
         }
         if (preferredName == null) {
             pname = new String[0];
         } else {
-            pname = whiteSpace.split(preferredName);
+            pname = WHITE_SPACE.split(preferredName);
         }
 
         HashSet<String> names = new HashSet<>(Arrays.asList(fname));
@@ -965,7 +994,7 @@ public class Client implements ConcurrencyControlledEntity {
      */
     public boolean profileSearch(String searchParam) {
         String lowerSearch = searchParam.toLowerCase();
-        String[] splitSearchItems = whiteSpace.split(lowerSearch);
+        String[] splitSearchItems = WHITE_SPACE.split(lowerSearch);
 
         Collection<String> searched = new ArrayList<>(Arrays.asList(splitSearchItems));
 
@@ -998,6 +1027,7 @@ public class Client implements ConcurrencyControlledEntity {
      */
     @Override
     public boolean equals(Object o) {
+
         if (this == o) {
             return true;
         }
@@ -1024,6 +1054,7 @@ public class Client implements ConcurrencyControlledEntity {
 
     public void addTransplantRequest(TransplantRequest request) {
         transplantRequests.add(request);
+
         request.setClient(this);
         isReceiver = !transplantRequests.isEmpty();
     }
@@ -1165,9 +1196,9 @@ public class Client implements ConcurrencyControlledEntity {
     @Override
     public String getETag() {
         if (modifiedTimestamp == null) {
-            return String.format("\"%d\"", createdTimestamp.hashCode());
+            return String.format(Locale.UK, "\"%d\"", createdTimestamp.hashCode());
         } else {
-            return String.format("\"%d\"", modifiedTimestamp.hashCode());
+            return String.format(Locale.UK, "\"%d\"", modifiedTimestamp.hashCode());
         }
     }
 
@@ -1202,7 +1233,6 @@ public class Client implements ConcurrencyControlledEntity {
     public Country getCountry() {
         return country;
     }
-
 
     public void setCountry(Country country) {
         this.country = country;

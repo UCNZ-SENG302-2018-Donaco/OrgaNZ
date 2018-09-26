@@ -26,8 +26,8 @@ import org.junit.Test;
 
 public class ConfigControllerTest extends ControllerTest {
 
-    private Administrator admin1 = new Administrator("admin1", "password");
-    private Set<Hospital> hospitals = Hospital.getDefaultHospitals();
+    private final Administrator admin = new Administrator("admin1", "password");
+    private final Set<Hospital> hospitals = Hospital.getDefaultHospitals();
 
     private Hospital firstHospital;
     private Hospital secondHospital;
@@ -35,32 +35,6 @@ public class ConfigControllerTest extends ControllerTest {
     @Override
     protected Page getPage() {
         return Page.ADMIN_CONFIG;
-    }
-
-    @Override
-    protected void initState() {
-        State.reset();
-
-        // Setup hospitals
-        Set<Hospital> hospitalsCopy = new HashSet<>(hospitals);
-        long i = 1;
-        for (Hospital hospital : hospitalsCopy) {
-            hospital.setId(i);
-            i++;
-        }
-        State.getConfigManager().setHospitals(hospitalsCopy);
-
-        // Add admin, log in, and open page
-        State.getAdministratorManager().addAdministrator(admin1);
-        State.login(admin1);
-        mainController.setWindowContext(WindowContext.defaultContext());
-
-        // sort hospitals by name and get first hospital,
-        // this ensures that the hospital is visible without scrolling.
-        List<Hospital> hospitalList = new ArrayList<>(hospitals);
-        hospitalList.sort(Comparator.comparing(Hospital::getName));
-        firstHospital = hospitalList.get(0);
-        secondHospital = hospitalList.get(1);
     }
 
     @Test
@@ -77,16 +51,34 @@ public class ConfigControllerTest extends ControllerTest {
         alertDialogHasHeaderAndContainsContent(hospitalName, firstHospital.getAddress());
     }
 
-    /**
-     * Asserts that header is expectedHeader and content contains expectedContent.
-     */
-    private void alertDialogHasHeaderAndContainsContent(final String expectedHeader, final String expectedContent) {
-        final javafx.stage.Stage actualAlertDialog = getTopModalStage();
-        assertNotNull(actualAlertDialog);
+    @Override
+    protected void initState() {
+        State.reset();
 
-        final DialogPane dialogPane = (DialogPane) actualAlertDialog.getScene().getRoot();
-        assertEquals(expectedHeader, dialogPane.getHeaderText());
-        assertThat(dialogPane.getContentText(), containsString(expectedContent));
+        // Setup hospitals
+        Set<Hospital> hospitalsCopy = new HashSet<>(hospitals);
+        long i = 1;
+        for (Hospital hospital : hospitalsCopy) {
+            hospital.setId(i);
+            i++;
+
+            for (Organ organ : Organ.values()) {
+                hospital.removeTransplantProgramFor(organ);
+            }
+        }
+        State.getConfigManager().setHospitals(hospitalsCopy);
+
+        // Add admin, log in, and open page
+        State.getAdministratorManager().addAdministrator(admin);
+        State.login(admin);
+        mainController.setWindowContext(WindowContext.defaultContext());
+
+        // sort hospitals by name and get first hospital,
+        // this ensures that the hospital is visible without scrolling.
+        List<Hospital> hospitalList = new ArrayList<>(hospitals);
+        hospitalList.sort(Comparator.comparing(Hospital::getName));
+        firstHospital = hospitalList.get(0);
+        secondHospital = hospitalList.get(1);
     }
 
     @Test
@@ -124,7 +116,5 @@ public class ConfigControllerTest extends ControllerTest {
                 .contains(Organ.values()[0]));
         assertEquals(1,
                 State.getConfigManager().getHospitalById(hospital.getId()).get().getTransplantPrograms().size());
-
     }
-
 }

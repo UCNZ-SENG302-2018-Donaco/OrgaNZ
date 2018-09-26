@@ -39,6 +39,7 @@ import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.state.State.UiType;
 import com.humanharvest.organz.utilities.enums.ClientSortOptionsEnum;
 import com.humanharvest.organz.utilities.enums.ClientType;
 import com.humanharvest.organz.utilities.enums.Gender;
@@ -83,7 +84,7 @@ public class SearchClientsController extends SubController {
     private HBox donatingFilterBox, requestingFilterBox;
 
     @FXML
-    private HBox menuBarPane;
+    private Pane menuBarPane;
 
     @FXML
     private TableView<Client> tableView;
@@ -121,7 +122,7 @@ public class SearchClientsController extends SubController {
     public void setup(MainController mainController) {
         super.setup(mainController);
         mainController.setTitle("Client search");
-        mainController.loadMenuBar(menuBarPane);
+        mainController.loadNavigation(menuBarPane);
     }
 
     @FXML
@@ -354,8 +355,8 @@ public class SearchClientsController extends SubController {
      * @param hBox the HBox to enable.
      */
     private void enableHBox(HBox hBox) {
-        hBox.setManaged(false);
-        hBox.setVisible(false);
+        hBox.setManaged(true);
+        hBox.setVisible(true);
     }
 
     /**

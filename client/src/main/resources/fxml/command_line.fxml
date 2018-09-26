@@ -9,8 +9,7 @@
 <VBox xmlns:fx="http://javafx.com/fxml/1" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0"
   prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.121"
   fx:controller="com.humanharvest.organz.controller.administrator.CommandLineController">
-  <SplitPane VBox.vgrow="ALWAYS" dividerPositions="0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="200.0">
-    <HBox maxHeight="20.0" minHeight="-Infinity" fx:id="menuBarPane"/>
+  <VBox fx:id="menuBarPane" maxWidth="1.7976931348623157E308" />
     <SplitPane VBox.vgrow="ALWAYS" prefHeight="200.0" prefWidth="200.0">
       <BorderPane fx:id="borderPane">
         <center>
@@ -23,5 +22,4 @@
         </center>
       </BorderPane>
     </SplitPane>
-  </SplitPane>
 </VBox>

@@ -9,6 +9,7 @@ import com.humanharvest.organz.Client;
 import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.actions.ActionInvoker;
+import com.humanharvest.organz.actions.client.illness.AddIllnessRecordAction;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.ClientManagerMemory;
 

@@ -48,7 +48,7 @@ public class DeleteImageAction extends Action {
         // Create the directory if it doesn't exist
         File directory = new File(imagesDirectory);
         if (!directory.exists()) {
-            directory.mkdir();
+            directory.mkdirs();
         }
 
         // Write the file

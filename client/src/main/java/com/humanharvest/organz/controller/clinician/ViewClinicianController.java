@@ -1,5 +1,7 @@
 package com.humanharvest.organz.controller.clinician;
 
+import static com.humanharvest.organz.views.ModifyBaseObject.addChangeIfDifferent;
+
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
@@ -24,6 +26,7 @@ import org.controlsfx.control.Notifications;
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.JSONConverter;
@@ -39,7 +42,7 @@ import com.humanharvest.organz.views.clinician.ModifyClinicianObject;
  * Presents an interface displaying all information of the currently logged in Clinician. Clinicians are able to edit
  * their details directly on this page.
  */
-public class ViewClinicianController extends ViewBaseController {
+public class ViewClinicianController extends SubController {
 
     private static final Logger LOGGER = Logger.getLogger(ViewClinicianController.class.getName());
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
@@ -86,19 +89,6 @@ public class ViewClinicianController extends ViewBaseController {
     @FXML
     private Button loadClinicianButton;
 
-    /**
-     * @return the clinician that the admin should view by default
-     */
-    private Clinician getClinicianForAdminToView() {
-        if (State.getViewedClinician() != null) {
-            Clinician clinician = State.getViewedClinician();
-            State.setViewedClinician(null);
-            return clinician;
-        } else {
-            return State.getClinicianManager().getDefaultClinician();
-        }
-    }
-
     public ViewClinicianController() {
         session = State.getSession();
 
@@ -111,6 +101,19 @@ public class ViewClinicianController extends ViewBaseController {
                 break;
             default:
                 throw new IllegalStateException("Should not get to this page without being logged in.");
+        }
+    }
+
+    /**
+     * @return the clinician that the admin should view by default
+     */
+    private static Clinician getClinicianForAdminToView() {
+        if (State.getViewedClinician() != null) {
+            Clinician clinician = State.getViewedClinician();
+            State.setViewedClinician(null);
+            return clinician;
+        } else {
+            return State.getClinicianManager().getDefaultClinician();
         }
     }
 
@@ -131,8 +134,7 @@ public class ViewClinicianController extends ViewBaseController {
     public void setup(MainController mainController) {
         super.setup(mainController);
         mainController.setTitle("Clinician profile: " + viewedClinician.getFullName());
-        mainController.loadMenuBar(menuBarPane);
-
+        mainController.loadNavigation(menuBarPane);
         getViewedClinicianData();
         updateCountries();
     }

@@ -2,8 +2,8 @@ package com.humanharvest.organz.touch;
 
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
+import javafx.scene.Node;
 import javafx.scene.input.TouchPoint;
-import javafx.scene.layout.Pane;
 
 public final class PointUtils {
 
@@ -39,15 +39,18 @@ public final class PointUtils {
         return newAngle - oldAngle;
     }
 
-    public static Point2D getCentreOfPane(Pane pane) {
-        Bounds paneBounds = pane.getBoundsInParent();
-        Point2D min = new Point2D(paneBounds.getMinX(), paneBounds.getMinY());
-        Point2D max = new Point2D(paneBounds.getMaxX(), paneBounds.getMaxY());
+    public static Point2D getCentreOfNode(Node node) {
+        return getCentreOfBounds(node.getBoundsInParent());
+    }
+
+    public static Point2D getCentreOfBounds(Bounds bounds) {
+        Point2D min = new Point2D(bounds.getMinX(), bounds.getMinY());
+        Point2D max = new Point2D(bounds.getMaxX(), bounds.getMaxY());
         return min.add(max.subtract(min).multiply(0.5));
     }
 
-    public static double distance(Point2D point1, Point2D point2D) {
-        Point2D delta = point1.subtract(point2D);
+    public static double distance(Point2D point1, Point2D point2) {
+        Point2D delta = point1.subtract(point2);
         return Math.sqrt(delta.getX() * delta.getX() + delta.getY() * delta.getY());
     }
 }

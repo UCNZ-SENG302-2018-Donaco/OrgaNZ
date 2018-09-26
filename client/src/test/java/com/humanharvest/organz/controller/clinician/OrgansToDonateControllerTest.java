@@ -1,6 +1,5 @@
 package com.humanharvest.organz.controller.clinician;
 
-import static org.junit.Assert.fail;
 import static org.testfx.api.FxAssert.verifyThat;
 
 import java.time.LocalDate;
@@ -18,20 +17,17 @@ import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredExcept
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.testfx.matcher.control.TableViewMatchers;
 
 public class OrgansToDonateControllerTest extends ControllerTest {
 
-    private static final int ROWS_PER_PAGE = 30;
+    private final Administrator testAdmin = new Administrator("username", "password");
 
-    private Administrator testAdmin = new Administrator("username", "password");
-
-    private Client client1 = new Client(1);
-    private Client client2 = new Client(2);
-    private Client client3 = new Client(3);
-    private Collection<Client> clients = new ArrayList<>();
+    private final Client client1 = new Client(1);
+    private final Client client2 = new Client(2);
+    private final Client client3 = new Client(3);
+    private final Collection<Client> clients = new ArrayList<>();
 
     private int numberOfOrgansBeingDonated;
 
@@ -72,18 +68,5 @@ public class OrgansToDonateControllerTest extends ControllerTest {
     @Test
     public void hasAllRowsTest() {
         verifyThat("#tableView", TableViewMatchers.hasNumRows(numberOfOrgansBeingDonated));
-    }
-
-    @Ignore("Pagination not implemented on this page.")
-    @Test
-    public void paginationTest() {
-        for (int i = 10; i < 50; i++) {
-            Client client = new Client(i);
-            client.markDead(LocalDate.now(), LocalTime.now(), Country.NZ, "Canterbury", "Christchurch");
-            clients.add(client);
-        }
-        State.getClientManager().setClients(clients);
-
-        verifyThat("#tableView", TableViewMatchers.hasNumRows(ROWS_PER_PAGE));
     }
 }

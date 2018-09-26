@@ -11,6 +11,7 @@ import com.humanharvest.organz.Hospital;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Region;
+import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 
 /**
  * Provides static helper methods to match organs to recipients
@@ -257,12 +258,22 @@ public abstract class MatchOrganToRecipients {
 
         List<Client> potentialMatches = new ArrayList<>();
 
+        // Create the list of matches from the list of transplant requests
+        for (TransplantRequest transplantRequest : getListOfPotentialTransplants(donatedOrgan, transplantRequests)) {
+            potentialMatches.add(transplantRequest.getClient());
+        }
+
+        return potentialMatches;
+    }
+
+    public static List<TransplantRequest> getListOfPotentialTransplants(DonatedOrgan donatedOrgan,
+            Iterable<TransplantRequest> transplantRequests) {
+
         Client donor = donatedOrgan.getDonor();
 
-        // If the organ trying to be matched has expired, or the donor isn't registered to a hospital,
-        // then return an empty list.
-        if (donatedOrgan.hasExpired() || donor.getHospital() == null) {
-            return potentialMatches;
+        // If the organ trying to be matched has expired then return an empty list.
+        if (donatedOrgan.hasExpired()) {
+            return new ArrayList<>();
         }
 
         // Create a list of eligible transplant requests
@@ -270,20 +281,21 @@ public abstract class MatchOrganToRecipients {
         for (TransplantRequest transplantRequest : transplantRequests) {
             Client recipient = transplantRequest.getClient();
 
-            // Check they are requesting the organ, have the same blood type, and are the right age
-            if ((donatedOrgan.getOrganType() == transplantRequest.getRequestedOrgan())
+            if (donatedOrgan.getOrganType() == transplantRequest.getRequestedOrgan()
+                    && donatedOrgan.isAvailable()
                     && donor.getBloodType() != null && recipient.getBloodType() != null
-                    && (donor.getBloodType() == recipient.getBloodType())
-                    && agesMatch(donor.getAge(), recipient.getAge())) {
+                    && donor.getBloodType() == recipient.getBloodType()
+                    && agesMatch(donor.getAge(), recipient.getAge())
+                    && transplantRequest.getStatus() == TransplantRequestStatus.WAITING) {
                 potentialTransplantRequests.add(transplantRequest);
             }
         }
 
         // Sort the list by when the transplant request was made, then where the potential recipient lives
         potentialTransplantRequests.sort((t1, t2) -> {
-            LocalDateTime requestDate1 = t1.getRequestDateTime().truncatedTo(ChronoUnit.DAYS);
-            LocalDateTime requestDate2 = t2.getRequestDateTime().truncatedTo(ChronoUnit.DAYS);
-            int timeComparison = requestDate1.compareTo(requestDate2);
+            LocalDateTime requestDateTime1 = t1.getRequestDateTime().truncatedTo(ChronoUnit.DAYS);
+            LocalDateTime requestDateTime2 = t2.getRequestDateTime().truncatedTo(ChronoUnit.DAYS);
+            int timeComparison = requestDateTime1.compareTo(requestDateTime2);
 
             if (timeComparison != 0) { // different time, so just compare using that
                 return timeComparison;
@@ -294,11 +306,6 @@ public abstract class MatchOrganToRecipients {
             }
         });
 
-        // Create the list of matches from the list of transplant requests
-        for (TransplantRequest transplantRequest : potentialTransplantRequests) {
-            potentialMatches.add(transplantRequest.getClient());
-        }
-
-        return potentialMatches;
+        return potentialTransplantRequests;
     }
 }
