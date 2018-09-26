@@ -25,6 +25,7 @@ import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DashboardStatistics;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.HistoryItem;
+import com.humanharvest.organz.TransplantRecord;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.database.DBManager;
 import com.humanharvest.organz.utilities.algorithms.MatchOrganToRecipients;
@@ -673,6 +674,43 @@ public class ClientManagerDBPure implements ClientManager {
 
         Collection<TransplantRequest> transplantRequests = getAllTransplantRequests();
         return MatchOrganToRecipients.getListOfPotentialRecipients(donatedOrgan, transplantRequests);
+    }
+
+    /**
+     * @param donatedOrgan available organ to find potential matches for
+     * @return list of TransplantRequests that will match the given organ
+     */
+    @Override
+    public List<TransplantRequest> getMatchingOrganTransplants(DonatedOrgan donatedOrgan) {
+
+        Collection<TransplantRequest> transplantRequests = getAllTransplantRequests();
+        return MatchOrganToRecipients.getListOfPotentialTransplants(donatedOrgan, transplantRequests);
+    }
+
+    /**
+     * @param donatedOrgan available organ to find potential matches for
+     * @return The matching TransplantRecord for the given organ
+     */
+    @Override
+    public TransplantRecord getMatchingOrganTransplantRecord(DonatedOrgan donatedOrgan) {
+        Transaction trns = null;
+
+        try (Session session = dbManager.getDBSession()) {
+            trns = session.beginTransaction();
+            TransplantRecord record = session
+                    .createQuery("SELECT req FROM TransplantRecord req WHERE req.organ = :organ",
+                            TransplantRecord.class)
+                    .setParameter("organ", donatedOrgan)
+                    .uniqueResult();
+            trns.commit();
+            return record;
+        } catch (RollbackException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
+            if (trns != null) {
+                trns.rollback();
+            }
+            return null;
+        }
     }
 
     /**

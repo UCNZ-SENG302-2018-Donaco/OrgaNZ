@@ -5,9 +5,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import org.controlsfx.control.Notifications;
@@ -25,6 +27,9 @@ import com.humanharvest.organz.views.ActionResponseView;
  * admins/clinicians who are using the touch application.
  */
 public class TouchActionsBarController extends SubController {
+
+    @FXML
+    private ToggleButton projectButton;
 
     @FXML
     private Button homeButton;
@@ -49,6 +54,7 @@ public class TouchActionsBarController extends SubController {
 
     private static final Logger LOGGER = Logger.getLogger(TouchActionsBarController.class.getName());
 
+
     /**
      * Setup the menu bar colours, buttons, and hamburger.
      * @param controller the controller to setup
@@ -60,6 +66,11 @@ public class TouchActionsBarController extends SubController {
         if (State.getSession().getLoggedInUserType() == UserType.CLIENT) {
             homeButton.setVisible(false);
             duplicateButton.setVisible(false);
+            projectButton.setVisible(false);
+            entireMenubarPane.setStyle("-fx-background-color: rgb(137, 186, 255)");
+
+        } else {
+            entireMenubarPane.setStyle("-fx-background-color: rgb(137, 186, 255)");
         }
 
         if (windowContext.isClinViewClientWindow()) {
@@ -67,7 +78,11 @@ public class TouchActionsBarController extends SubController {
         } else {
             entireMenubarPane.getStyleClass().add("menu-bar-clinician");
         }
+        if (!ProjectionHelper.canProject()) {
+            projectButton.setDisable(true);
+        }
         hamburger.addEventHandler(MouseEvent.MOUSE_CLICKED, (e) -> toggleSidebar(controller.getDrawer()));
+
         refresh();
     }
 
@@ -109,6 +124,7 @@ public class TouchActionsBarController extends SubController {
     private void navigateHome() {
         // We need to navigate to our dashboard (for now we're just loading the search clients page).
         PageNavigator.loadPage(Page.DASHBOARD, mainController);
+        ProjectionHelper.updateProjection(mainController);
     }
 
     /**
@@ -141,14 +157,17 @@ public class TouchActionsBarController extends SubController {
         redoButton.setDisable(!responseView.isCanRedo());
 
         // Disable exit button if this is the last clinician window
-        if (State.getUiType() != UiType.STANDARD && !windowContext.isClinViewClientWindow() && State.getMainControllers
-                ().stream()
-                .filter(controller -> !controller.getWindowContext().isClinViewClientWindow())
-                .count() <= 1) {
+        if (State.getUiType() != UiType.STANDARD && !windowContext.isClinViewClientWindow() &&
+                State.getMainControllers()
+                        .stream()
+                        .filter(controller -> !controller.getWindowContext().isClinViewClientWindow())
+                        .filter(controller -> !controller.isProjecting())
+                        .count() <= 1) {
             exitButton.setDisable(true);
         } else {
             exitButton.setDisable(false);
         }
+        projectButton.setSelected(mainController.isProjecting());
     }
 
     @FXML
@@ -194,6 +213,10 @@ public class TouchActionsBarController extends SubController {
             PageNavigator.loadPage(Page.LANDING, mainController);
         } else {
             PageNavigator.loadPage(Page.LOGIN_STAFF, mainController);
+            if (projectButton.isSelected()) {
+                ProjectionHelper.stageClosing();
+                mainController.setProjecting(false);
+            }
         }
     }
 
@@ -203,5 +226,32 @@ public class TouchActionsBarController extends SubController {
     public void exit() {
         mainController.closeWindow();
         State.getMainControllers().forEach(MainController::refreshNavigation);
+        if (projectButton.isSelected()) {
+            ProjectionHelper.stageClosing();
+            mainController.setProjecting(false);
+        }
+    }
+
+    /**
+     * Create a projection of the current pane
+     */
+    @FXML
+    private void projectWindow() {
+        if (!projectButton.isSelected()) {
+            ProjectionHelper.stageClosing();
+            mainController.setProjecting(false);
+        } else {
+
+            if (ProjectionHelper.canProject()) {
+                for (MainController controller: State.getMainControllers()) {
+                    if (controller != mainController) {
+                        controller.setProjecting(false);
+                    }
+                }
+                mainController.setProjecting(true);
+                PageNavigator.refreshAllWindows();
+                ProjectionHelper.createNewProjection(mainController);
+            }
+        }
     }
 }

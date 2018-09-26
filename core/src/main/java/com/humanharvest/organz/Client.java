@@ -89,7 +89,7 @@ public class Client implements ConcurrencyControlledEntity {
 
     @ManyToOne
     @JoinColumn(name = "Hospital_id")
-    @JsonView(Views.Details.class)
+    @JsonView(Views.Overview.class)
     private Hospital hospital;
 
     @JsonView(Views.Overview.class)

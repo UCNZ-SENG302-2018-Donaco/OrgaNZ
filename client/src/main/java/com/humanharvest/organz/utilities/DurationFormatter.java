@@ -144,6 +144,10 @@ public abstract class DurationFormatter {
                 String oneSecond, String multipleSeconds,
                 String oneMinute, String multipleMinutes, boolean useSeconds) {
 
+        if (duration == null) {
+            return "Could not calculate duration";
+        }
+
         String formattedDuration;
         long hours = duration.toHours();
         if (hours == 1) {

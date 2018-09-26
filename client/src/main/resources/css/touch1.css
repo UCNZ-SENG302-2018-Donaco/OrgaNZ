@@ -37,7 +37,18 @@
   -fx-background-color: #BFB4FA;
 }
 
-.menubox .hamburger:hover {
+
+.menubox .toggle-button {
+  -fx-background-color: #CFC7FA;
+  -fx-border-color: #CFC7FA;
+}
+
+.menubox .toggle-button:hover {
+  -fx-background-color: #BFB4FA;
+}
+
+.menubox .toggle-button:selected {
+  -fx-effect: dropshadow(gaussian , rgba(145, 156, 51, 0.5), 12, 0.95, 0, 0);
   -fx-background-color: #BFB4FA;
 }
 
@@ -56,7 +67,6 @@
   -fx-border-style: solid;
   -fx-border-width: 0.5;
 }
-
 
 
 .drawer-pane {

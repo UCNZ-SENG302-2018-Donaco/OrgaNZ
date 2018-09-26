@@ -17,7 +17,6 @@ public class HospitalTest {
     private final Organ organ = Organ.LIVER;
     private final Organ organ1 = Organ.HEART;
     private final Organ organ2 = Organ.BONE;
-
     private Hospital hospital;
 
     @BeforeEach
