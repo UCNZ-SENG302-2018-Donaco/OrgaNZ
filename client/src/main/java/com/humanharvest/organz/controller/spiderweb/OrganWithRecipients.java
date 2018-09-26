@@ -67,6 +67,8 @@ public class OrganWithRecipients {
     private static final DurationFormat durationFormat = DurationFormat.X_HRS_Y_MINS_SECS;
     private static final int ORGAN_SIZE = 70;
 
+    private final DropShadow hoveredGlow;
+
     private final Pane deceasedDonorPane;
     private final Pane matchesPane;
     private final Pane canvas;
@@ -87,6 +89,10 @@ public class OrganWithRecipients {
         this.organ = organ;
         this.deceasedDonorPane = deceasedDonorPane;
         this.canvas = canvas;
+
+        // Create the hovered glow effect for creating transplants
+        hoveredGlow = new DropShadow(15, Color.PALEGOLDENROD);
+        hoveredGlow.setInput(new Glow(0.5));
 
         MainController newMain = ((PageNavigatorTouch) PageNavigator.getInstance())
                 .openNewWindow(ORGAN_SIZE, ORGAN_SIZE, pane -> new OrganFocusArea(pane, this));
@@ -406,13 +412,8 @@ public class OrganWithRecipients {
         for (Node cell : recipientCells) {
             cell.setEffect(null);
         }
-        // Set the
-        Optional<PotentialRecipientCell> closestCell = getNearestCell();
-        if (closestCell.isPresent()) {
-            DropShadow dropShadow = new DropShadow(15, Color.PALEGOLDENROD);
-            dropShadow.setInput(new Glow(0.5));
-            closestCell.get().setEffect(dropShadow);
-        }
+        // Set the hovered glow effect on the nearest hovered cell if it exists
+        getNearestCell().ifPresent(cell -> cell.setEffect(hoveredGlow));
 
         setRecipientConnectorStart(bounds);
         setRecipientConnectorEnd(matchesPane.getBoundsInParent());
