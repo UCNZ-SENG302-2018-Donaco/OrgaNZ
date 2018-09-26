@@ -476,4 +476,37 @@ public class ClientManagerMemory implements ClientManager {
     public List<Client> getOrganMatches(DonatedOrgan donatedOrgan) {
         return MatchOrganToRecipients.getListOfPotentialRecipients(donatedOrgan, getAllCurrentTransplantRequests());
     }
+
+    /**
+     * Determines whether a donor is deceased and has chosen to donate organs that are currently available (not expired)
+     * @param client client to determine viability of as an organ donor
+     * @return boolean of whether the given client is viable as an organ donor
+     */
+    private boolean isViableDonor(Client client) {
+        if (client.isDead()) {
+            for (DonatedOrgan organ : client.getDonatedOrgans()) {
+                if (!organ.hasExpired()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Gets viable deceased donors (those that have available organs)
+     * @return list of viable deceased donors
+     */
+    @Override
+    public List<Client> getViableDeceasedDonors() {
+        List<Client> viableDeceasedDonors = new ArrayList<>();
+
+        for (Client client : clients) {
+            if (isViableDonor(client)) {
+                viableDeceasedDonors.add(client);
+            }
+        }
+
+        return viableDeceasedDonors;
+    }
 }

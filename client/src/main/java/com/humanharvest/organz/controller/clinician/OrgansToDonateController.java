@@ -91,7 +91,8 @@ public class OrgansToDonateController extends SubController {
     private final SortedList<Hospital> sortedHospitals = new SortedList<>(filteredHospitals);
 
     @FXML
-    private HBox menuBarPane;
+    private Pane menuBarPane;
+
     @FXML
     private TableView<DonatedOrgan> tableView;
     @FXML
@@ -165,7 +166,8 @@ public class OrgansToDonateController extends SubController {
     public void setup(MainController mainController) {
         super.setup(mainController);
         mainController.setTitle("Organs to Donate");
-        mainController.loadMenuBar(menuBarPane);
+
+        mainController.loadNavigation(menuBarPane);
         refresh();
     }
 

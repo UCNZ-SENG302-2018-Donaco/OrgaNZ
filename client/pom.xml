@@ -58,7 +58,6 @@
       <version>4.0.13-alpha</version>
       <scope>test</scope>
     </dependency>
-
     <!-- https://mvnrepository.com/artifact/org.testfx/testfx-junit -->
     <dependency>
       <groupId>org.testfx</groupId>

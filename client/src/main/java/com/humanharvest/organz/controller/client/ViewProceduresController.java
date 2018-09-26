@@ -324,7 +324,6 @@ public class ViewProceduresController extends SubController {
         // fields they're not allowed to.
         if (session.getLoggedInUserType() == UserType.CLIENT) {
             client = session.getLoggedInClient();
-            mainController.loadSidebar(sidebarPane);
             newProcedurePane.setVisible(false);
             newProcedurePane.setManaged(false);
             pendingProcedureView.setEditable(false);
@@ -339,9 +338,9 @@ public class ViewProceduresController extends SubController {
             completeTransplantButton.setDisable(true);
         } else if (windowContext.isClinViewClientWindow()) {
             client = windowContext.getViewClient();
-            mainController.loadMenuBar(menuBarPane);
         }
 
+        mainController.loadNavigation(menuBarPane);
         mainController.setTitle("Procedures: " + client.getPreferredNameFormatted());
         refresh();
         enableAppropriateButtons();
