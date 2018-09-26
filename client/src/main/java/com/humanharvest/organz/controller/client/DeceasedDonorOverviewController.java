@@ -94,6 +94,7 @@ public class DeceasedDonorOverviewController extends SubController {
         });
 
         updateClientDetails();
+        updateOrganCount(deceasedDonor.getDonatedOrgans());
         updateImage();
     }
 
@@ -139,7 +140,7 @@ public class DeceasedDonorOverviewController extends SubController {
         }
     }
 
-    private void fetchOrgans() {
+    public void fetchOrgans() {
         Task<Collection<DonatedOrgan>> organsTask = new Task<Collection<DonatedOrgan>>() {
             @Override
             protected Collection<DonatedOrgan> call() throws ServerRestException {
@@ -147,14 +148,14 @@ public class DeceasedDonorOverviewController extends SubController {
             }
         };
 
-        organsTask.setOnSucceeded(event -> updateOrgans(organsTask.getValue()));
+        organsTask.setOnSucceeded(event -> updateOrganCount(organsTask.getValue()));
 
         organsTask.setOnFailed(err -> handleError());
 
         new Thread(organsTask).start();
     }
 
-    private void updateOrgans(Collection<DonatedOrgan> donatedOrgans) {
+    private void updateOrganCount(Collection<DonatedOrgan> donatedOrgans) {
         if (donatedOrgans == null) {
             numOrgansLabel.setText("Number of donated organs unknown.");
         } else {

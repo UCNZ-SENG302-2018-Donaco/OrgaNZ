@@ -25,6 +25,7 @@ import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
+import com.humanharvest.organz.controller.client.DeceasedDonorOverviewController;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.touch.FocusArea;
 import com.humanharvest.organz.touch.MultitouchHandler;
@@ -49,6 +50,7 @@ public class SpiderWebController extends SubController {
     private final Pane rootPane;
     private final Pane canvas;
     private Pane deceasedDonorPane;
+    private DeceasedDonorOverviewController donorOverviewController;
 
     public SpiderWebController(Client viewedClient) {
         client = viewedClient;
@@ -147,7 +149,7 @@ public class SpiderWebController extends SubController {
     }
 
     private void addOrganNode(DonatedOrgan organ, double xPos, double yPos, double rotation) {
-        OrganWithRecipients organWithRecipients = new OrganWithRecipients(organ, deceasedDonorPane,
+        OrganWithRecipients organWithRecipients = new OrganWithRecipients(organ, donorOverviewController,
                 canvas);
 
         organWithRecipientsList.add(organWithRecipients);
@@ -157,7 +159,8 @@ public class SpiderWebController extends SubController {
 
     private void displayDonatingClient() {
         MainController newMain = PageNavigator.openNewWindow(200, 320);
-        PageNavigator.loadPage(Page.DECEASED_DONOR_OVERVIEW, newMain);
+        donorOverviewController = (DeceasedDonorOverviewController)
+                PageNavigator.loadPage(Page.DECEASED_DONOR_OVERVIEW, newMain);
 
         deceasedDonorPane = newMain.getPane();
 

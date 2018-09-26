@@ -44,6 +44,7 @@ import com.humanharvest.organz.Hospital;
 import com.humanharvest.organz.TransplantRecord;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.controller.client.DeceasedDonorOverviewController;
 import com.humanharvest.organz.controller.client.ReceiverOverviewController;
 import com.humanharvest.organz.controller.components.ExpiryBarUtils;
 import com.humanharvest.organz.controller.components.PotentialRecipientCell;
@@ -69,9 +70,9 @@ public class OrganWithRecipients {
 
     private final DropShadow hoveredGlow;
 
-    private final Pane deceasedDonorPane;
     private final Pane matchesPane;
     private final Pane canvas;
+    private final DeceasedDonorOverviewController donorOverviewController;
     private DonatedOrgan organ;
     private Timeline refresher;
 
@@ -84,10 +85,10 @@ public class OrganWithRecipients {
     private Line organToRecipientConnector;
     private Text durationText;
 
-    public OrganWithRecipients(DonatedOrgan organ, Pane deceasedDonorPane,
+    public OrganWithRecipients(DonatedOrgan organ, DeceasedDonorOverviewController donorOverviewController,
             Pane canvas) {
         this.organ = organ;
-        this.deceasedDonorPane = deceasedDonorPane;
+        this.donorOverviewController = donorOverviewController;
         this.canvas = canvas;
 
         // Create the hovered glow effect for creating transplants
@@ -111,11 +112,12 @@ public class OrganWithRecipients {
 
         enableHandlers();
 
-        refresh();
+        drawMatchesPane(true);
+        createRefresher();
     }
 
     public void refresh() {
-        drawMatchesPane();
+        drawMatchesPane(false);
         createRefresher();
     }
 
@@ -177,7 +179,7 @@ public class OrganWithRecipients {
         canvas.getChildren().add(0, durationText);
     }
 
-    private void drawMatchesPane() {
+    private void drawMatchesPane(boolean isInit) {
         organImageController.matchCountIsVisible(false);
 
         // Create match pane or matches list pane
@@ -195,11 +197,13 @@ public class OrganWithRecipients {
                 matchesTask.setOnSucceeded(event -> {
                     List<TransplantRequest> potentialMatches = matchesTask.getValue();
                     setMatchPane(createMatchesPane(FXCollections.observableArrayList(potentialMatches)));
-
                     organImageController.setMatchCount(potentialMatches.size());
-                    matchesPane.setVisible(false);
-                    organImageController.matchCountIsVisible(true);
                     updateRecipientConnector();
+
+                    if (isInit) {
+                        matchesPane.setVisible(false);
+                        organImageController.matchCountIsVisible(true);
+                    }
                 });
 
                 new Thread(matchesTask).start();
@@ -287,14 +291,16 @@ public class OrganWithRecipients {
             String reason = "Manually Overridden by Doctor using WebView";
             State.getClientResolver().manuallyOverrideOrgan(organ, reason);
             organ.manuallyOverride(reason);
+            donorOverviewController.fetchOrgans();
 
             removeMatchPane();
 
         } else if (organ.getState() == OrganState.OVERRIDDEN) {
             State.getClientResolver().cancelManualOverrideForOrgan(organ);
             organ.cancelManualOverride();
+            donorOverviewController.fetchOrgans();
 
-            drawMatchesPane();
+            drawMatchesPane(false);
         }
 
         organImageController.matchCountIsVisible(false);
@@ -326,6 +332,7 @@ public class OrganWithRecipients {
                         .stream()
                         .filter(newOrgan -> newOrgan.getId().equals(organ.getId()))
                         .findFirst();
+                donorOverviewController.refresh();
                 if (optionalOrgan.isPresent()) {
                     this.organ = optionalOrgan.get();
                     refresh();
@@ -386,6 +393,7 @@ public class OrganWithRecipients {
         try {
             State.getClientResolver().scheduleTransplantProcedure(organ, request, transplantHospital, transplantDate);
             this.organ = State.getClientManager().getMatchingOrganTransplantRecord(organ).getOrgan();
+            donorOverviewController.refresh();
             refresh();
         } catch (ServerRestException exc) {
             Notifications.create()
