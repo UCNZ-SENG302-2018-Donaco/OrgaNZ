@@ -249,9 +249,12 @@ public class ViewClientController extends ViewBaseController {
             deathDetailsPane.setDisable(true);
         } else if (windowContext.isClinViewClientWindow()) {
             mainController.setTitle("View Client: " + viewedClient.getFullName());
-            // date of death is not editable - disable all the things
-            aliveToggleBtn.setDisable(!viewedClient.getDateOfDeathIsEditable());
-            deadToggleBtn.setDisable(!viewedClient.getDateOfDeathIsEditable());
+
+            // client is dead - disable resurrecting
+            aliveToggleBtn.setDisable(viewedClient.isDead());
+            deadToggleBtn.setDisable(viewedClient.isDead());
+
+            // date of death is not editable - disable editing of date and time
             deathDatePicker.setDisable(!viewedClient.getDateOfDeathIsEditable());
             deathTimeField.setDisable(!viewedClient.getDateOfDeathIsEditable());
             if (!viewedClient.getDateOfDeathIsEditable()) {
