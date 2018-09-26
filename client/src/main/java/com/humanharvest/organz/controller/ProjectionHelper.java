@@ -1,7 +1,6 @@
 package com.humanharvest.organz.controller;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -25,8 +24,9 @@ public final class ProjectionHelper {
 
     private static final Logger LOGGER = Logger.getLogger(ProjectionHelper.class.getName());
 
-    private static Screen thisScreen;
-    private static Collection<Screen> otherScreens;
+    private static List<Screen> otherScreens;
+
+    private static Stage[] stages;
 
     private ProjectionHelper() {
 
@@ -39,20 +39,25 @@ public final class ProjectionHelper {
         Bounds rootBounds = rootPane.localToScreen(rootPane.getBoundsInLocal());
 
         // Assume only one screen - should always be true in touch mode
-        thisScreen = Screen.getScreensForRectangle(
+        Screen thisScreen = Screen.getScreensForRectangle(
                 rootBounds.getMinX(), rootBounds.getMinY(),
                 rootBounds.getWidth(), rootBounds.getHeight()).get(0);
 
         otherScreens = screens.stream()
                 .filter(screen -> !Objects.equals(screen, thisScreen))
                 .collect(Collectors.toList());
+
+        stages = new Stage[otherScreens.size()];
     }
 
     public static void createNewProjection(MainController originalMainController) {
 
-        // TODO: Remove old projection
+        for (int i = 0; i < stages.length; i++) {
+            if (stages[i] != null) {
+                stages[i].close();
+            }
 
-        for (Screen screen : otherScreens) {
+            Screen screen = otherScreens.get(i);
 
             try {
                 Stage newStage = new Stage();
@@ -82,6 +87,8 @@ public final class ProjectionHelper {
                 newStage.setScene(scene);
                 newStage.initStyle(StageStyle.UNDECORATED);
                 newStage.show();
+
+                stages[i] = newStage;
 
                 mainController.setWindowContext(originalMainController.getWindowContext());
                 PageNavigator.loadPage(originalMainController.getCurrentPage(), mainController);
