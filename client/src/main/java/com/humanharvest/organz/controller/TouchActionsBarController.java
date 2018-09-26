@@ -5,9 +5,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import org.controlsfx.control.Notifications;
@@ -25,6 +27,9 @@ import com.humanharvest.organz.views.ActionResponseView;
  * admins/clinicians who are using the touch application.
  */
 public class TouchActionsBarController extends SubController {
+
+    @FXML
+    private ToggleButton projectButton;
 
     @FXML
     private Button homeButton;
@@ -152,6 +157,8 @@ public class TouchActionsBarController extends SubController {
         } else {
             exitButton.setDisable(false);
         }
+
+        projectButton.setSelected(false);
     }
 
     @FXML
@@ -206,5 +213,23 @@ public class TouchActionsBarController extends SubController {
     public void exit() {
         mainController.closeWindow();
         State.getMainControllers().forEach(MainController::refreshNavigation);
+    }
+
+    /**
+     * Create a projection of the current pane
+     */
+    @FXML
+    private void projectWindow() {
+
+        if (!projectButton.isSelected()) {
+            ProjectionHelper.stageClosing();
+        } else {
+            if (ProjectionHelper.canProject()) {
+                PageNavigator.refreshAllWindows();
+                ProjectionHelper.createNewProjection(mainController);
+            }
+        }
+//        PageNavigator.refreshAllWindows();
+        projectButton.setSelected(true);
     }
 }

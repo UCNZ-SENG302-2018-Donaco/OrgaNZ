@@ -579,6 +579,9 @@ public class MenuBarController extends SubController {
         PageNavigator.refreshAllWindows();
     }
 
+    /**
+     * Create a copy of the current window
+     */
     @FXML
     private void duplicateWindow() {
         MainController newMain = PageNavigator.openNewWindow();
@@ -588,13 +591,6 @@ public class MenuBarController extends SubController {
         } else {
             PageNavigator.showAlert(AlertType.ERROR, "Error duplicating page",
                     "The new page could not be created", mainController.getStage());
-        }
-    }
-
-    @FXML
-    private void projectWindow() {
-        if (ProjectionHelper.canProject()) {
-            ProjectionHelper.createNewProjection(mainController);
         }
     }
 
