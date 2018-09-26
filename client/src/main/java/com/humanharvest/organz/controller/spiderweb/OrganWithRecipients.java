@@ -145,6 +145,11 @@ public class OrganWithRecipients {
         }
     }
 
+    public void closeRefresher() {
+        refresher.stop();
+        refresher = null;
+    }
+
     private void createOrganImage(MainController newMain) {
         organImageController = (OrganImageController) PageNavigator
                 .loadPage(Page.ORGAN_IMAGE, newMain);
@@ -255,7 +260,7 @@ public class OrganWithRecipients {
 
         // This listener is only used to handle the initial reposition
         matchesPane.boundsInLocalProperty().addListener(
-                (__, ___, newValue) -> handleOrganPaneTransformed(organPane.getLocalToParentTransform()));
+                (__, ___, ____) -> handleOrganPaneTransformed(organPane.getLocalToParentTransform()));
     }
 
     public void handleOrganPaneClick(MouseEvent event) {
@@ -417,8 +422,6 @@ public class OrganWithRecipients {
 
         setRecipientConnectorStart(bounds);
         setRecipientConnectorEnd(matchesPane.getBoundsInParent());
-
-        organPane.toFront();
     }
 
     public void handlePotentialMatchesTransformed() {

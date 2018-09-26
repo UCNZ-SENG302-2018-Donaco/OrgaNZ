@@ -204,6 +204,9 @@ public class SpiderWebController extends SubController {
         toClose.forEach(MainController::closeWindow);
         rootPane.getChildren().clear();
 
+        // We need to close the Timeline to clear resources
+        organWithRecipientsList.forEach(OrganWithRecipients::closeRefresher);
+
         // Open all the previously open windows again
         previouslyOpenWindows.forEach(MainController::showWindow);
     }
@@ -225,6 +228,5 @@ public class SpiderWebController extends SubController {
                 page.refresh(newOrgan.get());
             }
         }
-        organWithRecipientsList.forEach(OrganWithRecipients::refresh);
     }
 }
