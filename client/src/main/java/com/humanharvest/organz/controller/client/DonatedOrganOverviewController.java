@@ -73,6 +73,7 @@ public class DonatedOrganOverviewController extends SubController {
 
     public void updateTime() {
 
+        timeToExpiry = donatedOrgan.getDurationUntilExpiry();
         timeToExpiryLabel.setText("Expires in " + DurationFormatter.getFormattedDuration(timeToExpiry,
                 DurationFormat.X_HRS_Y_MINS_SECS));
 

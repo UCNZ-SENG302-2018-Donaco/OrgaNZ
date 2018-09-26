@@ -29,10 +29,10 @@ public class DeceasedDonorCell extends ListCell<Client> {
     @Override
     protected void updateItem(Client donor, boolean empty) {
         super.updateItem(donor, empty);
-        System.out.println(String.format("Old value: %s, New value: %s, Empty: %s",
-                this.donor != null ? this.donor.getFullName() : null,
-                donor != null ? donor.getFullName() : null,
-                empty));
+//        System.out.println(String.format("Old value: %s, New value: %s, Empty: %s",
+//                this.donor != null ? this.donor.getFullName() : null,
+//                donor != null ? donor.getFullName() : null,
+//                empty));
 
         if (empty || donor == null) {
             setText(null);
@@ -40,10 +40,11 @@ public class DeceasedDonorCell extends ListCell<Client> {
             return;
         }
 
-        if (!donor.equals(this.donor)) {
+        if (donor != this.donor || donor.getOrganDonationStatus() != this.donor.getOrganDonationStatus()) {
             this.donor = donor;
             try {
-                FXMLLoader loader = new FXMLLoader(DeceasedDonorCell.class.getResource(Page.DECEASED_DONOR_DASHBOARD_OVERVIEW.getPath()));
+                FXMLLoader loader = new FXMLLoader(
+                        DeceasedDonorCell.class.getResource(Page.DECEASED_DONOR_DASHBOARD_OVERVIEW.getPath()));
                 Node node = loader.load();
 
                 DeceasedDonorDashboardOverviewController controller = loader.getController();

@@ -148,23 +148,24 @@ public class DashboardController extends SubController {
         });
 
         // Attach timer to update table each second (for time until expiration)
-        Timeline clock = new Timeline(new KeyFrame(
-                javafx.util.Duration.millis(1000),
-                event -> {
-//                    expiringOrgansList.refresh();
-                    observableOrgansToDonate.removeIf(donatedOrgan ->
-                            donatedOrgan.getOverrideReason() != null ||
-                                    donatedOrgan.getDurationUntilExpiry() != null &&
-                                            donatedOrgan.getDurationUntilExpiry().minusSeconds(1).isNegative());
-                }));
-        clock.setCycleCount(Animation.INDEFINITE);
-        clock.play();
+//        Timeline clock = new Timeline(new KeyFrame(
+//                javafx.util.Duration.millis(1000),
+//                event -> {
+////                    expiringOrgansList.refresh();
+//                    observableOrgansToDonate.removeIf(donatedOrgan ->
+//                            donatedOrgan.getOverrideReason() != null ||
+//                                    donatedOrgan.getDurationUntilExpiry() != null &&
+//                                            donatedOrgan.getDurationUntilExpiry().minusSeconds(1).isNegative());
+//                }));
+//        clock.setCycleCount(Animation.INDEFINITE);
+//        clock.play();
         updateOrgansToDonateList();
     }
 
     private void updateOrgansToDonateList() {
         observableOrgansToDonate = FXCollections.observableArrayList(manager.getAllOrgansToDonate
                 ().stream().filter(o -> o.getDurationUntilExpiry() != null).collect(Collectors.toList()));
+        expiringOrgansList.getItems().setAll(observableOrgansToDonate);
 
     }
 
