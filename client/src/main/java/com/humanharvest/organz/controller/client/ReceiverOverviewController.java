@@ -3,7 +3,6 @@ package com.humanharvest.organz.controller.client;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.time.Duration;
-import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -11,8 +10,8 @@ import java.util.logging.Logger;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -20,6 +19,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import org.controlsfx.control.Notifications;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.TransplantRecord;
@@ -158,26 +158,39 @@ public class ReceiverOverviewController extends ViewBaseController {
     }
 
     private void loadImage() {
-        byte[] bytes;
-        try {
-            bytes = State.getImageManager().getClientImage(recipient.getUid());
-        } catch (NotFoundException ignored) {
-            try {
-                bytes = State.getImageManager().getDefaultImage();
-            } catch (IOException e) {
-                LOGGER.log(Level.SEVERE, "IO Exception when loading image ", e);
-                return;
+        Task<byte[]> task = new Task<byte[]>() {
+            @Override
+            protected byte[] call() throws ServerRestException, IOException {
+                try {
+                    return com.humanharvest.organz.state.State.getImageManager().getClientImage(recipient.getUid());
+                } catch (NotFoundException exc) {
+                    return com.humanharvest.organz.state.State.getImageManager().getDefaultImage();
+                }
             }
-        } catch (ServerRestException e) {
-            PageNavigator
-                    .showAlert(AlertType.ERROR, "Server Error", "Something went wrong with the server. "
-                            + "Please try again later.", mainController.getStage());
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
-            return;
-        }
+        };
 
-        Image image = new Image(new ByteArrayInputStream(bytes));
-        imageView.setImage(image);
+        task.setOnSucceeded(event -> {
+            Image image = new Image(new ByteArrayInputStream(task.getValue()));
+            imageView.setImage(image);
+        });
+
+        task.setOnFailed(event -> {
+            try {
+                throw task.getException();
+            } catch (IOException exc) {
+                LOGGER.log(Level.SEVERE, "IOException when loading default image.", exc);
+            } catch (ServerRestException exc) {
+                LOGGER.log(Level.SEVERE, "", exc);
+                Notifications.create()
+                        .title("Server Error")
+                        .text("A client's profile picture could not be retrieved from the server.")
+                        .showError();
+            } catch (Throwable exc) {
+                LOGGER.log(Level.SEVERE, exc.getMessage(), exc);
+            }
+        });
+
+        new Thread(task).start();
     }
 
     @FXML

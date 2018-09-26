@@ -20,6 +20,7 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
@@ -167,33 +168,56 @@ public class OrganWithRecipients {
 
     private void drawMatchesPane() {
         organImageController.matchCountIsVisible(false);
+
         // Create match pane or matches list pane
         switch (organ.getState()) {
             case CURRENT:
             case NO_EXPIRY:
-                List<TransplantRequest> potentialMatches = State.getClientManager().getMatchingOrganTransplants(organ);
+                Task<List<TransplantRequest>> matchesTask = new Task<List<TransplantRequest>>() {
+                    @Override
+                    protected List<TransplantRequest> call() throws ServerRestException {
+                        return com.humanharvest.organz.state.State.getClientManager()
+                                .getMatchingOrganTransplants(organ);
+                    }
+                };
 
-                setMatchPane(createMatchesPane(FXCollections.observableArrayList(potentialMatches)));
+                matchesTask.setOnSucceeded(event -> {
+                    List<TransplantRequest> potentialMatches = matchesTask.getValue();
+                    setMatchPane(createMatchesPane(FXCollections.observableArrayList(potentialMatches)));
 
-                organImageController.setMatchCount(potentialMatches.size());
+                    organImageController.setMatchCount(potentialMatches.size());
+                    if (potentialMatches.isEmpty() && !organ.hasExpired()) {
+                        organImageController.matchCountIsVisible(true);
+                    }
+                    updateRecipientConnector();
+                });
 
-                if (potentialMatches.isEmpty() && !organ.hasExpired()) {
-                    organImageController.matchCountIsVisible(true);
-                }
+                new Thread(matchesTask).start();
                 break;
 
             case TRANSPLANT_COMPLETED:
             case TRANSPLANT_PLANNED:
-                transplantRecord = State.getClientManager().getMatchingOrganTransplantRecord(organ);
+                Task<TransplantRecord> transplantTask = new Task<TransplantRecord>() {
+                    @Override
+                    protected TransplantRecord call() throws ServerRestException {
+                        return com.humanharvest.organz.state.State.getClientManager()
+                                .getMatchingOrganTransplantRecord(organ);
+                    }
+                };
 
-                setMatchPane(createMatchPane(transplantRecord));
+                transplantTask.setOnSucceeded(event -> {
+                    transplantRecord = transplantTask.getValue();
+                    setMatchPane(createMatchPane(transplantRecord));
+                    updateRecipientConnector();
+                });
+
+                new Thread(transplantTask).start();
                 break;
 
             default:
                 removeMatchPane();
+                updateRecipientConnector();
         }
-
-        updateRecipientConnector();
     }
 
     private void removeMatchPane() {
@@ -269,7 +293,6 @@ public class OrganWithRecipients {
     }
 
     public void handleOrganPaneTouchReleased() {
-        System.out.println("Released");
         switch (organ.getState()) {
             case CURRENT:
             case NO_EXPIRY:
@@ -500,7 +523,6 @@ public class OrganWithRecipients {
                 matchesList.setMinWidth(380);
                 break;
             default:
-                System.out.println(potentialMatches.size());
                 matchesList.setMinWidth(450);
                 break;
         }
