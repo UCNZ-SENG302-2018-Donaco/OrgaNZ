@@ -14,7 +14,8 @@ public class OrganFocusArea extends FocusArea {
 
     private static final double MAX_CLICK_DISTANCE = 25;
     private static final int MULTI_CLICK_INTERVAL =
-            (int) Toolkit.getDefaultToolkit().getDesktopProperty("awt.multiClickInterval");
+            Toolkit.getDefaultToolkit().getDesktopProperty("awt.multiClickInterval") == null ? 200 :
+                    (int) Toolkit.getDefaultToolkit().getDesktopProperty("awt.multiClickInterval");
 
     private final OrganWithRecipients organWithRecipients;
     private final Timer doubleClickTimer;

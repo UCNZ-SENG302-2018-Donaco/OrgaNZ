@@ -455,7 +455,6 @@ public class OrganWithRecipients {
                 LOGGER.log(Level.SEVERE, e.getMessage(), e);
             }
         }
-
         return pane;
     }
 
@@ -473,9 +472,26 @@ public class OrganWithRecipients {
         });
 
         matchesList.setOrientation(Orientation.HORIZONTAL);
-        matchesList.setMinWidth(380);
-        matchesList.setMaxHeight(250);
-        matchesList.setFixedCellSize(190);
+        switch (potentialMatches.size()) {
+            case 0:
+                matchesList.setMinWidth(0);
+                matchesList.setPrefWidth(0);
+                matchesList.setMaxWidth(0);
+            case 1:
+                matchesList.setMaxWidth(176);
+                break;
+            case 2:
+                matchesList.setMaxWidth(380);
+                matchesList.setMinWidth(380);
+                break;
+            default:
+                System.out.println(potentialMatches.size());
+                matchesList.setMinWidth(450);
+                break;
+        }
+
+        matchesList.setMaxHeight(265);
+        matchesList.setFixedCellSize(200);
 
         return new Pane(matchesList);
     }
