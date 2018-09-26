@@ -10,7 +10,7 @@ Colors:
  */
 
 .backdrop {
-  -fx-background-color: #F7F7FF;
+  -fx-background-color: linear-gradient(rgba(132, 132, 132, 0.81) 0%, rgb(143, 143, 143) 100%);
 }
 
 .window {
@@ -63,29 +63,29 @@ Colors:
 }
 
 
-.table-view {
+.table-view, .list-view {
     -fx-background-color: #9AA4B3;
     -fx-font-family: Lato;
 }
 
-.table-view .column-header, .table-view .filler {
+.table-view .column-header, .table-view .filler, .list-view .filler {
     -fx-background-color: linear-gradient(#8c918b 0%, #5f635f);
 }
 
-.table-row-cell{
+.table-row-cell, .list-cell {
     -fx-border-color: #848484;
     -fx-background-color: #3b3a38;
 }
 
-.table-row-cell .text {
+.table-row-cell .text, .list-cell .text {
     -fx-fill: #e1e1e1;
 }
 
-.table-view .scroll-bar {
+.table-view .scroll-bar, .list-view .scroll-bar {
     -fx-background-color: linear-gradient(#5f635f 0%, #3b3a38 100%);
 }
 
-.table-view .scroll-bar .thumb {
+.table-view .scroll-bar .thumb, .list-view .scroll-bar .thumb {
     -fx-background-color: linear-gradient(#ced5cd 0%, #9f9e9b 100%);
     -fx-background-radius: 90;
 }
