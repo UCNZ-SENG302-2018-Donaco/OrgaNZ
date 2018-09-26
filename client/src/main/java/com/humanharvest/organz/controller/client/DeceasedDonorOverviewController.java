@@ -9,8 +9,8 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -93,22 +93,13 @@ public class DeceasedDonorOverviewController extends SubController {
         });
 
         displayData();
-        loadImage();
+        updateImage();
     }
 
     @Override
     public void refresh() {
-        Optional<Client> optionalClient = State.getClientManager().getClientByID(deceasedDonor.getUid());
-        if (!optionalClient.isPresent()) {
-            Notifications.create()
-                    .title("Server Error")
-                    .text("Could not refresh the information for the donor.")
-                    .showError();
-        } else {
-            deceasedDonor = optionalClient.get();
-            displayData();
-            loadImage();
-        }
+        updateClientData();
+        updateImage();
     }
 
     private void displayData() {
@@ -126,25 +117,70 @@ public class DeceasedDonorOverviewController extends SubController {
         }
     }
 
-    private void loadImage() {
-        byte[] bytes;
-        try {
-            bytes = State.getImageManager().getClientImage(deceasedDonor.getUid());
-        } catch (NotFoundException ignored) {
-            try {
-                bytes = State.getImageManager().getDefaultImage();
-            } catch (IOException e) {
-                LOGGER.log(Level.SEVERE, "IO Exception when loading image ", e);
-                return;
+    private void updateClientData() {
+        Task<Optional<Client>> task = new Task<Optional<Client>>() {
+            @Override
+            protected Optional<Client> call() throws ServerRestException {
+                return com.humanharvest.organz.state.State.getClientManager().getClientByID(deceasedDonor.getUid());
             }
-        } catch (ServerRestException e) {
-            PageNavigator
-                    .showAlert(AlertType.ERROR, "Server Error", "Something went wrong with the server. "
-                            + "Please try again later.", mainController.getStage());
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
-            return;
-        }
-        Image image = new Image(new ByteArrayInputStream(bytes));
-        imageView.setImage(image);
+        };
+
+        task.setOnSucceeded(event -> {
+            Optional<Client> optionalClient = task.getValue();
+            if (optionalClient.isPresent()) {
+                deceasedDonor = optionalClient.get();
+                displayData();
+            } else {
+                Notifications.create()
+                        .title("Server Error")
+                        .text("Could not refresh the information for the donor.")
+                        .showError();
+            }
+        });
+
+        task.setOnFailed(event -> {
+            Notifications.create()
+                    .title("Server Error")
+                    .text("Could not refresh the information for the donor.")
+                    .showError();
+        });
+
+        new Thread(task).start();
+    }
+
+    private void updateImage() {
+        Task<byte[]> task = new Task<byte[]>() {
+            @Override
+            protected byte[] call() throws ServerRestException, IOException {
+                try {
+                    return com.humanharvest.organz.state.State.getImageManager().getClientImage(deceasedDonor.getUid());
+                } catch (NotFoundException exc) {
+                    return com.humanharvest.organz.state.State.getImageManager().getDefaultImage();
+                }
+            }
+        };
+
+        task.setOnSucceeded(event -> {
+            Image image = new Image(new ByteArrayInputStream(task.getValue()));
+            imageView.setImage(image);
+        });
+
+        task.setOnFailed(event -> {
+            try {
+                throw task.getException();
+            } catch (IOException exc) {
+                LOGGER.log(Level.SEVERE, "IOException when loading default image.", exc);
+            } catch (ServerRestException exc) {
+                LOGGER.log(Level.SEVERE, "", exc);
+                Notifications.create()
+                        .title("Server Error")
+                        .text("A client's profile picture could not be retrieved from the server.")
+                        .showError();
+            } catch (Throwable exc) {
+                LOGGER.log(Level.SEVERE, exc.getMessage(), exc);
+            }
+        });
+
+        new Thread(task).start();
     }
 }
