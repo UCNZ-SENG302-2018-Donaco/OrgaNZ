@@ -65,6 +65,7 @@ public class TouchActionsBarController extends SubController {
         if (State.getSession().getLoggedInUserType() == UserType.CLIENT) {
             homeButton.setVisible(false);
             duplicateButton.setVisible(false);
+            projectButton.setVisible(false);
             entireMenubarPane.setStyle("-fx-background-color: rgb(137, 186, 255)");
 
         } else {
@@ -213,6 +214,9 @@ public class TouchActionsBarController extends SubController {
     public void exit() {
         mainController.closeWindow();
         State.getMainControllers().forEach(MainController::refreshNavigation);
+        if (projectButton.isSelected()) {
+            ProjectionHelper.stageClosing();
+        }
     }
 
     /**
@@ -227,9 +231,8 @@ public class TouchActionsBarController extends SubController {
             if (ProjectionHelper.canProject()) {
                 PageNavigator.refreshAllWindows();
                 ProjectionHelper.createNewProjection(mainController);
+                projectButton.setSelected(true);
             }
         }
-//        PageNavigator.refreshAllWindows();
-        projectButton.setSelected(true);
     }
 }
