@@ -1,7 +1,9 @@
 package com.humanharvest.organz.controller;
 
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -10,7 +12,6 @@ import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-
 import org.controlsfx.control.Notifications;
 
 import com.humanharvest.organz.state.Session.UserType;
@@ -21,7 +22,6 @@ import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.views.ActionResponseView;
 
-import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXHamburger;
 
 /**
@@ -166,11 +166,11 @@ public class TouchActionsBarController extends SubController {
      */
     public void logout() {
         State.logout();
-        for (MainController controller : State.getMainControllers()) {
-            if (controller != mainController) {
-                controller.closeWindow();
-            }
-        }
+        List<MainController> toClose = State.getMainControllers().stream()
+                .filter(controller -> controller != mainController)
+                .collect(Collectors.toList());
+        toClose.forEach(MainController::closeWindow);
+
         State.clearMainControllers();
         State.addMainController(mainController);
         mainController.resetWindowContext();
