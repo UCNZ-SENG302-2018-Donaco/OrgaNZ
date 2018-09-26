@@ -22,8 +22,6 @@ import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
 
-import com.jfoenix.controls.JFXDrawer;
-
 /**
  * Main controller class for the application window.
  */
@@ -36,8 +34,8 @@ public class MainController {
     private Pane pane;
     private WindowContext windowContext;
     private String title;
-    private SidebarController sidebarController;
     private MenuBarController menuBarController;
+    private TouchActionsBarController touchActionsBarController;
     private SubController subController;
     /**
      * Holder of a switchable page.
@@ -45,18 +43,19 @@ public class MainController {
     @FXML
     private StackPane pageHolder;
     @FXML
-    private JFXDrawer drawer; // = new JFXDrawer();
+    private Pane drawer;
 
     @FXML
     public void initialize() {
         pageHolder.getStyleClass().add("window");
         drawer.setDisable(true);
         drawer.setVisible(false);
-        drawer.setOnDrawerOpened(EventListener -> drawer.setVisible(true));
-
+//        drawer.setOnDrawerOpened(EventListener -> drawer.setVisible(true));
+        drawer.toFront();
+        pageHolder.setPickOnBounds(false);
     }
 
-    public JFXDrawer getDrawer() {
+    public Pane getDrawer() {
         return drawer;
     }
 
@@ -97,6 +96,7 @@ public class MainController {
     public void setPage(Page page, Node node) {
         currentPage = page;
         pageHolder.getChildren().setAll(node);
+//        pageHolder.setOnMouseClicked(event -> touchActionsBarController.closeSidebar(drawer));
     }
 
     void resetWindowContext() {
@@ -134,11 +134,9 @@ public class MainController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(Page.SIDEBAR.getPath()));
             VBox sidebar = loader.load();
-
-            sidebarController = loader.getController();
+            SidebarController sidebarController = loader.getController();
             sidebarController.setup(this);
-            drawer.setSidePane(sidebar);
-            drawer.setOverLayVisible(false);
+            drawer.getChildren().setAll(sidebar);
 
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Couldn't load sidebar from fxml file.", e);
@@ -146,8 +144,7 @@ public class MainController {
     }
 
     /**
-     * Method that can be
-            this.getPane().getChildren().addAll(hamburger);called from other controllers to load the sidebar into that page.
+     * Method that can be called from other controllers to load the sidebar into that page.
      * Will set the sidebar as the child of the pane given.
      *
      * @param menuBarPane The container pane for the menu bar, given by the importer.
@@ -172,7 +169,7 @@ public class MainController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(Page.TOUCH_ACTIONS_BAR.getPath()));
             HBox touch_action_bar = loader.load();
-            TouchActionsBarController touchActionsBarController = loader.getController();
+            touchActionsBarController = loader.getController();
             touchActionsBarController.setup(this);
             pane.getChildren().setAll(touch_action_bar);
             loadSidebar();
@@ -182,7 +179,8 @@ public class MainController {
     }
 
     /**
-     * Sets up the navigation type for the given pane
+     * Sets up the navigation type for the given pane. The menu bar is given for admins/clinicians using the
+     * desktop application. Otherwise a touch actions bar is used.
      * @param pane type of pane to setup navigation for
      */
     public void loadNavigation(Pane pane) {
@@ -214,8 +212,8 @@ public class MainController {
     public void refreshNavigation() {
         if (menuBarController != null) {
             menuBarController.refresh();
-        } else if (sidebarController != null) {
-            sidebarController.refresh();
+        } else if (touchActionsBarController != null) {
+            touchActionsBarController.refresh();
         }
     }
 

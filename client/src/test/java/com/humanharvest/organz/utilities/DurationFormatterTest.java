@@ -11,6 +11,8 @@ import org.junit.Test;
 
 public class DurationFormatterTest {
 
+    // X hours Y minutes/seconds
+
     @Test
     public void getDurationFormattedXHoursYMinutesSeconds1() {
         Duration duration = Duration.ofSeconds(0);
@@ -70,6 +72,8 @@ public class DurationFormatterTest {
         Duration duration = Duration.ofHours(5000);
         assertEquals("5000 hours 0 seconds", getFormattedDuration(duration, DurationFormat.X_HOURS_Y_MINUTES_SECONDS));
     }
+
+    // Biggest
 
     @Test
     public void getDurationFormattedBiggest1() {
@@ -141,5 +145,61 @@ public class DurationFormatterTest {
     public void getDurationFormattedBiggest12() {
         Duration duration = Duration.ofDays(900);
         assertEquals("2 years", getFormattedDuration(duration, DurationFormat.BIGGEST));
+    }
+
+    // Xhrs Ymins
+
+    @Test
+    public void getDurationFormattedXHrsYMins1() {
+        Duration duration = Duration.ofSeconds(0);
+        assertEquals("0hrs 0mins", getFormattedDuration(duration, DurationFormat.X_HRS_Y_MINS));
+    }
+
+    @Test
+    public void getDurationFormattedXHrsYMins2() {
+        Duration duration = Duration.ofSeconds(59);
+        assertEquals("0hrs 0mins", getFormattedDuration(duration, DurationFormat.X_HRS_Y_MINS));
+    }
+
+    @Test
+    public void getDurationFormattedXHrsYMins3() {
+        Duration duration = Duration.ofSeconds(60);
+        assertEquals("0hrs 1min", getFormattedDuration(duration, DurationFormat.X_HRS_Y_MINS));
+    }
+
+    @Test
+    public void getDurationFormattedXHrsYMins4() {
+        Duration duration = Duration.ofSeconds(119);
+        assertEquals("0hrs 1min", getFormattedDuration(duration, DurationFormat.X_HRS_Y_MINS));
+    }
+
+    @Test
+    public void getDurationFormattedXHrsYMins5() {
+        Duration duration = Duration.ofSeconds(120);
+        assertEquals("0hrs 2mins", getFormattedDuration(duration, DurationFormat.X_HRS_Y_MINS));
+    }
+
+    @Test
+    public void getDurationFormattedXHrsYMins6() {
+        Duration duration = Duration.ofSeconds(60*60);
+        assertEquals("1hr 0mins", getFormattedDuration(duration, DurationFormat.X_HRS_Y_MINS));
+    }
+
+    @Test
+    public void getDurationFormattedXHrsYMins7() {
+        Duration duration = Duration.ofSeconds(60*60 + 59);
+        assertEquals("1hr 0mins", getFormattedDuration(duration, DurationFormat.X_HRS_Y_MINS));
+    }
+
+    @Test
+    public void getDurationFormattedXHrsYMins8() {
+        Duration duration = Duration.ofSeconds(60*61);
+        assertEquals("1hr 1min", getFormattedDuration(duration, DurationFormat.X_HRS_Y_MINS));
+    }
+
+    @Test
+    public void getDurationFormattedXHrsYMins9() {
+        Duration duration = Duration.ofSeconds(60*60*4-1);
+        assertEquals("3hrs 59mins", getFormattedDuration(duration, DurationFormat.X_HRS_Y_MINS));
     }
 }

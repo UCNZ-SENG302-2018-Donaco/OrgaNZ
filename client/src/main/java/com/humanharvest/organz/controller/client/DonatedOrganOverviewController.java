@@ -34,10 +34,7 @@ public class DonatedOrganOverviewController extends SubController {
 
     private Duration timeToExpiry;
 
-    //@FXML
-    //private Text donorNameLabel, organsAvailable;
-
-    DonatedOrgan donatedOrgan;
+    private DonatedOrgan donatedOrgan;
 
     public void setup(DonatedOrgan organ, Map<Organ, Image> organPictureStore) {
         donatedOrgan = organ;

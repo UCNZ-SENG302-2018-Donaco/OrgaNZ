@@ -41,10 +41,7 @@ public class DeceasedDonorDashboardOverviewController extends SubController {
     @FXML
     private Label nameLabel, deathLabel, organCount;
 
-    //@FXML
-    //private Text organCount, organsAvailable;
-
-    Client donor;
+    private Client donor;
 
     public void setup(Client donor, Map<Client, Image> profilePictureStore) {
         this.donor = donor;
@@ -60,17 +57,10 @@ public class DeceasedDonorDashboardOverviewController extends SubController {
                 .filter(organ -> organ.getState() == OrganState.CURRENT || organ.getState() == OrganState.NO_EXPIRY)
                 .collect(Collectors.toSet());
 
-        //organCount.setText());
         if (availableOrgans.size() == 1) {
             organCount.setText("1 organ available ");
         } else {
             organCount.setText(String.valueOf(availableOrgans.size()) + " organs available");
-/*
-        Text text1 = new Text(String.valueOf(availableOrgans.size()));
-        text1.setFont(Font.font());
-        textFlow.set
-
-        organsLabel.setText( + " organs available");*/
         }
         Duration daysSinceDeath = Duration.between(LocalDateTime.now(), donor.getDatetimeOfDeath());
         deathLabel.setText("Died " + DurationFormatter.getFormattedDuration(daysSinceDeath, DurationFormat.DAYS));
