@@ -144,6 +144,11 @@ public class TouchActionsBarController extends SubController {
         redoButton.setDisable(!responseView.isCanRedo());
     }
 
+    @FXML
+    private void refreshWindow() {
+        mainController.refresh();
+    }
+
     /**
      * Open another instance of the currently opened window
      */
