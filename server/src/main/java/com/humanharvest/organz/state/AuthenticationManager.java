@@ -25,6 +25,15 @@ public class AuthenticationManager {
         return "secret";
     }
 
+    private static String generateToken(String id) {
+        return Jwts.builder()
+                .setId(id)
+                .setIssuedAt(Date.from(Instant.now()))
+                .setExpiration(Date.from(Instant.now().plusSeconds(86400))) // 24 hours
+                .signWith(SignatureAlgorithm.HS512, getSecret())
+                .compact();
+    }
+
     /**
      * Given an authentication token, check if it is a valid administrator
      *
@@ -183,14 +192,5 @@ public class AuthenticationManager {
      */
     public String generateAdministratorToken(String username) {
         return generateToken("admin:" + username);
-    }
-
-    private String generateToken(String id) {
-        return Jwts.builder()
-                .setId(id)
-                .setIssuedAt(Date.from(Instant.now()))
-                .setExpiration(Date.from(Instant.now().plusSeconds(86400))) // 24 hours
-                .signWith(SignatureAlgorithm.HS512, getSecret())
-                .compact();
     }
 }

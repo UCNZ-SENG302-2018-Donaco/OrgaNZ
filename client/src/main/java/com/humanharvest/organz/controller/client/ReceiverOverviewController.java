@@ -1,11 +1,10 @@
 package com.humanharvest.organz.controller.client;
 
-import static com.humanharvest.organz.state.State.getClientResolver;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -27,7 +26,7 @@ import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.clinician.ViewBaseController;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.DurationFormatter;
-import com.humanharvest.organz.utilities.DurationFormatter.Format;
+import com.humanharvest.organz.utilities.DurationFormatter.DurationFormat;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
@@ -63,6 +62,18 @@ public class ReceiverOverviewController extends ViewBaseController {
     private Label age;
 
     @FXML
+    private Label col1Label;
+
+    @FXML
+    private Label col2Label;
+
+    @FXML
+    private Label col3Label;
+
+    @FXML
+    private Label col4Label;
+
+    @FXML
     private VBox receiverVBox;
 
     /**
@@ -71,10 +82,14 @@ public class ReceiverOverviewController extends ViewBaseController {
     private void setClientFields() {
         //todo replace dummy donor and organ
         Client dummyDonor = new Client();
-        dummyDonor.setHospital(new Hospital("", viewedClient.getHospital().getLatitude()+1,
-                viewedClient.getHeight(), ""));
-        donor = dummyDonor;
-        organ = Organ.LIVER;
+        if (dummyDonor.getHospital() == null) {
+            dummyDonor.setHospital(new Hospital("temp", 0, 0, "nowhere"));
+        } else {
+            dummyDonor.setHospital(new Hospital("", viewedClient.getHospital().getLatitude() + 1,
+                    viewedClient.getHeight(), ""));
+            donor = dummyDonor;
+            organ = Organ.LIVER;
+        }
 
         // Set name and age
         name.setText(viewedClient.getFullName());
@@ -93,8 +108,8 @@ public class ReceiverOverviewController extends ViewBaseController {
             if (timeBetweenHospitals.isZero()) {
                 travelTime.setText("None");
             } else {
-                travelTime.setText(DurationFormatter.getFormattedDuration(timeBetweenHospitals, Format.Biggest)
-                        + String.format("%n(%.0f km)",
+                travelTime.setText(DurationFormatter.getFormattedDuration(timeBetweenHospitals, DurationFormat.BIGGEST)
+                        + String.format(Locale.UK, "%n(%.0f km)",
                         viewedClient.getHospital().calculateDistanceTo(donor.getHospital())));
             }
         } else {
@@ -102,12 +117,8 @@ public class ReceiverOverviewController extends ViewBaseController {
         }
 
         // Set wait time
-        List<TransplantRequest> transplantRequests = State.getClientResolver().getTransplantRequests(viewedClient);
-        for (TransplantRequest transplantRequest : transplantRequests) {
-            if (transplantRequest.getRequestedOrgan() == organ) {
-                viewedTransplantRequest = transplantRequest;
-            }
-        }
+        viewedClient.setTransplantRequests(State.getClientResolver().getTransplantRequests(viewedClient));
+        viewedTransplantRequest = viewedClient.getTransplantRequest(organ);
         updateWaitTime();
 
         // Set image
@@ -115,7 +126,7 @@ public class ReceiverOverviewController extends ViewBaseController {
 
         // Track the adding of panes with the spiderweb pane collection.
         receiverVBox.setOnMouseClicked(mouseEvent -> {
-            if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 1) {
+            if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 2) {
                 MainController newMain = PageNavigator.openNewWindow();
                 if (newMain != null) {
                     newMain.setWindowContext(new WindowContextBuilder()
@@ -134,14 +145,18 @@ public class ReceiverOverviewController extends ViewBaseController {
             requestedTime.setText("Error: no request");
         } else {
             Duration waitTime = viewedTransplantRequest.getTimeSinceRequest();
-            requestedTime.setText(DurationFormatter.getFormattedDuration(waitTime, Format.Biggest));
+            requestedTime.setText(DurationFormatter.getFormattedDuration(waitTime, DurationFormat.BIGGEST));
         }
     }
 
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
-        viewedClient = windowContext.getViewClient();
+        if (windowContext == null) {
+            viewedClient = State.getSpiderwebDonor();
+        } else {
+            viewedClient = windowContext.getViewClient();
+        }
         refresh();
     }
 
@@ -168,6 +183,7 @@ public class ReceiverOverviewController extends ViewBaseController {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
             return;
         }
+
         Image image = new Image(new ByteArrayInputStream(bytes));
         imageView.setImage(image);
     }

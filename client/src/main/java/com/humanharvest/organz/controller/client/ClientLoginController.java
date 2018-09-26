@@ -33,8 +33,6 @@ public class ClientLoginController extends SubController {
 
     @FXML
     private ListView<Client> clientList;
-    @FXML
-    private Button signInButton, goBackButton;
 
     /**
      * Override so we can set the page title.

@@ -6,7 +6,6 @@
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
-<?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleButton?>
@@ -22,11 +21,7 @@
 <?import javafx.scene.text.Text?>
 
 <VBox prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.client.ViewClientController">
-  <SplitPane dividerPositions="0.5" orientation="VERTICAL" VBox.vgrow="ALWAYS">
-    <HBox fx:id="menuBarPane" maxHeight="-Infinity" />
-    <SplitPane dividerPositions="0.29797979797979796" VBox.vgrow="ALWAYS">
-      <HBox fx:id="sidebarPane" maxWidth="-Infinity" />
-      <VBox prefHeight="600.0" prefWidth="800.0">
+  <VBox fx:id="menuBarPane" maxWidth="1.7976931348623157E308" />
         <BorderPane VBox.vgrow="ALWAYS">
           <bottom>
             <HBox BorderPane.alignment="CENTER">
@@ -109,7 +104,7 @@
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                           <children>
-                            <Button fx:id="uploadPhotoButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#uploadPhoto" text="Add Photo" />
+                            <Button fx:id="uploadPhotoButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#uploadPhoto" text="Upload" />
                             <Button fx:id="deletePhotoButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#deletePhoto" text="Delete" GridPane.columnIndex="1" />
                           </children>
                         </GridPane>
@@ -198,7 +193,7 @@
                             <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                           <children>
                             <Label text="Address: " />
@@ -208,8 +203,8 @@
                             <ChoiceBox fx:id="regionCB" maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                             <Label text="Country: " GridPane.rowIndex="2" />
                             <ChoiceBox fx:id="country" maxWidth="1.7976931348623157E308" minWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                                          <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Hospital: " GridPane.rowIndex="3" />
-                                          <ChoiceBox fx:id="hospital" prefHeight="27.0" prefWidth="234.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Hospital: " GridPane.rowIndex="3" />
+                            <ChoiceBox fx:id="hospital" prefHeight="27.0" prefWidth="234.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                           </children>
                         </GridPane>
                       </children>
@@ -244,7 +239,6 @@
                           </children>
                         </GridPane>
                       </children>
-                      <Button mnemonicParsing="false" onAction="#openRecDetForLiver" text="Open receiver details for liver" />
                     </VBox>
                     <VBox spacing="10.0" GridPane.columnIndex="2">
                       <children>
@@ -312,7 +306,4 @@
             </GridPane>
           </center>
         </BorderPane>
-      </VBox>
-    </SplitPane>
-  </SplitPane>
 </VBox>

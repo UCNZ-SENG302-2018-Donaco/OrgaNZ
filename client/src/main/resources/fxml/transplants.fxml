@@ -16,11 +16,8 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 <?import org.controlsfx.control.CheckComboBox?>
-<VBox xmlns:fx="http://javafx.com/fxml/1" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0"
-  prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.121"
-  fx:controller="com.humanharvest.organz.controller.clinician.TransplantsController">
-  <SplitPane VBox.vgrow="ALWAYS" dividerPositions="0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="200.0">
-    <HBox maxHeight="20.0" minHeight="-Infinity" fx:id="menuBarPane"/>
+<VBox xmlns:fx="http://javafx.com/fxml/1" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.121" fx:controller="com.humanharvest.organz.controller.clinician.TransplantsController">
+  <VBox fx:id="menuBarPane" maxWidth="1.7976931348623157E308" />
     <SplitPane VBox.vgrow="ALWAYS" prefHeight="200.0" prefWidth="200.0">
       <BorderPane>
         <center>
@@ -32,7 +29,7 @@
               <TableColumn prefWidth="75.0" text="Client" fx:id="clientCol"/>
               <TableColumn prefWidth="75.0" text="Organ" fx:id="organCol"/>
               <TableColumn prefWidth="75.0" text="Region" fx:id="regionCol"/>
-              <TableColumn prefWidth="75.0" text="Date" fx:id="dateCol"/>
+              <TableColumn prefWidth="75.0" text="Date" fx:id="dateTimeCol"/>
             </columns>
             <BorderPane.margin>
               <Insets top="10.0"/>
@@ -45,8 +42,7 @@
         <bottom>
           <VBox BorderPane.alignment="CENTER" alignment="CENTER" prefWidth="200.0">
             <Pagination prefWidth="200.0" fx:id="pagination"/>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Displaying x-y of z"
-              fx:id="displayingXToYOfZText"/>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Displaying x-y of z" fx:id="displayingXToYOfZText"/>
             <padding>
               <Insets bottom="10.0" top="5.0"/>
             </padding>
@@ -67,25 +63,20 @@
                   <Font size="20.0"/>
                 </font>
               </Label>
-              <TitledPane GridPane.rowIndex="1" expanded="false" text="Filter">
+              <TitledPane GridPane.rowIndex="1" text="Filters">
                 <content>
                   <GridPane hgap="10.0">
                     <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="6.0"
-                        prefWidth="100.0"/>
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="6.0" prefWidth="100.0"/>
                       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="5.0"
-                        prefWidth="100.0"/>
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="5.0" prefWidth="100.0"/>
                       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
                     </columnConstraints>
                     <rowConstraints>
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                      <RowConstraints vgrow="SOMETIMES"/>
                     </rowConstraints>
-                    <CheckComboBox GridPane.columnIndex="1" maxWidth="1.7976931348623157E308"
-                      prefWidth="150.0" fx:id="regionChoice"/>
-                    <CheckComboBox GridPane.columnIndex="3" maxWidth="1.7976931348623157E308"
-                      prefWidth="150.0"
-                      fx:id="organChoice"/>
+                    <CheckComboBox GridPane.columnIndex="1" maxWidth="1.7976931348623157E308" prefWidth="150.0" fx:id="regionChoice"/>
+                    <CheckComboBox GridPane.columnIndex="3" maxWidth="1.7976931348623157E308" prefWidth="150.0" fx:id="organChoice"/>
                     <Label text="Region:">
                       <GridPane.margin>
                         <Insets/>
@@ -103,5 +94,4 @@
         </padding>
       </BorderPane>
     </SplitPane>
-  </SplitPane>
 </VBox>

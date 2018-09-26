@@ -11,6 +11,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.HistoryItem;
@@ -26,7 +27,7 @@ public class StaffListController extends SubController {
 
     private ClinicianManager clinicianManager;
     @FXML
-    private HBox menuBarPane;
+    private Pane menuBarPane;
     @FXML
     private TableView<Clinician> tableView;
     @FXML

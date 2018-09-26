@@ -138,13 +138,12 @@ public class RegisterOrganDonationController extends SubController {
 
         if (session.getLoggedInUserType() == Session.UserType.CLIENT) {
             client = session.getLoggedInClient();
-            mainController.loadSidebar(sidebarPane);
             donatedOrgansPane.setVisible(false);
         } else if (windowContext.isClinViewClientWindow()) {
             client = windowContext.getViewClient();
-            mainController.loadMenuBar(menuBarPane);
             donatedOrgansPane.setVisible(true);
         }
+        mainController.loadNavigation(menuBarPane);
         refresh();
     }
 
@@ -208,6 +207,7 @@ public class RegisterOrganDonationController extends SubController {
             overrideReason.append("\n").append(LocalDateTime.now().format(dateTimeFormat));
             if (session.getLoggedInUserType() == UserType.CLINICIAN) {
                 overrideReason.append(String.format("%nOverriden by clinician %d (%s)",
+//                        s = 1
                         session.getLoggedInClinician().getStaffId(), session.getLoggedInClinician().getFullName()));
             } else if (session.getLoggedInUserType() == UserType.ADMINISTRATOR) {
                 overrideReason.append(String.format("%nOverriden by admin '%s'.",

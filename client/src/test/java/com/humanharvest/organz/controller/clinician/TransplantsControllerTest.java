@@ -30,7 +30,6 @@ import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
-import com.humanharvest.organz.views.client.CreateTransplantRequestView;
 
 import org.junit.Before;
 import org.junit.Ignore;
@@ -82,17 +81,17 @@ public class TransplantsControllerTest extends ControllerTest {
         }
 
         for (TransplantRequest request : requests1) {
-            State.getClientResolver().createTransplantRequest(client1, new CreateTransplantRequestView(request
+            State.getClientResolver().createTransplantRequest(client1, new TransplantRequest(client1, request
                     .getRequestedOrgan(), request.getRequestDateTime()));
             //client1.addTransplantRequest(request);
             requests.add(request);
         }
         for (TransplantRequest request : requests2) {
-            State.getClientResolver().createTransplantRequest(client2, new CreateTransplantRequestView(request
+            State.getClientResolver().createTransplantRequest(client2, new TransplantRequest(client2, request
                     .getRequestedOrgan(), request.getRequestDateTime()));
             requests.add(request);
         }
-        State.getClientResolver().createTransplantRequest(client3, new CreateTransplantRequestView(request3
+        State.getClientResolver().createTransplantRequest(client3, new TransplantRequest(client3, request3
                 .getRequestedOrgan(), request3.getRequestDateTime()));
         requests.add(request3);
 
@@ -104,7 +103,7 @@ public class TransplantsControllerTest extends ControllerTest {
             Client client = new Client("Client", "Number", createClientName(i), LocalDate.now(), i);
             TransplantRequest request = new TransplantRequest(client, Organ.MIDDLE_EAR);
             State.getClientManager().addClient(client);
-            State.getClientResolver().createTransplantRequest(client, new CreateTransplantRequestView(request
+            State.getClientResolver().createTransplantRequest(client, new TransplantRequest(client, request
                     .getRequestedOrgan(), request.getRequestDateTime()));
             client.setRegion(Region.NELSON.toString());
             State.getClientManager().applyChangesTo(client);

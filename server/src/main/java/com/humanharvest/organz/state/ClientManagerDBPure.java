@@ -15,6 +15,7 @@ import java.util.Set;
 import java.util.StringJoiner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.persistence.OptimisticLockException;
 import javax.persistence.RollbackException;
@@ -24,7 +25,6 @@ import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.database.DBManager;
-import com.humanharvest.organz.server.controller.client.ClientController;
 import com.humanharvest.organz.utilities.algorithms.MatchOrganToRecipients;
 import com.humanharvest.organz.utilities.enums.ClientSortOptionsEnum;
 import com.humanharvest.organz.utilities.enums.ClientType;
@@ -48,7 +48,8 @@ import org.hibernate.query.Query;
  */
 public class ClientManagerDBPure implements ClientManager {
 
-    private static final Logger LOGGER = Logger.getLogger(ClientController.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ClientManagerDBPure.class.getName());
+    private static final Pattern WHITE_SPACE = Pattern.compile("(%20|\\s)+");
 
     private final DBManager dbManager;
 
@@ -65,6 +66,7 @@ public class ClientManagerDBPure implements ClientManager {
         List<Client> clients;
 
         try (Session session = dbManager.getDBSession()) {
+            session.beginTransaction();
             clients = session
                     .createQuery("FROM Client", Client.class)
                     .getResultList();
@@ -117,10 +119,14 @@ public class ClientManagerDBPure implements ClientManager {
         // Setup the client type filters. For this we use an EXISTS (or NOT) then a separate SELECT on
         // the respective table where uid=uid.
         // LIMIT 1 is an efficiency increase as we do not need to keep looking once we have a result (boolean true)
-        String isDonor = "EXISTS (SELECT donating.Client_uid FROM Client_organsDonating AS donating WHERE donating.Client_uid=c.uid LIMIT 1)";
-        String notIsDonor = "NOT EXISTS (SELECT donating.Client_uid FROM Client_organsDonating AS donating WHERE donating.Client_uid=c.uid LIMIT 1)";
-        String isRequesting = "EXISTS (SELECT requesting.Client_uid FROM TransplantRequest AS requesting WHERE requesting.Client_uid=c.uid LIMIT 1)";
-        String notIsRequesting = "NOT EXISTS (SELECT requesting.Client_uid FROM TransplantRequest AS requesting WHERE requesting.Client_uid=c.uid LIMIT 1)";
+        String isDonor = "EXISTS (SELECT donating.Client_uid FROM Client_organsDonating AS donating "
+                + "WHERE donating.Client_uid=c.uid LIMIT 1)";
+        String notIsDonor = "NOT EXISTS (SELECT donating.Client_uid FROM Client_organsDonating AS donating "
+                + "WHERE donating.Client_uid=c.uid LIMIT 1)";
+        String isRequesting = "EXISTS (SELECT requesting.Client_uid FROM TransplantRequest AS requesting "
+                + "WHERE requesting.Client_uid=c.uid LIMIT 1)";
+        String notIsRequesting = "NOT EXISTS (SELECT requesting.Client_uid FROM TransplantRequest AS requesting "
+                + "WHERE requesting.Client_uid=c.uid LIMIT 1)";
 
         //TODO: Make this use the complex sort as in ClientNameSorter
         String nameSort = "lastName";
@@ -135,25 +141,29 @@ public class ClientManagerDBPure implements ClientManager {
             //Setup minimum age filter
             if (minimumAge != null) {
                 //Use the TIMESTAMPDIFF (MySQL only) function to calculate age
-                whereJoiner.add("TIMESTAMPDIFF(YEAR, c.dateOfBirth, NOW()) >= :minimumAge");
+                whereJoiner.add(
+                        "CASE WHEN dateOfDeath IS NULL THEN TIMESTAMPDIFF(YEAR, c.dateOfBirth, NOW()) >= :minimumAge "
+                                + "ELSE TIMESTAMPDIFF(YEAR, c.dateOfBirth, c.dateOfDeath) >= :minimumAge END");
                 params.put("minimumAge", minimumAge);
             }
 
             //Setup maximum age filter
             if (maximumAge != null) {
                 //Use the TIMESTAMPDIFF (MySQL only) function to calculate age
-                whereJoiner.add("TIMESTAMPDIFF(YEAR, c.dateOfBirth, NOW()) <= :maximumAge");
+                whereJoiner.add(
+                        "CASE WHEN dateOfDeath IS NULL THEN TIMESTAMPDIFF(YEAR, c.dateOfBirth, NOW()) <= :maximumAge "
+                                + "ELSE TIMESTAMPDIFF(YEAR, c.dateOfBirth, c.dateOfDeath) <= :maximumAge END");
                 params.put("maximumAge", maximumAge);
             }
 
             // Setup region filter.
-            if (regions != null && regions.size() > 0) {
+            if (regions != null && !regions.isEmpty()) {
                 whereJoiner.add("c.region IN (:regions)");
                 params.put("regions", regions);
             }
 
             // Setup birth gender filter.
-            if (birthGenders != null && birthGenders.size() > 0) {
+            if (birthGenders != null && !birthGenders.isEmpty()) {
                 whereJoiner.add("c.gender IN (:genders)");
                 // Map the genders to strings as they are stored that way in the DB
                 params.put("genders", birthGenders.stream().map(Gender::name).collect(Collectors.toList()));
@@ -162,7 +172,7 @@ public class ClientManagerDBPure implements ClientManager {
             // Setup donating filter.
             // We use an INNER JOIN and therefor select only clients where they have an entry in
             // the Client_organsDonating table that matches one of the given organs
-            if (donating != null && donating.size() > 0) {
+            if (donating != null && !donating.isEmpty()) {
                 String joinQuery = " INNER JOIN (SELECT donating.Client_uid FROM Client_organsDonating AS donating "
                         + "WHERE donating.organsDonating IN (:donating) "
                         + "GROUP BY donating.Client_uid) donating ON c.uid=donating.Client_uid ";
@@ -175,7 +185,7 @@ public class ClientManagerDBPure implements ClientManager {
             // Setup requesting filter.
             // We use an INNER JOIN and therefor select only clients where they have an entry in
             // the TransplantRequest table that matches one of the given organs and is status=WAITING
-            if (requesting != null && requesting.size() > 0) {
+            if (requesting != null && !requesting.isEmpty()) {
                 String joinQuery = " INNER JOIN (SELECT requesting.Client_uid FROM TransplantRequest AS requesting "
                         + "WHERE requesting.status='WAITING' AND requesting.requestedOrgan IN (:requesting) "
                         + "GROUP BY requesting.Client_uid) requesting ON c.uid=requesting.Client_uid ";
@@ -190,6 +200,11 @@ public class ClientManagerDBPure implements ClientManager {
             // LIMIT 1 is an efficiency increase as we do not need to keep looking once we have a result (boolean true)
             if (clientType != null) {
                 switch (clientType) {
+                    case BOTH:
+                        whereJoiner.add(isDonor);
+                        whereJoiner.add(isRequesting);
+                        break;
+
                     case NEITHER:
                         whereJoiner.add(notIsDonor);
                         whereJoiner.add(notIsRequesting);
@@ -204,23 +219,31 @@ public class ClientManagerDBPure implements ClientManager {
                         whereJoiner.add(notIsDonor);
                         whereJoiner.add(isRequesting);
                         break;
-
-                    default: // both
-                        whereJoiner.add(isDonor);
-                        whereJoiner.add(isRequesting);
+                    case ANY:
+                    default:
+                        // Do nothing because we do not want to apply any filters in this case
                 }
             }
 
             //Setup the name filter. For this we make a series of OR checks on the names, if any is true it's true.
             //Checks any portion of any name
             if (q != null && !q.isEmpty()) {
-                StringJoiner qOrJoiner = new StringJoiner(" OR ");
-                qOrJoiner.add("UPPER(c.firstName) LIKE UPPER(:q)");
-                qOrJoiner.add("UPPER(c.middleName) LIKE UPPER(:q)");
-                qOrJoiner.add("UPPER(c.preferredName) LIKE UPPER(:q)");
-                qOrJoiner.add("UPPER(c.lastName) LIKE UPPER(:q)");
-                whereJoiner.add("(" + qOrJoiner + ")");
-                params.put("q", "%" + q + "%");
+                String[] qParts = WHITE_SPACE.split(q);
+                StringJoiner qAndJoiner = new StringJoiner(" AND ");
+
+                //For every substring, make sure that it matches any of the names
+                int i = 0;
+                for (String qPart : qParts) {
+                    StringJoiner qOrJoiner = new StringJoiner(" OR ");
+                    qOrJoiner.add("UPPER(c.firstName) LIKE UPPER(:q" + i + ")");
+                    qOrJoiner.add("UPPER(c.middleName) LIKE UPPER(:q" + i + ")");
+                    qOrJoiner.add("UPPER(c.preferredName) LIKE UPPER(:q" + i + ")");
+                    qOrJoiner.add("UPPER(c.lastName) LIKE UPPER(:q" + i + ")");
+                    params.put("q" + i, "%" + qPart + "%");
+                    qAndJoiner.add("(" + qOrJoiner + ")");
+                    i++;
+                }
+                whereJoiner.add("(" + qAndJoiner + ")");
             }
 
             //Set offset to zero if not given
@@ -350,19 +373,33 @@ public class ClientManagerDBPure implements ClientManager {
 
     @Override
     public void applyChangesTo(Client client) {
+        applyChangesToObject(client);
+    }
+
+    @Override
+    public void applyChangesTo(DonatedOrgan organ) {
+        applyChangesToObject(organ);
+    }
+
+    @Override
+    public void applyChangesTo(TransplantRequest request) {
+        applyChangesToObject(request);
+    }
+
+    private void applyChangesToObject(Object object) {
         Transaction trns = null;
 
         try (Session session = dbManager.getDBSession()) {
             trns = session.beginTransaction();
 
             try {
-                session.update(client);
+                session.update(object);
                 trns.commit();
             } catch (OptimisticLockException exc) {
                 // TODO fix this hack
                 try (Session otherSession = dbManager.getDBSession()) {
                     trns = otherSession.beginTransaction();
-                    otherSession.replicate(client, ReplicationMode.OVERWRITE);
+                    otherSession.replicate(object, ReplicationMode.OVERWRITE);
                     trns.commit();
                 }
             }
@@ -403,14 +440,14 @@ public class ClientManagerDBPure implements ClientManager {
 
         try (Session session = dbManager.getDBSession()) {
             trns = session.beginTransaction();
-            collision = session.createQuery("SELECT c FROM Client c "
+            collision = !session.createQuery("SELECT c FROM Client c "
                     + "WHERE c.firstName = :firstName "
                     + "AND c.lastName = :lastName "
                     + "AND c.dateOfBirth = :dateOfBirth", Client.class)
                     .setParameter("firstName", firstName)
                     .setParameter("lastName", lastName)
                     .setParameter("dateOfBirth", dateOfBirth)
-                    .getResultList().size() > 0;
+                    .getResultList().isEmpty();
             trns.commit();
         } catch (RollbackException e) {
             LOGGER.log(Level.WARNING, e.getMessage(), e);
@@ -539,6 +576,7 @@ public class ClientManagerDBPure implements ClientManager {
         List<DonatedOrgan> filteredOrgans = getAllOrgansToDonate().stream()
                 .filter(organ -> organ.getDurationUntilExpiry() == null || !organ.getDurationUntilExpiry().isZero())
                 .filter(organ -> organ.getOverrideReason() == null)
+                .filter(DonatedOrgan::isAvailable)
                 .filter(organ -> regionsToFilter.isEmpty()
                         || regionsToFilter.contains(organ.getDonor().getRegionOfDeath())
                         || (regionsToFilter.contains("International")
@@ -574,5 +612,61 @@ public class ClientManagerDBPure implements ClientManager {
 
         Collection<TransplantRequest> transplantRequests = getAllTransplantRequests();
         return MatchOrganToRecipients.getListOfPotentialRecipients(donatedOrgan, transplantRequests);
+    }
+
+    /**
+     * Determines whether a donor is deceased and has chosen to donate organs that are currently available (not expired)
+     * @param client client to determine viability of as an organ donor
+     * @return boolean of whether the given client is viable as an organ donor
+     */
+    private boolean isViableDonor(Client client) {
+        if (client.isDead()) {
+            for (DonatedOrgan organ : client.getDonatedOrgans()) {
+                if (!organ.hasExpired() && organ.getOverrideReason() == null) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Fetches viable deceased donors from the database
+     * @return list of viable deceased donors
+     */
+    @Override
+    public List<Client> getViableDeceasedDonors() {
+
+        Transaction trns = null;
+
+        try (Session session = dbManager.getDBSession()) {
+            trns = session.beginTransaction();
+
+            String queryString = "SELECT c.* FROM Client c \n"
+                    + "WHERE EXISTS (SELECT donating.Client_uid \n"
+                    + "              FROM Client_organsDonating AS donating\n"
+                    + "              WHERE donating.Client_uid=c.uid "
+                    + "              LIMIT 1)\n"
+                    + "      AND c.dateOfDeath IS NOT NULL\n"
+                    + "ORDER BY c.dateOfDeath DESC";
+
+            Query<Client> query = session.createNativeQuery(queryString, Client.class);
+
+            List<Client> clients = new ArrayList<>();
+            for (Client client : query.getResultList()) {
+                if (isViableDonor(client)) {
+                    clients.add(client);
+                }
+            }
+
+            return clients;
+
+        }  catch (RollbackException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
+            if (trns != null) {
+                trns.rollback();
+            }
+            return null;
+        }
     }
 }

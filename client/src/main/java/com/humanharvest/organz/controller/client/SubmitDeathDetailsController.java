@@ -8,7 +8,6 @@ import java.time.format.DateTimeParseException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javafx.beans.property.Property;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
@@ -160,21 +159,12 @@ public class SubmitDeathDetailsController extends SubController {
 
         // All valid, all death details registered as changes
         // Check that user really wants to mark as dead
-        Property<Boolean> response = PageNavigator.showAlert(AlertType.CONFIRMATION,
+        PageNavigator.showAlert(AlertType.CONFIRMATION,
                 "Are you sure you want to mark this client as dead?",
-                "This will cancel all waiting transplant requests for this client.", mainController.getStage());
-
-        if (response.getValue() != null) {
-            if (response.getValue()) {
-                makeRequest(modifyClientObject);
-            }
-        } else {
-            response.addListener((observable, oldValue, newValue) -> {
-                if (newValue) {
+                "This will cancel all waiting transplant requests for this client.", mainController.getStage(),
+                isOk -> {
                     makeRequest(modifyClientObject);
-                }
-            });
-        }
+                });
     }
 
     @FXML
