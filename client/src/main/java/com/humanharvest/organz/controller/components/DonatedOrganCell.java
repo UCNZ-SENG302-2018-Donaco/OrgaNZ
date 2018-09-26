@@ -16,31 +16,40 @@ public class DonatedOrganCell extends ListCell<DonatedOrgan> {
 
     private static final Logger LOGGER = Logger.getLogger(DeceasedDonorCell.class.getName());
 
+    private DonatedOrgan donatedOrgan;
+    private DonatedOrganOverviewController controller;
+
     public DonatedOrganCell() {
         setPrefWidth(0);
     }
 
     @Override
-    protected void updateItem(DonatedOrgan organ, boolean empty) {
-        super.updateItem(organ, empty);
+    protected void updateItem(DonatedOrgan donatedOrgan, boolean empty) {
+        super.updateItem(donatedOrgan, empty);
 
-        if (empty || organ == null) {
+        if (empty || donatedOrgan == null) {
             setText(null);
             setStyle(null);
             return;
         }
 
-        try {
-            FXMLLoader loader =
-                    new FXMLLoader(DeceasedDonorCell.class.getResource(Page.DONATED_ORGAN_OVERVIEW.getPath()));
-            Node node = loader.load();
+        if (donatedOrgan == this.donatedOrgan) {
+            // the same organ, we just need to refresh the time
+            controller.updateTime();
+        } else {
 
-            DonatedOrganOverviewController controller = loader.getController();
-            controller.setup(organ);
-            setGraphic(node);
+            try {
+                FXMLLoader loader =
+                        new FXMLLoader(DeceasedDonorCell.class.getResource(Page.DONATED_ORGAN_OVERVIEW.getPath()));
+                Node node = loader.load();
 
-        } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                controller = loader.getController();
+                controller.setup(donatedOrgan);
+                setGraphic(node);
+
+            } catch (IOException e) {
+                LOGGER.log(Level.SEVERE, e.getMessage(), e);
+            }
         }
 
     }

@@ -14,6 +14,7 @@ import javafx.scene.image.ImageView;
 
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.controller.SubController;
+import com.humanharvest.organz.controller.spiderweb.SpiderWebController;
 import com.humanharvest.organz.utilities.DurationFormatter;
 import com.humanharvest.organz.utilities.DurationFormatter.DurationFormat;
 import com.humanharvest.organz.utilities.enums.Organ;
@@ -30,6 +31,8 @@ public class DonatedOrganOverviewController extends SubController {
     @FXML
     private Label nameLabel, timeToExpiryLabel, donorNameLabel;
 
+    private Duration timeToExpiry;
+
     //@FXML
     //private Text donorNameLabel, organsAvailable;
 
@@ -45,11 +48,11 @@ public class DonatedOrganOverviewController extends SubController {
 
         nameLabel.setText(organ.getOrganType().toString());
 
-        donorNameLabel.setText(donatedOrgan.getDonor().getFullName());
+        timeToExpiry = donatedOrgan.getDurationUntilExpiry();
 
-        Duration timeToExpiry = donatedOrgan.getDurationUntilExpiry();
-        timeToExpiryLabel.setText("Expires in " + DurationFormatter.getFormattedDuration(timeToExpiry,
-                DurationFormat.X_HRS_Y_MINS_SECS));
+        updateTime();
+
+        donorNameLabel.setText(donatedOrgan.getDonor().getFullName());
 
         try (InputStream in = getClass().getResourceAsStream("/images/pages/spiderweb.png")) {
             byte[] spiderWebImageBytes = IOUtils.toByteArray(in);
@@ -57,6 +60,11 @@ public class DonatedOrganOverviewController extends SubController {
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "IO Exception when loading image ", e);
         }
+    }
+
+    @FXML
+    private void openSpiderWeb() {
+        new SpiderWebController(donatedOrgan.getDonor());
     }
 
     private Image getOrganImage(Organ organ) {
@@ -70,6 +78,13 @@ public class DonatedOrganOverviewController extends SubController {
             LOGGER.log(Level.SEVERE, "Organ image failed to load");
             return null;
         }
+    }
+
+    public void updateTime() {
+
+        timeToExpiryLabel.setText("Expires in " + DurationFormatter.getFormattedDuration(timeToExpiry,
+                DurationFormat.X_HRS_Y_MINS_SECS));
+
     }
 
 }
