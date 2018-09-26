@@ -1,0 +1,84 @@
+/*
+A7A5C6
+8797B2
+6D8A96
+5D707F
+66CED6
+
+161925-23395b-8ea8c3-5d707f-cbf7ed
+
+light
+   shade 1 = #B6DBF4 = rgb(182,219,244) = rgba(182,219,244,1) = rgb0(0.714,0.859,0.957)
+   shade 2 = #83BCE5 = rgb(131,188,229) = rgba(131,188,229,1) = rgb0(0.514,0.737,0.898)
+   shade 0 = #5BA2D4 = rgb( 91,162,212) = rgba( 91,162,212,1) = rgb0(0.357,0.635,0.831)
+   shade 3 = #3A89C0 = rgb( 58,137,192) = rgba( 58,137,192,1) = rgb0(0.227,0.537,0.753)
+   shade 4 = #1C6FAA = rgb( 28,111,170) = rgba( 28,111,170,1) = rgb0(0.11,0.435,0.667)
+dark
+ */
+
+.backdrop {
+  -fx-background-color: #5D707F;
+}
+
+.window {
+  -fx-font-family: Lato;
+  -fx-border-insets: 10;
+  -fx-background-color: #C6DBF0;
+  -fx-background-radius: 15;
+  -fx-border-radius: 7;
+  -fx-border-color: #C6DBF0;
+  -fx-border-style: solid;
+  -fx-border-width: 3;
+  -fx-effect: dropshadow(three-pass-box, rgba(100, 100, 100, 1), 24, 0.5, 0, 0);
+  -fx-background-insets: 10;
+}
+
+.window .label {
+  -fx-text-fill: #282828;
+}
+
+.split-pane {
+  -fx-background-color: #C6DBF0;
+}
+
+.tooltip .text {
+  -fx-fill: #C6DBF0;
+}
+
+/* MENU BUTTONS */
+.menubox .button {
+  -fx-background-color: #CFC7FA;
+  -fx-border-color: #CFC7FA;
+}
+
+.menubox .button:hover {
+  -fx-background-color: #BFB4FA;
+}
+
+.menubox .hamburger:hover {
+  -fx-background-color: #BFB4FA;
+}
+
+
+/* DRAWER */
+.drawer-pane .button {
+  -fx-background-color: #d6e5ff;
+  -fx-border-color: #9FB3D6;
+  -fx-border-style: solid;
+  -fx-border-width: 0.5;
+}
+
+.drawer-pane .button:hover {
+  -fx-background-color: #BDD5FF;
+  -fx-border-color: #9FB3D6;
+  -fx-border-style: solid;
+  -fx-border-width: 0.5;
+}
+
+
+
+.drawer-pane {
+  -fx-padding: 0px 0px 0px 10px; /*Need to include this line to set the drawer inline with the pane*/
+  -fx-effect: dropshadow(gaussian, #1d1d1d, 4, 0, 3, 3);
+}
+

@@ -18,7 +18,6 @@ import javafx.scene.transform.Scale;
 import javafx.scene.transform.Translate;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-
 import org.controlsfx.control.Notifications;
 
 import com.humanharvest.organz.Client;
@@ -146,6 +145,7 @@ public class SpiderWebController extends SubController {
     private void displayDonatingClient() {
         MainController newMain = PageNavigator.openNewWindow(200, 320);
         PageNavigator.loadPage(Page.DECEASED_DONOR_OVERVIEW, newMain);
+
         deceasedDonorPane = newMain.getPane();
 
         FocusArea deceasedDonorFocus = (FocusArea) deceasedDonorPane.getUserData();

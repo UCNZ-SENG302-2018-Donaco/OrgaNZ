@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -15,6 +16,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
+import org.controlsfx.control.Notifications;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
@@ -90,13 +92,23 @@ public class DeceasedDonorOverviewController extends SubController {
             }
         });
 
-        refresh();
+        displayData();
+        loadImage();
     }
 
     @Override
     public void refresh() {
-        displayData();
-        loadImage();
+        Optional<Client> optionalClient = State.getClientManager().getClientByID(deceasedDonor.getUid());
+        if (!optionalClient.isPresent()) {
+            Notifications.create()
+                    .title("Server Error")
+                    .text("Could not refresh the information for the donor.")
+                    .showError();
+        } else {
+            deceasedDonor = optionalClient.get();
+            displayData();
+            loadImage();
+        }
     }
 
     private void displayData() {

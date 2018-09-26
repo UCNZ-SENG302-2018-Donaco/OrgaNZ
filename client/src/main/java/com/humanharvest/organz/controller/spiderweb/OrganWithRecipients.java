@@ -5,6 +5,7 @@ import static com.humanharvest.organz.controller.spiderweb.LineFormatters.update
 import static com.humanharvest.organz.controller.spiderweb.LineFormatters.updateMatchesListPosition;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -34,7 +35,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Transform;
-import javafx.util.Duration;
 import org.controlsfx.control.Notifications;
 
 import com.humanharvest.organz.DonatedOrgan;
@@ -52,7 +52,6 @@ import com.humanharvest.organz.touch.MultitouchHandler;
 import com.humanharvest.organz.touch.OrganFocusArea;
 import com.humanharvest.organz.touch.PointUtils;
 import com.humanharvest.organz.utilities.DurationFormatter.DurationFormat;
-import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.Page;
@@ -67,9 +66,9 @@ public class OrganWithRecipients {
     private static final int ORGAN_SIZE = 70;
 
     private final Pane deceasedDonorPane;
-    private DonatedOrgan organ;
     private final Pane matchesPane;
     private final Pane canvas;
+    private DonatedOrgan organ;
     private Timeline refresher;
 
     private OrganImageController organImageController;
@@ -128,7 +127,7 @@ public class OrganWithRecipients {
             refresher = null;
         } else {
             refresher = new Timeline(new KeyFrame(
-                    Duration.seconds(1),
+                    javafx.util.Duration.seconds(1),
                     event -> {
                         updateDonorConnector(organ, deceasedToOrganConnector, organPane);
                         updateConnectorText(durationText, organ, deceasedToOrganConnector);
@@ -323,54 +322,37 @@ public class OrganWithRecipients {
     private void scheduleTransplant(DonatedOrgan organ, TransplantRequest request) {
         Set<Hospital> hospitals = State.getConfigManager().getHospitals();
 
-        Hospital nearestHospital;
-        if (request.getClient().getHospital() != null) {
-            // Recipient has a hospital
-            nearestHospital = request.getClient().getHospital()
-                    .getNearestWithTransplantProgram(organ.getOrganType(), hospitals);
-        } else {
-            try {
-                // Recipient has no hospital, but has a region
-                final Region region = Region.fromString(request.getClient().getRegion());
-                nearestHospital = hospitals.stream()
-                        .filter(hospital -> hospital.getTransplantPrograms().contains(organ.getOrganType()))
-                        .min(Comparator.comparing(hospital -> hospital.calculateDistanceTo(region)))
-                        .orElse(null);
-            } catch (IllegalArgumentException exc) {
-                // Neither hospital nor region, so get nearest to the organ's donor
-                Hospital organHospital = organ.getDonor().getHospital();
-                if (organHospital == null) {
-                    nearestHospital = hospitals.stream()
-                            .filter(hospital -> hospital.getTransplantPrograms().contains(organ.getOrganType()))
-                            .findAny().orElse(null);
-                } else {
-                    nearestHospital = organ.getDonor().getHospital()
-                            .getNearestWithTransplantProgram(organ.getOrganType(), hospitals);
-                }
-            }
+        Hospital donorHospital = organ.getDonor().getHospital();
+        if (donorHospital == null) {
+            Notifications.create()
+                    .title("No Donor Hospital")
+                    .text("The Donor must have a hospital specified. The transplant has not been scheduled")
+                    .showError();
+            return;
         }
 
-        if (nearestHospital == null) {
-            Notifications.create()
-                    .title("No Valid Hospital")
-                    .text(String.format("There is no hospital that can transplant %s.",
-                            organ.getOrganType().toString()))
-                    .showError();
+        Hospital recipientHospital = Hospital.getHospitalForClient(request.getClient(), hospitals);
+
+        Hospital transplantHospital;
+        Duration travelTime;
+        if (recipientHospital != null) {
+            transplantHospital = recipientHospital.getNearestWithTransplantProgram(organ.getOrganType(), hospitals);
+            travelTime = recipientHospital.calculateTimeTo(transplantHospital);
         } else {
-            final LocalDate transplantDate = LocalDateTime.now()
-                    .plus(nearestHospital.calculateTimeTo(organ.getDonor().getHospital()))
-                    .toLocalDate();
-            //TODO: This fails if the Donor has no hospital
-            try {
-                State.getClientResolver().scheduleTransplantProcedure(organ, request, nearestHospital, transplantDate);
-                this.organ = State.getClientManager().getMatchingOrganTransplantRecord(organ).getOrgan();
-                refresh();
-            } catch (ServerRestException exc) {
-                Notifications.create()
-                        .title("Server Error")
-                        .text("An error occurred when trying to schedule the transplant.")
-                        .showError();
-            }
+            transplantHospital = donorHospital.getNearestWithTransplantProgram(organ.getOrganType(), hospitals);
+            travelTime = donorHospital.calculateTimeTo(transplantHospital);
+        }
+        LocalDate transplantDate = LocalDateTime.now().plus(travelTime).toLocalDate();
+
+        try {
+            State.getClientResolver().scheduleTransplantProcedure(organ, request, transplantHospital, transplantDate);
+            this.organ = State.getClientManager().getMatchingOrganTransplantRecord(organ).getOrgan();
+            refresh();
+        } catch (ServerRestException exc) {
+            Notifications.create()
+                    .title("Server Error")
+                    .text("An error occurred when trying to schedule the transplant.")
+                    .showError();
         }
     }
 

@@ -208,12 +208,11 @@ public class RequestOrgansController extends SubController {
             newRequestForm.setVisible(false);
             resolveRequestBar.setManaged(false);
             resolveRequestBar.setVisible(false);
-            mainController.loadSidebar(sidebarPane);
         } else if (windowContext.isClinViewClientWindow()) {
             client = windowContext.getViewClient();
-            mainController.loadMenuBar(menuBarPane);
         }
 
+        mainController.loadNavigation(menuBarPane);
         refresh();
         enableAppropriateButtons();
     }
