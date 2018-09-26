@@ -49,8 +49,8 @@ public final class PointUtils {
         return min.add(max.subtract(min).multiply(0.5));
     }
 
-    public static double distance(Point2D point1, Point2D point2D) {
-        Point2D delta = point1.subtract(point2D);
+    public static double distance(Point2D point1, Point2D point2) {
+        Point2D delta = point1.subtract(point2);
         return Math.sqrt(delta.getX() * delta.getX() + delta.getY() * delta.getY());
     }
 }

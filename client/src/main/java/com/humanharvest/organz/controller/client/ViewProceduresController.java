@@ -162,7 +162,6 @@ public class ViewProceduresController extends SubController {
         } else {
             ModifyProcedureObject modification = new ModifyProcedureObject();
             modification.setSummary(event.getNewValue());
-            System.out.println(event.getNewValue());
             ProcedureRecord record = event.getRowValue();
             sendModification(record, modification);
         }
