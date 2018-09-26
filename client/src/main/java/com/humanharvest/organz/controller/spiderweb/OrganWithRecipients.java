@@ -128,12 +128,9 @@ public class OrganWithRecipients {
         updateDonorConnector(organ, deceasedToOrganConnector, organPane);
         updateConnectorText(durationText, organ, deceasedToOrganConnector);
         // Attach timer to update connector each second (for time until expiration)
-        if (organ.getState() == OrganState.TRANSPLANT_COMPLETED) {
-            if (refresher != null) {
-                refresher.stop();
-            }
-            refresher = null;
-        } else {
+
+        closeRefresher();
+        if (organ.getState() != OrganState.TRANSPLANT_COMPLETED) {
             refresher = new Timeline(new KeyFrame(
                     javafx.util.Duration.seconds(1),
                     event -> {
@@ -475,7 +472,7 @@ public class OrganWithRecipients {
                         PotentialRecipientCell.class.getResource(Page.RECEIVER_OVERVIEW.getPath()));
                 Node node = loader.load();
                 ReceiverOverviewController controller = loader.getController();
-                controller.setup(record, organ.getDonor());
+                controller.setup(record, organ.getDonor(), refresher);
                 if (organ.getState() == OrganState.TRANSPLANT_PLANNED) {
                     controller.setPriority("Scheduled");
                 } else if (organ.getState() == OrganState.TRANSPLANT_COMPLETED) {
@@ -499,7 +496,7 @@ public class OrganWithRecipients {
         matchesList.setItems(potentialMatches);
 
         matchesList.setCellFactory(param -> {
-            PotentialRecipientCell cell = new PotentialRecipientCell(param.getItems(), organ.getDonor());
+            PotentialRecipientCell cell = new PotentialRecipientCell(param.getItems(), organ.getDonor(), refresher);
             recipientCells.add(cell);
             return cell;
         });

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javafx.animation.Timeline;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.ListCell;
@@ -21,10 +22,12 @@ public class PotentialRecipientCell extends ListCell<TransplantRequest> {
     private final List<TransplantRequest> potentialRecipientList;
     private final Client donor;
     private TransplantRequest transplantRequest;
+    private Timeline refresher;
 
-    public PotentialRecipientCell(List<TransplantRequest> potentialRecipientList, Client donor) {
+    public PotentialRecipientCell(List<TransplantRequest> potentialRecipientList, Client donor, Timeline refresher) {
         this.potentialRecipientList = potentialRecipientList;
         this.donor = donor;
+        this.refresher = refresher;
     }
 
     @Override
@@ -38,7 +41,7 @@ public class PotentialRecipientCell extends ListCell<TransplantRequest> {
                         PotentialRecipientCell.class.getResource(Page.RECEIVER_OVERVIEW.getPath()));
                 Node recipientPane = loader.load();
                 ReceiverOverviewController recipientOverview = loader.getController();
-                recipientOverview.setup(request, donor);
+                recipientOverview.setup(request, donor, refresher);
                 recipientOverview.setPriority(potentialRecipientList.indexOf(request) + 1);
                 setGraphic(recipientPane);
 

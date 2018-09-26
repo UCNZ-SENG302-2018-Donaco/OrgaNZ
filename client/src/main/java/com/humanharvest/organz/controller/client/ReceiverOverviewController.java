@@ -7,7 +7,6 @@ import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.concurrent.Task;
@@ -29,6 +28,7 @@ import com.humanharvest.organz.controller.clinician.ViewBaseController;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.DurationFormatter;
 import com.humanharvest.organz.utilities.DurationFormatter.DurationFormat;
+import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.Page;
@@ -77,7 +77,7 @@ public class ReceiverOverviewController extends ViewBaseController {
 
         // Set hospital
         if (recipient.getHospital() == null) {
-            hospital.setText("Unknown");
+            hospital.setText("Unknown location");
         } else {
             hospital.setText(recipient.getHospital().getName());
         }
@@ -121,24 +121,36 @@ public class ReceiverOverviewController extends ViewBaseController {
     private void updateWaitTime() {
         if (request == null) {
             requestedTime.setText("Error: no request");
+        } else if (request.getStatus() == TransplantRequestStatus.COMPLETED) {
+            requestedTime.setText("");
         } else {
             Duration waitTime = request.getTimeSinceRequest();
             requestedTime.setText(DurationFormatter.getFormattedDuration(waitTime, DurationFormat.BIGGEST));
         }
     }
 
-    public void setup(TransplantRequest request, Client donor) {
+    public void setup(TransplantRequest request, Client donor, Timeline refresher) {
         this.request = request;
         this.recipient = request.getClient();
         this.donor = donor;
+        setupRefresher(refresher);
         refresh();
     }
 
-    public void setup(TransplantRecord record, Client donor) {
+    public void setup(TransplantRecord record, Client donor, Timeline refresher) {
         this.request = record.getRequest();
         this.recipient = record.getReceiver();
         this.donor = donor;
+        setupRefresher(refresher);
         refresh();
+    }
+
+    private void setupRefresher(Timeline refresher) {
+        if (refresher != null) {
+            refresher.getKeyFrames().add(new KeyFrame(
+                    javafx.util.Duration.seconds(1),
+                    event -> updateWaitTime()));
+        }
     }
 
     @Override
@@ -191,18 +203,6 @@ public class ReceiverOverviewController extends ViewBaseController {
         });
 
         new Thread(task).start();
-    }
-
-    @FXML
-    private void initialize() {
-
-        // Setup ticking
-        final Timeline clock = new Timeline(new KeyFrame(
-                javafx.util.Duration.millis(1000),
-                event -> updateWaitTime()));
-        clock.setCycleCount(Animation.INDEFINITE);
-        clock.play();
-
     }
 
     public void setPriority(int priority) {
