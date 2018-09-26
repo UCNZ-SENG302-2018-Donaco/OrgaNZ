@@ -7,8 +7,6 @@ import static org.testfx.matcher.base.NodeMatchers.isVisible;
 
 import java.time.LocalDate;
 
-import javafx.scene.Node;
-
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.TransplantRequest;

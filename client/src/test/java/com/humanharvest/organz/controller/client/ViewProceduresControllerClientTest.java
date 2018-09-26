@@ -1,6 +1,5 @@
 package com.humanharvest.organz.controller.client;
 
-import static org.junit.Assert.assertEquals;
 import static org.testfx.api.FxAssert.verifyThat;
 import static org.testfx.matcher.control.TableViewMatchers.containsRow;
 import static org.testfx.util.NodeQueryUtils.isVisible;
