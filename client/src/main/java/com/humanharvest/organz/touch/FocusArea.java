@@ -297,12 +297,6 @@ public class FocusArea implements InvalidationListener {
             eventDispatcher.dispatchCapturingEvent(event);
         });
 
-        currentScrollingPane.ifPresent(virtualFlow -> {
-            if (virtualFlow.isPannable()) {
-
-            }
-        });
-
         if (paneTouches.isEmpty()) {
             pane.setCacheHint(CacheHint.QUALITY);
             setupVelocity(System.nanoTime(), PointUtils.getCentreOfNode(pane));
