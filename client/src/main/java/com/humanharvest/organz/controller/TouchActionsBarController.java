@@ -14,6 +14,7 @@ import org.controlsfx.control.Notifications;
 
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.state.State.UiType;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.views.ActionResponseView;
@@ -143,7 +144,8 @@ public class TouchActionsBarController extends SubController {
         redoButton.setDisable(!responseView.isCanRedo());
 
         // Disable exit button if this is the last clinician window
-        if (!windowContext.isClinViewClientWindow() && State.getMainControllers().stream()
+        if (State.getUiType() != UiType.STANDARD && !windowContext.isClinViewClientWindow() && State.getMainControllers
+                ().stream()
                 .filter(controller -> !controller.getWindowContext().isClinViewClientWindow())
                 .count() <= 1) {
             exitButton.setDisable(true);
