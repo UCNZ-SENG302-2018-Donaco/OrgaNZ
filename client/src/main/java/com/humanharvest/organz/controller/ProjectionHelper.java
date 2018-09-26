@@ -86,7 +86,7 @@ public final class ProjectionHelper {
 
                 Scene scene = new Scene(mainPane);
 
-                Rectangle2D bounds = screen.getVisualBounds();
+                Rectangle2D bounds = screen.getBounds();
                 newStage.setX(bounds.getMinX());
                 newStage.setY(bounds.getMinY());
                 newStage.setMinWidth(bounds.getWidth());
