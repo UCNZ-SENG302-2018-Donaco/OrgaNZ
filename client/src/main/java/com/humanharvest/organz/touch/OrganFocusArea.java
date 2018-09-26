@@ -67,7 +67,7 @@ public class OrganFocusArea extends FocusArea {
             organWithRecipients.handleOrganSingleClick();
         }
 
-        organWithRecipients.handleOrganPaneTouchReleased();
+        organWithRecipients.handleTouchReleased();
     }
 
     @Override

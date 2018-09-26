@@ -2,7 +2,6 @@ package com.humanharvest.organz;
 
 import java.time.Duration;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
@@ -187,6 +186,52 @@ public class Hospital {
         return hospitals;
     }
 
+    /**
+     * Return the hospital nearest to a given region
+     *
+     * @param region The region to find the closest hospital
+     * @param hospitals The hospitals to check
+     * @return The nearest hospital. Will be null if the iterator contained no hospitals
+     */
+    public static Hospital getNearestHospitalToRegion(Region region, Iterable<Hospital> hospitals) {
+        Hospital nearest = null;
+        double nearestDistance = Double.MAX_VALUE;
+
+        for (Hospital hospital : hospitals) {
+            double distance = hospital.calculateDistanceTo(region);
+            if (distance < nearestDistance) {
+                nearestDistance = distance;
+                nearest = hospital;
+            }
+        }
+        return nearest;
+    }
+
+    /**
+     * Given a Client and a list of Hospitals, find the Hospital for the Client
+     * Will default to the Clients Hospital if they have one, otherwise will use their region string,
+     * attempt to convert that to one of the Region ENUM items, and if so will find the nearest hospital to that
+     * regions from the Iterable given
+     *
+     * @param client The client to check
+     * @param hospitals The Iterable collection of Hospitals to check
+     * @return The nearest Hospital, or null if the Client has no Hospital or Region
+     */
+    public static Hospital getHospitalForClient(Client client, Iterable<Hospital> hospitals) {
+        if (client == null) {
+            return null;
+        } else if (client.getHospital() != null) {
+            return client.getHospital();
+        } else {
+            try {
+                Region recipientRegion = Region.fromString(client.getRegion());
+                return Hospital.getNearestHospitalToRegion(recipientRegion, hospitals);
+            } catch (IllegalArgumentException e) {
+                return null;
+            }
+        }
+    }
+
     @Override
     public String toString() {
         return name;
@@ -303,7 +348,7 @@ public class Hospital {
      * @param hospitals The other hospitals to check
      * @return The nearest hospital. Will be null if there are no valid hospitals
      */
-    public Hospital getNearestWithTransplantProgram(Organ organ, Collection<Hospital> hospitals) {
+    public Hospital getNearestWithTransplantProgram(Organ organ, Iterable<Hospital> hospitals) {
         if (hasTransplantProgram(organ)) {
             return this;
         } else {

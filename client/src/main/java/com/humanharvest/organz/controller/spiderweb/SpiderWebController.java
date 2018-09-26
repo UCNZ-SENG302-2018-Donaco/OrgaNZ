@@ -11,6 +11,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.CacheHint;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.transform.Affine;
 import javafx.scene.transform.Rotate;
@@ -78,12 +79,8 @@ public class SpiderWebController extends SubController {
         // Setup spider web physics
         MultitouchHandler.setPhysicsHandler(new SpiderPhysicsHandler(MultitouchHandler.getRootPane()));
 
-        // Add exit button
-        Button exitButton = new Button("Exit Spider Web");
-        canvas.getChildren().add(exitButton);
-        exitButton.setOnAction(event -> closeSpiderWeb());
-
         // Setup page
+        setupButtons();
         displayDonatingClient();
         displayOrgans();
     }
@@ -110,6 +107,22 @@ public class SpiderWebController extends SubController {
         focusArea.setTransform(transform);
 
         node.setCacheHint(CacheHint.QUALITY);
+    }
+
+    /**
+     * Setup the basic buttons in the top left corner
+     */
+    private void setupButtons() {
+        Button exitButton = new Button("Exit Spider Web");
+        exitButton.setOnAction(__ -> closeSpiderWeb());
+
+        Button resetButton = new Button("Reset");
+        resetButton.setOnAction(__ -> resetLayout());
+
+        HBox buttons = new HBox();
+        buttons.setSpacing(10);
+        buttons.getChildren().addAll(exitButton, resetButton);
+        canvas.getChildren().add(buttons);
     }
 
     /**
@@ -161,6 +174,24 @@ public class SpiderWebController extends SubController {
         deceasedDonorPane.boundsInLocalProperty().addListener(
                 (__, ___, ____) -> organWithRecipientsList.forEach(
                         organ -> organ.setDonorConnectorStart(deceasedDonorPane.getBoundsInParent())));
+    }
+
+    private void resetLayout() {
+        Bounds donorBounds = deceasedDonorPane.getBoundsInParent();
+        double centreX = donorBounds.getMinX() + donorBounds.getWidth() / 2;
+        double centreY = donorBounds.getMinY() + donorBounds.getHeight() / 2;
+        double angleSize = (Math.PI * 2) / organWithRecipientsList.size();
+
+        for (int i = 0; i < organWithRecipientsList.size(); i++) {
+            OrganWithRecipients organWithRecipients = organWithRecipientsList.get(i);
+
+            double xPos = centreX + RADIUS * Math.sin(angleSize * i);
+            double yPos = centreY + RADIUS * Math.cos(angleSize * i);
+            double angle = 360.01 - Math.toDegrees(angleSize * i);
+
+            setPositionUsingTransform(organWithRecipients.getOrganPane(), 0, 0, 0, 0);
+            setPositionUsingTransform(organWithRecipients.getOrganPane(), xPos, yPos, angle, 1);
+        }
     }
 
     @FXML
