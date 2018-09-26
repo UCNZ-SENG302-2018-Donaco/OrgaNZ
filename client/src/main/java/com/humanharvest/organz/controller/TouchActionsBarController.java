@@ -156,10 +156,12 @@ public class TouchActionsBarController extends SubController {
         redoButton.setDisable(!responseView.isCanRedo());
 
         // Disable exit button if this is the last clinician window
-        if (State.getUiType() != UiType.STANDARD && !windowContext.isClinViewClientWindow() && State.getMainControllers
-                ().stream()
-                .filter(controller -> !controller.getWindowContext().isClinViewClientWindow())
-                .count() <= 1) {
+        if (State.getUiType() != UiType.STANDARD && !windowContext.isClinViewClientWindow() &&
+                State.getMainControllers()
+                        .stream()
+                        .filter(controller -> !controller.getWindowContext().isClinViewClientWindow())
+                        .filter(controller -> !controller.isProjecting())
+                        .count() <= 1) {
             exitButton.setDisable(true);
         } else {
             exitButton.setDisable(false);
