@@ -22,11 +22,7 @@
 <?import org.controlsfx.control.CheckComboBox?>
 <VBox xmlns:fx="http://javafx.com/fxml/1" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.121" fx:controller="com.humanharvest.organz.controller.clinician.OrgansToDonateController">
   <children>
-    <SplitPane VBox.vgrow="ALWAYS" dividerPositions="0.5" orientation="VERTICAL">
-      <items>
-        <HBox maxHeight="20.0" minHeight="-Infinity" fx:id="menuBarPane"/>
-        <SplitPane prefHeight="600.0">
-          <items>
+    <VBox fx:id="menuBarPane" maxWidth="1.7976931348623157E308"/>
             <BorderPane>
               <bottom>
                 <VBox BorderPane.alignment="CENTER" alignment="CENTER" prefWidth="200.0">
@@ -152,9 +148,5 @@
                 </VBox>
               </right>
             </BorderPane>
-          </items>
-        </SplitPane>
-      </items>
-    </SplitPane>
   </children>
 </VBox>

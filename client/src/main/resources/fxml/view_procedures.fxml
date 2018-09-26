@@ -18,9 +18,9 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 <?import org.controlsfx.control.CheckComboBox?>
-<VBox xmlns:fx="http://javafx.com/fxml/1" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.121" fx:controller="com.humanharvest.organz.controller.client.ViewProceduresController">
-  <SplitPane VBox.vgrow="ALWAYS" dividerPositions="0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="200.0">
-    <HBox maxHeight="-Infinity" minHeight="-Infinity" fx:id="menuBarPane"/>
+<VBox xmlns:fx="http://javafx.com/fxml/1" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.121"
+  fx:controller="com.humanharvest.organz.controller.client.ViewProceduresController">
+  <VBox fx:id="menuBarPane" maxWidth="1.7976931348623157E308" />
     <SplitPane VBox.vgrow="ALWAYS" dividerPositions="0.5">
       <HBox maxWidth="-Infinity" fx:id="sidebarPane"/>
       <BorderPane>
@@ -142,10 +142,10 @@
             <BorderPane.margin>
               <Insets bottom="20.0" left="10.0" right="10.0"/>
             </BorderPane.margin>
+            <Button mnemonicParsing="false" onAction="#viewDetails" text="View details" fx:id="viewDetailsButton"/>
             <Button mnemonicParsing="false" onAction="#deleteProcedure" text="Delete" fx:id="deleteButton"/>
           </HBox>
         </bottom>
       </BorderPane>
     </SplitPane>
-  </SplitPane>
 </VBox>
