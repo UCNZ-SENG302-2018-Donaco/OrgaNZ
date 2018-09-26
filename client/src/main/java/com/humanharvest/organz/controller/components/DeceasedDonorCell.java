@@ -16,6 +16,8 @@ public class DeceasedDonorCell extends ListCell<Client> {
 
     private static final Logger LOGGER = Logger.getLogger(DeceasedDonorCell.class.getName());
 
+    private Client donor;
+
     public DeceasedDonorCell() {
         setPrefWidth(0);
     }
@@ -30,18 +32,20 @@ public class DeceasedDonorCell extends ListCell<Client> {
             return;
         }
 
-        try {
-            FXMLLoader loader = new FXMLLoader(DeceasedDonorCell.class.getResource(Page.DECEASED_DONOR_DASHBOARD_OVERVIEW.getPath()));
-            Node node = loader.load();
+        if (donor != this.donor) {
+            this.donor = donor;
+            try {
+                FXMLLoader loader = new FXMLLoader(DeceasedDonorCell.class.getResource(Page.DECEASED_DONOR_DASHBOARD_OVERVIEW.getPath()));
+                Node node = loader.load();
 
-            DeceasedDonorDashboardOverviewController controller = loader.getController();
-            controller.setup(donor);
-            setGraphic(node);
+                DeceasedDonorDashboardOverviewController controller = loader.getController();
+                controller.setup(donor);
+                setGraphic(node);
 
-        } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+            } catch (IOException e) {
+                LOGGER.log(Level.SEVERE, e.getMessage(), e);
+            }
         }
-
     }
 
 }

@@ -70,7 +70,7 @@
             </Label>
          </children>
       </GridPane>
-   <ImageView fx:id="spiderWeb" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2">
+   <ImageView fx:id="spiderWeb" fitHeight="50.0" fitWidth="50.0"  onMouseClicked="#openSpiderWeb" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2">
          <HBox.margin>
             <Insets left="10.0" />
          </HBox.margin></ImageView>
