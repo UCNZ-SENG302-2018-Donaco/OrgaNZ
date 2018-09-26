@@ -15,7 +15,6 @@ import javafx.scene.control.ListView;
 import javafx.scene.layout.Pane;
 
 import com.humanharvest.organz.Client;
-import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.DashboardStatistics;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.controller.MainController;
@@ -29,7 +28,6 @@ import com.humanharvest.organz.state.State;
 public class DashboardController extends SubController {
 
     private final Session session;
-    private Clinician clinician;
     private DashboardStatistics statistics;
     private final ClientManager manager;
 
@@ -55,11 +53,7 @@ public class DashboardController extends SubController {
     public DashboardController() {
         session = State.getSession();
         manager = State.getClientManager();
-        // TODO make work with either admin or clinician
-        clinician = session.getLoggedInClinician();
     }
-
-
 
     @Override
     public void setup(MainController mainController) {
@@ -71,7 +65,7 @@ public class DashboardController extends SubController {
         refresh();
     }
 
-    public void generatePieChartData(){
+    private void generatePieChartData(){
         ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList(
             new Data("Donors",statistics.getDonorCount()),
             new Data("Receivers",statistics.getReceiverCount()),
@@ -84,12 +78,12 @@ public class DashboardController extends SubController {
 
     @Override
     public void refresh() {
-        statistics = State.getClientManager().getStatistics();
+        statistics = manager.getStatistics();
         totalClientsNum.setText(String.valueOf(statistics.getClientCount()));
         organsNum.setText(String.valueOf(statistics.getOrganCount()));
         requestNum.setText(String.valueOf(statistics.getRequestCount()));
 
-        deceasedDonorsList.getItems().setAll(State.getClientManager().getViableDeceasedDonors());
+        deceasedDonorsList.getItems().setAll(manager.getViableDeceasedDonors());
 
 
 
@@ -105,7 +99,7 @@ public class DashboardController extends SubController {
 
         updateOrgansToDonateList();
 
-        deceasedDonorsList.setItems((FXCollections.observableArrayList(State.getClientManager().getViableDeceasedDonors())));
+        deceasedDonorsList.setItems((FXCollections.observableArrayList(manager.getViableDeceasedDonors())));
 
         deceasedDonorsList.setCellFactory(param -> {
             DeceasedDonorCell item = new DeceasedDonorCell();
@@ -124,9 +118,6 @@ public class DashboardController extends SubController {
             return item;
         });
 
-
-
-
         // Attach timer to update table each second (for time until expiration)
         Timeline clock = new Timeline(new KeyFrame(
                 javafx.util.Duration.millis(1000),
@@ -140,12 +131,10 @@ public class DashboardController extends SubController {
         clock.setCycleCount(Animation.INDEFINITE);
         clock.play();
         updateOrgansToDonateList();
-
-
     }
 
     private void updateOrgansToDonateList() {
-        observableOrgansToDonate = FXCollections.observableArrayList(State.getClientManager().getAllOrgansToDonate
+        observableOrgansToDonate = FXCollections.observableArrayList(manager.getAllOrgansToDonate
                 ().stream().filter(o -> o.getDurationUntilExpiry() != null).collect(Collectors.toList()));
     }
 }
