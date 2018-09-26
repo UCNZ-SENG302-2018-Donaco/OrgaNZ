@@ -141,7 +141,7 @@ public class AppUI extends Application {
 
         // Only enable projection helper on touch screen
         if (MultitouchHandler.getRootPane() != null) {
-            ProjectionHelper.initialise(MultitouchHandler.getRootPane());
+            ProjectionHelper.initialise();
         }
 
         // Skips login page if arguments contains --login & --password

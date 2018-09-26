@@ -8,7 +8,6 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Bounds;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
@@ -34,8 +33,6 @@ public final class ProjectionHelper {
      */
     private static Stage[] stages;
 
-    private static Pane mainPane;
-
     private static MainController mainController;
 
     private ProjectionHelper() {
@@ -44,19 +41,12 @@ public final class ProjectionHelper {
     /**
      * Sets up the projection helper to keep track of what screens are non-primary.
      */
-    public static void initialise(Pane rootPane) {
+    public static void initialise() {
 
         List<Screen> screens = Screen.getScreens();
 
-        Bounds rootBounds = rootPane.localToScreen(rootPane.getBoundsInLocal());
-
-        // Assume only one screen - should always be true in touch mode
-        Screen thisScreen = Screen.getScreensForRectangle(
-                rootBounds.getMinX(), rootBounds.getMinY(),
-                rootBounds.getWidth(), rootBounds.getHeight()).get(0);
-
         otherScreens = screens.stream()
-                .filter(screen -> !Objects.equals(screen, thisScreen))
+                .filter(screen -> !Objects.equals(screen, Screen.getPrimary()))
                 .collect(Collectors.toList());
 
         stages = new Stage[otherScreens.size()];
@@ -83,7 +73,7 @@ public final class ProjectionHelper {
                 Stage newStage = new Stage();
                 newStage.setTitle("Organ Client Management System");
                 FXMLLoader loader = new FXMLLoader();
-                mainPane = loader.load(ProjectionHelper.class.getResourceAsStream(Page.MAIN.getPath()));
+                Pane mainPane = loader.load(ProjectionHelper.class.getResourceAsStream(Page.MAIN.getPath()));
                 mainController = loader.getController();
                 mainController.setStage(newStage);
                 mainController.setPane(mainPane);
@@ -115,6 +105,8 @@ public final class ProjectionHelper {
                 LOGGER.log(Level.SEVERE, "Error loading new window\n", e);
             }
         }
+
+        originalMainController.getPane().getScene().getWindow().requestFocus();
     }
 
     public static void updateProjection(MainController originalMainController) {
