@@ -96,7 +96,6 @@ public class StaffListController extends SubController {
      */
     @Override
     public void refresh() {
-        super.refresh();
         tableView.setItems(FXCollections.observableArrayList(clinicianManager.getClinicians()));
     }
 

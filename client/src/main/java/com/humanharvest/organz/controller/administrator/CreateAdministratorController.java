@@ -67,6 +67,11 @@ public class CreateAdministratorController extends SubController {
         mainController.setTitle("Create a new administrator");
     }
 
+    @Override
+    public void refresh() {
+        //Do not need to do anything as page doesn't render anything that could have changed
+    }
+
     /**
      * Checks that both fields are valid.
      * Sets any invalid fields' labels to red if they are invalid.

@@ -616,8 +616,11 @@ public class OrgansToDonateController extends SubController {
      */
     @Override
     public void refresh() {
-        updateOrgansToDonateList();
-        tableView.setItems(sortedOrgansToDonate);
+        // Only refresh this page if
+        if (!potentialRecipients.isFocused()) {
+            updateOrgansToDonateList();
+            tableView.setItems(sortedOrgansToDonate);
+        }
     }
 
     // ---------------- Format methods ----------------

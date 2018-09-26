@@ -121,6 +121,11 @@ public class StaffLoginController extends SubController {
         mainController.setTitle("Staff login");
     }
 
+    @Override
+    public void refresh() {
+        //Do not need to do anything as page doesn't render anything that could have changed
+    }
+
     /**
      * Navigates a user back to the Landing page.
      */

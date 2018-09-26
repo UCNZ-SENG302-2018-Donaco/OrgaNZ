@@ -250,7 +250,6 @@ public class SearchClientsController extends SubController {
 
     @Override
     public void refresh() {
-        super.refresh();
         // Refresh the client list to ensure any additions or removals are updated
         updateClientList();
     }

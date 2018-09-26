@@ -6,13 +6,11 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.EnumSet;
-import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
@@ -45,6 +43,7 @@ import com.humanharvest.organz.views.clinician.ModifyClinicianObject;
 public class ViewClinicianController extends SubController {
 
     private static final Logger LOGGER = Logger.getLogger(ViewClinicianController.class.getName());
+
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
             .withZone(ZoneId.systemDefault());
 
@@ -100,7 +99,7 @@ public class ViewClinicianController extends SubController {
                 viewedClinician = session.getLoggedInClinician();
                 break;
             default:
-                throw new IllegalStateException("Should not get to this page without being logged in.");
+                throw new IllegalStateException("View Clinician page reached without being logged in.");
         }
     }
 
@@ -142,8 +141,11 @@ public class ViewClinicianController extends SubController {
 
     @Override
     public void refresh() {
-        getViewedClinicianData();
-        updateCountries();
+        // Only refresh the page if there have not been any changes made
+        if (getChanges().getModifiedFields().isEmpty()) {
+            getViewedClinicianData();
+            updateCountries();
+        }
     }
 
     /**
@@ -173,31 +175,6 @@ public class ViewClinicianController extends SubController {
         } else {
             regionCB.setVisible(false);
             regionTF.setVisible(true);
-        }
-    }
-
-    /**
-     * Loads the clinician identified by the staff ID in loadStaffIdTextField.
-     */
-    @FXML
-    void loadClinician() {
-        int idValue;
-        try {
-            idValue = Integer.parseInt(loadStaffIdTextField.getText());
-        } catch (NumberFormatException e) {
-            LOGGER.log(Level.WARNING, "Invalid staff ID", e);
-            PageNavigator.showAlert(Alert.AlertType.ERROR, "Invalid Staff ID",
-                    "The Staff ID must be an integer.", mainController.getStage());
-            return;
-        }
-
-        Optional<Clinician> newClinician = State.getClinicianManager().getClinicianByStaffId(idValue);
-        if (newClinician.isPresent()) {
-            viewedClinician = newClinician.get();
-            getViewedClinicianData();
-        } else {
-            PageNavigator.showAlert(Alert.AlertType.ERROR, "Invalid Staff ID",
-                    "This staff ID does not exist in the system.", mainController.getStage());
         }
     }
 
@@ -301,12 +278,7 @@ public class ViewClinicianController extends SubController {
         }
     }
 
-    /**
-     * Records the changes updated as a ModifyClinicianAction to trace the change in record.
-     *
-     * @return If there were any changes made
-     */
-    private boolean updateChanges() {
+    private ModifyClinicianObject getChanges() {
         ModifyClinicianObject modifyClinicianObject = new ModifyClinicianObject();
 
         addChangeIfDifferent(modifyClinicianObject, viewedClinician, "firstName", fname.getText());
@@ -321,6 +293,17 @@ public class ViewClinicianController extends SubController {
         } else {
             addChangeIfDifferent(modifyClinicianObject, viewedClinician, "region", regionTF.getText());
         }
+
+        return modifyClinicianObject;
+    }
+
+    /**
+     * Records the changes updated as a ModifyClinicianAction to trace the change in record.
+     *
+     * @return If there were any changes made
+     */
+    private boolean updateChanges() {
+        ModifyClinicianObject modifyClinicianObject = getChanges();
 
         try {
             viewedClinician = State.getClinicianResolver().modifyClinician(viewedClinician, modifyClinicianObject);
