@@ -28,6 +28,7 @@ import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
+import com.humanharvest.organz.utilities.view.PageNavigatorTouch;
 import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
 
 public class DeceasedDonorOverviewController extends SubController {
@@ -82,6 +83,13 @@ public class DeceasedDonorOverviewController extends SubController {
         // Setup handling of double-click
         deceasedDonorPane.setOnMouseClicked(mouseEvent -> {
             if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 2) {
+                PageNavigatorTouch nav = (PageNavigatorTouch) PageNavigator.getInstance();
+                System.out.println(deceasedDonorPane.getBoundsInParent());
+                System.out.println(deceasedDonorPane.getBoundsInLocal());
+                System.out.println(deceasedDonorPane.getTransforms());
+//                nav.openNewWindow(de)
+
+
                 MainController newMain = PageNavigator.openNewWindow();
                 if (newMain != null) {
                     newMain.setWindowContext(new WindowContextBuilder()

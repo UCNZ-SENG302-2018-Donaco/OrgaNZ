@@ -9,6 +9,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -16,7 +17,10 @@ import javafx.scene.control.Alert;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.transform.Affine;
+import javafx.scene.transform.Rotate;
+import javafx.scene.transform.Scale;
 import javafx.scene.transform.Transform;
+import javafx.scene.transform.Translate;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
@@ -27,6 +31,7 @@ import com.humanharvest.organz.controller.components.TouchAlertTextController;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.touch.FocusArea;
 import com.humanharvest.organz.touch.MultitouchHandler;
+import com.humanharvest.organz.touch.PointUtils;
 
 /**
  * Utility class for controlling navigation between pages.
@@ -108,6 +113,22 @@ public class PageNavigatorTouch implements IPageNavigator {
     public MainController openNewWindow(int width, int height) {
 
         return openNewWindow(width, height, FocusArea::new);
+    }
+
+    public MainController openNewWindow(double x, double y, double angle, double scale) {
+        MainController mainController = openNewWindow(1016, 639);
+
+        FocusArea focusArea = (FocusArea) mainController.getPane().getUserData();
+
+        Point2D centre = PointUtils.getCentreOfNode(mainController.getPane());
+
+        Affine transform = new Affine();
+        transform.append(new Translate(x, y));
+        transform.append(new Scale(scale, scale));
+        transform.append(new Rotate(angle, centre.getX(), centre.getY()));
+        focusArea.setTransform(transform);
+
+        return mainController;
     }
 
     /**
