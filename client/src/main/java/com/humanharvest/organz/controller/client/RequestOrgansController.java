@@ -196,11 +196,10 @@ public class RequestOrgansController extends SubController {
         }
 
         refresh();
-        enableAppropriateButtons();
     }
 
     /**
-     * Refreshes the contents of the two tables based on the client's current transplant requests.
+     * Fully refreshes the information on this page, as all changes can be immediately applied so change cannot be lost
      */
     @Override
     public void refresh() {
@@ -240,15 +239,25 @@ public class RequestOrgansController extends SubController {
             mainController.setTitle("Request Organs: " + client.getFullName());
 
         }
+
+        enableAppropriateButtons();
     }
 
     private void enableAppropriateButtons() {
         // The "Resolve Request" button
-        if (windowContext.isClinViewClientWindow()
-                && currentRequestsTable.getSelectionModel().getSelectedItem() != null) {
-            resolveRequestBar.setDisable(false);
-        } else {
+
+        if (client.isDead()) {
             resolveRequestBar.setDisable(true);
+            newRequestForm.setDisable(true);
+        } else {
+            newRequestForm.setDisable(false);
+
+            if (windowContext.isClinViewClientWindow()
+                    && currentRequestsTable.getSelectionModel().getSelectedItem() != null) {
+                resolveRequestBar.setDisable(false);
+            } else {
+                resolveRequestBar.setDisable(true);
+            }
         }
     }
 

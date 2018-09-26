@@ -223,11 +223,21 @@ public class ViewClientController extends SubController {
             viewedClient = windowContext.getViewClient();
             mainController.loadMenuBar(menuBarPane);
         }
-        refresh();
+        refreshData();
     }
 
+    /**
+     * Fully updates the Client if there have not been any changes. If there have, then no new data is loaded
+     */
     @Override
     public void refresh() {
+        if (!hasChanges()) {
+            // The client has not been modified, so update the data
+            refreshData();
+        }
+    }
+
+    private void refreshData() {
         setEnabledCountries();
 
         // Refresh client data from server
@@ -268,6 +278,19 @@ public class ViewClientController extends SubController {
         checkMandatoryFields();
         checkNonMandatoryFields();
         checkDeathDetailsFields();
+    }
+
+    private boolean hasChanges() {
+        ModifyClientObject modifyClientObject = new ModifyClientObject();
+
+        addChangesIfDifferent(modifyClientObject);
+
+        if (deathDetailsPane.isDisabled()) {
+            return !modifyClientObject.getModifiedFields().isEmpty();
+        } else {
+            updateDeathFields(modifyClientObject);
+            return !modifyClientObject.getModifiedFields().isEmpty();
+        }
     }
 
     /**
@@ -429,7 +452,7 @@ public class ViewClientController extends SubController {
             }
         }
         if (uploadSuccess) {
-            refresh();
+            refreshData();
             PageNavigator.showAlert(AlertType.CONFIRMATION, "Success", "The image has been posted.",
                     mainController.getStage());
         }
@@ -442,7 +465,7 @@ public class ViewClientController extends SubController {
     public void deletePhoto() {
         try {
             State.getImageManager().deleteClientImage(viewedClient.getUid());
-            refresh();
+            refreshData();
         } catch (ServerRestException e) {
             PageNavigator.showAlert(AlertType.ERROR, "Server Error", "Something went wrong with the server. "
                     + "Please try again later.", mainController.getStage());
@@ -455,7 +478,7 @@ public class ViewClientController extends SubController {
      */
     @FXML
     private void cancel() {
-        refresh();
+        refreshData();
     }
 
     /**
@@ -594,6 +617,7 @@ public class ViewClientController extends SubController {
                 promptMarkAsDead(modifyClientObject);
             } else {
                 updateDeathFields(modifyClientObject);
+                applyChanges(modifyClientObject);
             }
         }
     }
@@ -640,6 +664,7 @@ public class ViewClientController extends SubController {
                 "This will cancel all waiting transplant requests for this client.", mainController.getStage(),
                 isOk -> {
                     updateDeathFields(modifyClientObject);
+                    applyChanges(modifyClientObject);
                 });
     }
 
@@ -668,8 +693,6 @@ public class ViewClientController extends SubController {
         } else {
             addChangeIfDifferent(modifyClientObject, viewedClient, "regionOfDeath", deathRegionTF.getText());
         }
-
-        applyChanges(modifyClientObject);
     }
 
     /**
