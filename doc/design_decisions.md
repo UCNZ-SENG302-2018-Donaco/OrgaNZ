@@ -14,7 +14,8 @@ having to deal with ties to specific deployment environments.
 
 
 #### Hibernate
-> Fill this in
+This library allows us to easily interface with a database backend without writing lots of boilerplate code,
+since it will manage the java object to schema mapping automatically.
 
 
 #### Google HTTP Client
