@@ -20,6 +20,7 @@ recent-artifacts:
 
   artifacts:
     paths:
+      - README.md
       - doc/examples/*
       - doc/design_decisions.md
       - doc/test_manual.md
@@ -37,6 +38,7 @@ recent-artifacts-dev:
 
   artifacts:
     paths:
+      - README.md
       - doc/examples/*
       - doc/design_decisions.md
       - doc/test_manual.md
