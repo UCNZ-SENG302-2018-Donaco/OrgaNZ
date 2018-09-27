@@ -203,7 +203,7 @@ public class TransplantsController extends SubController {
                 TransplantRequest request = tableView.getSelectionModel().getSelectedItem();
                 if (request != null) {
                     Client client = request.getClient();
-                    MainController newMain = PageNavigator.openNewWindow();
+                    MainController newMain = PageNavigator.openNewWindow(mainController);
                     if (newMain != null) {
                         newMain.setWindowContext(new WindowContextBuilder()
                                 .setAsClinicianViewClientWindow()

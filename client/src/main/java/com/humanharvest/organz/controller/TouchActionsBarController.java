@@ -179,7 +179,7 @@ public class TouchActionsBarController extends SubController {
      */
     @FXML
     private void duplicateWindow() {
-        MainController newMain = PageNavigator.openNewWindow();
+        MainController newMain = PageNavigator.openNewWindow(mainController);
         if (newMain != null) {
             newMain.setWindowContext(mainController.getWindowContext());
             PageNavigator.loadPage(mainController.getCurrentPage(), newMain);
