@@ -226,6 +226,7 @@ public class MainController {
             menuBarController.refresh();
         } else if (touchActionsBarController != null) {
             touchActionsBarController.refresh();
+            loadSidebar();
         }
     }
 
