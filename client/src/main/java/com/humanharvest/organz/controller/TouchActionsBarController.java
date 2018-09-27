@@ -67,15 +67,13 @@ public class TouchActionsBarController extends SubController {
             homeButton.setVisible(false);
             duplicateButton.setVisible(false);
             projectButton.setVisible(false);
-            entireMenubarPane.setStyle("-fx-background-color: rgb(137, 186, 255)");
-
-        } else {
-            entireMenubarPane.setStyle("-fx-background-color: rgb(137, 186, 255)");
         }
 
         if (windowContext.isClinViewClientWindow()) {
             homeButton.setDisable(true);
-            entireMenubarPane.setStyle("-fx-background-color: #D9B3FF");
+            entireMenubarPane.getStyleClass().setAll("menu-bar-view-client");
+        } else {
+            entireMenubarPane.getStyleClass().setAll("menu-bar-clinician");
         }
         if (!ProjectionHelper.canProject()) {
             projectButton.setDisable(true);
@@ -242,14 +240,21 @@ public class TouchActionsBarController extends SubController {
         } else {
 
             if (ProjectionHelper.canProject()) {
+                boolean existingProjection  = false;
                 for (MainController controller: State.getMainControllers()) {
-                    if (controller != mainController) {
+                    if (controller != mainController && controller.isProjecting()) {
+                        existingProjection = true;
                         controller.setProjecting(false);
+                        controller.refreshNavigation();
                     }
                 }
+
                 mainController.setProjecting(true);
-                PageNavigator.refreshAllWindows();
-                ProjectionHelper.createNewProjection(mainController);
+                if (existingProjection) {
+                    ProjectionHelper.updateProjection(mainController);
+                } else {
+                    ProjectionHelper.createNewProjection(mainController);
+                }
             }
         }
     }
