@@ -37,6 +37,7 @@ public class MainController {
     private TouchActionsBarController touchActionsBarController;
     private SubController subController;
     private boolean isProjecting;
+    private boolean isAProjection = false;
     /**
      * Holder of a switchable page.
      */
@@ -263,5 +264,13 @@ public class MainController {
 
     public void setProjecting(boolean projecting) {
         isProjecting = projecting;
+    }
+
+    public boolean isAProjection() {
+        return isAProjection;
+    }
+
+    public void setIsAProjection(boolean aProjection) {
+        isAProjection = aProjection;
     }
 }

@@ -10,16 +10,55 @@ import java.time.temporal.ChronoUnit;
 public abstract class DurationFormatter {
 
     public enum DurationFormat {
-        X_HOURS_Y_MINUTES_SECONDS, BIGGEST, X_HRS_Y_MINS_SECS, DAYS
+        X_HOURS_Y_MINUTES_SECONDS, BIGGEST, X_HRS_Y_MINS_SECS, DAYS, X_HRS_Y_MINS
+    }
+
+    /**
+     * Returns the duration, formatted to a string.
+     *
+     * How it is formatted depends on the Format passed in.
+     *
+     * The options are:
+     *
+     * X_HOURS_Y_MINUTES_SECONDS: x hours, y minutes (or x hours, y seconds if there are less than 60 seconds).
+     * E.g. "5 hours 20 minutes", "102 hours 30 seconds".
+     *
+     * BIGGEST: the biggest unit of time. E.g. "4 days", "3 hours", "59 seconds".
+     *
+     * @param duration the duration to format
+     * @return the formatted string
+     */
+    public static String getFormattedDuration(Duration duration, DurationFormat format) {
+        switch (format) {
+            case X_HOURS_Y_MINUTES_SECONDS:
+                return getDurationFormattedXHoursYMinutesSeconds(duration);
+            case BIGGEST:
+                return getDurationFormattedBiggest(duration);
+            case X_HRS_Y_MINS_SECS:
+                return getDurationFormattedXHrsYMinsSecs(duration);
+            case DAYS:
+                return getDurationFormattedDays(duration);
+            case X_HRS_Y_MINS:
+                return getDurationFormattedXHrsYMins(duration);
+            default:
+                throw new UnsupportedOperationException("Unknown format for duration.");
+        }
     }
 
     private static String getDurationFormattedDays(Duration duration) {
         long days = duration.toDays();
-        if (days == 0) {
-            return "today";
-        } else if (days < 0) {
+        if (days < -1) {
             return days * -1 + " days ago";
-        } else {
+
+        } else if (days == -1) {
+            return "1 day ago";
+
+        } else if (days == 0) {
+            return "today";
+
+        } else if (days == 1) {
+            return "in 1 day";
+        } else  {
             return "in " + days + " days";
         }
     }
@@ -60,36 +99,6 @@ public abstract class DurationFormatter {
     }
 
     /**
-     * Returns the duration, formatted to a string.
-     *
-     * How it is formatted depends on the Format passed in.
-     *
-     * The options are:
-     *
-     * X_HOURS_Y_MINUTES_SECONDS: x hours, y minutes (or x hours, y seconds if there are less than 60 seconds).
-     * E.g. "5 hours 20 minutes", "102 hours 30 seconds".
-     *
-     * BIGGEST: the biggest unit of time. E.g. "4 days", "3 hours", "59 seconds".
-     *
-     * @param duration the duration to format
-     * @return the formatted string
-     */
-    public static String getFormattedDuration(Duration duration, DurationFormat format) {
-        switch (format) {
-            case X_HOURS_Y_MINUTES_SECONDS:
-                return getDurationFormattedXHoursYMinutesSeconds(duration);
-            case BIGGEST:
-                return getDurationFormattedBiggest(duration);
-            case X_HRS_Y_MINS_SECS:
-                return getDurationFormattedXHrsYMinsSecs(duration);
-            case DAYS:
-                return getDurationFormattedDays(duration);
-            default:
-                throw new UnsupportedOperationException("Unknown format for duration.");
-        }
-    }
-
-    /**
      * Returns the duration, formatted to display x hours, y minutes (or x hours, y seconds if there are less than 60
      * seconds).
      * E.g. "5 hours 20 minutes", "102 hours 30 seconds".
@@ -124,6 +133,16 @@ public abstract class DurationFormatter {
             String singleHour, String multipleHours,
             String oneSecond, String multipleSeconds,
             String oneMinute, String multipleMinutes) {
+        return getDurationHoursMinsSecsString(duration,
+                singleHour, multipleHours,
+                oneSecond, multipleSeconds,
+                oneMinute, multipleMinutes, true);
+    }
+
+        private static String getDurationHoursMinsSecsString(Duration duration,
+                String singleHour, String multipleHours,
+                String oneSecond, String multipleSeconds,
+                String oneMinute, String multipleMinutes, boolean useSeconds) {
 
         if (duration == null) {
             return "Could not calculate duration";
@@ -137,7 +156,7 @@ public abstract class DurationFormatter {
             formattedDuration = hours + multipleHours;
         }
         long minutes = duration.toMinutes() % 60;
-        if (minutes == 0) { // no minutes, just seconds (and perhaps hours)
+        if (minutes == 0 && useSeconds) { // no minutes, just seconds (and perhaps hours)
             long seconds = duration.getSeconds() % 3600;
             if (seconds == 1) {
                 formattedDuration += "1" + oneSecond;
@@ -150,6 +169,14 @@ public abstract class DurationFormatter {
             formattedDuration += minutes + multipleMinutes;
         }
         return formattedDuration;
+    }
+
+    private static String getDurationFormattedXHrsYMins(Duration duration) {
+
+        return getDurationHoursMinsSecsString(duration,
+                "hr ", "hrs ",
+                "sec", "secs",
+                "min", "mins", false);
     }
 
 }

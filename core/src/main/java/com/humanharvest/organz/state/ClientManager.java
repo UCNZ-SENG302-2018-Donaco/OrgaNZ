@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.DashboardStatistics;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.TransplantRecord;
@@ -93,7 +94,14 @@ public interface ClientManager {
     Collection<DonatedOrgan> getAllOrgansToDonate();
 
     /**
-     * Returns a collection of all the organs that are available to donate from dead peop[e.
+     * A paginated list of all organs that are available for donation
+     * @param offset How many results to skip (default: 0)
+     * @param count How many results to return (default: all)
+     * @param regions Only return organs withing the given regions (default: all)
+     * @param organType Only return organs of the given types (default: all)
+     * @param sortOption Sort by the given option (default: time until expiry)
+     * @param reversed If the results should be reversed (default: false)
+     * @return A paginated list of donated organs matching the given filters
      */
     PaginatedDonatedOrgansList getAllOrgansToDonate(Integer offset, Integer count, Set<String> regions, Set<Organ>
             organType, DonatedOrganSortOptionsEnum sortOption, Boolean reversed);
@@ -116,4 +124,6 @@ public interface ClientManager {
     TransplantRecord getMatchingOrganTransplantRecord(DonatedOrgan donatedOrgan);
 
     List<HistoryItem> getAllHistoryItems();
+
+    DashboardStatistics getStatistics();
 }

@@ -5,7 +5,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -74,8 +73,9 @@ public class TouchActionsBarController extends SubController {
         }
 
         if (windowContext.isClinViewClientWindow()) {
-            homeButton.setDisable(true);
-            entireMenubarPane.setStyle("-fx-background-color: #D9B3FF");
+            entireMenubarPane.getStyleClass().add("menu-bar-view-client");
+        } else {
+            entireMenubarPane.getStyleClass().add("menu-bar-clinician");
         }
         if (!ProjectionHelper.canProject()) {
             projectButton.setDisable(true);
@@ -120,8 +120,8 @@ public class TouchActionsBarController extends SubController {
      */
     @FXML
     private void navigateHome() {
-        // todo We need to navigate to our dashboard (for now we're just loading the search clients page).
-        PageNavigator.loadPage(Page.SEARCH, mainController);
+        // We need to navigate to our dashboard (for now we're just loading the search clients page).
+        PageNavigator.loadPage(Page.DASHBOARD, mainController);
         ProjectionHelper.updateProjection(mainController);
     }
 
@@ -154,17 +154,17 @@ public class TouchActionsBarController extends SubController {
         undoButton.setDisable(!responseView.isCanUndo());
         redoButton.setDisable(!responseView.isCanRedo());
 
-        // Disable exit button if this is the last clinician window
-        if (State.getUiType() != UiType.STANDARD && !windowContext.isClinViewClientWindow() &&
-                State.getMainControllers()
-                        .stream()
-                        .filter(controller -> !controller.getWindowContext().isClinViewClientWindow())
-                        .filter(controller -> !controller.isProjecting())
-                        .count() <= 1) {
+        if (State.getUiType() == UiType.TOUCH && !windowContext.isClinViewClientWindow() && State.getMainControllers()
+                .stream()
+                .filter(controller -> !controller.getWindowContext().isClinViewClientWindow())
+                .filter(controller -> !controller.isAProjection())
+                .count() <= 1) {
             exitButton.setDisable(true);
+
         } else {
             exitButton.setDisable(false);
         }
+
         projectButton.setSelected(mainController.isProjecting());
     }
 
@@ -222,12 +222,13 @@ public class TouchActionsBarController extends SubController {
      * Exit the pane that is currently open
      */
     public void exit() {
-        mainController.closeWindow();
-        State.getMainControllers().forEach(MainController::refreshNavigation);
         if (projectButton.isSelected()) {
             ProjectionHelper.stageClosing();
             mainController.setProjecting(false);
         }
+        mainController.closeWindow();
+        State.getMainControllers().forEach(MainController::refreshNavigation);
+
     }
 
     /**
