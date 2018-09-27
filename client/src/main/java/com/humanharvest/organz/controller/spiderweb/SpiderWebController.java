@@ -69,7 +69,9 @@ public class SpiderWebController extends SubController {
         Iterable<MainController> toClose = new ArrayList<>(State.getMainControllers());
         for (MainController mainController : toClose) {
             mainController.closeWindow();
-            previouslyOpenWindows.add(mainController);
+            if (!mainController.isAProjection()) {
+                previouslyOpenWindows.add(mainController);
+            }
         }
 
         // Need to do this to be able to refresh the spider web
@@ -122,7 +124,10 @@ public class SpiderWebController extends SubController {
      */
     private void setupButtons() {
         Button exitButton = new Button("Exit Spider Web");
-        exitButton.setOnAction(__ -> closeSpiderWeb());
+        exitButton.setOnAction(__ -> {
+            closeSpiderWeb();
+            openPreviouslyOpenWindows();
+        });
 
         Button homeButton = new Button("Dashboard");
         homeButton.setOnAction(__ -> goToDashboard());
@@ -219,7 +224,9 @@ public class SpiderWebController extends SubController {
 
         // We need to close the Timeline to clear resources
         organWithRecipientsList.forEach(OrganWithRecipients::closeRefresher);
+    }
 
+    private void openPreviouslyOpenWindows() {
         // Open all the previously open windows again
         for (MainController mainController : previouslyOpenWindows) {
             mainController.showWindow();
@@ -254,12 +261,9 @@ public class SpiderWebController extends SubController {
     @FXML
     private void goToDashboard() {
         closeSpiderWeb();
-        for (MainController newMain : previouslyOpenWindows) {
-            canvas.getChildren().clear();
-            newMain.setWindowContext(WindowContext.defaultContext());
-            PageNavigator.loadPage(Page.DASHBOARD, newMain);
-        }
 
-
+        MainController newMain = PageNavigator.openNewWindow();
+        newMain.setWindowContext(WindowContext.defaultContext());
+        PageNavigator.loadPage(Page.DASHBOARD, newMain);
     }
 }

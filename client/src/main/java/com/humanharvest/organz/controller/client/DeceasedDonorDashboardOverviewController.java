@@ -20,6 +20,7 @@ import javafx.scene.image.ImageView;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.DonatedOrgan.OrganState;
+import com.humanharvest.organz.controller.ProjectionHelper;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.controller.spiderweb.SpiderWebController;
 import com.humanharvest.organz.state.State;
@@ -76,6 +77,7 @@ public class DeceasedDonorDashboardOverviewController extends SubController {
 
     @FXML
     private void openSpiderWeb() {
+        ProjectionHelper.stageClosing();
         new SpiderWebController(donor);
     }
 
