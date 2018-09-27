@@ -88,16 +88,12 @@ public class ReceiverOverviewController extends SubController {
             if (timeBetweenHospitals.isZero()) {
                 travelTime.setText("None");
             } else {
-                //todo should it be "5 hours (50 km)" or "50 km (5 hours)"? the label does say travel time.
                 travelTime.setText(DurationFormatter.getFormattedDuration(timeBetweenHospitals, DurationFormat.BIGGEST)
                         + String.format(Locale.UK, "%n(%.0f km)",
-                        recipient.getHospital().calculateDistanceTo(donor.getHospital())));
-                travelTime.setText(String.format(Locale.UK, "%.0f km (%s)",
-                        recipient.getHospital().calculateDistanceTo(donor.getHospital()),
-                        DurationFormatter.getFormattedDuration(timeBetweenHospitals, DurationFormat.BIGGEST)));
+                        recipient.getHospital().calculateDistanceTo(donor.getHospital())) + " away");
             }
         } else {
-            travelTime.setText("Unknown");
+            travelTime.setText("Unknown distance away");
         }
 
         // Set wait time
@@ -129,7 +125,8 @@ public class ReceiverOverviewController extends SubController {
             requestedTime.setText("");
         } else {
             Duration waitTime = request.getTimeSinceRequest();
-            requestedTime.setText(DurationFormatter.getFormattedDuration(waitTime, DurationFormat.BIGGEST));
+            requestedTime.setText("Waiting " +
+                    DurationFormatter.getFormattedDuration(waitTime, DurationFormat.BIGGEST));
         }
     }
 
