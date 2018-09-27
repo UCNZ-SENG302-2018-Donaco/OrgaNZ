@@ -96,14 +96,13 @@ public class TouchActionsBarController extends SubController {
         } else {
             openSidebar(drawer);
         }
-
     }
 
     /**
      * If the draw item is open, it will be closed.
      * @param drawer the item to close
      */
-    private static void closeSidebar(Pane drawer) {
+    public static void closeSidebar(Pane drawer) {
         drawer.setDisable(true);
         drawer.setVisible(false);
     }
