@@ -28,6 +28,9 @@ import com.humanharvest.organz.views.ActionResponseView;
 public class TouchActionsBarController extends SubController {
 
     @FXML
+    private Button logoutButton;
+
+    @FXML
     private ToggleButton projectButton;
 
     @FXML
@@ -78,6 +81,10 @@ public class TouchActionsBarController extends SubController {
             projectButton.setDisable(true);
         }
         hamburger.addEventHandler(MouseEvent.MOUSE_CLICKED, (e) -> toggleSidebar(controller.getDrawer()));
+
+        if (State.getSpiderwebDonor() != null) {
+            logoutButton.setDisable(true);
+        }
 
         refresh();
     }
