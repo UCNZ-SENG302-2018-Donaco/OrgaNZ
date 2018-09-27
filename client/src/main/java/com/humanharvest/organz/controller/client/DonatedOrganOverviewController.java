@@ -81,7 +81,7 @@ public class DonatedOrganOverviewController extends SubController {
         if(State.getUiType() == UiType.TOUCH) {
             new SpiderWebController(donatedOrgan.getDonor());
         } else { //standard
-            MainController newMain = PageNavigator.openNewWindow();
+            MainController newMain = PageNavigator.openNewWindow(mainController);
             newMain.setWindowContext(new WindowContext.WindowContextBuilder()
                     .setAsClinicianViewClientWindow()
                     .viewClient(donatedOrgan.getDonor()).build());

@@ -134,7 +134,7 @@ public class DashboardController extends SubController {
             if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 2) {
                 Client client = deceasedDonorsList.getSelectionModel().getSelectedItem();
                 if (client != null) {
-                    MainController newMain = PageNavigator.openNewWindow();
+                    MainController newMain = PageNavigator.openNewWindow(mainController);
                     if (newMain != null) {
                         newMain.setWindowContext(new WindowContext.WindowContextBuilder()
                                 .setAsClinicianViewClientWindow()
