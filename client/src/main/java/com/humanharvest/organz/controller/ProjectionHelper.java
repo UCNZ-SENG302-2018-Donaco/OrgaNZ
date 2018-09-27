@@ -122,6 +122,7 @@ public final class ProjectionHelper {
     public static void stageClosing() {
         if (mainController != null) {
             mainController.closeWindow();
+            mainController = null;
         }
 
         for (int i = 0; i < stages.length; i++) {
