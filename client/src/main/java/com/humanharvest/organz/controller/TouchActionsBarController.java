@@ -73,8 +73,9 @@ public class TouchActionsBarController extends SubController {
         }
 
         if (windowContext.isClinViewClientWindow()) {
-            homeButton.setDisable(true);
-            entireMenubarPane.setStyle("-fx-background-color: #D9B3FF");
+            entireMenubarPane.getStyleClass().add("menu-bar-view-client");
+        } else {
+            entireMenubarPane.getStyleClass().add("menu-bar-clinician");
         }
         if (!ProjectionHelper.canProject()) {
             projectButton.setDisable(true);
@@ -121,7 +122,7 @@ public class TouchActionsBarController extends SubController {
     @FXML
     private void navigateHome() {
         // We need to navigate to our dashboard (for now we're just loading the search clients page).
-        PageNavigator.loadPage(Page.SEARCH, mainController);
+        PageNavigator.loadPage(Page.DASHBOARD, mainController);
         ProjectionHelper.updateProjection(mainController);
     }
 

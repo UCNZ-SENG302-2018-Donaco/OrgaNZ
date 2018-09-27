@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.DashboardStatistics;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.IllnessRecord;
@@ -364,6 +365,7 @@ public class ClientManagerMemory implements ClientManager {
                 .collect(Collectors.toList());
     }
 
+
     @Override
     public PaginatedTransplantList getAllCurrentTransplantRequests(Integer offset, Integer count,
             Set<String> regions, Set<Organ> organs) {
@@ -399,6 +401,28 @@ public class ClientManagerMemory implements ClientManager {
         return clients.stream()
                 .flatMap(client -> client.getChangesHistory().stream())
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public DashboardStatistics getStatistics() {
+        DashboardStatistics statistics = new DashboardStatistics();
+        statistics.setClientCount(clients.size());
+
+        int donorReceiverCount = (int) clients.stream().filter(client -> client.isDonor() && client.isReceiver())
+                .count();
+        int donorCount = (int) clients.stream().filter(client -> client.isDonor() && !client.isReceiver())
+                .count();
+        int receiverCount = (int) clients.stream().filter(client -> !client.isDonor() && client.isReceiver())
+                .count();
+
+        statistics.setDonorCount(donorCount);
+        statistics.setReceiverCount(receiverCount);
+        statistics.setDonorReceiverCount(donorReceiverCount);
+
+        statistics.setOrganCount(getAllOrgansToDonate().size());
+        statistics.setRequestCount(getAllTransplantRequests().size());
+
+        return statistics;
     }
 
     /**

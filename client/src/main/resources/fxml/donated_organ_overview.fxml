@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<HBox maxHeight="50.0" prefHeight="50.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.client.DonatedOrganOverviewController">
+  <children>
+      <BorderPane prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: #dddddd;">
+         <center>
+         <ImageView fx:id="organPicture" fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER" />
+         </center>
+      </BorderPane>
+      <GridPane HBox.hgrow="ALWAYS">
+         <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="40.0" prefWidth="100.0" />
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="60.0" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+         </rowConstraints>
+         <children>
+         <VBox GridPane.columnIndex="1">
+           <children>
+             <!--
+                  <TextFlow fx:id="textFlow" style="-fx-text-alignment: center;" VBox.vgrow="ALWAYS">
+                           <children>
+                              <Text fx:id="organCount" fontSmoothingType="LCD" strokeType="OUTSIDE" strokeWidth="0.0" text="Loading">
+                                 <font>
+                                    <Font name="System Bold" size="13.0" />
+                                 </font>
+                              </Text>
+                              <Text fx:id="organsAvailable" fontSmoothingType="LCD" strokeType="OUTSIDE" strokeWidth="0.0" text=" organ count..." />
+                           </children>
+                        </TextFlow>-->
+             <Label fx:id="donorNameLabel" prefHeight="25.0" text="Loading donor..." VBox.vgrow="ALWAYS">
+                     <VBox.margin>
+                        <Insets left="25.0" />
+                     </VBox.margin>
+                  </Label>
+             <Label fx:id="timeToExpiryLabel" prefHeight="25.0" text="Loading time to expiry..." VBox.vgrow="ALWAYS">
+                     <VBox.margin>
+                        <Insets left="25.0" />
+                     </VBox.margin>
+                  </Label>
+           </children>
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+         </VBox>
+         <Label fx:id="nameLabel" maxWidth="1.7976931348623157E308" prefHeight="50.0" text="Loading organ...">
+               <font>
+                  <Font size="18.0" />
+               </font>
+               <GridPane.margin>
+                  <Insets left="10.0" />
+               </GridPane.margin>
+            </Label>
+         </children>
+      </GridPane>
+   <ImageView fx:id="spiderWeb" fitHeight="50.0"  onMouseClicked="#openSpiderWeb" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2">
+         <HBox.margin>
+            <Insets left="10.0" />
+         </HBox.margin>
+      </ImageView>
+  </children>
+</HBox>
