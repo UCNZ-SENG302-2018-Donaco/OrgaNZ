@@ -36,8 +36,6 @@ import com.humanharvest.organz.touch.PointUtils;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.utilities.view.WindowContext;
-import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
-import com.humanharvest.organz.utilities.view.WindowContext;
 
 /**
  * The Spider web controller which handles everything to do with displaying panes in the spider web stage.
@@ -85,15 +83,6 @@ public class SpiderWebController extends SubController {
         // Setup spider web physics
         MultitouchHandler.setPhysicsHandler(new SpiderPhysicsHandler(MultitouchHandler.getRootPane()));
 
-        Button exitButton = new Button("Exit Spider Web");
-        canvas.getChildren().add(exitButton);
-        exitButton.setOnAction(event -> closeSpiderWeb());
-
-        Button homeButton = new Button("Dashboard");
-        homeButton.setTranslateX(120);
-        canvas.getChildren().add(homeButton);
-        homeButton.setOnAction(event -> goToDashboard());
-
         // Setup page
         setupButtons();
         displayDonatingClient();
@@ -135,12 +124,15 @@ public class SpiderWebController extends SubController {
         Button exitButton = new Button("Exit Spider Web");
         exitButton.setOnAction(__ -> closeSpiderWeb());
 
+        Button homeButton = new Button("Dashboard");
+        homeButton.setOnAction(__ -> goToDashboard());
+
         Button resetButton = new Button("Reset");
         resetButton.setOnAction(__ -> resetLayout());
 
         HBox buttons = new HBox();
         buttons.setSpacing(10);
-        buttons.getChildren().addAll(exitButton, resetButton);
+        buttons.getChildren().addAll(exitButton, homeButton, resetButton);
         canvas.getChildren().add(buttons);
     }
 
