@@ -64,7 +64,7 @@ public class CreateClientController extends SubController {
         mainController.setTitle("Create a client");
 
         if (State.getSession() != null) { //they're a clinician or admin
-            mainController.loadTouchActionsBar(menuBarPane);
+            mainController.loadNavigation(menuBarPane);
             goBackButton.setVisible(false);
         }
 

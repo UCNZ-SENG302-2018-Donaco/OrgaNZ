@@ -1,6 +1,5 @@
 package com.humanharvest.organz.controller;
 
-
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 

@@ -74,7 +74,7 @@ public class StaffLoginController extends SubController {
             return;
         }
 
-        PageNavigator.loadPage(Page.VIEW_CLINICIAN, mainController);
+        PageNavigator.loadPage(Page.DASHBOARD, mainController);
 
         HistoryItem save = new HistoryItem("LOGIN_STAFF", String.format("Clinician %s %s logged in.",
                 clinician.getFirstName(), clinician.getLastName()));
@@ -96,7 +96,7 @@ public class StaffLoginController extends SubController {
             return;
         }
 
-        PageNavigator.loadPage(Page.SEARCH, mainController);
+        PageNavigator.loadPage(Page.DASHBOARD, mainController);
         HistoryItem save = new HistoryItem("LOGIN_STAFF", String.format("Administrator %s logged in.",
                 administrator.getUsername()));
         JSONConverter.updateHistory(save, "action_history.json");

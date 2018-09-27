@@ -124,12 +124,15 @@ public class SpiderWebController extends SubController {
         Button exitButton = new Button("Exit Spider Web");
         exitButton.setOnAction(__ -> closeSpiderWeb());
 
+        Button homeButton = new Button("Dashboard");
+        homeButton.setOnAction(__ -> goToDashboard());
+
         Button resetButton = new Button("Reset");
         resetButton.setOnAction(__ -> resetLayout());
 
         HBox buttons = new HBox();
         buttons.setSpacing(10);
-        buttons.getChildren().addAll(exitButton, resetButton);
+        buttons.getChildren().addAll(exitButton, homeButton, resetButton);
         canvas.getChildren().add(buttons);
     }
 
@@ -248,4 +251,15 @@ public class SpiderWebController extends SubController {
         }
     }
 
+    @FXML
+    private void goToDashboard() {
+        closeSpiderWeb();
+        for (MainController newMain : previouslyOpenWindows) {
+            canvas.getChildren().clear();
+            newMain.setWindowContext(WindowContext.defaultContext());
+            PageNavigator.loadPage(Page.DASHBOARD, newMain);
+        }
+
+
+    }
 }

@@ -88,9 +88,13 @@ public class ReceiverOverviewController extends SubController {
             if (timeBetweenHospitals.isZero()) {
                 travelTime.setText("None");
             } else {
+                //todo should it be "5 hours (50 km)" or "50 km (5 hours)"? the label does say travel time.
                 travelTime.setText(DurationFormatter.getFormattedDuration(timeBetweenHospitals, DurationFormat.BIGGEST)
                         + String.format(Locale.UK, "%n(%.0f km)",
                         recipient.getHospital().calculateDistanceTo(donor.getHospital())));
+                travelTime.setText(String.format(Locale.UK, "%.0f km (%s)",
+                        recipient.getHospital().calculateDistanceTo(donor.getHospital()),
+                        DurationFormatter.getFormattedDuration(timeBetweenHospitals, DurationFormat.BIGGEST)));
             }
         } else {
             travelTime.setText("Unknown");
