@@ -29,6 +29,9 @@ import com.humanharvest.organz.views.ActionResponseView;
 public class TouchActionsBarController extends SubController {
 
     @FXML
+    private Button logoutButton;
+
+    @FXML
     private ToggleButton projectButton;
 
     @FXML
@@ -67,21 +70,22 @@ public class TouchActionsBarController extends SubController {
             homeButton.setVisible(false);
             duplicateButton.setVisible(false);
             projectButton.setVisible(false);
-            entireMenubarPane.setStyle("-fx-background-color: rgb(137, 186, 255)");
-
-        } else {
-            entireMenubarPane.setStyle("-fx-background-color: rgb(137, 186, 255)");
         }
 
         if (windowContext.isClinViewClientWindow()) {
-            entireMenubarPane.getStyleClass().add("menu-bar-view-client");
+            homeButton.setDisable(true);
+            entireMenubarPane.getStyleClass().setAll("menu-bar-view-client");
         } else {
-            entireMenubarPane.getStyleClass().add("menu-bar-clinician");
+            entireMenubarPane.getStyleClass().setAll("menu-bar-clinician");
         }
         if (!ProjectionHelper.canProject()) {
             projectButton.setDisable(true);
         }
         hamburger.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> toggleSidebar(mainController.getDrawer()));
+
+        if (State.getSpiderwebDonor() != null) {
+            logoutButton.setDisable(true);
+        }
 
         refresh();
     }
@@ -179,7 +183,7 @@ public class TouchActionsBarController extends SubController {
      */
     @FXML
     private void duplicateWindow() {
-        MainController newMain = PageNavigator.openNewWindow();
+        MainController newMain = PageNavigator.openNewWindow(mainController);
         if (newMain != null) {
             newMain.setWindowContext(mainController.getWindowContext());
             PageNavigator.loadPage(mainController.getCurrentPage(), newMain);
@@ -239,14 +243,21 @@ public class TouchActionsBarController extends SubController {
     private void projectWindow() {
         if (projectButton.isSelected()) {
             if (ProjectionHelper.canProject()) {
-                for (MainController controller : State.getMainControllers()) {
-                    if (!Objects.equals(controller, mainController)) {
+                boolean existingProjection  = false;
+                for (MainController controller: State.getMainControllers()) {
+                    if (!Objects.equals(controller, mainController) && controller.isProjecting()) {
+                        existingProjection = true;
                         controller.setProjecting(false);
+                        controller.refreshNavigation();
                     }
                 }
+
                 mainController.setProjecting(true);
-                PageNavigator.refreshAllWindows();
-                ProjectionHelper.createNewProjection(mainController);
+                if (existingProjection) {
+                    ProjectionHelper.updateProjection(mainController);
+                } else {
+                    ProjectionHelper.createNewProjection(mainController);
+                }
             }
         } else {
             ProjectionHelper.stageClosing();

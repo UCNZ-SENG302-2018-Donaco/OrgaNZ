@@ -20,14 +20,19 @@ import javafx.scene.image.ImageView;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.DonatedOrgan.OrganState;
+import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.controller.ProjectionHelper;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.controller.spiderweb.SpiderWebController;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.state.State.UiType;
 import com.humanharvest.organz.utilities.DurationFormatter;
 import com.humanharvest.organz.utilities.DurationFormatter.DurationFormat;
 import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
+import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
+import com.humanharvest.organz.utilities.view.WindowContext;
 
 import org.apache.commons.io.IOUtils;
 
@@ -65,7 +70,13 @@ public class DeceasedDonorDashboardOverviewController extends SubController {
         Duration daysSinceDeath = Duration.between(LocalDateTime.now(), donor.getDatetimeOfDeath());
         deathLabel.setText("Died " + DurationFormatter.getFormattedDuration(daysSinceDeath, DurationFormat.DAYS));
 
-        try (InputStream in = getClass().getResourceAsStream("/images/pages/spiderweb.png")) {
+        String imageName;
+        if(State.getUiType() == UiType.TOUCH) {
+            imageName = "spiderweb";
+        } else { //standard
+            imageName = "donate_organs";
+        }
+        try (InputStream in = getClass().getResourceAsStream("/images/pages/" + imageName + ".png")) {
             byte[] spiderWebImageBytes = IOUtils.toByteArray(in);
             spiderWeb.setImage(new Image(new ByteArrayInputStream(spiderWebImageBytes)));
         } catch (IOException e) {
@@ -79,8 +90,17 @@ public class DeceasedDonorDashboardOverviewController extends SubController {
     }
 
     @FXML
-    private void openSpiderWeb() {
-        new SpiderWebController(donor);
+    private void openSpiderWebOrOrgansToDonatePage() {
+        if(State.getUiType() == UiType.TOUCH) {
+            ProjectionHelper.stageClosing();
+            new SpiderWebController(donor);
+        } else { //standard
+            MainController newMain = PageNavigator.openNewWindow();
+            newMain.setWindowContext(new WindowContext.WindowContextBuilder()
+                    .setAsClinicianViewClientWindow()
+                    .viewClient(donor).build());
+            PageNavigator.loadPage(Page.REGISTER_ORGAN_DONATIONS, newMain);
+        }
     }
 
     private Image getProfilePicture(Client client, Map<Client, Image> profilePictureStore) {

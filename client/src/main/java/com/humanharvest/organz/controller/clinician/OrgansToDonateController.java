@@ -228,7 +228,7 @@ public class OrgansToDonateController extends SubController {
             if (mouseEvent.getButton() == MouseButton.PRIMARY && mouseEvent.getClickCount() == 2) {
                 Client client = potentialRecipients.getSelectionModel().getSelectedItem();
                 if (client != null) {
-                    MainController newMain = PageNavigator.openNewWindow();
+                    MainController newMain = PageNavigator.openNewWindow(mainController);
                     if (newMain != null) {
                         newMain.setWindowContext(new WindowContextBuilder()
                                 .setAsClinicianViewClientWindow()
@@ -256,7 +256,7 @@ public class OrgansToDonateController extends SubController {
                 DonatedOrgan organToDonate = tableView.getSelectionModel().getSelectedItem();
                 if (organToDonate != null) {
                     Client client = organToDonate.getDonor();
-                    MainController newMain = PageNavigator.openNewWindow();
+                    MainController newMain = PageNavigator.openNewWindow(mainController);
                     if (newMain != null) {
                         newMain.setWindowContext(new WindowContextBuilder()
                                 .setAsClinicianViewClientWindow()
@@ -381,7 +381,7 @@ public class OrgansToDonateController extends SubController {
                 transplantHospitalChoice.setValue(nearestWithProgram);
 
                 transplantDatePicker.setValue(LocalDateTime.now()
-                        .plus(nearestWithProgram.calculateTimeTo(selected.getHospital())).toLocalDate());
+                        .plus(nearestWithProgram.calculateTimeTo(clientHospital)).toLocalDate());
 
                 sortedHospitals.setComparator(Comparator.comparing(
                         hospital -> hospital.calculateTimeTo(nearestWithProgram)));

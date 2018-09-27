@@ -488,7 +488,7 @@ public class OrganWithRecipients {
                         PotentialRecipientCell.class.getResource(Page.RECEIVER_OVERVIEW.getPath()));
                 Node node = loader.load();
                 ReceiverOverviewController controller = loader.getController();
-                controller.setup(record, organ.getDonor(), refresher);
+                controller.setup(record, organ.getDonor(), refresher, matchesPane);
                 if (organ.getState() == OrganState.TRANSPLANT_PLANNED) {
                     controller.setPriority("Scheduled");
                 } else if (organ.getState() == OrganState.TRANSPLANT_COMPLETED) {
@@ -512,7 +512,8 @@ public class OrganWithRecipients {
         matchesList.setItems(potentialMatches);
 
         matchesList.setCellFactory(param -> {
-            PotentialRecipientCell cell = new PotentialRecipientCell(param.getItems(), organ.getDonor(), refresher);
+            PotentialRecipientCell cell = new PotentialRecipientCell(param.getItems(), organ.getDonor(), refresher,
+                    matchesPane);
             recipientCells.add(cell);
             return cell;
         });

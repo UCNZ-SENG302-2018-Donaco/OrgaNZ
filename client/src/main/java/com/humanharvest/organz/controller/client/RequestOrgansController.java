@@ -434,7 +434,7 @@ public class RequestOrgansController extends SubController {
     }
 
     private void resolveDeceasedRequest() {
-        MainController newMain = PageNavigator.openNewWindow(400, 400);
+        MainController newMain = PageNavigator.openNewWindow(400, 400, mainController);
         assert newMain != null;
         newMain.setWindowContext(new WindowContext.WindowContextBuilder()
                 .setAsClinicianViewClientWindow()

@@ -76,6 +76,7 @@ public class MenuBarController extends SubController {
     public MenuItem settingsItem;
     public MenuItem quitItem;
     public MenuItem duplicateItem;
+    public MenuItem viewDashboardItem;
 
     public SeparatorMenuItem topSeparator;
 
@@ -349,6 +350,11 @@ public class MenuBarController extends SubController {
         PageNavigator.loadPage(Page.CREATE_CLIENT, mainController);
     }
 
+    @FXML
+    private void viewDashboardItem() {
+        PageNavigator.loadPage(Page.DASHBOARD, mainController);
+    }
+
     /**
      * Redirects the GUI to the Admin command line page.
      */
@@ -575,7 +581,7 @@ public class MenuBarController extends SubController {
      */
     @FXML
     private void duplicateWindow() {
-        MainController newMain = PageNavigator.openNewWindow();
+        MainController newMain = PageNavigator.openNewWindow(mainController);
         if (newMain != null) {
             newMain.setWindowContext(mainController.getWindowContext());
             PageNavigator.loadPage(mainController.getCurrentPage(), newMain);

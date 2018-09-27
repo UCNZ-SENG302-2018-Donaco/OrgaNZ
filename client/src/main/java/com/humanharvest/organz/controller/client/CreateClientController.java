@@ -148,7 +148,7 @@ public class CreateClientController extends SubController {
 
         } else { // Clinician or admin are creating a user.
 
-            MainController newMain = PageNavigator.openNewWindow();
+            MainController newMain = PageNavigator.openNewWindow(mainController);
             if (newMain != null) {
                 newMain.setWindowContext(new WindowContext.WindowContextBuilder()
                         .setAsClinicianViewClientWindow()

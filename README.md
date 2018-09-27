@@ -46,10 +46,10 @@ All applicable copyright notices and licenses for the libraries used are provide
 
 ## Usage
 
-Please refer to the documentation found in `doc/user_manual.md` to find out more on how to use the application.
+Please refer to the documentation found in `doc/User_Manual.pdf` to find out more on how to use the application.
 
 For more information on the design decisions that were made, please refer to the documentation found in
 `doc/design_decisions.md`.
 
-To see an example of a JSON file that loads in the user data, please direct your attention to
-`doc/examples/savefile.JSON`.
+To see an example of a file that loads in the user data, please direct your attention to
+`doc/examples/11300_clients.csv`.

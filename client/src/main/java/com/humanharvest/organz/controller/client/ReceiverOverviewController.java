@@ -15,9 +15,11 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.scene.transform.Affine;
 import org.controlsfx.control.Notifications;
 
 import com.humanharvest.organz.Client;
@@ -33,6 +35,7 @@ import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
+import com.humanharvest.organz.utilities.view.PageNavigatorTouch;
 import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
 
 public class ReceiverOverviewController extends SubController {
@@ -42,6 +45,7 @@ public class ReceiverOverviewController extends SubController {
     private Client recipient;
     private Client donor;
     private TransplantRequest request;
+    private Pane matchesPane;
 
     @FXML
     private ImageView imageView;
@@ -88,16 +92,12 @@ public class ReceiverOverviewController extends SubController {
             if (timeBetweenHospitals.isZero()) {
                 travelTime.setText("None");
             } else {
-                //todo should it be "5 hours (50 km)" or "50 km (5 hours)"? the label does say travel time.
                 travelTime.setText(DurationFormatter.getFormattedDuration(timeBetweenHospitals, DurationFormat.BIGGEST)
                         + String.format(Locale.UK, "%n(%.0f km)",
-                        recipient.getHospital().calculateDistanceTo(donor.getHospital())));
-                travelTime.setText(String.format(Locale.UK, "%.0f km (%s)",
-                        recipient.getHospital().calculateDistanceTo(donor.getHospital()),
-                        DurationFormatter.getFormattedDuration(timeBetweenHospitals, DurationFormat.BIGGEST)));
+                        recipient.getHospital().calculateDistanceTo(donor.getHospital())) + " away");
             }
         } else {
-            travelTime.setText("Unknown");
+            travelTime.setText("Unknown distance away");
         }
 
         // Set wait time
@@ -106,17 +106,33 @@ public class ReceiverOverviewController extends SubController {
         // Track the adding of panes with the spiderweb pane collection.
         receiverVBox.setOnMouseClicked(mouseEvent -> {
             if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 2) {
-                MainController newMain = PageNavigator.openNewWindow();
-                if (newMain != null) {
-                    newMain.setWindowContext(new WindowContextBuilder()
-                            .setAsClinicianViewClientWindow()
-                            .viewClient(recipient)
-                            .build());
-                    PageNavigator.loadPage(Page.VIEW_CLIENT, newMain);
-                }
+                openRecipientWindow();
             }
         });
+    }
 
+    private void openRecipientWindow() {
+        MainController newMain;
+        // If we are in touch mode, try to get the panes transform and apply it to the new window
+        if (PageNavigator.getInstance() instanceof PageNavigatorTouch &&
+                matchesPane.getTransforms().size() == 1 &&
+                matchesPane.getTransforms().get(0) instanceof Affine) {
+
+            newMain = ((PageNavigatorTouch) PageNavigator.getInstance())
+                    .openNewWindow((Affine) matchesPane.getTransforms().get(0));
+
+        } else {
+            // Otherwise fallback to the default
+            newMain = PageNavigator.openNewWindow();
+        }
+
+        if (newMain != null) {
+            newMain.setWindowContext(new WindowContextBuilder()
+                    .setAsClinicianViewClientWindow()
+                    .viewClient(recipient)
+                    .build());
+            PageNavigator.loadPage(Page.VIEW_CLIENT, newMain);
+        }
     }
 
     private void updateWaitTime() {
@@ -126,22 +142,25 @@ public class ReceiverOverviewController extends SubController {
             requestedTime.setText("");
         } else {
             Duration waitTime = request.getTimeSinceRequest();
-            requestedTime.setText(DurationFormatter.getFormattedDuration(waitTime, DurationFormat.BIGGEST));
+            requestedTime.setText("Waiting " +
+                    DurationFormatter.getFormattedDuration(waitTime, DurationFormat.BIGGEST));
         }
     }
 
-    public void setup(TransplantRequest request, Client donor, Timeline refresher) {
+    public void setup(TransplantRequest request, Client donor, Timeline refresher, Pane matchesPane) {
         this.request = request;
         this.recipient = request.getClient();
         this.donor = donor;
+        this.matchesPane = matchesPane;
         setupRefresher(refresher);
         refresh();
     }
 
-    public void setup(TransplantRecord record, Client donor, Timeline refresher) {
+    public void setup(TransplantRecord record, Client donor, Timeline refresher, Pane matchesPane) {
         this.request = record.getRequest();
         this.recipient = record.getReceiver();
         this.donor = donor;
+        this.matchesPane = matchesPane;
         setupRefresher(refresher);
         refresh();
     }
