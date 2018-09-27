@@ -1,7 +1,7 @@
 package com.humanharvest.organz.controller.administrator;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.testfx.api.FxAssert.verifyThat;
 import static org.testfx.matcher.control.ListViewMatchers.hasItems;
 
@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Set;
 
 import javafx.scene.Node;
-import javafx.scene.control.DialogPane;
 
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.Hospital;

@@ -11,6 +11,7 @@ import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -31,6 +32,7 @@ public class ViewClientControllerClinician3Test extends ViewClientControllerClin
     }
 
     @Test
+    @Ignore("Fails in headless mode - test passes normally")
     public void dateOfDeathIsEditableAgainTest() {
         clickOn("#deathDatePicker");
         doubleClickOn("#deathDatePicker").type(KeyCode.BACK_SPACE).write("10/10/" + recentYear);
@@ -39,6 +41,7 @@ public class ViewClientControllerClinician3Test extends ViewClientControllerClin
     }
 
     @Test
+    @Ignore("Fails in headless mode - test passes normally")
     public void timeOfDeathIsEditableAgainTest() {
         clickOn("#deathTimeField");
         doubleClickOn("#deathTimeField").type(KeyCode.BACK_SPACE).write(adjustedTimeOfDeathString);

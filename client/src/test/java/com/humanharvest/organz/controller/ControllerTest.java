@@ -23,6 +23,7 @@ import javafx.stage.Window;
 
 import com.humanharvest.organz.GUICategory;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.ReflectionUtils;
 import com.humanharvest.organz.utilities.view.Page;
 
 import org.junit.After;
@@ -79,6 +80,13 @@ public abstract class ControllerTest extends ApplicationTest {
         return result;
     }
 
+    protected static <T, Y> void setPrivateField(Class<T> clazz, T instance, String fieldName, Y newValue)
+            throws NoSuchFieldException, IllegalAccessException {
+        Field field = clazz.getDeclaredField(fieldName);
+        field.setAccessible(true);
+        field.set(instance, newValue);
+    }
+
     @Override
     public void start(Stage stage) throws Exception {
         // Load main pane and controller
@@ -107,6 +115,17 @@ public abstract class ControllerTest extends ApplicationTest {
         mainController.setSubController(pageController);
     }
 
+    @Override
+    public void stop() throws Exception {
+        super.stop();
+        // Cleans up memory - Needed due to TestFX memory leaks
+        mainController = null;
+        pageController = null;
+        mockRestTemplate = null;
+        pageNode = null;
+        setPrivateField(FxRobot.class, this, "context", null);
+    }
+
     @After
     public void killAllWindows() {
         Stage stage = getTopModalStage();
@@ -118,7 +137,6 @@ public abstract class ControllerTest extends ApplicationTest {
             }
         }
     }
-
 
 
     /**

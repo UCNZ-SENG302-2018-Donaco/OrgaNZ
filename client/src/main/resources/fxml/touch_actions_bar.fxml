@@ -8,7 +8,6 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
-
 <HBox fx:id="entireMenubarPane" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.TouchActionsBarController">
    <children>
       <GridPane hgap="5.0" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" prefHeight="35.0" styleClass="menubox" HBox.hgrow="ALWAYS">

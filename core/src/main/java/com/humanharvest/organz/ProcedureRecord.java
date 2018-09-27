@@ -77,12 +77,10 @@ public class ProcedureRecord {
 
     /**
      * This method should be called only when this record is added to/removed from a client's collection.
-     * Therefore it is package-private so it may only be called from Client.
-     * TODO no it's not??
      *
      * @param client The client to set this record as belonging to.
      */
-    public void setClient(Client client) {
+    public final void setClient(Client client) {
         this.client = client;
     }
 
@@ -90,15 +88,15 @@ public class ProcedureRecord {
         return summary;
     }
 
-    public void setSummary(String procedureSummary) {
-        this.summary = procedureSummary;
+    public final void setSummary(String procedureSummary) {
+        summary = procedureSummary;
     }
 
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
+    public final void setDescription(String description) {
         this.description = description;
     }
 
@@ -106,7 +104,7 @@ public class ProcedureRecord {
         return date;
     }
 
-    public void setDate(LocalDate date) {
+    public final void setDate(LocalDate date) {
         this.date = date;
     }
 
@@ -121,7 +119,7 @@ public class ProcedureRecord {
         this.affectedOrgans = affectedOrgans;
     }
 
-    public void addAffectedOrgan(Organ organ) {
+    public final void addAffectedOrgan(Organ organ) {
         affectedOrgans.add(organ);
     }
 
