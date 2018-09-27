@@ -27,7 +27,7 @@ It provides people in New Zealand with a system they can use to register as orga
 
 This application makes use of a number of external libraries, including:
 * Spring Boot
-* GSON
+* Jackson
 * PicoCLI
 * ControlsFX
 * Hibernate
