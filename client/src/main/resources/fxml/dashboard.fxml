@@ -11,12 +11,12 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.clinician.DashboardController">
+<VBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.clinician.DashboardController">
    <children>
       <VBox fx:id="menuBarPane" maxWidth="1.7976931348623157E308" />
       <VBox spacing="10.0" VBox.vgrow="ALWAYS">
          <children>
-            <GridPane hgap="10.0" prefHeight="275.0">
+            <GridPane hgap="10.0" prefHeight="349.0" prefWidth="980.0">
               <columnConstraints>
                 <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" percentWidth="33.0" />
                 <ColumnConstraints hgrow="ALWAYS" minWidth="10.0" percentWidth="50.0" />
