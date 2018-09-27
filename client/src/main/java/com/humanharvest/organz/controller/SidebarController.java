@@ -1,12 +1,25 @@
 package com.humanharvest.organz.controller;
 
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import org.controlsfx.control.Notifications;
 
+import com.humanharvest.organz.Client;
+import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.controller.spiderweb.SpiderWebController;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
+import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 
@@ -20,7 +33,9 @@ public class SidebarController extends SubController  {
     viewMedicationsButton, illnessHistoryButton, viewProceduresButton, searchButton, createClientButton,
             organsToDonateButton, transplantsButton, actionHistory, spiderwebButton;
 
-    private Session session;
+    private final Session session;
+    private Client client;
+    private Set<Organ> currentlyRequestedOrgans;
 
 
     /**
@@ -31,22 +46,111 @@ public class SidebarController extends SubController  {
     }
 
     @Override
-    public void setup(MainController controller) {
-        super.setup(controller);
+    public void setup(MainController mainController) {
+        super.setup(mainController);
+        UserType userType = session.getLoggedInUserType();
+
+        if (userType == UserType.CLIENT) {
+            client = session.getLoggedInClient();
+            currentlyRequestedOrgans = client.getCurrentlyRequestedOrgans();
+        } else if (windowContext.isClinViewClientWindow()) {
+            client = windowContext.getViewClient();
+            currentlyRequestedOrgans = client.getCurrentlyRequestedOrgans();
+        }
+
+        refreshButtons();
+    }
+
+    /**
+     * Resets the buttons depending on the clients state
+     */
+    @Override
+    public void refresh() {
+        if (client != null) {
+            refreshClientDetails();
+            refreshClientRequestedOrgans();
+        }
+    }
+
+    private void refreshClientDetails() {
+        Task<Optional<Client>> clientTask = new Task<Optional<Client>>() {
+            @Override
+            protected Optional<Client> call() throws ServerRestException {
+                return com.humanharvest.organz.state.State.getClientManager().getClientByID(client.getUid());
+            }
+        };
+
+        clientTask.setOnSucceeded(event -> {
+            Optional<Client> optionalClient = clientTask.getValue();
+            if (optionalClient.isPresent()) {
+                client = optionalClient.get();
+                refreshButtons();
+            } else {
+                handleTaskError();
+            }
+        });
+
+        clientTask.setOnFailed(err -> handleTaskError());
+
+        new Thread(clientTask).start();
+    }
+
+    private void refreshClientRequestedOrgans() {
+        Task<Set<Organ>> organsTask = new Task<Set<Organ>>() {
+            @Override
+            protected Set<Organ> call() throws ServerRestException {
+                List<TransplantRequest> transplantRequests = com.humanharvest.organz.state.
+                        State.getClientResolver().getTransplantRequests(client);
+                if (transplantRequests == null) {
+                    return null;
+                } else {
+                    return transplantRequests
+                            .stream()
+                            .filter(request -> request.getStatus() == TransplantRequestStatus.WAITING)
+                            .map(TransplantRequest::getRequestedOrgan)
+                            .collect(Collectors.toCollection(() -> EnumSet.noneOf(Organ.class)));
+                }
+
+            }
+        };
+
+        organsTask.setOnSucceeded(event -> {
+            Set<Organ> requestedOrgans = organsTask.getValue();
+            if (requestedOrgans != null) {
+                currentlyRequestedOrgans = requestedOrgans;
+                refreshButtons();
+            } else {
+                handleTaskError();
+            }
+        });
+
+        organsTask.setOnFailed(err -> handleTaskError());
+        new Thread(organsTask).start();
+    }
+
+    private void handleTaskError() {
+        Notifications.create()
+                .title("Server Error")
+                .text("Could not refresh the information for the donor.")
+                .showError();
+    }
+
+    private void refreshButtons() {
         UserType userType = session.getLoggedInUserType();
 
         Button[] allButtons = {viewClientButton, registerOrganDonationButton, requestOrganDonationButton,
                 viewMedicationsButton, illnessHistoryButton, viewProceduresButton, searchButton, createClientButton,
                 organsToDonateButton, transplantsButton, actionHistory, spiderwebButton};
 
-        Button[] clientButtons = {viewProceduresButton, illnessHistoryButton, registerOrganDonationButton, viewClientButton,
-                requestOrganDonationButton, viewMedicationsButton};
+        Button[] clientButtons = {viewProceduresButton, illnessHistoryButton, registerOrganDonationButton,
+                viewClientButton, requestOrganDonationButton, viewMedicationsButton};
 
-        Button[] clinicianButtons = {searchButton, createClientButton, organsToDonateButton, transplantsButton, actionHistory};
+        Button[] clinicianButtons = {
+                searchButton, createClientButton, organsToDonateButton, transplantsButton, actionHistory
+        };
 
         Button[] clinicianViewClientButtons = {registerOrganDonationButton, requestOrganDonationButton,
                 viewMedicationsButton, illnessHistoryButton, viewProceduresButton, viewClientButton};
-
 
         // Hide all buttons then only show buttons relevant to that user type.
         hideButtons(allButtons);
@@ -54,7 +158,7 @@ public class SidebarController extends SubController  {
         if (userType == UserType.CLIENT) {
             showButtons(clientButtons);
             // If they're not requesting any organs, don't show them the request organs button
-            if (session.getLoggedInClient().getCurrentlyRequestedOrgans().isEmpty()) {
+            if (currentlyRequestedOrgans.isEmpty()) {
                 hideButton(requestOrganDonationButton);
             }
         } else {
@@ -62,7 +166,7 @@ public class SidebarController extends SubController  {
             if (windowContext.isClinViewClientWindow()) {
                 showButtons(clinicianViewClientButtons);
 
-                if (windowContext.getViewClient().isDead() && windowContext.getViewClient().isDonor()) {
+                if (client.isDead() && client.isDonor()) {
                     showButton(spiderwebButton);
                 }
 
@@ -70,15 +174,14 @@ public class SidebarController extends SubController  {
                 showButtons(clinicianButtons);
             }
         }
-        refresh();
     }
 
-    private void showButton(Button button) {
+    private static void showButton(Button button) {
         button.setVisible(true);
         button.setManaged(true);
     }
 
-    private void showButtons(Button[] buttons) {
+    private static void showButtons(Button[] buttons) {
         for (Button button: buttons) {
             showButton(button);
         }
@@ -89,7 +192,7 @@ public class SidebarController extends SubController  {
      *
      * @param buttons The buttons to hide
      */
-    private void hideButtons(Button[] buttons) {
+    private static void hideButtons(Button[] buttons) {
         for (Button button : buttons) {
             hideButton(button);
         }
@@ -100,7 +203,7 @@ public class SidebarController extends SubController  {
      *
      * @param button the button to hide
      */
-    private void hideButton(Button button) {
+    private static void hideButton(Button button) {
         button.setVisible(false);
         button.setManaged(false);
     }

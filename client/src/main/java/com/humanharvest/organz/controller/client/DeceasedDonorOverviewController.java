@@ -117,6 +117,9 @@ public class DeceasedDonorOverviewController extends SubController {
         }
     }
 
+    /**
+     * Refreshes the Donors information and image
+     */
     @Override
     public void refresh() {
         fetchClient();

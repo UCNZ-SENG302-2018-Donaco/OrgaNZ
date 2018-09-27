@@ -68,6 +68,14 @@ public class CreateAdministratorController extends SubController {
     }
 
     /**
+     * Does not do anything as page doesn't render anything that could have changed
+     */
+    @Override
+    public void refresh() {
+        //Do not need to do anything as page doesn't render anything that could have changed
+    }
+
+    /**
      * Checks that both fields are valid.
      * Sets any invalid fields' labels to red if they are invalid.
      * Shows an alert if there is invalid input (apart from empty input).

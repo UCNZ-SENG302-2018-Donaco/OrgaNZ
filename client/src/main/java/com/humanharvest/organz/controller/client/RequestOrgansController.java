@@ -3,6 +3,7 @@ package com.humanharvest.organz.controller.client;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -194,19 +195,49 @@ public class RequestOrgansController extends SubController {
         }
 
         mainController.loadNavigation(menuBarPane);
-        refresh();
+        refreshTransplants();
         enableAppropriateButtons();
     }
 
     /**
-     * Refreshes the contents of the two tables based on the client's current transplant requests.
+     * Fully refreshes the information on this page, as all changes can be immediately applied so change cannot be lost
      */
     @Override
     public void refresh() {
+        refreshTransplants();
+        refreshClient();
+    }
+
+    private void refreshClient() {
+        try {
+            Optional<Client> optionalClient = State.getClientManager().getClientByID(client.getUid());
+            if (optionalClient.isPresent()) {
+                client = optionalClient.get();
+                enableAppropriateButtons();
+            } else {
+                throw new NotFoundException();
+            }
+        } catch (NotFoundException e) {
+            LOGGER.log(Level.WARNING, "Client not found", e);
+            PageNavigator.showAlert(AlertType.ERROR,
+                    "Client not found",
+                    "The client could not be found on the server, it may have been deleted", mainController.getStage());
+            return;
+        } catch (ServerRestException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
+            PageNavigator.showAlert(AlertType.ERROR,
+                    "Server error",
+                    "Could not apply changes on the server, please try again later", mainController.getStage());
+            return;
+        }
+    }
+
+    private void refreshTransplants() {
         // Reload the client's transplant requests
         Collection<TransplantRequest> allRequests;
         try {
             allRequests = resolver.getTransplantRequests(client);
+
         } catch (NotFoundException e) {
             LOGGER.log(Level.WARNING, "Client not found", e);
             PageNavigator.showAlert(AlertType.ERROR,
@@ -243,11 +274,19 @@ public class RequestOrgansController extends SubController {
 
     private void enableAppropriateButtons() {
         // The "Resolve Request" button
-        if (windowContext.isClinViewClientWindow()
-                && currentRequestsTable.getSelectionModel().getSelectedItem() != null) {
-            resolveRequestBar.setDisable(false);
-        } else {
+
+        if (client.isDead()) {
             resolveRequestBar.setDisable(true);
+            newRequestForm.setDisable(true);
+        } else {
+            newRequestForm.setDisable(false);
+
+            if (windowContext.isClinViewClientWindow()
+                    && currentRequestsTable.getSelectionModel().getSelectedItem() != null) {
+                resolveRequestBar.setDisable(false);
+            } else {
+                resolveRequestBar.setDisable(true);
+            }
         }
     }
 

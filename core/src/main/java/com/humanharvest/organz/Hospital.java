@@ -55,7 +55,6 @@ public class Hospital {
     @JsonBackReference
     private Config config;
 
-    // todo should these be @tagged?
     @JsonView(Views.Overview.class)
     private String name;
     @JsonView(Views.Details.class)

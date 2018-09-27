@@ -45,6 +45,14 @@ public class ClientLoginController extends SubController {
     }
 
     /**
+     * Does not do anything as page doesn't render anything that could have changed
+     */
+    @Override
+    public void refresh() {
+        //Do not need to do anything as page doesn't render anything that could have changed
+    }
+
+    /**
      * Initializes the UI for this page.
      * - Gets the client manager from the current state.
      * - Sets up the cell factory to show users with their id and name.

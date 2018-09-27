@@ -195,6 +195,7 @@ public class ViewMedicationsController extends SubController {
 
     /**
      * Updates the window title and medication lists
+     * This page will always refresh as all change are immediately applied so there is no risk of loss
      */
     @Override
     public void refresh() {

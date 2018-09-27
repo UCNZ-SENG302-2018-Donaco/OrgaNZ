@@ -3,9 +3,7 @@ package com.humanharvest.organz.controller.clinician;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
-import java.util.EnumSet;
 import java.util.HashSet;
-import java.util.Set;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -48,6 +46,9 @@ public class TransplantsController extends SubController {
     private static final int ROWS_PER_PAGE = 30;
     private static final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("d MMM yyyy hh:mm a");
 
+    private final ObservableList<TransplantRequest> observableTransplants = FXCollections.observableArrayList();
+    private final SortedList<TransplantRequest> sortedTransplants = new SortedList<>(observableTransplants);
+
     @FXML
     private Pane menuBarPane;
 
@@ -79,10 +80,6 @@ public class TransplantsController extends SubController {
     private CheckComboBox<Organ> organChoice;
 
     private ClientManager manager;
-    private Set<String> regionsToFilter;
-    private Set<Organ> organsToFilter;
-    private ObservableList<TransplantRequest> observableTransplantRequests = FXCollections.observableArrayList();
-    private SortedList<TransplantRequest> sortedTransplantRequests;
 
     /**
      * Gets the client manager from the global state.
@@ -119,7 +116,7 @@ public class TransplantsController extends SubController {
     /**
      * Sets up the page, setting its title, loading the menu bar and doing the first refresh of the data.
      *
-     * @param mainController The main controller that defines which window this subcontroller belongs to.
+     * @param mainController The main controller that defines which window this SubController belongs to.
      */
     @Override
     public void setup(MainController mainController) {
@@ -127,30 +124,6 @@ public class TransplantsController extends SubController {
         mainController.setTitle("Transplant requests");
         mainController.loadNavigation(menuBarPane);
         refresh();
-    }
-
-    /**
-     * Refreshes the data in the transplants waiting list table. Should be called whenever any page calls a global
-     * refresh.
-     */
-    @Override
-    public void refresh() {
-        sortedTransplantRequests = new SortedList<>(observableTransplantRequests);
-
-        //Link the sorted list sort to the tableView sort
-        sortedTransplantRequests.comparatorProperty().bind(tableView.comparatorProperty());
-
-        //Set initial pagination
-        int numberOfPages = Math.max(1, (sortedTransplantRequests.size() + ROWS_PER_PAGE - 1) / ROWS_PER_PAGE);
-        pagination.setPageCount(numberOfPages);
-
-        //Initialize the observable list to all clients
-        observableTransplantRequests.setAll(sortedTransplantRequests);
-
-        //Bind the tableView to the observable list
-        tableView.setItems(observableTransplantRequests);
-
-        createPage(pagination.getCurrentPageIndex());
     }
 
     /**
@@ -176,6 +149,25 @@ public class TransplantsController extends SubController {
 
         //On pagination update call createPage
         pagination.setPageFactory(this::createPage);
+
+        //Link the sorted list sort to the tableView sort
+        sortedTransplants.comparatorProperty().bind(tableView.comparatorProperty());
+        //Bind the tableView to the sorted list
+        tableView.setItems(sortedTransplants);
+
+        //Set initial pagination
+        int numberOfPages = Math.max(1, (sortedTransplants.size() + ROWS_PER_PAGE - 1) / ROWS_PER_PAGE);
+        pagination.setPageCount(numberOfPages);
+        createPage(pagination.getCurrentPageIndex());
+    }
+
+    /**
+     * Refreshes the data in the transplants waiting list table.
+     * There cannot be any changes from this page so it will always refresh
+     */
+    @Override
+    public void refresh() {
+        updateTransplantRequestList();
     }
 
     /**
@@ -215,64 +207,22 @@ public class TransplantsController extends SubController {
         });
 
         // Sets the comparator for sorting by organ column.
-        organCol.setComparator(new Comparator<Organ>() {
-            /**
-             * Alphabetical order of the organ name.
-             */
-            @Override
-            public int compare(Organ o1, Organ o2) {
-                return o1.toString().compareTo(o2.toString());
-            }
-        });
+        organCol.setComparator(Comparator.comparing(Organ::toString));
 
         // Sets the comparator for sorting by region column.
-        regionCol.setComparator(new Comparator<String>() {
-            /**
-             * Nulls are ordered first, then alphabetical order of the region name.
-             */
-            @Override
-            public int compare(String o1, String o2) {
-                if (o1 == null) {
-                    if (o2 == null) {
-                        return 0;
-                    } else {
-                        return -1;
-                    }
-                } else if (o2 == null) {
-                    return 1;
-                }
-                return o1.compareTo(o2);
-            }
-        });
-    }
 
-    /**
-     * Filters the regions based on the RegionChoices current state and updates the organsToFilter Collection.
-     */
-    private void filterRegions() {
-        regionsToFilter = new HashSet<>();
-        regionsToFilter.addAll(
-                regionChoice.getCheckModel().getCheckedItems());
-    }
-
-    /**
-     * Filters the organs based on the OrganChoices current state and updates the organsToFilter Collection.
-     */
-    private void filterOrgans() {
-        organsToFilter = EnumSet.noneOf(Organ.class);
-        organsToFilter.addAll(organChoice.getCheckModel().getCheckedItems());
+        //Nulls are ordered first, then alphabetical order of the region name.
+        regionCol.setComparator(Comparator.nullsFirst(Comparator.naturalOrder()));
     }
 
     private void updateTransplantRequestList() {
-        filterRegions();
-        filterOrgans();
         PaginatedTransplantList newTransplantRequests = manager.getAllCurrentTransplantRequests(
                 pagination.getCurrentPageIndex() * ROWS_PER_PAGE,
                 ROWS_PER_PAGE,
-                regionsToFilter,
-                organsToFilter);
+                new HashSet<>(regionChoice.getCheckModel().getCheckedItems()),
+                new HashSet<>(organChoice.getCheckModel().getCheckedItems()));
 
-        observableTransplantRequests.setAll(newTransplantRequests.getTransplantRequests());
+        observableTransplants.setAll(newTransplantRequests.getTransplantRequests());
 
         int newPageCount = Math.max(1, (newTransplantRequests.getTotalResults() + ROWS_PER_PAGE - 1) / ROWS_PER_PAGE);
         if (pagination.getPageCount() != newPageCount) {

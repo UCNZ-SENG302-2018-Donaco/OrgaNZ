@@ -333,12 +333,13 @@ public class OrganWithRecipients {
                         .findFirst();
                 donorOverviewController.refresh();
                 if (optionalOrgan.isPresent()) {
-                    this.organ = optionalOrgan.get();
+                    organ = optionalOrgan.get();
                     refresh();
                 } else {
                     throw new NotFoundException();
                 }
             } catch (ServerRestException | NotFoundException exc) {
+                LOGGER.log(Level.SEVERE, "An error occurred when trying to remove the transplant.", exc);
                 Notifications.create()
                         .title("Server Error")
                         .text("An error occurred when trying to remove the transplant.")
@@ -436,12 +437,6 @@ public class OrganWithRecipients {
 
         setRecipientConnectorStart(bounds);
         setRecipientConnectorEnd(matchesPane.getBoundsInParent());
-
-        try {
-            organPane.toFront();
-        } catch (RuntimeException e) {
-            LOGGER.log(Level.WARNING, "Runtime exception when setting pane to front", e);
-        }
     }
 
     public void handlePotentialMatchesTransformed() {
@@ -529,6 +524,7 @@ public class OrganWithRecipients {
                 matchesList.setMinWidth(0);
                 matchesList.setPrefWidth(0);
                 matchesList.setMaxWidth(0);
+                break;
             case 1:
                 matchesList.setMaxWidth(176);
                 break;
