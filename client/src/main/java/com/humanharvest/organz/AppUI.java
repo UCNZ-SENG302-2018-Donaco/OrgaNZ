@@ -149,8 +149,6 @@ public class AppUI extends Application {
             StaffLoginController.handleSignIn(parameters.get("login"),
                     parameters.getOrDefault("password", ""),
                     State.getMainControllers().get(0));
-
-//            new SpiderWebController(State.getClientManager().getClientByID(9096).orElseThrow(RuntimeException::new));
         }
     }
 

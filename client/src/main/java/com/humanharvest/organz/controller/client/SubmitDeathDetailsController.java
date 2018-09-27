@@ -56,12 +56,6 @@ public class SubmitDeathDetailsController extends SubController {
     public void setup(MainController mainController) {
         super.setup(mainController);
         mainController.setTitle("Details of Death");
-        refresh();
-    }
-
-    @Override
-    public void refresh() {
-        super.refresh();
 
         // Get allowed countries & regions
         deathCountry.setItems(FXCollections.observableArrayList(State.getConfigManager().getAllowedCountries()));
@@ -77,6 +71,14 @@ public class SubmitDeathDetailsController extends SubController {
             deathRegionTF.setText(client.getRegion());
         }
         deathCity.setText(client.getCurrentAddress());
+    }
+
+    /**
+     * Does not do anything as the chances anything changed are highly minimal
+     */
+    @Override
+    public void refresh() {
+        //Do not need to do anything as the chances anything changed are highly minimal
     }
 
     /**

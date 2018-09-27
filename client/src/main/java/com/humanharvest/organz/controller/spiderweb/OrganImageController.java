@@ -37,6 +37,14 @@ public class OrganImageController extends SubController {
     }
 
     /**
+     * Does not do anything as page doesn't render anything that could have changed
+     */
+    @Override
+    public void refresh() {
+        //Do not need to do anything as page doesn't render anything that could have changed
+    }
+
+    /**
      * Loads the organs icon based on what type of organ it is.
      */
     public void loadImage(Organ organ) {

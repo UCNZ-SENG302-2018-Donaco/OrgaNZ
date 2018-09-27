@@ -67,6 +67,14 @@ public class CreateClinicianController extends SubController {
     }
 
     /**
+     * Does not do anything as page doesn't render anything that could have changed
+     */
+    @Override
+    public void refresh() {
+        //Do not need to do anything as page doesn't render anything that could have changed
+    }
+
+    /**
      * Checks that all mandatory fields have had valid input correctly input. Invalid input results in the text beside
      * the instigating field turning red.
      *

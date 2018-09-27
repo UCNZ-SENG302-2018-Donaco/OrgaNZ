@@ -224,11 +224,21 @@ public class ViewClientController extends SubController {
         } else if (windowContext.isClinViewClientWindow()) {
             viewedClient = windowContext.getViewClient();
         }
-        refresh();
+        refreshData();
     }
 
+    /**
+     * Fully updates the Client if there have not been any changes. If there have, then no new data is loaded
+     */
     @Override
     public void refresh() {
+        if (!hasChanges()) {
+            // The client has not been modified, so update the data
+            refreshData();
+        }
+    }
+
+    private void refreshData() {
         setEnabledCountries();
 
         // Refresh client data from server
@@ -272,6 +282,19 @@ public class ViewClientController extends SubController {
         checkMandatoryFields();
         checkNonMandatoryFields();
         checkDeathDetailsFields();
+    }
+
+    private boolean hasChanges() {
+        ModifyClientObject modifyClientObject = new ModifyClientObject();
+
+        addChangesIfDifferent(modifyClientObject);
+
+        if (deathDetailsPane.isDisabled()) {
+            return !modifyClientObject.getModifiedFields().isEmpty();
+        } else {
+            updateDeathFields(modifyClientObject);
+            return !modifyClientObject.getModifiedFields().isEmpty();
+        }
     }
 
     /**
@@ -453,7 +476,7 @@ public class ViewClientController extends SubController {
     public void deletePhoto() {
         try {
             State.getImageManager().deleteClientImage(viewedClient.getUid());
-            refresh();
+            refreshData();
         } catch (ServerRestException e) {
             PageNavigator.showAlert(AlertType.ERROR, "Server Error", "Something went wrong with the server. "
                     + "Please try again later.", mainController.getStage());
@@ -466,7 +489,7 @@ public class ViewClientController extends SubController {
      */
     @FXML
     private void cancel() {
-        refresh();
+        refreshData();
         imageToUpload = null;
     }
 
@@ -606,6 +629,7 @@ public class ViewClientController extends SubController {
                 promptMarkAsDead(modifyClientObject);
             } else {
                 updateDeathFields(modifyClientObject);
+                applyChanges(modifyClientObject);
             }
         }
     }
@@ -650,7 +674,10 @@ public class ViewClientController extends SubController {
         PageNavigator.showAlert(AlertType.CONFIRMATION,
                 "Are you sure you want to mark this client as dead?",
                 "This will cancel all waiting transplant requests for this client.", mainController.getStage(),
-                isOk -> updateDeathFields(modifyClientObject));
+                isOk -> {
+                    updateDeathFields(modifyClientObject);
+                    applyChanges(modifyClientObject);
+                });
     }
 
     /**
@@ -678,8 +705,6 @@ public class ViewClientController extends SubController {
         } else {
             addChangeIfDifferent(modifyClientObject, viewedClient, "regionOfDeath", deathRegionTF.getText());
         }
-
-        applyChanges(modifyClientObject);
     }
 
     /**
