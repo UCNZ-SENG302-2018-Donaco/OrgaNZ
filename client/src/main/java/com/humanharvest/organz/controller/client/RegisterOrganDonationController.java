@@ -3,11 +3,11 @@ package com.humanharvest.organz.controller.client;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -84,8 +84,6 @@ public class RegisterOrganDonationController extends SubController {
         try {
             State.getClientResolver().cancelManualOverrideForOrgan(donatedOrgan);
             PageNavigator.refreshAllWindows();
-        } catch (IfMatchFailedException exc) {
-            // TODO deal with outdated error
         } catch (NotFoundException exc) {
             LOGGER.log(Level.WARNING, "Client/Organ Not Found", exc);
             Notifications.create()
@@ -159,17 +157,8 @@ public class RegisterOrganDonationController extends SubController {
                 RegisterOrganDonationController::handleCancelOverride));
 
         // Sets the comparator for sorting by time until expiry column.
-        timeUntilExpiryCol.setComparator((dur1, dur2) -> {
-            if (Objects.equals(dur1, dur2)) {
-                return 0;
-            } else if (dur1 == null) {
-                return 1;  // nulls are considered "bigger" than actual durations
-            } else if (dur2 == null) {
-                return -1;
-            } else {
-                return dur1.compareTo(dur2);
-            }
-        });
+        // Nulls are considered "bigger" than actual durations
+        timeUntilExpiryCol.setComparator(Comparator.nullsFirst(Comparator.naturalOrder()));
 
         // Sort by time until expiry column by default.
         donatedOrgansTable.getSortOrder().clear();
@@ -207,7 +196,6 @@ public class RegisterOrganDonationController extends SubController {
             overrideReason.append("\n").append(LocalDateTime.now().format(dateTimeFormat));
             if (session.getLoggedInUserType() == UserType.CLINICIAN) {
                 overrideReason.append(String.format("%nOverriden by clinician %d (%s)",
-//                        s = 1
                         session.getLoggedInClinician().getStaffId(), session.getLoggedInClinician().getFullName()));
             } else if (session.getLoggedInUserType() == UserType.ADMINISTRATOR) {
                 overrideReason.append(String.format("%nOverriden by admin '%s'.",
@@ -215,8 +203,6 @@ public class RegisterOrganDonationController extends SubController {
             }
             State.getClientResolver().manuallyOverrideOrgan(donatedOrgan, overrideReason.toString());
             PageNavigator.refreshAllWindows();
-        } catch (IfMatchFailedException exc) {
-            // TODO deal with outdated error
         } catch (NotFoundException exc) {
             LOGGER.log(Level.WARNING, "Client/Organ Not Found", exc);
             Notifications.create()
