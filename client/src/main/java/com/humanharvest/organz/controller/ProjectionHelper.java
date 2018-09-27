@@ -77,6 +77,7 @@ public final class ProjectionHelper {
                 mainController = loader.getController();
                 mainController.setStage(newStage);
                 mainController.setPane(mainPane);
+                mainController.setIsAProjection(true);
                 State.addMainController(mainController);
                 newStage.setOnCloseRequest(e -> mainController.closeWindow());
 
@@ -122,6 +123,7 @@ public final class ProjectionHelper {
     public static void stageClosing() {
         if (mainController != null) {
             mainController.closeWindow();
+            mainController = null;
         }
 
         for (int i = 0; i < stages.length; i++) {
@@ -138,4 +140,5 @@ public final class ProjectionHelper {
     public static boolean canProject() {
         return otherScreens != null && !otherScreens.isEmpty();
     }
+
 }
