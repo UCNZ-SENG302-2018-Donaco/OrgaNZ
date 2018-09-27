@@ -124,7 +124,7 @@ public class PageNavigatorTouch implements IPageNavigator {
     @Override
     public MainController openNewWindow(int width, int height, MainController prevMainController) {
         FocusArea focusArea = (FocusArea) prevMainController.getPane().getUserData();
-        return openNewWindow(focusArea.getTransform(), width, height);
+        return openNewWindow(focusArea.getTransform(), width, height, 0.1);
     }
 
     /**
@@ -144,7 +144,7 @@ public class PageNavigatorTouch implements IPageNavigator {
      * @return The MainController for the new window, or null if the new window could not be created.
      */
     public MainController openNewWindow(Affine transform) {
-        return openNewWindow(transform, 1016, 639);
+        return openNewWindow(transform, 1016, 639, 0.5);
     }
 
     /**
@@ -154,9 +154,10 @@ public class PageNavigatorTouch implements IPageNavigator {
      * @param transform The transform to apply to the new window once it's created
      * @param width The width of the new window
      * @param height The height of the new window
+     * @param offsetScale How much to scale the offset by
      * @return The MainController for the new window, or null if the new window could not be created.
      */
-    public MainController openNewWindow(Affine transform, int width, int height) {
+    public MainController openNewWindow(Affine transform, int width, int height, double offsetScale) {
         MainController mainController = openNewWindow(width, height);
         if (mainController == null) {
             return null;
@@ -169,13 +170,11 @@ public class PageNavigatorTouch implements IPageNavigator {
         double scaleX = PointUtils.length(transform.getMxx(), transform.getMyx(), transform.getMzx());
         double scaleY = PointUtils.length(transform.getMxy(), transform.getMyy(), transform.getMzy());
 
-        double deltaX = -scaleX * (width / 2);
-        double deltaY = -scaleY * (height / 2);
+        double deltaX = -scaleX * (width * offsetScale);
+        double deltaY = -scaleY * (height * offsetScale);
 
         newTransform.append(new Translate(deltaX, deltaY));
-
         focusArea.setTransform(newTransform);
-
         return mainController;
     }
 
