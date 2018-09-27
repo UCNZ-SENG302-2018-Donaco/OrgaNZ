@@ -37,7 +37,7 @@ public class MainController {
     private TouchActionsBarController touchActionsBarController;
     private SubController subController;
     private boolean isProjecting;
-    private boolean isAProjection = false;
+    private boolean isAProjection;
     /**
      * Holder of a switchable page.
      */
@@ -170,14 +170,22 @@ public class MainController {
     public void loadTouchActionsBar(Pane pane) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(Page.TOUCH_ACTIONS_BAR.getPath()));
-            HBox touch_action_bar = loader.load();
+            HBox touchActionBar = loader.load();
             touchActionsBarController = loader.getController();
             touchActionsBarController.setup(this);
-            pane.getChildren().setAll(touch_action_bar);
+            pane.getChildren().setAll(touchActionBar);
             loadSidebar();
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Couldn't load touch actions bar from fxml file.", e);
         }
+    }
+
+    /**
+     * Closes the touch actions bar
+     * (So that it can be closed once navigated to a new page)
+     */
+    public void closeTouchActionsBar() {
+        touchActionsBarController.closeSidebar(drawer);
     }
 
     /**
@@ -218,6 +226,7 @@ public class MainController {
             menuBarController.refresh();
         } else if (touchActionsBarController != null) {
             touchActionsBarController.refresh();
+            loadSidebar();
         }
     }
 

@@ -248,9 +248,11 @@ public class SearchClientsController extends SubController {
         }
     }
 
+    /**
+     * Refresh the list of clients with the currently selected filters
+     */
     @Override
     public void refresh() {
-        super.refresh();
         // Refresh the client list to ensure any additions or removals are updated
         updateClientList();
     }
@@ -335,7 +337,7 @@ public class SearchClientsController extends SubController {
             if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 2) {
                 Client client = tableView.getSelectionModel().getSelectedItem();
                 if (client != null) {
-                    MainController newMain = PageNavigator.openNewWindow();
+                    MainController newMain = PageNavigator.openNewWindow(mainController);
                     if (newMain != null) {
                         newMain.setWindowContext(new WindowContext.WindowContextBuilder()
                                 .setAsClinicianViewClientWindow()

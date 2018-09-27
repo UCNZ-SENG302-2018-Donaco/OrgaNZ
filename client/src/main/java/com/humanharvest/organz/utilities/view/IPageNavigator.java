@@ -47,6 +47,25 @@ public interface IPageNavigator {
     MainController openNewWindow(int width, int height);
 
     /**
+     * Open a new window using the transform of the current window to spawn it near the window it is being created from.
+     *
+     * @param prevMainController the main controller of the window the new window is being spawned from
+     * @return The MainController for the new window, or null if the new window could not be created.
+     */
+    MainController openNewWindow(MainController prevMainController);
+
+    /**
+     * Open a new window with the given size as min and current, and may use the transform of the current window to
+     * spawn it near the window it is being created from.
+     *
+     * @param width The width to set
+     * @param height The height to set
+     * @param prevMainController The main controller for the window the new window is being spawned from
+     * @return The MainController for the new window, or null if the new window could not be created.
+     */
+    MainController openNewWindow(int width, int height, MainController prevMainController);
+
+    /**
      * Generates a pop-up alert of the given type.
      *
      * @param alertType the type of alert to show (can determine its style and button options).

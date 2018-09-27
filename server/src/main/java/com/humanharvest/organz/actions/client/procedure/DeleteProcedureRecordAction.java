@@ -50,7 +50,7 @@ public class DeleteProcedureRecordAction extends ClientAction {
 
             // Delete duplicate requests that have since been made for this
             requestsToDelete = client.getTransplantRequests().stream()
-                    .filter(request -> request.getRequestedOrgan().equals(transplant.getOrgan().getOrganType()))
+                    .filter(request -> request.getRequestedOrgan() == transplant.getOrgan().getOrganType())
                     .filter(request -> request.getStatus() == TransplantRequestStatus.WAITING)
                     .filter(request -> !request.equals(transplant.getRequest()))
                     .collect(Collectors.toList());

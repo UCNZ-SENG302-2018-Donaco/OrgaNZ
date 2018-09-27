@@ -72,7 +72,11 @@ public class DeceasedDonorDashboardOverviewController extends SubController {
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "IO Exception when loading image ", e);
         }
+    }
 
+    @Override
+    public void refresh() {
+        // Currently does nothing
     }
 
     @FXML

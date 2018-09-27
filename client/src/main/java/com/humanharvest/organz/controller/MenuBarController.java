@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -47,7 +48,6 @@ public class MenuBarController extends SubController {
     private static final Logger LOGGER = Logger.getLogger(MenuBarController.class.getName());
 
     private static final String ERROR_SAVING_MESSAGE = "There was an error saving to the file specified.";
-    private static final String ERROR_LOADING_MESSAGE = "There was an error loading the file specified.";
 
     public MenuItem viewClientItem;
     public MenuItem searchClientItem;
@@ -195,7 +195,7 @@ public class MenuBarController extends SubController {
      *
      * @param items The menu items to hide
      */
-    private void hideMenuItems(MenuItem[] items) {
+    private static void hideMenuItems(MenuItem[] items) {
         for (MenuItem menuItem : items) {
             hideMenuItem(menuItem);
         }
@@ -206,7 +206,7 @@ public class MenuBarController extends SubController {
      *
      * @param menuItem the menu item to hide
      */
-    private void hideMenuItem(MenuItem menuItem) {
+    private static void hideMenuItem(MenuItem menuItem) {
         menuItem.setVisible(false);
     }
 
@@ -215,7 +215,7 @@ public class MenuBarController extends SubController {
      *
      * @param menus The menus to hide
      */
-    private void hideMenus(Menu[] menus) {
+    private static void hideMenus(Menu[] menus) {
         for (Menu menu : menus) {
             hideMenu(menu);
         }
@@ -226,7 +226,7 @@ public class MenuBarController extends SubController {
      *
      * @param menu the menu to hide
      */
-    private void hideMenu(Menu menu) {
+    private static void hideMenu(Menu menu) {
         menu.setVisible(false);
     }
 
@@ -501,7 +501,7 @@ public class MenuBarController extends SubController {
     private void logout() {
         State.logout();
         List<MainController> toClose = State.getMainControllers().stream()
-                .filter(controller -> controller != mainController)
+                .filter(controller -> !Objects.equals(controller, mainController))
                 .collect(Collectors.toList());
         toClose.forEach(MainController::closeWindow);
 
@@ -581,7 +581,7 @@ public class MenuBarController extends SubController {
      */
     @FXML
     private void duplicateWindow() {
-        MainController newMain = PageNavigator.openNewWindow();
+        MainController newMain = PageNavigator.openNewWindow(mainController);
         if (newMain != null) {
             newMain.setWindowContext(mainController.getWindowContext());
             PageNavigator.loadPage(mainController.getCurrentPage(), newMain);

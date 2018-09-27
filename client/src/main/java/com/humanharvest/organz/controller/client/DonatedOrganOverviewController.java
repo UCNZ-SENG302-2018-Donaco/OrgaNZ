@@ -60,6 +60,11 @@ public class DonatedOrganOverviewController extends SubController {
         }
     }
 
+    @Override
+    public void refresh() {
+        // Currently do nothing
+    }
+
     @FXML
     private void openSpiderWeb() {
         new SpiderWebController(donatedOrgan.getDonor());

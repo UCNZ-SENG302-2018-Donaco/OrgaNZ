@@ -347,6 +347,7 @@ public class ViewProceduresController extends SubController {
 
     /**
      * Refreshes the past/pending procedure tables from the client's properties.
+     * This page will always refresh as all change are immediately applied so there is no risk of loss
      */
     @Override
     public void refresh() {
@@ -512,7 +513,6 @@ public class ViewProceduresController extends SubController {
     private void viewDetails() {
         ProcedureRecord record = getSelectedRecord();
         //todo disable this button (and delete button) if nothing is selected
-        System.out.println(record);
         if (record != null) {
             String title = "";
             if (record instanceof TransplantRecord) {
