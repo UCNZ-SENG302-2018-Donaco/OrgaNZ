@@ -437,12 +437,6 @@ public class OrganWithRecipients {
 
         setRecipientConnectorStart(bounds);
         setRecipientConnectorEnd(matchesPane.getBoundsInParent());
-
-        try {
-            organPane.toFront();
-        } catch (RuntimeException e) {
-            LOGGER.log(Level.WARNING, "Runtime exception when setting pane to front", e);
-        }
     }
 
     public void handlePotentialMatchesTransformed() {
