@@ -3,17 +3,22 @@ package com.humanharvest.organz.controller.client;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.SortedList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.CheckBox;
@@ -51,6 +56,8 @@ public class RegisterOrganDonationController extends SubController {
     private static final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("d MMM yyyy hh:mm a");
 
     private final Map<Organ, CheckBox> organCheckBoxes = new HashMap<>();
+    private final ObservableList<DonatedOrgan> observableDonatedOrgans = FXCollections.observableArrayList();
+    private final SortedList<DonatedOrgan> sortedDonatedOrgans = new SortedList<>(observableDonatedOrgans);
 
     private Session session;
     private Client client;
@@ -163,6 +170,7 @@ public class RegisterOrganDonationController extends SubController {
         // Sort by time until expiry column by default.
         donatedOrgansTable.getSortOrder().clear();
         donatedOrgansTable.getSortOrder().add(timeUntilExpiryCol);
+        sortedDonatedOrgans.comparatorProperty().bind(donatedOrgansTable.comparatorProperty());
     }
 
     /**
@@ -270,51 +278,30 @@ public class RegisterOrganDonationController extends SubController {
         }
     }
 
-    @Override
-    public void refresh() {
-        // Retrieve organ donation status and transplant requests from the server
-        try {
-            client.setTransplantRequests(State.getClientResolver().getTransplantRequests(client));
-            client.setOrganDonationStatus(State.getClientResolver().getOrganDonationStatus(client));
-            client.setDonatedOrgans(State.getClientResolver().getDonatedOrgans(client));
-        } catch (NotFoundException e) {
-            LOGGER.log(Level.WARNING, "Client Not Found", e);
-            Notifications.create()
-                    .title("Client Not Found")
-                    .text("The client could not be found on the server; it may have been deleted.")
-                    .showWarning();
-            return;
-        } catch (ServerRestException e) {
-            LOGGER.log(Level.WARNING, e.getMessage(), e);
-            Notifications.create()
-                    .title("Server Error")
-                    .text("A server error occurred when retrieving the client; please try again later.")
-                    .showError();
-            return;
-        }
-
-        List<TransplantRequest> transplantRequests = client.getTransplantRequests();
-        donationStatus = client.getOrganDonationStatus();
-
-        // Determine which organs are/have been involved in transplant requests by this client
-        EnumSet<Organ> allPreviouslyRequestedOrgans = transplantRequests
-                .stream()
-                .map(TransplantRequest::getRequestedOrgan)
-                .collect(Collectors.toCollection(() -> EnumSet.noneOf(Organ.class)));
-
-        // Set the checkbox as ticked if the client is registered to donate an organ
-        for (Map.Entry<Organ, CheckBox> entry : organCheckBoxes.entrySet()) {
-            entry.getValue().setSelected(donationStatus.get(entry.getKey()));
-            // Highlight & add tooltip if this organ is/has been involved in a transplant request by this client
-            if (allPreviouslyRequestedOrgans.contains(entry.getKey())) {
-                entry.getValue().setStyle("-fx-color: lightcoral;");
-                entry.getValue().setTooltip(new Tooltip("This organ was/is part of a transplant request."));
-            } else {
-                entry.getValue().setStyle(null);
-                entry.getValue().setTooltip(null);
+    private void refreshClientDetails() {
+        Task<Optional<Client>> clientTask = new Task<Optional<Client>>() {
+            @Override
+            protected Optional<Client> call() throws ServerRestException {
+                return com.humanharvest.organz.state.State.getClientManager().getClientByID(client.getUid());
             }
-        }
+        };
 
+        clientTask.setOnSucceeded(event -> {
+            Optional<Client> optionalClient = clientTask.getValue();
+            if (optionalClient.isPresent()) {
+                client = optionalClient.get();
+                updateClientDetails();
+            } else {
+                handleTaskError();
+            }
+        });
+
+        clientTask.setOnFailed(err -> handleTaskError());
+
+        new Thread(clientTask).start();
+    }
+
+    private void updateClientDetails() {
         // Set appropriate name on window title and name label
         String name = "";
         if (session.getLoggedInUserType() == UserType.CLIENT) {
@@ -323,9 +310,6 @@ public class RegisterOrganDonationController extends SubController {
         } else if (windowContext.isClinViewClientWindow()) {
             mainController.setTitle("Donate Organs: " + client.getFullName());
             name = client.getFullName();
-            donatedOrgansTable.setItems(
-                    FXCollections.observableArrayList(client.getDonatedOrgans())
-                            .sorted(donatedOrgansTable.getComparator()));
         }
         if (client.isDead()) {
             name += " (died at " + client.getDatetimeOfDeath().format(dateTimeFormat) + ")";
@@ -336,6 +320,119 @@ public class RegisterOrganDonationController extends SubController {
         if (client.isDead()) {
             registerPane.setDisable(true);
         }
+    }
+
+    private void refreshTransplants() {
+        Task<List<TransplantRequest>> transplantTask = new Task<List<TransplantRequest>>() {
+            @Override
+            protected List<TransplantRequest> call() throws ServerRestException {
+                return com.humanharvest.organz.state.State.getClientResolver().getTransplantRequests(client);
+            }
+        };
+
+        transplantTask.setOnSucceeded(event -> {
+            List<TransplantRequest> transplantRequests = transplantTask.getValue();
+            if (transplantRequests != null) {
+                updateTransplantDetails(transplantRequests);
+            } else {
+                handleTaskError();
+            }
+        });
+
+        transplantTask.setOnFailed(err -> handleTaskError());
+
+        new Thread(transplantTask).start();
+    }
+
+    private void updateTransplantDetails(List<TransplantRequest> transplantRequests) {
+        // Determine which organs are/have been involved in transplant requests by this client
+        EnumSet<Organ> allPreviouslyRequestedOrgans = transplantRequests
+                .stream()
+                .map(TransplantRequest::getRequestedOrgan)
+                .collect(Collectors.toCollection(() -> EnumSet.noneOf(Organ.class)));
+
+        // Set the checkbox as ticked if the client is registered to donate an organ
+        for (Map.Entry<Organ, CheckBox> entry : organCheckBoxes.entrySet()) {
+            // Highlight & add tooltip if this organ is/has been involved in a transplant request by this client
+            if (allPreviouslyRequestedOrgans.contains(entry.getKey())) {
+                entry.getValue().setStyle("-fx-color: lightcoral;");
+                entry.getValue().setTooltip(new Tooltip("This organ was/is part of a transplant request."));
+            } else {
+                entry.getValue().setStyle(null);
+                entry.getValue().setTooltip(null);
+            }
+        }
+    }
+
+    private void refreshDonationStatus() {
+        Task<Map<Organ, Boolean>> donationStatusTask = new Task<Map<Organ, Boolean>>() {
+            @Override
+            protected Map<Organ, Boolean> call() throws ServerRestException {
+                return com.humanharvest.organz.state.State.getClientResolver().getOrganDonationStatus(client);
+            }
+        };
+
+        donationStatusTask.setOnSucceeded(event -> {
+            Map<Organ, Boolean> newDonationStatus = donationStatusTask.getValue();
+            if (newDonationStatus != null) {
+                donationStatus = newDonationStatus;
+                updateDonationStatus();
+            } else {
+                handleTaskError();
+            }
+        });
+
+        donationStatusTask.setOnFailed(err -> handleTaskError());
+
+        new Thread(donationStatusTask).start();
+    }
+
+    private void updateDonationStatus() {
+        // Set the checkbox as ticked if the client is registered to donate an organ
+        for (Map.Entry<Organ, CheckBox> entry : organCheckBoxes.entrySet()) {
+            entry.getValue().setSelected(donationStatus.get(entry.getKey()));
+        }
+    }
+
+    private void refreshDonatedOrgans() {
+        Task<Collection<DonatedOrgan>> donatedOrgansTask = new Task<Collection<DonatedOrgan>>() {
+            @Override
+            protected Collection<DonatedOrgan> call() throws ServerRestException {
+                return com.humanharvest.organz.state.State.getClientResolver().getDonatedOrgans(client);
+            }
+        };
+
+        donatedOrgansTask.setOnSucceeded(event -> {
+            Collection<DonatedOrgan> donatedOrgans = donatedOrgansTask.getValue();
+            if (donatedOrgans != null) {
+                updateDonatedOrgans(donatedOrgans);
+            } else {
+                handleTaskError();
+            }
+        });
+
+        donatedOrgansTask.setOnFailed(err -> handleTaskError());
+
+        new Thread(donatedOrgansTask).start();
+    }
+
+    private void updateDonatedOrgans(Collection<DonatedOrgan> donatedOrgans) {
+        observableDonatedOrgans.setAll(donatedOrgans);
+    }
+
+    private void handleTaskError() {
+        Notifications.create()
+                .title("Server Error")
+                .text("Could not refresh the information for the donor.")
+                .showError();
+    }
+
+    @Override
+    public void refresh() {
+        refreshTransplants();
+        refreshDonationStatus();
+        refreshDonatedOrgans();
+        refreshClientDetails();
     }
 
     /**
