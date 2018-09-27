@@ -606,12 +606,12 @@ public class OrgansToDonateController extends SubController {
 
     /**
      * Refreshes the data in the transplants waiting list table.
-     * Does not refresh if the PotentialRecipients are focused.
+     * Does not refresh if a potential recipient is selected.
      */
     @Override
     public void refresh() {
-        // Only refresh this page if
-        if (!potentialRecipients.isFocused()) {
+        // Only refresh this page if they have not selected a potential recipient
+        if (potentialRecipients.getSelectionModel().getSelectedItems().size() != 1) {
             updateOrgansToDonateList();
             tableView.setItems(sortedOrgansToDonate);
         }
