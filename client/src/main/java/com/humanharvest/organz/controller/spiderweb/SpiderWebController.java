@@ -224,6 +224,8 @@ public class SpiderWebController extends SubController {
 
         // We need to close the Timeline to clear resources
         organWithRecipientsList.forEach(OrganWithRecipients::closeRefresher);
+
+        State.setSpiderwebDonor(null);
     }
 
     private void openPreviouslyOpenWindows() {
