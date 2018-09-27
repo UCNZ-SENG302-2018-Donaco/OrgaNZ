@@ -80,6 +80,13 @@ public abstract class ControllerTest extends ApplicationTest {
         return result;
     }
 
+    protected static <T, Y> void setPrivateField(Class<T> clazz, T instance, String fieldName, Y newValue)
+            throws NoSuchFieldException, IllegalAccessException {
+        Field field = clazz.getDeclaredField(fieldName);
+        field.setAccessible(true);
+        field.set(instance, newValue);
+    }
+
     @Override
     public void start(Stage stage) throws Exception {
         // Load main pane and controller
@@ -116,6 +123,7 @@ public abstract class ControllerTest extends ApplicationTest {
         pageController = null;
         mockRestTemplate = null;
         pageNode = null;
+        setPrivateField(FxRobot.class, this, "context", null);
     }
 
     @After
