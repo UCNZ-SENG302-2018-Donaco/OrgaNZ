@@ -8,7 +8,10 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
@@ -35,8 +38,10 @@ import javafx.scene.transform.Translate;
 import com.humanharvest.organz.skin.MTDatePickerSkin;
 import com.humanharvest.organz.utilities.ReflectionException;
 import com.humanharvest.organz.utilities.ReflectionUtils;
+import com.humanharvest.organz.utilities.Tuple;
 
 import com.sun.javafx.scene.NodeEventDispatcher;
+import com.sun.javafx.scene.control.skin.VirtualFlow;
 import org.tuiofx.widgets.controls.KeyboardPane;
 import org.tuiofx.widgets.skin.ChoiceBoxSkinAndroid;
 import org.tuiofx.widgets.skin.KeyboardManager;
@@ -48,6 +53,8 @@ import org.tuiofx.widgets.skin.TextFieldSkinAndroid;
 import org.tuiofx.widgets.utils.Util;
 
 public class FocusArea implements InvalidationListener {
+
+    private static final Logger LOGGER = Logger.getLogger(FocusArea.class.getName());
 
     private final Collection<Consumer<EventTarget>> skinHandlers = new ArrayList<>();
     private final Collection<Consumer<EventTarget>> popupHandlers = new ArrayList<>();
@@ -65,6 +72,8 @@ public class FocusArea implements InvalidationListener {
     private List<CurrentTouch> paneTouches;
     private Point2D velocity = Point2D.ZERO;
     private boolean disableHinting;
+
+    private Optional<VirtualFlow<?>> currentScrollingPane;
 
     public FocusArea(Pane pane) {
         this.pane = pane;
@@ -238,9 +247,7 @@ public class FocusArea implements InvalidationListener {
 
     public void handleTouchEvent(TouchEvent event, CurrentTouch currentTouch) {
 
-        this.paneTouches = MultitouchHandler.findPaneTouches(pane);
-
-        TouchPoint touchPoint = event.getTouchPoint();
+        paneTouches = MultitouchHandler.findPaneTouches(pane);
 
         if (event.getEventType() == TouchEvent.TOUCH_PRESSED) {
             onTouchPressed(event, currentTouch);
@@ -256,7 +263,11 @@ public class FocusArea implements InvalidationListener {
         TouchPoint touchPoint = event.getTouchPoint();
         currentTouch.setCurrentScreenPoint(new Point2D(touchPoint.getX(), touchPoint.getY()));
 
-        pane.toFront();
+        try {
+            pane.toFront();
+        } catch (RuntimeException e) {
+            LOGGER.log(Level.WARNING, "Runtime exception when setting pane to front", e);
+        }
 
         OnScreenKeyboard<?> keyboard = KeyboardManager.getInstance().getKeyboard(pane);
         ReflectionUtils.<KeyboardPane>getField(keyboard.getSkin(), "keyboardPane").toFront();
@@ -266,10 +277,15 @@ public class FocusArea implements InvalidationListener {
             NodeEventDispatcher eventDispatcher = (NodeEventDispatcher) node.getEventDispatcher();
             eventDispatcher.dispatchCapturingEvent(event);
         });
+
         if (paneTouches.size() == 1) {
             // Informs the focus area nodes of a touch event
             setLastPosition(System.nanoTime(), PointUtils.getCentreOfNode(pane));
             propagateEvent(event.getTarget());
+
+            currentScrollingPane = MultitouchHandler.getVirtualFlow(touchPoint.getPickResult().getIntersectedNode());
+        } else {
+            currentScrollingPane = Optional.empty();
         }
     }
 
@@ -300,6 +316,10 @@ public class FocusArea implements InvalidationListener {
             return;
         }
 
+        currentScrollingPane.ifPresent(virtualFlow -> {
+            handleScrollEvent(virtualFlow, touchPointPosition, currentTouch.getCurrentScreenPoint());
+        });
+
         setLastPosition(System.nanoTime(), PointUtils.getCentreOfNode(pane));
 
         // Find other touches belonging to this pane.
@@ -310,6 +330,134 @@ public class FocusArea implements InvalidationListener {
             CurrentTouch otherTouch = getOtherTouch(currentTouch);
             handleDoubleTouch(touchPointPosition, touchPoint, currentTouch, otherTouch);
         }
+    }
+
+    /**
+     * Scrolls the VirtualFlow node given the previous and new touch points.
+     */
+    private void handleScrollEvent(VirtualFlow<?> virtualFlow, Point2D newTouchPoint, Point2D lastTouchPoint) {
+
+        // Gets the scale and angle out of the transformation matrix
+        Tuple<Double, Double> decomposed = decomposeMatrix(transform);
+
+        // The touch position delta
+        Point2D delta = newTouchPoint.subtract(lastTouchPoint);
+
+        // The length of the delta
+        double deltaLength = PointUtils.length(delta);
+
+        // Gets the angle of the touch delta, relative to the focus area
+        double deltaAngle = Math.atan2(delta.getY(), delta.getX()) - decomposed.y;
+
+        // The amount to scale the touch delta by
+        double scale = 1 / decomposed.x * deltaLength;
+
+        delta = new Point2D(Math.cos(deltaAngle) * scale, Math.sin(deltaAngle) * scale);
+
+        // Adjust the VirtualFlow
+        if (virtualFlow.isVertical()) {
+            virtualFlow.adjustPixels(-delta.getY());
+        } else {
+            virtualFlow.adjustPixels(-delta.getX());
+        }
+    }
+
+    /**
+     * Retrieves the scale and angle from the matrix.
+     * Assumes that it represents a 2d matrix with uniform scaling (ie, x=y=z),
+     * and is only rotated around the Z co-ordinate.
+     */
+    private static Tuple<Double, Double> decomposeMatrix(Affine transform) {
+
+        double scaleX = PointUtils.length(transform.getMxx(), transform.getMyx(), transform.getMzx());
+        double scaleY = PointUtils.length(transform.getMxy(), transform.getMyy(), transform.getMzy());
+        double scaleZ = PointUtils.length(transform.getMxz(), transform.getMyz(), transform.getMzz());
+
+        Affine rotate = new Affine(
+                transform.getMxx() / scaleX, transform.getMxy() / scaleY, transform.getMxz() / scaleZ, 0,
+                transform.getMyx() / scaleX, transform.getMyy() / scaleY, transform.getMyz() / scaleZ, 0,
+                transform.getMzx() / scaleX, transform.getMzy() / scaleY, transform.getMzz() / scaleZ, 0);
+
+        double[] quaternion = matrixToQuaternion(rotate);
+        double[] angles = quaternionToAxisAngle(quaternion);
+
+        // Assume x/y axis is null
+        double angle = angles[3] * Math.signum(angles[2]);
+
+        // Assume scale is uniform
+        return new Tuple(scaleX, angle);
+    }
+
+    /**
+     * Converts a quaternion to an axis angle [x, y, z, angle]
+     */
+    private static double[] quaternionToAxisAngle(double[] quaternion) {
+        // Code lovingly stolen from:
+        // http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToAngle/
+
+        // Assume normalised quaternion
+
+        double angle = 2 * Math.acos(quaternion[3]);
+        double s = Math.sqrt(1 - quaternion[3] * quaternion[3]);
+        // assuming quaternion normalised then w is less than 1, so term
+        // always positive.
+        if (s < 0.001) {
+            // test to avoid divide by zero, s is always positive due to sqrt
+            // if s close to zero then direction of axis not important
+            double x = quaternion[0];
+            double y = quaternion[1];
+            double z = quaternion[2];
+            return new double[] { x, y, z, angle };
+        } else {
+            double x = quaternion[0] / s; // normalise axis
+            double y = quaternion[1] / s;
+            double z = quaternion[2] / s;
+            return new double[] { x, y, z, angle };
+        }
+    }
+
+    /**
+     * Converts a matrix to a quaternion. Assumes it's only a rotation matrix.
+     */
+    private static double[] matrixToQuaternion(Affine affine) {
+
+        // Code lovingly stolen from
+        // http://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/
+
+        double tr = affine.getMxx() + affine.getMyy() + affine.getMzz();
+
+        double qx;
+        double qy;
+        double qz;
+        double qw;
+
+        if (tr > 0) {
+            double S = Math.sqrt(tr+1.0) * 2; // S=4*qw
+            qw = 0.25 * S;
+            qx = (affine.getMzy() - affine.getMyz()) / S;
+            qy = (affine.getMxz() - affine.getMzx()) / S;
+            qz = (affine.getMyx() - affine.getMxy()) / S;
+        } else if (affine.getMxx() > affine.getMyy() && affine.getMxx() > affine.getMzz()) {
+            double S = Math.sqrt(1.0 + affine.getMxx() - affine.getMyy() - affine.getMzz()) * 2; // S=4*qx
+            qw = (affine.getMzy() - affine.getMyz()) / S;
+            qx = 0.25 * S;
+            qy = (affine.getMxy() + affine.getMyx()) / S;
+            qz = (affine.getMxz() + affine.getMzx()) / S;
+        } else if (affine.getMyy() > affine.getMzz()) {
+            double S = Math.sqrt(1.0 + affine.getMyy() - affine.getMxx() - affine.getMzz()) * 2; // S=4*qy
+            qw = (affine.getMxz() - affine.getMzx()) / S;
+            qx = (affine.getMxy() + affine.getMyx()) / S;
+            qy = 0.25 * S;
+            qz = (affine.getMyz() + affine.getMzy()) / S;
+        } else {
+            double S = Math.sqrt(1.0 + affine.getMyy() - affine.getMxx() - affine.getMyy()) * 2; // S=4*qz
+            qw = (affine.getMyx() - affine.getMxy()) / S;
+            qx = (affine.getMxz() + affine.getMzx()) / S;
+            qy = (affine.getMyz() + affine.getMzy()) / S;
+            qz = 0.25 * S;
+        }
+
+        return new double[]{ qx, qy, qz, qw };
     }
 
     /**
@@ -427,8 +575,9 @@ public class FocusArea implements InvalidationListener {
             if (translatable) {
                 prependTransform(new Translate(delta.getX(), delta.getY()));
             }
-            currentTouch.setCurrentScreenPoint(touchPointPosition);
         }
+
+        currentTouch.setCurrentScreenPoint(touchPointPosition);
     }
 
     protected Collection<CurrentTouch> getPaneTouches() {
