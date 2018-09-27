@@ -3,7 +3,6 @@ package com.humanharvest.organz.controller.clinician;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
-import java.util.EnumSet;
 import java.util.HashSet;
 
 import javafx.beans.property.SimpleStringProperty;
@@ -221,7 +220,7 @@ public class TransplantsController extends SubController {
                 pagination.getCurrentPageIndex() * ROWS_PER_PAGE,
                 ROWS_PER_PAGE,
                 new HashSet<>(regionChoice.getCheckModel().getCheckedItems()),
-                EnumSet.copyOf(organChoice.getCheckModel().getCheckedItems()));
+                new HashSet<>(organChoice.getCheckModel().getCheckedItems()));
 
         observableTransplants.setAll(newTransplantRequests.getTransplantRequests());
 
