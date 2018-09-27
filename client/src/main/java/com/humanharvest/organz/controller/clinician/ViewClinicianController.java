@@ -65,7 +65,7 @@ public class ViewClinicianController extends SubController {
     @FXML
     private Label lnameLabel;
     @FXML
-    private Label staffIdLabel;
+    private Label staffIdLabel, passwordLabel;
     @FXML
     private Label title;
     @FXML
@@ -143,6 +143,7 @@ public class ViewClinicianController extends SubController {
     public void refresh() {
         getViewedClinicianData();
         updateCountries();
+        checkMandatoryFields();
     }
 
     /**
@@ -262,18 +263,31 @@ public class ViewClinicianController extends SubController {
      */
     private boolean checkMandatoryFields() {
         boolean update = true;
+
+        // Check first name isn't empty
         if (fname.getText().isEmpty()) {
             fnameLabel.setTextFill(Color.RED);
             update = false;
         } else {
             fnameLabel.setTextFill(Color.BLACK);
         }
+
+        // Check last name isn't empty
         if (lname.getText().isEmpty()) {
             lnameLabel.setTextFill(Color.RED);
             update = false;
         } else {
             lnameLabel.setTextFill(Color.BLACK);
         }
+
+        // Check password isn't empty
+        if (password.getText().isEmpty()) {
+            passwordLabel.setTextFill(Color.RED);
+            update = false;
+        } else {
+            passwordLabel.setTextFill(Color.BLACK);
+        }
+
         return update;
     }
 

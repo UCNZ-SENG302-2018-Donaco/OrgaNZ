@@ -76,6 +76,7 @@ public class MenuBarController extends SubController {
     public MenuItem settingsItem;
     public MenuItem quitItem;
     public MenuItem duplicateItem;
+    public MenuItem viewDashboardItem;
 
     public SeparatorMenuItem topSeparator;
 
@@ -347,6 +348,11 @@ public class MenuBarController extends SubController {
     @FXML
     private void goToCreateClient() {
         PageNavigator.loadPage(Page.CREATE_CLIENT, mainController);
+    }
+
+    @FXML
+    private void viewDashboardItem() {
+        PageNavigator.loadPage(Page.DASHBOARD, mainController);
     }
 
     /**
