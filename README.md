@@ -18,7 +18,7 @@ Scrum Master:
 ## Product Info
 Title: **OrgaNZ**
 
-Version: **Sprint 7 Release**
+Version: **Sprint 7 (Final) Release**
 
 Description: **This project has been designed to increase the deceased organ donation rates in New Zealand.
 It provides people in New Zealand with a system they can use to register as organ donors, or request organ transplants.**
@@ -27,11 +27,11 @@ It provides people in New Zealand with a system they can use to register as orga
 
 This application makes use of a number of external libraries, including:
 * Spring Boot
+* Jackson
 * PicoCLI
 * ControlsFX
 * Hibernate
 * MySqlConnector
-* Swing
 * TUIOFX
 
 And also makes use of these external libraries for testing purposes:
@@ -51,5 +51,5 @@ Please refer to the documentation found in `doc/user_manual.md` to find out more
 For more information on the design decisions that were made, please refer to the documentation found in
 `doc/design_decisions.md`.
 
-To see an example of a file that loads in the user data, please direct your attention to
-`doc/examples/11300_clients.csv`.
+To see an example of a JSON file that loads in the user data, please direct your attention to
+`doc/examples/savefile.JSON`.
