@@ -42,7 +42,7 @@ public class StaffLoginControllerTest extends ControllerTest {
         clickOn("#staffId").write("0");
         clickOn("#password").write("clinician");
         clickOn("Log in");
-        assertEquals(Page.VIEW_CLINICIAN, mainController.getCurrentPage());
+        assertEquals(Page.DASHBOARD, mainController.getCurrentPage());
     }
 
     @Test
@@ -50,7 +50,7 @@ public class StaffLoginControllerTest extends ControllerTest {
         clickOn("#staffId").write("3");
         clickOn("#password").write("k");
         clickOn("Log in");
-        assertEquals(Page.VIEW_CLINICIAN, mainController.getCurrentPage());
+        assertEquals(Page.DASHBOARD, mainController.getCurrentPage());
     }
 
     @Test
@@ -91,7 +91,7 @@ public class StaffLoginControllerTest extends ControllerTest {
         clickOn("#staffId").write(adminUsername);
         clickOn("#password").write(adminPassword);
         clickOn("Log in");
-        assertEquals(Page.SEARCH, mainController.getCurrentPage());
+        assertEquals(Page.DASHBOARD, mainController.getCurrentPage());
     }
 
     @Test
@@ -99,6 +99,6 @@ public class StaffLoginControllerTest extends ControllerTest {
         clickOn("#staffId").write("admin");
         clickOn("#password");
         clickOn("Log in");
-        assertEquals(Page.SEARCH, mainController.getCurrentPage());
+        assertEquals(Page.DASHBOARD, mainController.getCurrentPage());
     }
 }

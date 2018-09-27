@@ -1,11 +1,8 @@
 package com.humanharvest.organz.controller;
 
-
 import javafx.fxml.FXML;
-
 import javafx.scene.control.Button;
 
-import com.humanharvest.organz.Client;
 import com.humanharvest.organz.controller.spiderweb.SpiderWebController;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;

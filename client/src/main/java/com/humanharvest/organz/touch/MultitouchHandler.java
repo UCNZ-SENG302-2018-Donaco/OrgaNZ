@@ -22,12 +22,13 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
-import javafx.scene.input.GestureEvent;
 import javafx.scene.input.RotateEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.input.TouchEvent;
 import javafx.scene.input.TouchPoint;
 import javafx.scene.layout.Pane;
+
+import com.sun.javafx.scene.control.skin.VirtualFlow;
 
 public final class MultitouchHandler {
 
@@ -49,11 +50,14 @@ public final class MultitouchHandler {
 
         root.addEventFilter(TouchEvent.ANY, MultitouchHandler::handleTouchEvent);
 
-        root.addEventFilter(ScrollEvent.ANY, Event::consume);
-        root.addEventFilter(GestureEvent.ANY, Event::consume);
+        root.addEventFilter(ScrollEvent.ANY, event -> {
+            if (event.isDirect()) {
+                event.consume();
+            }
+        });
         root.addEventFilter(RotateEvent.ANY, Event::consume);
 
-        HackyMouseTouch.initialise(root);
+//        HackyMouseTouch.initialise(root);
 
         physicsHandler = new PhysicsHandler(rootPane);
 
@@ -169,6 +173,22 @@ public final class MultitouchHandler {
                     node.getClass().getName(),
                     "com.sun.javafx.scene.control.skin.PaginationSkin$NavigationControl")) {
                 return Optional.of(node);
+            }
+
+            node = node.getParent();
+        }
+
+        return Optional.empty();
+    }
+
+    /**
+     * Returns the virtualflow node if the touchPoint intersects it.
+     */
+    static Optional<VirtualFlow<?>> getVirtualFlow(Node node) {
+
+        while (node != null && !Objects.equals(node, rootPane)) {
+            if (node instanceof VirtualFlow<?>) {
+                return Optional.of((VirtualFlow<?>) node);
             }
 
             node = node.getParent();
