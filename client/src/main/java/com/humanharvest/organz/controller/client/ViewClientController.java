@@ -9,6 +9,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -75,6 +76,7 @@ public class ViewClientController extends SubController {
     private static final Logger LOGGER = Logger.getLogger(ViewClientController.class.getName());
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
             .withZone(ZoneId.systemDefault());
+    private static final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("h:mm a");
 
     private static final int MAX_FILE_SIZE = 2_000_000; // (2mb)
 
@@ -199,6 +201,7 @@ public class ViewClientController extends SubController {
                     deathRegionTF.setText(viewedClient.getRegion());
                 }
                 deathCity.setText(viewedClient.getCurrentAddress());
+                deathTimeField.setText(LocalTime.now().format(timeFormatter));
             } else if (Objects.equals(newValue, aliveToggleBtn)) {
                 deathDetailsPane.setDisable(true);
                 // Clear current input values
@@ -296,6 +299,9 @@ public class ViewClientController extends SubController {
         height.setText(String.valueOf(viewedClient.getHeight()));
         weight.setText(String.valueOf(viewedClient.getWeight()));
         btype.setValue(viewedClient.getBloodType());
+        if (!country.getItems().contains(viewedClient.getCountry())) {
+            country.getItems().add(viewedClient.getCountry());
+        }
         country.setValue(viewedClient.getCountry());
         if (viewedClient.getHospital() == null) {
             hospital.setValue(null);
@@ -331,7 +337,10 @@ public class ViewClientController extends SubController {
             isDeadToggleGroup.selectToggle(deadToggleBtn);
             aliveToggleBtn.setDisable(true);
             deathDatePicker.setValue(viewedClient.getDateOfDeath());
-            deathTimeField.setText(viewedClient.getTimeOfDeath().toString());
+            deathTimeField.setText(viewedClient.getTimeOfDeath().format(timeFormatter));
+            if (!deathCountry.getItems().contains(viewedClient.getCountryOfDeath())) {
+                deathCountry.getItems().add(viewedClient.getCountryOfDeath());
+            }
             deathCountry.setValue(viewedClient.getCountryOfDeath());
             if (viewedClient.getCountryOfDeath() == Country.NZ && viewedClient.getRegionOfDeath() != null) {
                 deathRegionCB.setValue(Region.fromString(viewedClient.getRegionOfDeath()));
@@ -527,7 +536,7 @@ public class ViewClientController extends SubController {
 
             // Validate time of death
             try {
-                LocalTime timeOfDeath = LocalTime.parse(deathTimeField.getText());
+                LocalTime timeOfDeath = LocalTime.parse(deathTimeField.getText(), timeFormatter);
                 if (ClientBornAndDiedDatesValidator.timeOfDeathIsValid(dateOfDeath, timeOfDeath)) {
                     timeOfDeathLabel.setTextFill(Color.BLACK);
                 } else {
@@ -653,7 +662,7 @@ public class ViewClientController extends SubController {
         addChangeIfDifferent(modifyClientObject, viewedClient, "dateOfDeath", deathDatePicker.getValue());
         try {
             addChangeIfDifferent(modifyClientObject, viewedClient, "timeOfDeath",
-                    LocalTime.parse(deathTimeField.getText()));
+                    LocalTime.parse(deathTimeField.getText(), timeFormatter));
         } catch (DateTimeParseException e) {
             // NOTE: this exception shouldn't occur, as checkDeathDetailsFields() should've been run first
             timeOfDeathLabel.setTextFill(Color.RED);

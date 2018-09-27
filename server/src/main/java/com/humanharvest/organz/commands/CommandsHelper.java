@@ -16,7 +16,7 @@ import picocli.CommandLine.Help.Ansi;
 /**
  * Utility class that provides helper functions for executing PicoCLI commands
  */
-public abstract class CommandsHelper {
+public final class CommandsHelper {
 
     private static final Logger LOGGER = Logger.getLogger(CommandsHelper.class.getName());
 

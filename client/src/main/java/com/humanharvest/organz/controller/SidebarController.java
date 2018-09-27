@@ -1,11 +1,8 @@
 package com.humanharvest.organz.controller;
 
-
 import javafx.fxml.FXML;
-
 import javafx.scene.control.Button;
 
-import com.humanharvest.organz.Client;
 import com.humanharvest.organz.controller.spiderweb.SpiderWebController;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
@@ -116,6 +113,8 @@ public class SidebarController extends SubController  {
     private void goToViewClient() {
         PageNavigator.loadPage(Page.VIEW_CLIENT, mainController);
         ProjectionHelper.updateProjection(mainController);
+        mainController.closeTouchActionsBar();
+
     }
 
     /**
@@ -125,6 +124,8 @@ public class SidebarController extends SubController  {
     private void goToRegisterOrganDonation() {
         PageNavigator.loadPage(Page.REGISTER_ORGAN_DONATIONS, mainController);
         ProjectionHelper.updateProjection(mainController);
+        mainController.closeTouchActionsBar();
+
     }
 
     /**
@@ -134,6 +135,8 @@ public class SidebarController extends SubController  {
     private void goToRequestOrganDonation() {
         PageNavigator.loadPage(Page.REQUEST_ORGANS, mainController);
         ProjectionHelper.updateProjection(mainController);
+        mainController.closeTouchActionsBar();
+
     }
 
     /**
@@ -143,6 +146,7 @@ public class SidebarController extends SubController  {
     private void goToViewMedications() {
         PageNavigator.loadPage(Page.VIEW_MEDICATIONS, mainController);
         ProjectionHelper.updateProjection(mainController);
+        mainController.closeTouchActionsBar();
     }
 
     /**
@@ -152,8 +156,8 @@ public class SidebarController extends SubController  {
     private void goToSearch() {
         PageNavigator.loadPage(Page.SEARCH, mainController);
         ProjectionHelper.updateProjection(mainController);
+        mainController.closeTouchActionsBar();
     }
-
 
     /**
      * Redirects the GUI to the Transplants page.
@@ -162,6 +166,7 @@ public class SidebarController extends SubController  {
     private void goToTransplants() {
         PageNavigator.loadPage(Page.TRANSPLANTS, mainController);
         ProjectionHelper.updateProjection(mainController);
+        mainController.closeTouchActionsBar();
     }
 
     /**
@@ -171,6 +176,7 @@ public class SidebarController extends SubController  {
     private void goToHistory() {
         PageNavigator.loadPage(Page.HISTORY, mainController);
         ProjectionHelper.updateProjection(mainController);
+        mainController.closeTouchActionsBar();
     }
 
     /**
@@ -180,6 +186,7 @@ public class SidebarController extends SubController  {
     private void goToIllnessHistory() {
         PageNavigator.loadPage(Page.VIEW_MEDICAL_HISTORY, mainController);
         ProjectionHelper.updateProjection(mainController);
+        mainController.closeTouchActionsBar();
     }
 
     /**
@@ -189,17 +196,20 @@ public class SidebarController extends SubController  {
     private void goToViewProcedures() {
         PageNavigator.loadPage(Page.VIEW_PROCEDURES, mainController);
         ProjectionHelper.updateProjection(mainController);
+        mainController.closeTouchActionsBar();
     }
 
 
     public void goToCreateClient() {
         PageNavigator.loadPage(Page.CREATE_CLIENT, mainController);
         ProjectionHelper.updateProjection(mainController);
+        mainController.closeTouchActionsBar();
     }
 
     public void goToOrgansToDonate() {
         PageNavigator.loadPage(Page.ORGANS_TO_DONATE, mainController);
         ProjectionHelper.updateProjection(mainController);
+        mainController.closeTouchActionsBar();
     }
 
     public void goToSpiderweb() {

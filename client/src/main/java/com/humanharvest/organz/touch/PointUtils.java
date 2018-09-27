@@ -50,8 +50,19 @@ public final class PointUtils {
     }
 
     public static double distance(Point2D point1, Point2D point2) {
-        Point2D delta = point1.subtract(point2);
-        return Math.sqrt(delta.getX() * delta.getX() + delta.getY() * delta.getY());
+        return length(point1.subtract(point2));
+    }
+
+    public static double length(Point2D value) {
+        return Math.sqrt(value.getX() * value.getX() + value.getY() * value.getY());
+    }
+
+    public static double length(double x, double y) {
+        return Math.sqrt(x * x + y * y);
+    }
+
+    public static double length(double x, double y, double z) {
+        return Math.sqrt(x * x + y * y + z * z);
     }
 
     public static double length(Point2D value) {
