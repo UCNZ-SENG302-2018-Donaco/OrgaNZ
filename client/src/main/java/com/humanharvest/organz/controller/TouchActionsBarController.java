@@ -5,7 +5,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -80,7 +79,7 @@ public class TouchActionsBarController extends SubController {
         if (!ProjectionHelper.canProject()) {
             projectButton.setDisable(true);
         }
-        hamburger.addEventHandler(MouseEvent.MOUSE_CLICKED, (e) -> toggleSidebar(controller.getDrawer()));
+        hamburger.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> toggleSidebar(controller.getDrawer()));
 
         refresh();
     }
@@ -147,7 +146,7 @@ public class TouchActionsBarController extends SubController {
     }
 
     /**
-     * Refresh the page
+     * Refreshes the undo and redo, exit, and project buttons
      */
     @Override
     public void refresh() {
@@ -171,7 +170,7 @@ public class TouchActionsBarController extends SubController {
 
     @FXML
     private void refreshWindow() {
-        mainController.refresh();
+        PageNavigator.refreshAllWindows();
     }
 
     /**
