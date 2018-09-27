@@ -1960,6 +1960,27 @@ paths:
         500:
           $ref: '#/components/responses/500InternalServerError'
 
+  '/statistics':
+    get:
+      tags:
+      - Configuration
+      summary: Gets the statistics of the organs and donors
+      security:
+      - AdministratorAccess: []
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/dashboardStatistics'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
+
   ### Undo/Redo
   '/actions/undo':
     get:
@@ -2808,6 +2829,22 @@ components:
           type: boolean
         canRedo:
           type: boolean
+
+    dashboardStatistics:
+      type: object
+      properties:
+        clientCount:
+          type: integer
+        donorCount:
+          type: integer
+        receiverCount:
+          type: integer
+        donorReceiverCount:
+          type: integer
+        organCount:
+          type: integer
+        requestCount:
+          type: integer
 
     # Enums
 
