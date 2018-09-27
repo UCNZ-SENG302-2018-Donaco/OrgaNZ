@@ -147,7 +147,7 @@ public class TouchActionsBarController extends SubController {
     }
 
     /**
-     * Refresh the page
+     * Refreshes the undo and redo, exit, and project buttons
      */
     @Override
     public void refresh() {
@@ -171,7 +171,7 @@ public class TouchActionsBarController extends SubController {
 
     @FXML
     private void refreshWindow() {
-        mainController.refresh();
+        PageNavigator.refreshAllWindows();
     }
 
     /**

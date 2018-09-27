@@ -22,6 +22,14 @@ public class LandingController extends SubController {
     }
 
     /**
+     * Does not do anything as page doesn't render anything that could have changed
+     */
+    @Override
+    public void refresh() {
+        //Do not need to do anything as page doesn't render anything that could have changed
+    }
+
+    /**
      * Redirects the GUI to create client page
      */
     @FXML
