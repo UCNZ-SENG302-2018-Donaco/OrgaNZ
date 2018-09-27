@@ -1,6 +1,7 @@
 package com.humanharvest.organz.commands.modify;
 
 import java.io.PrintStream;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -93,7 +94,7 @@ public class SetOrganStatus implements Runnable {
 
         ModifyClientOrgansAction action = new ModifyClientOrgansAction(client.get(), manager);
 
-        Map<Organ, Boolean> states = new HashMap<>();
+        Map<Organ, Boolean> states = new EnumMap<>(Organ.class);
         states.put(Organ.LIVER, liver);
         states.put(Organ.KIDNEY, kidney);
         states.put(Organ.PANCREAS, pancreas);
