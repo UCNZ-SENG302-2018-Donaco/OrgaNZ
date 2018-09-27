@@ -214,6 +214,23 @@ public abstract class MatchOrganToRecipients {
         Hospital h2 = c2.getHospital();
         Hospital deathHospital = targetClient.getHospital();
 
+        // If the donor does not have a hospital, use their region
+        if (deathHospital == null) {
+            // Try to get the region of the donor
+            // If we can't resolve the region, we cannot compare closeness, so return 0
+            try {
+                Region donorRegion = Region.fromString(deathRegion);
+                deathHospital = new Hospital(deathRegion, donorRegion.getLatitude(), donorRegion.getLongitude(), "");
+            } catch (IllegalArgumentException e) {
+                return 0;
+            }
+        }
+
+        // If all the hospitals are present, simply return the hospital comparison
+        if (h1 != null && h2 != null) {
+            return compareHospitalCloseness(h1, h2, deathHospital);
+        }
+
         // Check if any regions are null, and compare hospitals
         if (r1 == null || r2 == null || deathRegion == null) {
             // Check if any of the hospitals are null
