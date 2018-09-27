@@ -347,7 +347,7 @@ public class OrganWithRecipients {
             }
         }
     }
-    ifMatchRequired
+
     private void tryScheduleTransplant() {
         Optional<PotentialRecipientCell> closestCell = getNearestCell();
 
