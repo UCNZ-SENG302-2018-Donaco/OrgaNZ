@@ -14,11 +14,17 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 import com.humanharvest.organz.DonatedOrgan;
+import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.controller.spiderweb.SpiderWebController;
+import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.state.State.UiType;
 import com.humanharvest.organz.utilities.DurationFormatter;
 import com.humanharvest.organz.utilities.DurationFormatter.DurationFormat;
 import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.utilities.view.Page;
+import com.humanharvest.organz.utilities.view.PageNavigator;
+import com.humanharvest.organz.utilities.view.WindowContext;
 
 import org.apache.commons.io.IOUtils;
 
@@ -51,8 +57,13 @@ public class DonatedOrganOverviewController extends SubController {
         updateTime();
 
         donorNameLabel.setText(donatedOrgan.getDonor().getFullName());
-
-        try (InputStream in = getClass().getResourceAsStream("/images/pages/spiderweb.png")) {
+        String imageName;
+        if(State.getUiType() == UiType.TOUCH) {
+             imageName = "spiderweb";
+        } else { //standard
+            imageName = "donate_organs";
+        }
+        try (InputStream in = getClass().getResourceAsStream("/images/pages/" + imageName + ".png")) {
             byte[] spiderWebImageBytes = IOUtils.toByteArray(in);
             spiderWeb.setImage(new Image(new ByteArrayInputStream(spiderWebImageBytes)));
         } catch (IOException e) {
@@ -61,8 +72,17 @@ public class DonatedOrganOverviewController extends SubController {
     }
 
     @FXML
-    private void openSpiderWeb() {
-        new SpiderWebController(donatedOrgan.getDonor());
+    private void openSpiderWebOrDonateOrgansPage() {
+        if(State.getUiType() == UiType.TOUCH) {
+            new SpiderWebController(donatedOrgan.getDonor());
+        } else { //standard
+            MainController newMain = PageNavigator.openNewWindow();
+            newMain.setWindowContext(new WindowContext.WindowContextBuilder()
+                    .setAsClinicianViewClientWindow()
+                    .viewClient(donatedOrgan.getDonor()).build());
+            PageNavigator.loadPage(Page.REGISTER_ORGAN_DONATIONS, newMain);
+        }
+
     }
 
     private Image getOrganImage(Organ organ, Map<Organ, Image> organPictureStore) {
