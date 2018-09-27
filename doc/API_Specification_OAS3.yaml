@@ -1,6 +1,6 @@
 openapi: "3.0.1"
 info:
-  version: 1.0.9
+  version: 1.0.10
   title: "Organz API"
   description: |
     An API used to access the Human Harvest Inc server.
@@ -8,52 +8,52 @@ info:
       Major changes include: Modifying the data types of any parameters or values, removing key value pairs, removing endpoints. These CANNOT be pushed without maintaining a legacy version and upgrading the system to a new version.
 
 tags:
-    - name: Client
-      description: All base client paths
-    - name: Client Donation Status
-      description: All client donation status paths
-    - name: Client Medications
-      description: All client medication paths
-    - name: Client Illnesses
-      description: All client illness AKA medical history paths
-    - name: Client Procedures
-      description: All client procedure paths
-    - name: Client Profile Picture
-      description: All client profile picture paths
-    - name: Client Transplant Requests
-      description: All client transplant request paths
-    - name: Clinician
-      description: All base clinician paths
-    - name: Administrator
-      description: All base administrator paths
-    - name: Configuration
-      description: All configuration paths
-    - name: Algorithms
-      description: All algorithm paths
+- name: Client
+  description: All base client paths
+- name: Client Donation Status
+  description: All client donation status paths
+- name: Client Medications
+  description: All client medication paths
+- name: Client Illnesses
+  description: All client illness AKA medical history paths
+- name: Client Procedures
+  description: All client procedure paths
+- name: Client Profile Picture
+  description: All client profile picture paths
+- name: Client Transplant Requests
+  description: All client transplant request paths
+- name: Clinician
+  description: All base clinician paths
+- name: Administrator
+  description: All base administrator paths
+- name: Configuration
+  description: All configuration paths
+- name: Algorithms
+  description: All algorithm paths
 
 paths:
   ### Clients
-  /clients:
+  '/clients':
     get:
       tags:
-        - Client
+      - Client
       security:
-        - ClinicianAccess: []
-        - AdministratorAccess: []
+      - ClinicianAccess: []
+      - AdministratorAccess: []
       summary: "Returns all clients from the system"
       parameters:
-        - $ref: '#/components/parameters/q'
-        - $ref: '#/components/parameters/offset'
-        - $ref: '#/components/parameters/count'
-        - $ref: '#/components/parameters/minimumAge'
-        - $ref: '#/components/parameters/maximumAge'
-        - $ref: '#/components/parameters/region'
-        - $ref: '#/components/parameters/birthGender'
-        - $ref: '#/components/parameters/clientType'
-        - $ref: '#/components/parameters/donating'
-        - $ref: '#/components/parameters/requesting'
-        - $ref: '#/components/parameters/sortOption'
-        - $ref: '#/components/parameters/isReversed'
+      - $ref: '#/components/parameters/q'
+      - $ref: '#/components/parameters/offset'
+      - $ref: '#/components/parameters/count'
+      - $ref: '#/components/parameters/minimumAge'
+      - $ref: '#/components/parameters/maximumAge'
+      - $ref: '#/components/parameters/region'
+      - $ref: '#/components/parameters/birthGender'
+      - $ref: '#/components/parameters/clientType'
+      - $ref: '#/components/parameters/donating'
+      - $ref: '#/components/parameters/requesting'
+      - $ref: '#/components/parameters/sortOption'
+      - $ref: '#/components/parameters/isReversed'
       responses:
         200:
           description: A list of clients
@@ -72,7 +72,7 @@ paths:
           $ref: '#/components/responses/500InternalServerError'
     post:
       tags:
-        - Client
+      - Client
       summary: Create a new client
       requestBody:
         content:
@@ -107,11 +107,11 @@ paths:
         minimum: 0
     get:
       tags:
-        - Client
+      - Client
       security:
-        - ClientAccess: []
-        - ClinicianAccess: []
-        - AdministratorAccess: []
+      - ClientAccess: []
+      - ClinicianAccess: []
+      - AdministratorAccess: []
       summary: Get detailed client information
       responses:
         200:
@@ -132,11 +132,11 @@ paths:
           $ref: '#/components/responses/500InternalServerError'
     patch:
       tags:
-        - Client
+      - Client
       security:
-        - ClientAccess: []
-        - ClinicianAccess: []
-        - AdministratorAccess: []
+      - ClientAccess: []
+      - ClinicianAccess: []
+      - AdministratorAccess: []
       summary: Change some information about a client
       description: Only those properties included in the request body will be changed.
 
@@ -144,7 +144,7 @@ paths:
         content:
           application/json:
             schema:
-                $ref: '#/components/schemas/clientModifiableDetails'
+              $ref: '#/components/schemas/clientModifiableDetails'
       responses:
         200:
           description: OK
@@ -164,11 +164,11 @@ paths:
           $ref: '#/components/responses/500InternalServerError'
     delete:
       tags:
-        - Client
+      - Client
       security:
-        - ClientAccess: []
-        - ClinicianAccess: []
-        - AdministratorAccess: []
+      - ClientAccess: []
+      - ClinicianAccess: []
+      - AdministratorAccess: []
       summary: Delete a client
 
       responses:
@@ -196,7 +196,7 @@ paths:
         minimum: 0
     post:
       tags:
-        - Client
+      - Client
       summary: Mark a client as dead
       requestBody:
         content:
@@ -236,11 +236,11 @@ paths:
         minimum: 0
     get:
       tags:
-        - Client
+      - Client
       security:
-        - ClientAccess: []
-        - ClinicianAccess: []
-        - AdministratorAccess: []
+      - ClientAccess: []
+      - ClinicianAccess: []
+      - AdministratorAccess: []
       summary: Get client history
       responses:
         200:
@@ -273,11 +273,11 @@ paths:
         minimum: 0
     get:
       tags:
-        - Client Profile Picture
+      - Client Profile Picture
       security:
-        - ClientAccess: []
-        - ClinicianAccess: []
-        - AdministratorAccess: []
+      - ClientAccess: []
+      - ClinicianAccess: []
+      - AdministratorAccess: []
       summary: Get client profile picture
       responses:
         200:
@@ -301,11 +301,11 @@ paths:
 
     post:
       tags:
-        - Client Profile Picture
+      - Client Profile Picture
       security:
-        - ClientAccess: []
-        - ClinicianAccess: []
-        - AdministratorAccess: []
+      - ClientAccess: []
+      - ClinicianAccess: []
+      - AdministratorAccess: []
       summary: Post client profile picture
       requestBody:
         content:
@@ -336,11 +336,11 @@ paths:
 
     delete:
       tags:
-        - Client Profile Picture
+      - Client Profile Picture
       security:
-        - ClientAccess: []
-        - ClinicianAccess: []
-        - AdministratorAccess: []
+      - ClientAccess: []
+      - ClinicianAccess: []
+      - AdministratorAccess: []
       summary: Delete client profile picture
       responses:
         201:
@@ -359,9 +359,9 @@ paths:
   '/clients/file':
     get:
       tags:
-        - Client
+      - Client
       security:
-        - AdministratorAccess: []
+      - AdministratorAccess: []
       summary: Get a file of all clients
       responses:
         200:
@@ -387,9 +387,9 @@ paths:
           $ref: '#/components/responses/500InternalServerError'
     post:
       tags:
-        - Client
+      - Client
       security:
-        - AdministratorAccess: []
+      - AdministratorAccess: []
       summary: Load a file of clients
       requestBody:
         content:
@@ -428,11 +428,11 @@ paths:
         minimum: 0
     get:
       tags:
-        - Client Donation Status
+      - Client Donation Status
       security:
-        - ClientAccess: []
-        - ClinicianAccess: []
-        - AdministratorAccess: []
+      - ClientAccess: []
+      - ClinicianAccess: []
+      - AdministratorAccess: []
       summary: Get the list of a given clients donation status
       responses:
         200:
@@ -453,11 +453,11 @@ paths:
           $ref: '#/components/responses/500InternalServerError'
     patch:
       tags:
-        - Client Donation Status
+      - Client Donation Status
       security:
-        - ClientAccess: []
-        - ClinicianAccess: []
-        - AdministratorAccess: []
+      - ClientAccess: []
+      - ClinicianAccess: []
+      - AdministratorAccess: []
       summary: Change a clients organ donation status
       description: Only those organs included in the request body will be changed.
 
@@ -465,7 +465,7 @@ paths:
         content:
           application/json:
             schema:
-                $ref: '#/components/schemas/organBooleanArray'
+              $ref: '#/components/schemas/organBooleanArray'
       responses:
         200:
           description: OK
@@ -487,10 +487,10 @@ paths:
   '/clients/organs':
     get:
       tags:
-        - Client Organs
+      - Client Organs
       security:
-        - ClinicianAccess: []
-        - AdministratorAccess: []
+      - ClinicianAccess: []
+      - AdministratorAccess: []
       summary: Get the list of all currently available organs
       responses:
         200:
@@ -512,19 +512,19 @@ paths:
 
   '/clients/{uid}/donatedOrgans':
     parameters:
-      - in: path
-        name: uid
-        description: Client User ID
-        required: true
-        schema:
-          type: integer
-          minimum: 0
+    - in: path
+      name: uid
+      description: Client User ID
+      required: true
+      schema:
+        type: integer
+        minimum: 0
     get:
       tags:
-        - Client Organs
+      - Client Organs
       security:
-        - ClinicianAccess: []
-        - AdministratorAccess: []
+      - ClinicianAccess: []
+      - AdministratorAccess: []
       summary: Get the list of organs this client has donated
       responses:
         200:
@@ -546,27 +546,27 @@ paths:
 
   '/clients/{uid}/donatedOrgans/{id}/override':
     parameters:
-      - in: path
-        name: uid
-        description: Client User ID
-        required: true
-        schema:
-          type: integer
-          minimum: 0
-      - in: path
-        name: id
-        description: Donated Organ ID
-        required: true
-        schema:
-          type: integer
-          minimum: 0
+    - in: path
+      name: uid
+      description: Client User ID
+      required: true
+      schema:
+        type: integer
+        minimum: 0
+    - in: path
+      name: id
+      description: Donated Organ ID
+      required: true
+      schema:
+        type: integer
+        minimum: 0
     post:
       summary: Manually override a given donated organ so it cannot be donated
       tags:
-        - Client Organs
+      - Client Organs
       security:
-        - ClinicianAccess: []
-        - AdministratorAccess: []
+      - ClinicianAccess: []
+      - AdministratorAccess: []
       requestBody:
         content:
           application/json:
@@ -592,10 +592,10 @@ paths:
     patch:
       summary: Edit the manual override on a given donated organ
       tags:
-        - Client Organs
+      - Client Organs
       security:
-        - ClinicianAccess: []
-        - AdministratorAccess: []
+      - ClinicianAccess: []
+      - AdministratorAccess: []
       requestBody:
         content:
           application/json:
@@ -621,10 +621,10 @@ paths:
     delete:
       summary: Cancel the manual override on a given donated organ so it can be donated again
       tags:
-        - Client Organs
+      - Client Organs
       security:
-        - ClinicianAccess: []
-        - AdministratorAccess: []
+      - ClinicianAccess: []
+      - AdministratorAccess: []
       responses:
         200:
           description: OK
@@ -654,11 +654,11 @@ paths:
         minimum: 0
     get:
       tags:
-        - Client Medications
+      - Client Medications
       security:
-        - ClientAccess: []
-        - ClinicianAccess: []
-        - AdministratorAccess: []
+      - ClientAccess: []
+      - ClinicianAccess: []
+      - AdministratorAccess: []
       summary: Get the list of a given clients medications
       responses:
         200:
@@ -681,10 +681,10 @@ paths:
           $ref: '#/components/responses/500InternalServerError'
     post:
       tags:
-        - Client Medications
+      - Client Medications
       security:
-        - ClinicianAccess: []
-        - AdministratorAccess: []
+      - ClinicianAccess: []
+      - AdministratorAccess: []
       summary: Create a new medication record
       description: Returns the full list of medication records in response upon success.
 
@@ -730,10 +730,10 @@ paths:
         type: integer
     delete:
       tags:
-        - Client Medications
+      - Client Medications
       security:
-        - ClinicianAccess: []
-        - AdministratorAccess: []
+      - ClinicianAccess: []
+      - AdministratorAccess: []
       summary: Delete a medication record
       responses:
         201:
@@ -766,10 +766,10 @@ paths:
         type: integer
     post:
       tags:
-        - Client Medications
+      - Client Medications
       security:
-        - ClinicianAccess: []
-        - AdministratorAccess: []
+      - ClinicianAccess: []
+      - AdministratorAccess: []
       summary: Move a medication to current medications
       description: Returns the medication record in response upon success.
 
@@ -808,10 +808,10 @@ paths:
         type: integer
     post:
       tags:
-        - Client Medications
+      - Client Medications
       security:
-        - ClinicianAccess: []
-        - AdministratorAccess: []
+      - ClinicianAccess: []
+      - AdministratorAccess: []
       summary: Move a medication to past medications
       description: Returns the medication record in response upon success.
 
@@ -844,11 +844,11 @@ paths:
         minimum: 0
     get:
       tags:
-        - Client Illnesses
+      - Client Illnesses
       security:
-        - ClientAccess: []
-        - ClinicianAccess: []
-        - AdministratorAccess: []
+      - ClientAccess: []
+      - ClinicianAccess: []
+      - AdministratorAccess: []
       summary: Get the list of a given clients illnesses
       responses:
         200:
@@ -871,10 +871,10 @@ paths:
           $ref: '#/components/responses/500InternalServerError'
     post:
       tags:
-        - Client Illnesses
+      - Client Illnesses
       security:
-        - ClinicianAccess: []
-        - AdministratorAccess: []
+      - ClinicianAccess: []
+      - AdministratorAccess: []
       summary: Create a new illness record
       description: Returns the full list of illness records in response upon success. The chronic flag cannot be set to true and have the cured date set. Cured date is nullable
 
@@ -920,10 +920,10 @@ paths:
         type: integer
     patch:
       tags:
-        - Client Illnesses
+      - Client Illnesses
       security:
-        - ClinicianAccess: []
-        - AdministratorAccess: []
+      - ClinicianAccess: []
+      - AdministratorAccess: []
       summary: Update an illness record
       description: Only those properties included in the request body will be changed. An illness cannot have it's curedDate set if the chronic flag is currently true.
 
@@ -931,7 +931,7 @@ paths:
         content:
           application/json:
             schema:
-                $ref: '#/components/schemas/illnessRecordModify'
+              $ref: '#/components/schemas/illnessRecordModify'
 
       responses:
         201:
@@ -953,10 +953,10 @@ paths:
 
     delete:
       tags:
-        - Client Illnesses
+      - Client Illnesses
       security:
-        - ClinicianAccess: []
-        - AdministratorAccess: []
+      - ClinicianAccess: []
+      - AdministratorAccess: []
       summary: Delete an illness
       description: Returns the illness record after success
 
@@ -989,11 +989,11 @@ paths:
         minimum: 0
     get:
       tags:
-        - Client Procedures
+      - Client Procedures
       security:
-        - ClientAccess: []
-        - ClinicianAccess: []
-        - AdministratorAccess: []
+      - ClientAccess: []
+      - ClinicianAccess: []
+      - AdministratorAccess: []
       summary: Get the list of a given clients medical procedures
       responses:
         200:
@@ -1016,10 +1016,10 @@ paths:
           $ref: '#/components/responses/500InternalServerError'
     post:
       tags:
-        - Client Procedures
+      - Client Procedures
       security:
-        - ClinicianAccess: []
-        - AdministratorAccess: []
+      - ClinicianAccess: []
+      - AdministratorAccess: []
       summary: Create a new procedure record
       description: Returns the full list of procedure records in response upon success.
 
@@ -1065,10 +1065,10 @@ paths:
         type: integer
     patch:
       tags:
-        - Client Procedures
+      - Client Procedures
       security:
-        - ClinicianAccess: []
-        - AdministratorAccess: []
+      - ClinicianAccess: []
+      - AdministratorAccess: []
       summary: Update a procedure record
       description: Only those properties included in the request body will be changed.
 
@@ -1076,7 +1076,7 @@ paths:
         content:
           application/json:
             schema:
-                $ref: '#/components/schemas/procedureRecordCreate'
+              $ref: '#/components/schemas/procedureRecordCreate'
       responses:
         201:
           description: Updated
@@ -1096,10 +1096,10 @@ paths:
           $ref: '#/components/responses/500InternalServerError'
     delete:
       tags:
-        - Client Procedures
+      - Client Procedures
       security:
-        - ClinicianAccess: []
-        - AdministratorAccess: []
+      - ClinicianAccess: []
+      - AdministratorAccess: []
       summary: Delete a procedure record
 
       responses:
@@ -1118,26 +1118,26 @@ paths:
 
   '/clients/{uid}/transplants':
     parameters:
-      - in: path
-        name: uid
-        description: Client User ID
-        required: true
-        schema:
-          type: integer
-          minimum: 0
+    - in: path
+      name: uid
+      description: Client User ID
+      required: true
+      schema:
+        type: integer
+        minimum: 0
     post:
       tags:
-        - Client Procedures
+      - Client Procedures
       security:
-        - ClinicianAccess: []
-        - AdministratorAccess: []
+      - ClinicianAccess: []
+      - AdministratorAccess: []
       summary: Schedule a transplant
       description: The transplant record date must not be in the past. If it is, a 400 error will be returned.
       parameters:
-        - $ref: '#/components/parameters/organId'
-        - $ref: '#/components/parameters/requestId'
-        - $ref: '#/components/parameters/hospitalId'
-        - $ref: '#/components/parameters/dateString'
+      - $ref: '#/components/parameters/organId'
+      - $ref: '#/components/parameters/requestId'
+      - $ref: '#/components/parameters/hospitalId'
+      - $ref: '#/components/parameters/dateString'
       responses:
         200:
           description: Updated
@@ -1149,10 +1149,6 @@ paths:
           $ref: '#/components/responses/403Forbidden'
         404:
           $ref: '#/components/responses/404NotFound'
-        412:
-          $ref: '#/components/responses/412PreconditionFailed'
-        428:
-          $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
 
@@ -1173,10 +1169,10 @@ paths:
         type: integer
     post:
       tags:
-        - Client Procedures
+      - Client Procedures
       security:
-        - ClinicianAccess: []
-        - AdministratorAccess: []
+      - ClinicianAccess: []
+      - AdministratorAccess: []
       summary: Resolve a transplant record
       description: The transplant record date must not be in the future, if it is a 400 error will be thrown.
 
@@ -1191,31 +1187,27 @@ paths:
           $ref: '#/components/responses/403Forbidden'
         404:
           $ref: '#/components/responses/404NotFound'
-        412:
-          $ref: '#/components/responses/412PreconditionFailed'
-        428:
-          $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
 
   '/clients/transplantRequests':
     get:
       tags:
-        - Client Transplant Requests
+      - Client Transplant Requests
       security:
-        - ClientAccess: []
-        - ClinicianAccess: []
-        - AdministratorAccess: []
+      - ClientAccess: []
+      - ClinicianAccess: []
+      - AdministratorAccess: []
       summary: Returns a list of transplant requests
       parameters:
-        - $ref: '#/components/parameters/offset'
-        - $ref: '#/components/parameters/count'
-        - $ref: '#/components/parameters/region'
-        - name: organs
-          in: query
-          description: "Only return transplants involving the given organs, may be comma separated for multiple"
-          schema:
-            $ref: '#/components/schemas/organEnum'
+      - $ref: '#/components/parameters/offset'
+      - $ref: '#/components/parameters/count'
+      - $ref: '#/components/parameters/region'
+      - name: organs
+        in: query
+        description: "Only return transplants involving the given organs, may be comma separated for multiple"
+        schema:
+          $ref: '#/components/schemas/organEnum'
       responses:
         200:
           description: OK
@@ -1247,11 +1239,11 @@ paths:
         minimum: 0
     get:
       tags:
-        - Client Transplant Requests
+      - Client Transplant Requests
       security:
-        - ClientAccess: []
-        - ClinicianAccess: []
-        - AdministratorAccess: []
+      - ClientAccess: []
+      - ClinicianAccess: []
+      - AdministratorAccess: []
       summary: Get the list of a given clients transplant requests
       responses:
         200:
@@ -1274,10 +1266,10 @@ paths:
           $ref: '#/components/responses/500InternalServerError'
     post:
       tags:
-        - Client Transplant Requests
+      - Client Transplant Requests
       security:
-        - ClinicianAccess: []
-        - AdministratorAccess: []
+      - ClinicianAccess: []
+      - AdministratorAccess: []
       summary: Create a new transplant request
       description: Returns the full list of transplant requests in response upon success.
 
@@ -1323,10 +1315,10 @@ paths:
         type: integer
     patch:
       tags:
-        - Client Transplant Requests
+      - Client Transplant Requests
       security:
-        - ClinicianAccess: []
-        - AdministratorAccess: []
+      - ClinicianAccess: []
+      - AdministratorAccess: []
       summary: Update a transpant request
       description: Only those properties included in the request body will be changed.
 
@@ -1334,7 +1326,7 @@ paths:
         content:
           application/json:
             schema:
-                $ref: '#/components/schemas/transplantRequestCreate'
+              $ref: '#/components/schemas/transplantRequestCreate'
       responses:
         201:
           description: Updated
@@ -1354,19 +1346,19 @@ paths:
           $ref: '#/components/responses/500InternalServerError'
 
   ### Clinician
-  /clinicians:
+  '/clinicians':
     get:
       tags:
-        - Clinician
+      - Clinician
       security:
-        - ClinicianAccess: []
-        - AdministratorAccess: []
+      - ClinicianAccess: []
+      - AdministratorAccess: []
       summary: "Returns all clinicians from the system"
       parameters:
-        - $ref: '#/components/parameters/q'
-        - $ref: '#/components/parameters/offset'
-        - $ref: '#/components/parameters/count'
-        - $ref: '#/components/parameters/region'
+      - $ref: '#/components/parameters/q'
+      - $ref: '#/components/parameters/offset'
+      - $ref: '#/components/parameters/count'
+      - $ref: '#/components/parameters/region'
       responses:
         200:
           description: A list of clinicians
@@ -1387,9 +1379,9 @@ paths:
           $ref: '#/components/responses/500InternalServerError'
     post:
       tags:
-        - Clinician
+      - Clinician
       security:
-        - AdministratorAccess: []
+      - AdministratorAccess: []
       summary: Create a new clinician
       requestBody:
         content:
@@ -1449,10 +1441,10 @@ paths:
         minimum: 0
     get:
       tags:
-        - Clinician
+      - Clinician
       security:
-        - ClinicianAccess: []
-        - AdministratorAccess: []
+      - ClinicianAccess: []
+      - AdministratorAccess: []
       summary: Get detailed clinician information
       responses:
         200:
@@ -1473,10 +1465,10 @@ paths:
           $ref: '#/components/responses/500InternalServerError'
     patch:
       tags:
-        - Clinician
+      - Clinician
       security:
-        - ClinicianAccess: []
-        - AdministratorAccess: []
+      - ClinicianAccess: []
+      - AdministratorAccess: []
       summary: Change some information about a clinician
       description: Only those properties included in the request body will be changed.
 
@@ -1484,7 +1476,7 @@ paths:
         content:
           application/json:
             schema:
-                $ref: '#/components/schemas/clinicianModifiableDetails'
+              $ref: '#/components/schemas/clinicianModifiableDetails'
       responses:
         200:
           description: OK
@@ -1504,10 +1496,10 @@ paths:
           $ref: '#/components/responses/500InternalServerError'
     delete:
       tags:
-        - Clinician
+      - Clinician
       security:
-        - ClinicianAccess: []
-        - AdministratorAccess: []
+      - ClinicianAccess: []
+      - AdministratorAccess: []
       summary: Delete a clinician
 
       responses:
@@ -1535,10 +1527,10 @@ paths:
         minimum: 0
     get:
       tags:
-        - Clinician
+      - Clinician
       security:
-        - ClinicianAccess: []
-        - AdministratorAccess: []
+      - ClinicianAccess: []
+      - AdministratorAccess: []
       summary: Get clinician history
       responses:
         200:
@@ -1561,17 +1553,17 @@ paths:
           $ref: '#/components/responses/500InternalServerError'
 
   ### Administrator
-  /administrators:
+  '/administrators':
     get:
       tags:
-        - Administrator
+      - Administrator
       security:
-        - AdministratorAccess: []
+      - AdministratorAccess: []
       summary: Returns all administrators from the system
       parameters:
-        - $ref: '#/components/parameters/q'
-        - $ref: '#/components/parameters/offset'
-        - $ref: '#/components/parameters/count'
+      - $ref: '#/components/parameters/q'
+      - $ref: '#/components/parameters/offset'
+      - $ref: '#/components/parameters/count'
       responses:
         200:
           description: A list of administrators
@@ -1592,9 +1584,9 @@ paths:
           $ref: '#/components/responses/500InternalServerError'
     post:
       tags:
-        - Administrator
+      - Administrator
       security:
-        - AdministratorAccess: []
+      - AdministratorAccess: []
       summary: Create a new administrator
       requestBody:
         content:
@@ -1629,9 +1621,9 @@ paths:
         minimum: 0
     get:
       tags:
-        - Administrator
+      - Administrator
       security:
-        - AdministratorAccess: []
+      - AdministratorAccess: []
       summary: Get detailed administrator information
       responses:
         200:
@@ -1652,9 +1644,9 @@ paths:
           $ref: '#/components/responses/500InternalServerError'
     patch:
       tags:
-        - Administrator
+      - Administrator
       security:
-        - AdministratorAccess: []
+      - AdministratorAccess: []
       summary: Change some information about an administrator
       description: Only those properties included in the request body will be changed.
 
@@ -1662,7 +1654,7 @@ paths:
         content:
           application/json:
             schema:
-                $ref: '#/components/schemas/administratorModifiableDetails'
+              $ref: '#/components/schemas/administratorModifiableDetails'
       responses:
         200:
           description: OK
@@ -1682,9 +1674,9 @@ paths:
           $ref: '#/components/responses/500InternalServerError'
     delete:
       tags:
-        - Administrator
+      - Administrator
       security:
-        - AdministratorAccess: []
+      - AdministratorAccess: []
       summary: Delete an administrator
 
       responses:
@@ -1704,9 +1696,9 @@ paths:
   '/history':
     get:
       tags:
-        - Administrator
+      - Administrator
       security:
-        - AdministratorAccess: []
+      - AdministratorAccess: []
       summary: Returns all history
       responses:
         200:
@@ -1729,15 +1721,15 @@ paths:
   '/commands':
     post:
       tags:
-        - Administrator
+      - Administrator
       security:
-        - AdministratorAccess: []
+      - AdministratorAccess: []
       summary: Execute command line commands on the backend database. Try executing "help" for information
       requestBody:
         content:
           application/json:
             schema:
-                $ref: '#/components/schemas/command'
+              $ref: '#/components/schemas/command'
       responses:
         200:
           description: The response from the command
@@ -1754,7 +1746,7 @@ paths:
   '/login/client':
     post:
       tags:
-        - Authentication
+      - Authentication
       summary: Client login endpoint
       description: Returns the unique identifier used for future queries, and also userData
         The response will also include the authentication token, which should be included in the Authentication header for all future requests.
@@ -1780,7 +1772,7 @@ paths:
   '/login/clinician':
     post:
       tags:
-        - Authentication
+      - Authentication
       summary: Clinician login endpoint
       description: Returns the authentication token, which should be included in the Authentication header for all future requests.
       requestBody:
@@ -1805,7 +1797,7 @@ paths:
   '/login/administrator':
     post:
       tags:
-        - Authentication
+      - Authentication
       summary: Administrator login endpoint
       description: Returns the authentication token, which should be included in the Authentication header for all future requests.
       requestBody:
@@ -1831,7 +1823,7 @@ paths:
   '/config/countries':
     get:
       tags:
-        - Configuration
+      - Configuration
       summary: Returns the allowed list of countries
       responses:
         200:
@@ -1847,10 +1839,10 @@ paths:
           $ref: '#/components/responses/500InternalServerError'
     post:
       tags:
-        - Configuration
+      - Configuration
       summary: Updates the allowed list of countries
       security:
-        - AdministratorAccess: []
+      - AdministratorAccess: []
       requestBody:
         content:
           application/json:
@@ -1871,7 +1863,7 @@ paths:
   '/config/hospitals':
     get:
       tags:
-        - Configuration
+      - Configuration
       summary: Returns the list of hospitals
       responses:
         200:
@@ -1887,10 +1879,10 @@ paths:
           $ref: '#/components/responses/500InternalServerError'
     post:
       tags:
-        - Configuration
+      - Configuration
       summary: Updates the allowed list of hospitals
       security:
-        - AdministratorAccess: []
+      - AdministratorAccess: []
       requestBody:
         content:
           application/json:
@@ -1910,18 +1902,18 @@ paths:
 
   '/config/hospitals/{id}/transplantPrograms':
     parameters:
-      - in: path
-        name: id
-        description: Hospital ID
-        required: true
-        schema:
-          type: integer
+    - in: path
+      name: id
+      description: Hospital ID
+      required: true
+      schema:
+        type: integer
     post:
       tags:
-        - Configuration
+      - Configuration
       summary: Updates the set of organs that the hospital can perform transplants for
       security:
-        - AdministratorAccess: []
+      - AdministratorAccess: []
       requestBody:
         content:
           application/json:
@@ -1939,15 +1931,44 @@ paths:
         500:
           $ref: '#/components/responses/500InternalServerError'
 
+  '/organimage/{organtype}':
+    parameters:
+    - in: path
+      name: organtype
+      description: Organ Type
+      required: true
+      schema:
+        $ref: '#/components/schemas/organEnum'
+    get:
+      tags:
+      - Configuration
+      summary: Returns the image for the specified organ-type
+      responses:
+        200:
+          description: OK
+          content:
+            image/png:
+              schema:
+                type: string
+                format: binary
+                example: Raw content of PNG image file
+
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        404:
+          $ref: '#/components/responses/404NotFound'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
+
   ### Undo/Redo
   '/actions/undo':
     get:
       tags:
-        - Actions
+      - Actions
       security:
-        - ClientAccess: []
-        - ClinicianAccess: []
-        - AdministratorAccess: []
+      - ClientAccess: []
+      - ClinicianAccess: []
+      - AdministratorAccess: []
       summary: Get the next action to be undone. May be null if no more actions to undo
       responses:
         200:
@@ -1966,11 +1987,11 @@ paths:
           $ref: '#/components/responses/500InternalServerError'
     post:
       tags:
-        - Actions
+      - Actions
       security:
-        - ClientAccess: []
-        - ClinicianAccess: []
-        - AdministratorAccess: []
+      - ClientAccess: []
+      - ClinicianAccess: []
+      - AdministratorAccess: []
       summary: Undo the last executed action
       description: Returns the string text of the undo action
       responses:
@@ -1992,11 +2013,11 @@ paths:
   '/actions/redo':
     get:
       tags:
-        - Actions
+      - Actions
       security:
-        - ClientAccess: []
-        - ClinicianAccess: []
-        - AdministratorAccess: []
+      - ClientAccess: []
+      - ClinicianAccess: []
+      - AdministratorAccess: []
       summary: Get the next action to be redone. May be null if no more actions to redo
       responses:
         200:
@@ -2015,11 +2036,11 @@ paths:
           $ref: '#/components/responses/500InternalServerError'
     post:
       tags:
-        - Actions
+      - Actions
       security:
-        - ClientAccess: []
-        - ClinicianAccess: []
-        - AdministratorAccess: []
+      - ClientAccess: []
+      - ClinicianAccess: []
+      - AdministratorAccess: []
       summary: Redo the last undone action
       description: Returns the string text of the redo action.
       responses:
@@ -2039,16 +2060,16 @@ paths:
           $ref: '#/components/responses/500InternalServerError'
 
   ### Algorithms
-  /matchOrganToRecipients:
+  '/matchOrganToRecipients':
     get:
       tags:
-        - Algorithms
+      - Algorithms
       security:
-        - ClinicianAccess: []
-        - AdministratorAccess: []
+      - ClinicianAccess: []
+      - AdministratorAccess: []
       summary: "Returns a list of potential recipients for the organ, in priority order."
       parameters:
-        - $ref: '#/components/schemas/donatedOrgan'
+      - $ref: '#/components/schemas/donatedOrgan'
       responses:
         200:
           description: A list of clients
@@ -2070,10 +2091,10 @@ paths:
   '/viableDeceasedDonors':
     get:
       tags:
-        - Algorithms
+      - Algorithms
       security:
-        - ClinicianAccess: []
-        - AdministratorAccess: []
+      - ClinicianAccess: []
+      - AdministratorAccess: []
       summary: "Returns a list of all viable deceased donors, those that are deceased and have available organs (not expired or overridden)"
       responses:
         200:
@@ -2495,7 +2516,7 @@ components:
         preferredName:
           type: string
         dateOfBirth:
-            $ref: '#/components/schemas/date'
+          $ref: '#/components/schemas/date'
 
     clientModifiableDetails:
       type: object
@@ -2617,7 +2638,7 @@ components:
     medicationRecordCreate:
       type: object
       required:
-        - name
+      - name
       properties:
         name:
           type: string
@@ -2772,7 +2793,7 @@ components:
     singleStringView:
       type: object
       required:
-        - value
+      - value
       properties:
         value:
           type: string
@@ -2813,7 +2834,7 @@ components:
     countryEnum:
       type: string
       enum: [AF, AX, AL, DZ, AS, AD, AO, AI, ...]
-      
+
     transplantRequestStatusEnum:
       type: string
       enum: [WAITING, CANCELLED, COMPLETED]
@@ -2842,21 +2863,21 @@ components:
       description: The specified resource was not found
     500InternalServerError:
       description: Internal server error
-      
+
   securitySchemes:
-          
+
     ClientAccess:
       description: A client may only access their own data, they cannot access other users. They may only modify their personal information and organ donation status. They can view all their other statuses.
       type: http
       scheme: bearer
       bearerFormat: JWT
-      
+
     ClinicianAccess:
       description: Clincians can access and modify and client, and may view any clinician, but only modify their own information.
       type: http
       scheme: bearer
       bearerFormat: JWT
-      
+
     AdministratorAccess:
       description: Administrators can access and modify all user types.
       type: http
