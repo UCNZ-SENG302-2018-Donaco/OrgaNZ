@@ -17,6 +17,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
+import javafx.scene.transform.Affine;
 import org.controlsfx.control.Notifications;
 
 import com.humanharvest.organz.Client;
@@ -83,27 +84,37 @@ public class DeceasedDonorOverviewController extends SubController {
         // Setup handling of double-click
         deceasedDonorPane.setOnMouseClicked(mouseEvent -> {
             if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 2) {
-                PageNavigatorTouch nav = (PageNavigatorTouch) PageNavigator.getInstance();
-                System.out.println(deceasedDonorPane.getBoundsInParent());
-                System.out.println(deceasedDonorPane.getBoundsInLocal());
-                System.out.println(deceasedDonorPane.getTransforms());
-//                nav.openNewWindow(de)
-
-
-                MainController newMain = PageNavigator.openNewWindow();
-                if (newMain != null) {
-                    newMain.setWindowContext(new WindowContextBuilder()
-                            .setAsClinicianViewClientWindow()
-                            .viewClient(deceasedDonor)
-                            .build());
-                    PageNavigator.loadPage(Page.VIEW_CLIENT, newMain);
-                }
+                openDonorWindow();
             }
         });
 
         updateClientDetails();
         updateOrganCount(deceasedDonor.getDonatedOrgans());
         updateImage();
+    }
+
+    private void openDonorWindow() {
+        MainController newMain;
+        // If we are in touch mode, try to get the panes transform and apply it to the new window
+        if (PageNavigator.getInstance() instanceof PageNavigatorTouch &&
+                deceasedDonorPane.getTransforms().size() == 1 &&
+                deceasedDonorPane.getTransforms().get(0) instanceof Affine) {
+
+            newMain = ((PageNavigatorTouch) PageNavigator.getInstance())
+                    .openNewWindow((Affine) deceasedDonorPane.getTransforms().get(0));
+
+        } else {
+            // Otherwise fallback to the default
+            newMain = PageNavigator.openNewWindow();
+        }
+
+        if (newMain != null) {
+            newMain.setWindowContext(new WindowContextBuilder()
+                    .setAsClinicianViewClientWindow()
+                    .viewClient(deceasedDonor)
+                    .build());
+            PageNavigator.loadPage(Page.VIEW_CLIENT, newMain);
+        }
     }
 
     @Override

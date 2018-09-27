@@ -9,7 +9,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -17,8 +16,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.transform.Affine;
-import javafx.scene.transform.Rotate;
-import javafx.scene.transform.Scale;
 import javafx.scene.transform.Transform;
 import javafx.scene.transform.Translate;
 import javafx.stage.Stage;
@@ -115,18 +112,34 @@ public class PageNavigatorTouch implements IPageNavigator {
         return openNewWindow(width, height, FocusArea::new);
     }
 
-    public MainController openNewWindow(double x, double y, double angle, double scale) {
-        MainController mainController = openNewWindow(1016, 639);
+    /**
+     * Open a new window and apply the given transform to the new window to spawn it on top of that position
+     *
+     * @param transform The transform to apply to the new window once it's created
+     * @return The MainController for the new window, or null if the new window could not be created.
+     */
+    public MainController openNewWindow(Affine transform) {
+        int width = 1016;
+        int height = 639;
+
+        MainController mainController = openNewWindow(width, height);
+        if (mainController == null) {
+            return null;
+        }
 
         FocusArea focusArea = (FocusArea) mainController.getPane().getUserData();
 
-        Point2D centre = PointUtils.getCentreOfNode(mainController.getPane());
+        Affine newTransform = transform.clone();
 
-        Affine transform = new Affine();
-        transform.append(new Translate(x, y));
-        transform.append(new Scale(scale, scale));
-        transform.append(new Rotate(angle, centre.getX(), centre.getY()));
-        focusArea.setTransform(transform);
+        double scaleX = PointUtils.length(transform.getMxx(), transform.getMyx(), transform.getMzx());
+        double scaleY = PointUtils.length(transform.getMxy(), transform.getMyy(), transform.getMzy());
+
+        double deltaX = -scaleX * (width / 2);
+        double deltaY = -scaleY * (height / 2);
+
+        newTransform.append(new Translate(deltaX, deltaY));
+
+        focusArea.setTransform(newTransform);
 
         return mainController;
     }
