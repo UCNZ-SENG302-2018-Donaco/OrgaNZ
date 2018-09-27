@@ -513,7 +513,6 @@ public class ViewProceduresController extends SubController {
     private void viewDetails() {
         ProcedureRecord record = getSelectedRecord();
         //todo disable this button (and delete button) if nothing is selected
-        System.out.println(record);
         if (record != null) {
             String title = "";
             if (record instanceof TransplantRecord) {

@@ -537,48 +537,49 @@ public class ClientManagerDBPure implements ClientManager {
     @Override
     public DashboardStatistics getStatistics() {
 
-        // Gets statistics for counts of clients, organs, and requests from the DB
-        String query = "SELECT (SELECT count(*)"
-                + "        FROM Client) AS clientCount,\n"
-                + "       (SELECT count(*)\n"
-                + "        FROM Client\n"
-                + "        WHERE Client.isDonor = 1 and Client.isReceiver = 0\n"
-                + "       ) AS donorCount,\n"
-                + "        \n"
-                + "       (SELECT count(*)\n"
-                + "        FROM Client\n"
-                + "        WHERE Client.isDonor = 0 and Client.isReceiver = 1\n"
-                + "       ) AS receiverCount,\n"
-                + "        \n"
-                + "       (SELECT count(*)\n"
-                + "        FROM Client \n"
-                + "        WHERE Client.isDonor = 1 and Client.isReceiver = 1\n"
-                + "       ) AS donorReceiverCount,\n"
-                + "       \n"
-                + "       (SELECT count(*)\n"
-                + "        FROM DonatedOrgan\n"
-                + "        WHERE DonatedOrgan.available = 1\n"
-                + "       ) AS organCount,\n"
-                + "       \n"
-                + "       (SELECT count(*)\n"
-                + "        FROM TransplantRequest\n"
-                + "        WHERE TransplantRequest.status = \"WAITING\"\n"
-                + "       ) AS requestCount\n"
-                + "        \n"
-                + "FROM dual";
-
         try (Connection session = dbManager.getStandardSqlConnection()) {
 
-            Statement stmt = session.createStatement();
-            ResultSet result = stmt.executeQuery(query);
-            result.next();
+            try (Statement stmt = session.createStatement()) {
 
-            DashboardStatistics statistics = new DashboardStatistics(result.getInt("clientCount"),
-                    result.getInt("donorCount"), result.getInt("receiverCount"),
-                    result.getInt("donorReceiverCount"), result.getInt("organCount"),
-                    result.getInt("requestCount"));
+                // Gets statistics for counts of clients, organs, and requests from the DB
+                final String QUERY = "SELECT (SELECT count(*)"
+                        + "        FROM Client) AS clientCount,\n"
+                        + "       (SELECT count(*)\n"
+                        + "        FROM Client\n"
+                        + "        WHERE Client.isDonor = 1 and Client.isReceiver = 0\n"
+                        + "       ) AS donorCount,\n"
+                        + "        \n"
+                        + "       (SELECT count(*)\n"
+                        + "        FROM Client\n"
+                        + "        WHERE Client.isDonor = 0 and Client.isReceiver = 1\n"
+                        + "       ) AS receiverCount,\n"
+                        + "        \n"
+                        + "       (SELECT count(*)\n"
+                        + "        FROM Client \n"
+                        + "        WHERE Client.isDonor = 1 and Client.isReceiver = 1\n"
+                        + "       ) AS donorReceiverCount,\n"
+                        + "       \n"
+                        + "       (SELECT count(*)\n"
+                        + "        FROM DonatedOrgan\n"
+                        + "        WHERE DonatedOrgan.available = 1\n"
+                        + "       ) AS organCount,\n"
+                        + "       \n"
+                        + "       (SELECT count(*)\n"
+                        + "        FROM TransplantRequest\n"
+                        + "        WHERE TransplantRequest.status = \"WAITING\"\n"
+                        + "       ) AS requestCount\n"
+                        + "        \n"
+                        + "FROM dual";
 
-            return statistics;
+                try (ResultSet result = stmt.executeQuery(QUERY)) {
+                    result.next();
+
+                    return new DashboardStatistics(result.getInt("clientCount"),
+                            result.getInt("donorCount"), result.getInt("receiverCount"),
+                            result.getInt("donorReceiverCount"), result.getInt("organCount"),
+                            result.getInt("requestCount"));
+                }
+            }
 
         } catch (SQLException e) {
             LOGGER.log(Level.WARNING, e.getMessage(), e);
@@ -718,7 +719,7 @@ public class ClientManagerDBPure implements ClientManager {
      * @param client client to determine viability of as an organ donor
      * @return boolean of whether the given client is viable as an organ donor
      */
-    private boolean isViableDonor(Client client) {
+    private static boolean isViableDonor(Client client) {
         if (client.isDead()) {
             for (DonatedOrgan organ : client.getDonatedOrgans()) {
                 if (!organ.hasExpired() && organ.getOverrideReason() == null) {

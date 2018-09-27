@@ -48,9 +48,6 @@ public class ConfigController extends SubController {
     private final ListChangeListener<? super Organ> programsChangeListener = change -> onTransplantProgramsChanged();
     private final ListChangeListener<? super Country> countryChangeListener = change -> countriesChanged = true;
 
-    public ConfigController() {
-    }
-
     @FXML
     private void initialize() {
         // Hospital selector
