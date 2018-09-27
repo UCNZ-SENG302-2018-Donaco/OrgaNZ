@@ -52,10 +52,11 @@ public class SidebarController extends SubController  {
 
         if (userType == UserType.CLIENT) {
             client = session.getLoggedInClient();
+            currentlyRequestedOrgans = client.getCurrentlyRequestedOrgans();
         } else if (windowContext.isClinViewClientWindow()) {
             client = windowContext.getViewClient();
+            currentlyRequestedOrgans = client.getCurrentlyRequestedOrgans();
         }
-        currentlyRequestedOrgans = client.getCurrentlyRequestedOrgans();
 
         refreshButtons();
     }
@@ -65,8 +66,10 @@ public class SidebarController extends SubController  {
      */
     @Override
     public void refresh() {
-        refreshClientDetails();
-        refreshClientRequestedOrgans();
+        if (client != null) {
+            refreshClientDetails();
+            refreshClientRequestedOrgans();
+        }
     }
 
     private void refreshClientDetails() {
