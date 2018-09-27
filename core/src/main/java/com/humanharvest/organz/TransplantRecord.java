@@ -39,7 +39,7 @@ public class TransplantRecord extends ProcedureRecord {
         this.hospital = hospital;
         setDate(scheduledDate);
         setClient(request.getClient());
-        setSummary(organ.getOrganType().toString() + " transplant");
+        setSummary(organ.getOrganType() + " transplant");
 
         setDescription(String.format(
                 "Transplant of %s from donor '%s' to recipient '%s' at %s.",
@@ -85,8 +85,8 @@ public class TransplantRecord extends ProcedureRecord {
 
     @Override
     public TransplantRecord cloneWithoutId() {
-        TransplantRecord clone = new TransplantRecord(getOrgan(), getRequest(), getHospital(), getDate());
-        clone.completed = this.completed;
+        TransplantRecord clone = new TransplantRecord(organ, request, hospital, getDate());
+        clone.completed = completed;
         return clone;
     }
 }
