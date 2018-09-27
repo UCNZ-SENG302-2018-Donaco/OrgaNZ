@@ -14,7 +14,9 @@ having to deal with ties to specific deployment environments.
 
 
 #### Hibernate
-> Fill this in
+Hibernate allows us to persistently store our data without needing to worry too much about the details of database access.
+It is an object-relational mapper, so we just set up the relationships between objects and then Hibernate reflects this in
+the database's table structure and whenever we need to query data. 
 
 
 #### Google HTTP Client
@@ -40,16 +42,11 @@ Cucumber is a testing library that we use for integration testing with our serve
 comparing with acceptance criteria and a faster time to create.
 
 
-#### Gson
-Gson is a Java library that can be used to convert Java Objects into their JSON representation.
-It can also be used to convert a JSON string to an equivalent Java object.
-Gson can work with arbitrary Java objects including pre-existing objects that you do not have
-source-code of.
-
-There are a few open-source projects that can convert Java objects to JSON.
-However, most of them require that you place Java annotations in your classes; something that you
-can not do if you do not have access to the source-code. Most also do not fully support the use
-of Java Generics. Gson considers both of these as very important design goals.
+#### Jackson
+Jackson is a Java library that can be used to convert Java Objects into their JSON representation.
+It can also be used to convert a JSON string to an equivalent Java object. Jackson allows us to use JSON both
+for saving/loading data and for transferring our objects between the client and server, easily deserializing them at
+either end.
 
 
 #### Picocli

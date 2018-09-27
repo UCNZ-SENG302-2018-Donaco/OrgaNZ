@@ -20,8 +20,7 @@ public class SidebarController extends SubController  {
     viewMedicationsButton, illnessHistoryButton, viewProceduresButton, searchButton, createClientButton,
             organsToDonateButton, transplantsButton, actionHistory, spiderwebButton;
 
-    private Session session;
-
+    private final Session session;
 
     /**
      * Gets the ActionInvoker from the current state.
@@ -31,18 +30,20 @@ public class SidebarController extends SubController  {
     }
 
     @Override
-    public void setup(MainController controller) {
-        super.setup(controller);
+    public void setup(MainController mainController) {
+        super.setup(mainController);
         UserType userType = session.getLoggedInUserType();
 
         Button[] allButtons = {viewClientButton, registerOrganDonationButton, requestOrganDonationButton,
                 viewMedicationsButton, illnessHistoryButton, viewProceduresButton, searchButton, createClientButton,
                 organsToDonateButton, transplantsButton, actionHistory, spiderwebButton};
 
-        Button[] clientButtons = {viewProceduresButton, illnessHistoryButton, registerOrganDonationButton, viewClientButton,
-                requestOrganDonationButton, viewMedicationsButton};
+        Button[] clientButtons = {viewProceduresButton, illnessHistoryButton, registerOrganDonationButton,
+                viewClientButton, requestOrganDonationButton, viewMedicationsButton};
 
-        Button[] clinicianButtons = {searchButton, createClientButton, organsToDonateButton, transplantsButton, actionHistory};
+        Button[] clinicianButtons = {
+                searchButton, createClientButton, organsToDonateButton, transplantsButton, actionHistory
+        };
 
         Button[] clinicianViewClientButtons = {registerOrganDonationButton, requestOrganDonationButton,
                 viewMedicationsButton, illnessHistoryButton, viewProceduresButton, viewClientButton};
@@ -73,12 +74,12 @@ public class SidebarController extends SubController  {
         refresh();
     }
 
-    private void showButton(Button button) {
+    private static void showButton(Button button) {
         button.setVisible(true);
         button.setManaged(true);
     }
 
-    private void showButtons(Button[] buttons) {
+    private static void showButtons(Button[] buttons) {
         for (Button button: buttons) {
             showButton(button);
         }
@@ -89,7 +90,7 @@ public class SidebarController extends SubController  {
      *
      * @param buttons The buttons to hide
      */
-    private void hideButtons(Button[] buttons) {
+    private static void hideButtons(Button[] buttons) {
         for (Button button : buttons) {
             hideButton(button);
         }
@@ -100,7 +101,7 @@ public class SidebarController extends SubController  {
      *
      * @param button the button to hide
      */
-    private void hideButton(Button button) {
+    private static void hideButton(Button button) {
         button.setVisible(false);
         button.setManaged(false);
     }

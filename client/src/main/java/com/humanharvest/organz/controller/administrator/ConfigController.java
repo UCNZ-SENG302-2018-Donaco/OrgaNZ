@@ -45,9 +45,6 @@ public class ConfigController extends SubController {
 
     private final ListChangeListener<? super Organ> programsChangeListener = change -> onTransplantProgramsChanged();
 
-    public ConfigController() {
-    }
-
     @FXML
     private void initialize() {
         // Hospital selector
