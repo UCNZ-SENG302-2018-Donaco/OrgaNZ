@@ -20,6 +20,10 @@ recent-artifacts:
 
   artifacts:
     paths:
+      - doc/examples/*
+      - doc/design_decisions.md
+      - doc/test_manual.md
+      - doc/User_Manual.pdf
       - target/organz-*-*.jar
     expire_in: 1 week
   except:
@@ -33,6 +37,10 @@ recent-artifacts-dev:
 
   artifacts:
     paths:
+      - doc/examples/*
+      - doc/design_decisions.md
+      - doc/test_manual.md
+      - doc/User_Manual.pdf
       - target/organz-*-*.jar
     expire_in: 1 week
   only:
