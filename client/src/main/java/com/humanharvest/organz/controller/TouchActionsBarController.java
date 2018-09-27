@@ -95,14 +95,13 @@ public class TouchActionsBarController extends SubController {
         } else {
             openSidebar(drawer);
         }
-
     }
 
     /**
      * If the draw item is open, it will be closed.
      * @param drawer the item to close
      */
-    private void closeSidebar(Pane drawer) {
+    public void closeSidebar(Pane drawer) {
         drawer.setDisable(true);
         drawer.setVisible(false);
     }
@@ -121,7 +120,7 @@ public class TouchActionsBarController extends SubController {
      */
     @FXML
     private void navigateHome() {
-        // We need to navigate to our dashboard (for now we're just loading the search clients page).
+        // todo We need to navigate to our dashboard (for now we're just loading the search clients page).
         PageNavigator.loadPage(Page.SEARCH, mainController);
         ProjectionHelper.updateProjection(mainController);
     }
