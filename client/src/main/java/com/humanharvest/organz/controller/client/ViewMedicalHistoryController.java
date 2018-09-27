@@ -222,7 +222,8 @@ public class ViewMedicalHistoryController extends SubController {
     }
 
     /**
-     * Refreshes the past/current illness tables from the client's properties.
+     * Refreshes the past/current illness table data.
+     * This page will always refresh as all change are immediately applied so there is no risk of loss
      */
     @Override
     public void refresh() {
