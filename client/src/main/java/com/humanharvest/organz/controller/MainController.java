@@ -37,6 +37,7 @@ public class MainController {
     private TouchActionsBarController touchActionsBarController;
     private SubController subController;
     private boolean isProjecting;
+    private boolean isAProjection = false;
     /**
      * Holder of a switchable page.
      */
@@ -180,6 +181,14 @@ public class MainController {
     }
 
     /**
+     * Closes the touch actions bar
+     * (So that it can be closed once navigated to a new page)
+     */
+    public void closeTouchActionsBar() {
+        touchActionsBarController.closeSidebar(drawer);
+    }
+
+    /**
      * Sets up the navigation type for the given pane. The menu bar is given for admins/clinicians using the
      * desktop application. Otherwise a touch actions bar is used.
      * @param pane type of pane to setup navigation for
@@ -255,5 +264,13 @@ public class MainController {
 
     public void setProjecting(boolean projecting) {
         isProjecting = projecting;
+    }
+
+    public boolean isAProjection() {
+        return isAProjection;
+    }
+
+    public void setIsAProjection(boolean aProjection) {
+        isAProjection = aProjection;
     }
 }

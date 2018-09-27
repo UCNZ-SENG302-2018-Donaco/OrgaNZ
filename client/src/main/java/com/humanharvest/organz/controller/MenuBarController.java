@@ -29,7 +29,6 @@ import javafx.stage.FileChooser;
 import org.controlsfx.control.Notifications;
 
 import com.humanharvest.organz.AppUI;
-import com.humanharvest.organz.controller.spiderweb.SpiderWebController;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
@@ -77,7 +76,6 @@ public class MenuBarController extends SubController {
     public MenuItem settingsItem;
     public MenuItem quitItem;
     public MenuItem duplicateItem;
-    public MenuItem organWebItem;
 
     public SeparatorMenuItem topSeparator;
 
@@ -152,8 +150,6 @@ public class MenuBarController extends SubController {
         // Menus to hide from clients (aka all menus)
         Menu[] allMenus = {filePrimaryItem, editPrimaryItem, clientPrimaryItem, organPrimaryItem,
                 medicationsPrimaryItem, staffPrimaryItem, profilePrimaryItem};
-
-        organWebItem.setVisible(windowContext.isClinViewClientWindow() && windowContext.getViewClient().isDead());
 
         // Duplicate item is exclusively for the touch screen interface
         if (State.getUiType() == UiType.TOUCH) {
@@ -542,11 +538,6 @@ public class MenuBarController extends SubController {
         });
 
         new Thread(task).start();
-    }
-
-    @FXML
-    private void openOrganWeb() {
-        new SpiderWebController(windowContext.getViewClient());
     }
 
     /**
