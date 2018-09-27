@@ -3,6 +3,8 @@ package com.humanharvest.organz.touch;
 import java.awt.Toolkit;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javafx.geometry.Point2D;
 import javafx.scene.input.TouchEvent;
@@ -11,6 +13,8 @@ import javafx.scene.layout.Pane;
 import com.humanharvest.organz.controller.spiderweb.OrganWithRecipients;
 
 public class OrganFocusArea extends FocusArea {
+
+    private static final Logger LOGGER = Logger.getLogger(OrganFocusArea.class.getName());
 
     private static final double MAX_CLICK_DISTANCE = 25;
     private static final int MULTI_CLICK_INTERVAL =
@@ -34,7 +38,11 @@ public class OrganFocusArea extends FocusArea {
     protected void onTouchPressed(TouchEvent event, CurrentTouch currentTouch) {
         super.onTouchPressed(event, currentTouch);
 
-        organWithRecipients.getOrganPane().toFront();
+        try {
+            organWithRecipients.getOrganPane().toFront();
+        } catch (RuntimeException e) {
+            LOGGER.log(Level.WARNING, "Runtime exception when setting pane to front", e);
+        }
 
         if (getPaneTouches().size() == 1) {
             originalTouchPoint = new Point2D(event.getTouchPoint().getScreenX(), event.getTouchPoint().getScreenY());

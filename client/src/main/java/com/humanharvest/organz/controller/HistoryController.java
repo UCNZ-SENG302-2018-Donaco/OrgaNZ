@@ -2,10 +2,12 @@ package com.humanharvest.organz.controller;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
+import java.util.Comparator;
 import java.util.logging.Logger;
 
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -25,6 +27,9 @@ public class HistoryController extends SubController {
 
     private static final Logger LOGGER = Logger.getLogger(HistoryController.class.getName());
     private static final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm:ss");
+
+    private final ObservableList<HistoryItem> historyItems = FXCollections.observableArrayList();
+    private final SortedList<HistoryItem> sortedHistoryItems = new SortedList<>(historyItems);
 
     private Session session;
 
@@ -65,26 +70,27 @@ public class HistoryController extends SubController {
             mainController.setTitle("System History");
         }
 
+        sortedHistoryItems.setComparator(Comparator.comparing(HistoryItem::getTimestamp));
+        historyTable.setItems(sortedHistoryItems);
+
         mainController.loadNavigation(menuBarPane);
         refresh();
     }
 
+    /**
+     * Updates the history items to the latest information
+     */
     @Override
     public void refresh() {
-        List<HistoryItem> historyItems;
         if (session.getLoggedInUserType() == UserType.CLIENT) {
-            historyItems = State.getClientResolver().getHistory(session.getLoggedInClient());
+            historyItems.setAll(State.getClientResolver().getHistory(session.getLoggedInClient()));
         } else if (windowContext.isClinViewClientWindow()) {
-            historyItems = State.getClientResolver().getHistory(windowContext.getViewClient());
+            historyItems.setAll(State.getClientResolver().getHistory(windowContext.getViewClient()));
         } else if (session.getLoggedInUserType() == UserType.CLINICIAN) {
-            historyItems = State.getClinicianResolver().getHistory(session.getLoggedInClinician());
+            historyItems.setAll(State.getClinicianResolver().getHistory(session.getLoggedInClinician()));
         } else {
 
-            historyItems = State.getAdministratorResolver().getHistory();
+            historyItems.setAll(State.getAdministratorResolver().getHistory());
         }
-
-        historyTable.setItems(FXCollections.observableArrayList(historyItems));
-
-        FXCollections.sort(historyTable.getItems(), (h1, h2) -> h2.getTimestamp().compareTo(h1.getTimestamp()));
     }
 }

@@ -333,12 +333,13 @@ public class OrganWithRecipients {
                         .findFirst();
                 donorOverviewController.refresh();
                 if (optionalOrgan.isPresent()) {
-                    this.organ = optionalOrgan.get();
+                    organ = optionalOrgan.get();
                     refresh();
                 } else {
                     throw new NotFoundException();
                 }
             } catch (ServerRestException | NotFoundException exc) {
+                LOGGER.log(Level.SEVERE, "An error occurred when trying to remove the transplant.", exc);
                 Notifications.create()
                         .title("Server Error")
                         .text("An error occurred when trying to remove the transplant.")
@@ -436,12 +437,6 @@ public class OrganWithRecipients {
 
         setRecipientConnectorStart(bounds);
         setRecipientConnectorEnd(matchesPane.getBoundsInParent());
-
-        try {
-            organPane.toFront();
-        } catch (RuntimeException e) {
-            LOGGER.log(Level.WARNING, "Runtime exception when setting pane to front", e);
-        }
     }
 
     public void handlePotentialMatchesTransformed() {
@@ -493,7 +488,7 @@ public class OrganWithRecipients {
                         PotentialRecipientCell.class.getResource(Page.RECEIVER_OVERVIEW.getPath()));
                 Node node = loader.load();
                 ReceiverOverviewController controller = loader.getController();
-                controller.setup(record, organ.getDonor(), refresher);
+                controller.setup(record, organ.getDonor(), refresher, matchesPane);
                 if (organ.getState() == OrganState.TRANSPLANT_PLANNED) {
                     controller.setPriority("Scheduled");
                 } else if (organ.getState() == OrganState.TRANSPLANT_COMPLETED) {
@@ -517,7 +512,8 @@ public class OrganWithRecipients {
         matchesList.setItems(potentialMatches);
 
         matchesList.setCellFactory(param -> {
-            PotentialRecipientCell cell = new PotentialRecipientCell(param.getItems(), organ.getDonor(), refresher);
+            PotentialRecipientCell cell = new PotentialRecipientCell(param.getItems(), organ.getDonor(), refresher,
+                    matchesPane);
             recipientCells.add(cell);
             return cell;
         });
@@ -528,6 +524,7 @@ public class OrganWithRecipients {
                 matchesList.setMinWidth(0);
                 matchesList.setPrefWidth(0);
                 matchesList.setMaxWidth(0);
+                break;
             case 1:
                 matchesList.setMaxWidth(176);
                 break;

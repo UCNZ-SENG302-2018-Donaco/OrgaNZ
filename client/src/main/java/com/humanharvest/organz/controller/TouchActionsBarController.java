@@ -1,6 +1,7 @@
 package com.humanharvest.organz.controller;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -26,6 +27,9 @@ import com.humanharvest.organz.views.ActionResponseView;
  * admins/clinicians who are using the touch application.
  */
 public class TouchActionsBarController extends SubController {
+
+    @FXML
+    private Button logoutButton;
 
     @FXML
     private ToggleButton projectButton;
@@ -56,31 +60,32 @@ public class TouchActionsBarController extends SubController {
 
     /**
      * Setup the menu bar colours, buttons, and hamburger.
-     * @param controller the controller to setup
+     * @param mainController the controller to setup
      */
     @Override
-    public void setup(MainController controller) {
-        super.setup(controller);
-        mainController = controller;
+    public void setup(MainController mainController) {
+        super.setup(mainController);
+        this.mainController = mainController;
         if (State.getSession().getLoggedInUserType() == UserType.CLIENT) {
             homeButton.setVisible(false);
             duplicateButton.setVisible(false);
             projectButton.setVisible(false);
-            entireMenubarPane.setStyle("-fx-background-color: rgb(137, 186, 255)");
-
-        } else {
-            entireMenubarPane.setStyle("-fx-background-color: rgb(137, 186, 255)");
         }
 
         if (windowContext.isClinViewClientWindow()) {
-            entireMenubarPane.getStyleClass().add("menu-bar-view-client");
+            homeButton.setDisable(true);
+            entireMenubarPane.getStyleClass().setAll("menu-bar-view-client");
         } else {
-            entireMenubarPane.getStyleClass().add("menu-bar-clinician");
+            entireMenubarPane.getStyleClass().setAll("menu-bar-clinician");
         }
         if (!ProjectionHelper.canProject()) {
             projectButton.setDisable(true);
         }
-        hamburger.addEventHandler(MouseEvent.MOUSE_CLICKED, (e) -> toggleSidebar(controller.getDrawer()));
+        hamburger.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> toggleSidebar(mainController.getDrawer()));
+
+        if (State.getSpiderwebDonor() != null) {
+            logoutButton.setDisable(true);
+        }
 
         refresh();
     }
@@ -89,20 +94,19 @@ public class TouchActionsBarController extends SubController {
      * Open the drawer if closed. Close the drawer if open
      * @param drawer the item to toggle
      */
-    private void toggleSidebar(Pane drawer) {
+    private static void toggleSidebar(Pane drawer) {
         if (drawer.isVisible()) {
             closeSidebar(drawer);
         } else {
             openSidebar(drawer);
         }
-
     }
 
     /**
      * If the draw item is open, it will be closed.
      * @param drawer the item to close
      */
-    private void closeSidebar(Pane drawer) {
+    public static void closeSidebar(Pane drawer) {
         drawer.setDisable(true);
         drawer.setVisible(false);
     }
@@ -111,7 +115,7 @@ public class TouchActionsBarController extends SubController {
      * If the draw item is closed, it will be opened.
      * @param drawer the item to open
      */
-    private void openSidebar(Pane drawer) {
+    private static void openSidebar(Pane drawer) {
         drawer.setDisable(false);
         drawer.setVisible(true);
     }
@@ -147,7 +151,7 @@ public class TouchActionsBarController extends SubController {
     }
 
     /**
-     * Refresh the page
+     * Refreshes the undo and redo, exit, and project buttons
      */
     @Override
     public void refresh() {
@@ -171,7 +175,7 @@ public class TouchActionsBarController extends SubController {
 
     @FXML
     private void refreshWindow() {
-        mainController.refresh();
+        PageNavigator.refreshAllWindows();
     }
 
     /**
@@ -179,7 +183,7 @@ public class TouchActionsBarController extends SubController {
      */
     @FXML
     private void duplicateWindow() {
-        MainController newMain = PageNavigator.openNewWindow();
+        MainController newMain = PageNavigator.openNewWindow(mainController);
         if (newMain != null) {
             newMain.setWindowContext(mainController.getWindowContext());
             PageNavigator.loadPage(mainController.getCurrentPage(), newMain);
@@ -199,7 +203,7 @@ public class TouchActionsBarController extends SubController {
         UserType userType = State.getSession().getLoggedInUserType();
         State.logout();
         List<MainController> toClose = State.getMainControllers().stream()
-                .filter(controller -> controller != mainController)
+                .filter(controller -> !Objects.equals(controller, mainController))
                 .collect(Collectors.toList());
         toClose.forEach(MainController::closeWindow);
 
@@ -237,21 +241,27 @@ public class TouchActionsBarController extends SubController {
      */
     @FXML
     private void projectWindow() {
-        if (!projectButton.isSelected()) {
-            ProjectionHelper.stageClosing();
-            mainController.setProjecting(false);
-        } else {
-
+        if (projectButton.isSelected()) {
             if (ProjectionHelper.canProject()) {
+                boolean existingProjection  = false;
                 for (MainController controller: State.getMainControllers()) {
-                    if (controller != mainController) {
+                    if (!Objects.equals(controller, mainController) && controller.isProjecting()) {
+                        existingProjection = true;
                         controller.setProjecting(false);
+                        controller.refreshNavigation();
                     }
                 }
+
                 mainController.setProjecting(true);
-                PageNavigator.refreshAllWindows();
-                ProjectionHelper.createNewProjection(mainController);
+                if (existingProjection) {
+                    ProjectionHelper.updateProjection(mainController);
+                } else {
+                    ProjectionHelper.createNewProjection(mainController);
+                }
             }
+        } else {
+            ProjectionHelper.stageClosing();
+            mainController.setProjecting(false);
         }
     }
 }

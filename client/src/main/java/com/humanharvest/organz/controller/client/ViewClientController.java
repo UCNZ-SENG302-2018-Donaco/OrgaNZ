@@ -9,6 +9,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -75,6 +76,7 @@ public class ViewClientController extends SubController {
     private static final Logger LOGGER = Logger.getLogger(ViewClientController.class.getName());
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
             .withZone(ZoneId.systemDefault());
+    private static final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("h:mm a");
 
     private static final int MAX_FILE_SIZE = 2_000_000; // (2mb)
 
@@ -199,6 +201,7 @@ public class ViewClientController extends SubController {
                     deathRegionTF.setText(viewedClient.getRegion());
                 }
                 deathCity.setText(viewedClient.getCurrentAddress());
+                deathTimeField.setText(LocalTime.now().format(timeFormatter));
             } else if (Objects.equals(newValue, aliveToggleBtn)) {
                 deathDetailsPane.setDisable(true);
                 // Clear current input values
@@ -221,11 +224,21 @@ public class ViewClientController extends SubController {
         } else if (windowContext.isClinViewClientWindow()) {
             viewedClient = windowContext.getViewClient();
         }
-        refresh();
+        refreshData();
     }
 
+    /**
+     * Fully updates the Client if there have not been any changes. If there have, then no new data is loaded
+     */
     @Override
     public void refresh() {
+        if (!hasChanges()) {
+            // The client has not been modified, so update the data
+            refreshData();
+        }
+    }
+
+    private void refreshData() {
         setEnabledCountries();
 
         // Refresh client data from server
@@ -269,6 +282,19 @@ public class ViewClientController extends SubController {
         checkMandatoryFields();
         checkNonMandatoryFields();
         checkDeathDetailsFields();
+    }
+
+    private boolean hasChanges() {
+        ModifyClientObject modifyClientObject = new ModifyClientObject();
+
+        addChangesIfDifferent(modifyClientObject);
+
+        if (deathDetailsPane.isDisabled()) {
+            return !modifyClientObject.getModifiedFields().isEmpty();
+        } else {
+            updateDeathFields(modifyClientObject);
+            return !modifyClientObject.getModifiedFields().isEmpty();
+        }
     }
 
     /**
@@ -334,7 +360,7 @@ public class ViewClientController extends SubController {
             isDeadToggleGroup.selectToggle(deadToggleBtn);
             aliveToggleBtn.setDisable(true);
             deathDatePicker.setValue(viewedClient.getDateOfDeath());
-            deathTimeField.setText(viewedClient.getTimeOfDeath().toString());
+            deathTimeField.setText(viewedClient.getTimeOfDeath().format(timeFormatter));
             if (!deathCountry.getItems().contains(viewedClient.getCountryOfDeath())) {
                 deathCountry.getItems().add(viewedClient.getCountryOfDeath());
             }
@@ -450,7 +476,7 @@ public class ViewClientController extends SubController {
     public void deletePhoto() {
         try {
             State.getImageManager().deleteClientImage(viewedClient.getUid());
-            refresh();
+            refreshData();
         } catch (ServerRestException e) {
             PageNavigator.showAlert(AlertType.ERROR, "Server Error", "Something went wrong with the server. "
                     + "Please try again later.", mainController.getStage());
@@ -463,7 +489,7 @@ public class ViewClientController extends SubController {
      */
     @FXML
     private void cancel() {
-        refresh();
+        refreshData();
         imageToUpload = null;
     }
 
@@ -533,7 +559,7 @@ public class ViewClientController extends SubController {
 
             // Validate time of death
             try {
-                LocalTime timeOfDeath = LocalTime.parse(deathTimeField.getText());
+                LocalTime timeOfDeath = LocalTime.parse(deathTimeField.getText(), timeFormatter);
                 if (ClientBornAndDiedDatesValidator.timeOfDeathIsValid(dateOfDeath, timeOfDeath)) {
                     timeOfDeathLabel.setTextFill(Color.BLACK);
                 } else {
@@ -603,6 +629,7 @@ public class ViewClientController extends SubController {
                 promptMarkAsDead(modifyClientObject);
             } else {
                 updateDeathFields(modifyClientObject);
+                applyChanges(modifyClientObject);
             }
         }
     }
@@ -647,7 +674,10 @@ public class ViewClientController extends SubController {
         PageNavigator.showAlert(AlertType.CONFIRMATION,
                 "Are you sure you want to mark this client as dead?",
                 "This will cancel all waiting transplant requests for this client.", mainController.getStage(),
-                isOk -> updateDeathFields(modifyClientObject));
+                isOk -> {
+                    updateDeathFields(modifyClientObject);
+                    applyChanges(modifyClientObject);
+                });
     }
 
     /**
@@ -659,7 +689,7 @@ public class ViewClientController extends SubController {
         addChangeIfDifferent(modifyClientObject, viewedClient, "dateOfDeath", deathDatePicker.getValue());
         try {
             addChangeIfDifferent(modifyClientObject, viewedClient, "timeOfDeath",
-                    LocalTime.parse(deathTimeField.getText()));
+                    LocalTime.parse(deathTimeField.getText(), timeFormatter));
         } catch (DateTimeParseException e) {
             // NOTE: this exception shouldn't occur, as checkDeathDetailsFields() should've been run first
             timeOfDeathLabel.setTextFill(Color.RED);
@@ -675,8 +705,6 @@ public class ViewClientController extends SubController {
         } else {
             addChangeIfDifferent(modifyClientObject, viewedClient, "regionOfDeath", deathRegionTF.getText());
         }
-
-        applyChanges(modifyClientObject);
     }
 
     /**

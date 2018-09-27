@@ -228,7 +228,7 @@ public class OrgansToDonateController extends SubController {
             if (mouseEvent.getButton() == MouseButton.PRIMARY && mouseEvent.getClickCount() == 2) {
                 Client client = potentialRecipients.getSelectionModel().getSelectedItem();
                 if (client != null) {
-                    MainController newMain = PageNavigator.openNewWindow();
+                    MainController newMain = PageNavigator.openNewWindow(mainController);
                     if (newMain != null) {
                         newMain.setWindowContext(new WindowContextBuilder()
                                 .setAsClinicianViewClientWindow()
@@ -256,7 +256,7 @@ public class OrgansToDonateController extends SubController {
                 DonatedOrgan organToDonate = tableView.getSelectionModel().getSelectedItem();
                 if (organToDonate != null) {
                     Client client = organToDonate.getDonor();
-                    MainController newMain = PageNavigator.openNewWindow();
+                    MainController newMain = PageNavigator.openNewWindow(mainController);
                     if (newMain != null) {
                         newMain.setWindowContext(new WindowContextBuilder()
                                 .setAsClinicianViewClientWindow()
@@ -293,18 +293,8 @@ public class OrgansToDonateController extends SubController {
         // Sets the comparator for sorting by organ column to alphabetical order of the organ name.
         organCol.setComparator(Comparator.comparing(Organ::toString));
 
-        // Sets the comparator for sorting by duration column.
-        timeUntilExpiryCol.setComparator((o1, o2) -> {
-            if (o1 == o2) {
-                return 0;
-            } else if (o1 == null) {
-                return 1; // o1 is "biggest"
-            } else if (o2 == null) {
-                return -1; //o2 is "biggest"
-            } else {
-                return o1.compareTo(o2);
-            }
-        });
+        // Sets the comparator for sorting by duration column. Nulls are considered larger
+        timeUntilExpiryCol.setComparator(Comparator.nullsFirst(Comparator.naturalOrder()));
 
         sortedOrgansToDonate.comparatorProperty().bind(tableView.comparatorProperty());
     }
@@ -391,7 +381,7 @@ public class OrgansToDonateController extends SubController {
                 transplantHospitalChoice.setValue(nearestWithProgram);
 
                 transplantDatePicker.setValue(LocalDateTime.now()
-                        .plus(nearestWithProgram.calculateTimeTo(selected.getHospital())).toLocalDate());
+                        .plus(nearestWithProgram.calculateTimeTo(clientHospital)).toLocalDate());
 
                 sortedHospitals.setComparator(Comparator.comparing(
                         hospital -> hospital.calculateTimeTo(nearestWithProgram)));
@@ -605,13 +595,16 @@ public class OrgansToDonateController extends SubController {
     }
 
     /**
-     * Refreshes the data in the transplants waiting list table. Should be called whenever any page calls a global
-     * refresh.
+     * Refreshes the data in the transplants waiting list table.
+     * Does not refresh if a potential recipient is selected.
      */
     @Override
     public void refresh() {
-        updateOrgansToDonateList();
-        tableView.setItems(sortedOrgansToDonate);
+        // Only refresh this page if they have not selected a potential recipient
+        if (potentialRecipients.getSelectionModel().getSelectedItems().size() != 1) {
+            updateOrgansToDonateList();
+            tableView.setItems(sortedOrgansToDonate);
+        }
     }
 
     // ---------------- Format methods ----------------

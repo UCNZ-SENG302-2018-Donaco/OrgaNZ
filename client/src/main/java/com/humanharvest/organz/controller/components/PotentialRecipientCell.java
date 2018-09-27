@@ -9,6 +9,7 @@ import javafx.animation.Timeline;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.ListCell;
+import javafx.scene.layout.Pane;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.TransplantRequest;
@@ -21,13 +22,17 @@ public class PotentialRecipientCell extends ListCell<TransplantRequest> {
 
     private final List<TransplantRequest> potentialRecipientList;
     private final Client donor;
-    private TransplantRequest transplantRequest;
-    private Timeline refresher;
+    private final Pane matchesPane;
+    private final Timeline refresher;
 
-    public PotentialRecipientCell(List<TransplantRequest> potentialRecipientList, Client donor, Timeline refresher) {
+    private TransplantRequest transplantRequest;
+
+    public PotentialRecipientCell(List<TransplantRequest> potentialRecipientList, Client donor, Timeline refresher,
+            Pane matchesPane) {
         this.potentialRecipientList = potentialRecipientList;
         this.donor = donor;
         this.refresher = refresher;
+        this.matchesPane = matchesPane;
     }
 
     @Override
@@ -41,7 +46,7 @@ public class PotentialRecipientCell extends ListCell<TransplantRequest> {
                         PotentialRecipientCell.class.getResource(Page.RECEIVER_OVERVIEW.getPath()));
                 Node recipientPane = loader.load();
                 ReceiverOverviewController recipientOverview = loader.getController();
-                recipientOverview.setup(request, donor, refresher);
+                recipientOverview.setup(request, donor, refresher, matchesPane);
                 recipientOverview.setPriority(potentialRecipientList.indexOf(request) + 1);
                 setGraphic(recipientPane);
 

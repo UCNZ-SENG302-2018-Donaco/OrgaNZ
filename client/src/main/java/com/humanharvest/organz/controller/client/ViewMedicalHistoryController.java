@@ -222,7 +222,8 @@ public class ViewMedicalHistoryController extends SubController {
     }
 
     /**
-     * Refreshes the past/current illness tables from the client's properties.
+     * Refreshes the past/current illness table data.
+     * This page will always refresh as all change are immediately applied so there is no risk of loss
      */
     @Override
     public void refresh() {
@@ -253,9 +254,9 @@ public class ViewMedicalHistoryController extends SubController {
         pastIllnessView.sort();
 
         if (session.getLoggedInUserType() == UserType.CLIENT) {
-            mainController.setTitle("Medication History:  " + client.getPreferredNameFormatted());
+            mainController.setTitle("Medical History:  " + client.getPreferredNameFormatted());
         } else if (windowContext.isClinViewClientWindow()) {
-            mainController.setTitle("Medication History:  " + client.getFullName());
+            mainController.setTitle("Medical History:  " + client.getFullName());
 
         }
 

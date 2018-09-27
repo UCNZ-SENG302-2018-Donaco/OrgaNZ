@@ -76,6 +76,14 @@ public class CreateClientController extends SubController {
     }
 
     /**
+     * Does not do anything as page doesn't render anything that could have changed
+     */
+    @Override
+    public void refresh() {
+        //Do not need to do anything as page doesn't render anything that could have changed
+    }
+
+    /**
      * Creates a new client based on the information supplied in the fields.
      * Shows appropriate alerts if the information is invalid, or if the client already exists.
      * Shows an alert if successful, then redirects to the view page for the new client.
@@ -140,7 +148,7 @@ public class CreateClientController extends SubController {
 
         } else { // Clinician or admin are creating a user.
 
-            MainController newMain = PageNavigator.openNewWindow();
+            MainController newMain = PageNavigator.openNewWindow(mainController);
             if (newMain != null) {
                 newMain.setWindowContext(new WindowContext.WindowContextBuilder()
                         .setAsClinicianViewClientWindow()
