@@ -68,6 +68,31 @@ public class PageNavigatorStandard implements IPageNavigator {
     }
 
     /**
+     * Open a new window using the transform of the current window to spawn it near the window it is being created from.
+     *
+     * @param prevMainController the main controller of the window the new window is being spawned from
+     * @return The MainController for the new window, or null if the new window could not be created.
+     */
+    @Override
+    public MainController openNewWindow(MainController prevMainController) {
+        return openNewWindow(1016, 639, prevMainController);
+    }
+
+    /**
+     * Open a new window with the given size as min and current, and may use the transform of the current window to
+     * spawn it near the window it is being created from.
+     *
+     * @param width The width to set
+     * @param height The height to set
+     * @param prevMainController The main controller for the window the new window is being spawned from
+     * @return The MainController for the new window, or null if the new window could not be created.
+     */
+    @Override
+    public MainController openNewWindow(int width, int height, MainController prevMainController) {
+        return openNewWindow(width, height);
+    }
+
+    /**
      * Opens a new window.
      *
      * @return The MainController for the new window, or null if the new window could not be created.

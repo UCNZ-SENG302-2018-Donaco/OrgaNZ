@@ -102,26 +102,61 @@ public class PageNavigatorTouch implements IPageNavigator {
     }
 
     /**
+     * Open a new window using the transform of the current window to spawn it near the window it is being created from.
+     *
+     * @param prevMainController the main controller of the window the new window is being spawned from
+     * @return The MainController for the new window, or null if the new window could not be created.
+     */
+    @Override
+    public MainController openNewWindow(MainController prevMainController) {
+        return openNewWindow(1016, 639, prevMainController);
+    }
+
+    /**
+     * Open a new window with the given size as min and current, and may use the transform of the current window to
+     * spawn it near the window it is being created from.
+     *
+     * @param width The width to set
+     * @param height The height to set
+     * @param prevMainController The main controller for the window the new window is being spawned from
+     * @return The MainController for the new window, or null if the new window could not be created.
+     */
+    @Override
+    public MainController openNewWindow(int width, int height, MainController prevMainController) {
+        FocusArea focusArea = (FocusArea) prevMainController.getPane().getUserData();
+        return openNewWindow(focusArea.getTransform(), width, height);
+    }
+
+    /**
      * Opens a new window.
      *
      * @return The MainController for the new window, or null if the new window could not be created.
      */
     @Override
     public MainController openNewWindow(int width, int height) {
-
         return openNewWindow(width, height, FocusArea::new);
     }
 
     /**
-     * Open a new window and apply the given transform to the new window to spawn it on top of that position
+     * Open a new window and apply the given transform to the new window to spawn it on top of that position.
      *
      * @param transform The transform to apply to the new window once it's created
      * @return The MainController for the new window, or null if the new window could not be created.
      */
     public MainController openNewWindow(Affine transform) {
-        int width = 1016;
-        int height = 639;
+        return openNewWindow(transform, 1016, 639);
+    }
 
+    /**
+     * Open a new window and apply the given transform to the new window to spawn it on top of that position. Also set
+     * its width and height to the given values.
+     *
+     * @param transform The transform to apply to the new window once it's created
+     * @param width The width of the new window
+     * @param height The height of the new window
+     * @return The MainController for the new window, or null if the new window could not be created.
+     */
+    public MainController openNewWindow(Affine transform, int width, int height) {
         MainController mainController = openNewWindow(width, height);
         if (mainController == null) {
             return null;
