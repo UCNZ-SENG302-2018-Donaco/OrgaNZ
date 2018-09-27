@@ -226,7 +226,8 @@ public final class State {
     }
 
     public static String getClientEtag() {
-        return clientEtag;
+        //return clientEtag;
+        return "\"\""; // just use a valid etag, the server doesn't care if it is correct
     }
 
     public static void setClientEtag(String etag) {
@@ -243,7 +244,8 @@ public final class State {
     }
 
     public static String getClinicianEtag() {
-        return clinicianEtag;
+        //return clinicianEtag;
+        return "\"\""; // just use a valid etag, the server doesn't care if it is correct
     }
 
     public static void setClinicianEtag(String etag) {
@@ -252,7 +254,8 @@ public final class State {
     }
 
     public static String getAdministratorEtag() {
-        return administratorEtag;
+        //return administratorEtag;
+        return "\"\""; // just use a valid etag, the server doesn't care if it is correct
     }
 
     public static void setAdministratorEtag(String etag) {

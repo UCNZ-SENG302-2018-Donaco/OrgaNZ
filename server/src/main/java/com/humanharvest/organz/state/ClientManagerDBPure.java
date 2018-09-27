@@ -1,6 +1,7 @@
 package com.humanharvest.organz.state;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
@@ -21,6 +22,7 @@ import javax.persistence.OptimisticLockException;
 import javax.persistence.RollbackException;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.DashboardStatistics;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.TransplantRecord;
@@ -532,6 +534,58 @@ public class ClientManagerDBPure implements ClientManager {
         return requests == null ? new ArrayList<>() : requests;
     }
 
+    @Override
+    public DashboardStatistics getStatistics() {
+
+        // Gets statistics for counts of clients, organs, and requests from the DB
+        String query = "SELECT (SELECT count(*)"
+                + "        FROM Client) AS clientCount,\n"
+                + "       (SELECT count(*)\n"
+                + "        FROM Client\n"
+                + "        WHERE Client.isDonor = 1 and Client.isReceiver = 0\n"
+                + "       ) AS donorCount,\n"
+                + "        \n"
+                + "       (SELECT count(*)\n"
+                + "        FROM Client\n"
+                + "        WHERE Client.isDonor = 0 and Client.isReceiver = 1\n"
+                + "       ) AS receiverCount,\n"
+                + "        \n"
+                + "       (SELECT count(*)\n"
+                + "        FROM Client \n"
+                + "        WHERE Client.isDonor = 1 and Client.isReceiver = 1\n"
+                + "       ) AS donorReceiverCount,\n"
+                + "       \n"
+                + "       (SELECT count(*)\n"
+                + "        FROM DonatedOrgan\n"
+                + "        WHERE DonatedOrgan.available = 1\n"
+                + "       ) AS organCount,\n"
+                + "       \n"
+                + "       (SELECT count(*)\n"
+                + "        FROM TransplantRequest\n"
+                + "        WHERE TransplantRequest.status = \"WAITING\"\n"
+                + "       ) AS requestCount\n"
+                + "        \n"
+                + "FROM dual";
+
+        try (Connection session = dbManager.getStandardSqlConnection()) {
+
+            Statement stmt = session.createStatement();
+            ResultSet result = stmt.executeQuery(query);
+            result.next();
+
+            DashboardStatistics statistics = new DashboardStatistics(result.getInt("clientCount"),
+                    result.getInt("donorCount"), result.getInt("receiverCount"),
+                    result.getInt("donorReceiverCount"), result.getInt("organCount"),
+                    result.getInt("requestCount"));
+
+            return statistics;
+
+        } catch (SQLException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
+        }
+        return null;
+    }
+
     /**
      * @return a list of all organs available for donation
      */
@@ -557,7 +611,14 @@ public class ClientManagerDBPure implements ClientManager {
     }
 
     /**
-     * @return a list of all organs available for donation
+     * A paginated list of all organs that are available for donation
+     * @param offset How many results to skip (default: 0)
+     * @param count How many results to return (default: all)
+     * @param regionsToFilter Only return organs withing the given regions (default: all)
+     * @param organType Only return organs of the given types (default: all)
+     * @param sortOption Sort by the given option (default: time until expiry)
+     * @param reversed If the results should be reversed (default: false)
+     * @return A paginated list of donated organs matching the given filters
      */
     @Override
     public PaginatedDonatedOrgansList getAllOrgansToDonate(Integer offset, Integer count, Set<String> regionsToFilter,

@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.DashboardStatistics;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.TransplantRecord;
@@ -213,6 +214,18 @@ public class ClientManagerRest implements ClientManager {
         return Collections.emptyList();
     }
 
+    @Override
+    public DashboardStatistics getStatistics() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("X-Auth-Token", State.getToken());
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        ResponseEntity<DashboardStatistics> responseEntity = State.getRestTemplate().exchange(State.getBaseUri() +
+                "/statistics", HttpMethod.GET, entity, DashboardStatistics.class);
+
+        return responseEntity.getBody();
+    }
+
     /**
      * Gets all organs that are available for donation
      *
@@ -229,9 +242,13 @@ public class ClientManagerRest implements ClientManager {
                 HttpMethod.GET,
                 entity, PaginatedDonatedOrgansList.class);
 
-        return responseEntity.getBody().getDonatedOrgans().stream()
-                .map(DonatedOrganView::getDonatedOrgan)
-                .collect(Collectors.toList());
+        if (responseEntity.getBody() == null) {
+            return new ArrayList<>();
+        } else {
+            return responseEntity.getBody().getDonatedOrgans().stream()
+                    .map(DonatedOrganView::getDonatedOrgan)
+                    .collect(Collectors.toList());
+        }
     }
 
     /**
