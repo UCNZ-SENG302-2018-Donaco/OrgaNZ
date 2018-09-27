@@ -43,7 +43,10 @@ public class ConfigController extends SubController {
     @FXML
     private CheckListView<Organ> organSelector;
 
+    private boolean countriesChanged;
+
     private final ListChangeListener<? super Organ> programsChangeListener = change -> onTransplantProgramsChanged();
+    private final ListChangeListener<? super Country> countryChangeListener = change -> countriesChanged = true;
 
     public ConfigController() {
     }
@@ -69,6 +72,7 @@ public class ConfigController extends SubController {
         Set<Country> selectedCountries = State.getConfigManager().getAllowedCountries();
         List<Country> allCountries = Arrays.asList(Country.values());
         SortedList<Country> countryList = getCountryListSortedByIfInCollection(allCountries, selectedCountries);
+        allowedCountries.getCheckModel().getCheckedItems().addListener(countryChangeListener);
 
         allowedCountries.getItems().setAll(countryList);
     }
@@ -91,14 +95,21 @@ public class ConfigController extends SubController {
         super.setup(mainController);
         mainController.setTitle("Settings");
         mainController.loadMenuBar(menuBarPane);
-        refresh();
+        forceRefresh();
     }
 
     /**
-     * Fetches the current allowed countries and checks them in the combocheckboxes
+     * Fetches the current allowed countries and checks them in the CheckComboBoxes
+     * Will only apply if there have not been any modifications
      */
     @Override
     public void refresh() {
+        if (!countriesChanged && modifiedHospitalPrograms.isEmpty()) {
+            forceRefresh();
+        }
+    }
+
+    private void forceRefresh() {
         allowedCountries.getCheckModel().clearChecks();
         for (Country country : State.getConfigManager().getAllowedCountries()) {
             allowedCountries.getCheckModel().check(country);
@@ -157,7 +168,7 @@ public class ConfigController extends SubController {
                                     .collect(Collectors.joining(", \n"))))
                     .showInformation();
         }
-        refresh();
+        forceRefresh();
     }
 
     /**
@@ -257,6 +268,6 @@ public class ConfigController extends SubController {
      */
     @FXML
     private void cancel() {
-        refresh();
+        forceRefresh();
     }
 }
