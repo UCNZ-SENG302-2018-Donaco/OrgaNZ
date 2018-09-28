@@ -15,25 +15,15 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 import com.humanharvest.organz.DonatedOrgan;
-import com.humanharvest.organz.controller.MainController;
-import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.controller.spiderweb.SpiderWebController;
-import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.state.State.UiType;
 import com.humanharvest.organz.utilities.DurationFormatter;
 import com.humanharvest.organz.utilities.DurationFormatter.DurationFormat;
 import com.humanharvest.organz.utilities.enums.Organ;
-import com.humanharvest.organz.utilities.view.Page;
-import com.humanharvest.organz.utilities.view.PageNavigator;
-import com.humanharvest.organz.utilities.view.WindowContext;
 
 import org.apache.commons.io.IOUtils;
 
-public class DonatedOrganOverviewController extends SubController {
+public class DonatedOrganOverviewController extends DashboardOverviewController {
 
     private static final Logger LOGGER = Logger.getLogger(DeceasedDonorDashboardOverviewController.class.getName());
-    private static final Image spiderWebImage = getPageImage("spiderweb");
-    private static final Image donateOrgansImage = getPageImage("donate_organs");
 
     @FXML
     private ImageView organPicture, linkImage;
@@ -42,32 +32,13 @@ public class DonatedOrganOverviewController extends SubController {
 
     private DonatedOrgan donatedOrgan;
 
-    private static Image getPageImage(String page) {
-        try (InputStream in = DonatedOrganOverviewController.class
-                .getResourceAsStream(String.format("/images/pages/%s.png", page))) {
-            byte[] spiderWebImageBytes = IOUtils.toByteArray(in);
-            return new Image(new ByteArrayInputStream(spiderWebImageBytes));
-        } catch (IOException exc) {
-            LOGGER.log(Level.SEVERE, "IOException when loading page image ", exc);
-            return null;
-        }
-    }
-
     public void setup(DonatedOrgan organ, Map<Organ, Image> organPictureStore) {
         donatedOrgan = organ;
         nameLabel.setText(organ.getOrganType().toString());
         donorNameLabel.setText(donatedOrgan.getDonor().getFullName());
         updateTime();
         updateOrganImage(organ.getOrganType(), organPictureStore);
-
-        switch (State.getUiType()) {
-            case TOUCH:
-                linkImage.setImage(spiderWebImage);
-                break;
-            case STANDARD:
-                linkImage.setImage(donateOrgansImage);
-                break;
-        }
+        setLinkImage(linkImage);
     }
 
     @Override
@@ -77,16 +48,7 @@ public class DonatedOrganOverviewController extends SubController {
 
     @FXML
     private void goToLinkPage() {
-        if (State.getUiType() == UiType.TOUCH) {
-            new SpiderWebController(donatedOrgan.getDonor());
-        } else { //standard
-            MainController newMain = PageNavigator.openNewWindow();
-            newMain.setWindowContext(new WindowContext.WindowContextBuilder()
-                    .setAsClinicianViewClientWindow()
-                    .viewClient(donatedOrgan.getDonor()).build());
-            PageNavigator.loadPage(Page.REGISTER_ORGAN_DONATIONS, newMain);
-        }
-
+        goToLinkPage(donatedOrgan.getDonor());
     }
 
     private void updateOrganImage(Organ organ, Map<Organ, Image> organPictureStore) {
