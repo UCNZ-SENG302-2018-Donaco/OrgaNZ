@@ -39,7 +39,7 @@ public class VersionController {
     @GetMapping("/")
     public ModelAndView method() {
         return new ModelAndView("redirect:"
-                + "https://eng-git.canterbury.ac.nz/seng302-2018/team-700/blob/master/doc/user_manual.md#organz-user-manual");
+                + "https://eng-git.canterbury.ac.nz/seng302-2018/team-700/blob/master/doc/User_Manual.pdf");
 
     }
 }
