@@ -317,7 +317,6 @@ public class SidebarController extends SubController  {
 
     public void goToSpiderweb() {
         State.setSpiderwebDonor(windowContext.getViewClient());
-        ProjectionHelper.stageClosing();
         new SpiderWebController(windowContext.getViewClient());
     }
 }

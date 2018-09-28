@@ -64,6 +64,9 @@ public class SpiderWebController extends SubController {
         canvas = new Pane();
         rootPane.getChildren().add(canvas);
 
+        // Close any current projection
+        ProjectionHelper.stageClosing();
+
         // Close existing windows, but save them for later
         // Copy to a new list to prevent concurrent modification
         Iterable<MainController> toClose = new ArrayList<>(State.getMainControllers());
