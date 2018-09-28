@@ -87,7 +87,11 @@ public class DonatedOrganOverviewController extends DashboardOverviewController 
 
     public void updateTime() {
         Duration timeToExpiry = donatedOrgan.getDurationUntilExpiry();
-        timeToExpiryLabel.setText("Expires in " + DurationFormatter.getFormattedDuration(timeToExpiry,
-                DurationFormat.X_HRS_Y_MINS_SECS));
+        if (timeToExpiry == null) {
+            timeToExpiryLabel.setText("Never expires");
+        } else {
+            timeToExpiryLabel.setText("Expires in " + DurationFormatter.getFormattedDuration(timeToExpiry,
+                    DurationFormat.X_HRS_Y_MINS_SECS));
+        }
     }
 }
