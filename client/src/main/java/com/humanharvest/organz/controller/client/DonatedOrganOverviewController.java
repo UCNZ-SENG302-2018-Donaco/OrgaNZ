@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
@@ -31,43 +32,41 @@ import org.apache.commons.io.IOUtils;
 public class DonatedOrganOverviewController extends SubController {
 
     private static final Logger LOGGER = Logger.getLogger(DeceasedDonorDashboardOverviewController.class.getName());
+    private static final Image spiderWebImage = getPageImage("spiderweb");
+    private static final Image donateOrgansImage = getPageImage("donate_organs");
 
     @FXML
-    private ImageView organPicture, spiderWeb;
-
+    private ImageView organPicture, linkImage;
     @FXML
     private Label nameLabel, timeToExpiryLabel, donorNameLabel;
 
-    private Duration timeToExpiry;
-
     private DonatedOrgan donatedOrgan;
+
+    private static Image getPageImage(String page) {
+        try (InputStream in = DonatedOrganOverviewController.class
+                .getResourceAsStream(String.format("/images/pages/%s.png", page))) {
+            byte[] spiderWebImageBytes = IOUtils.toByteArray(in);
+            return new Image(new ByteArrayInputStream(spiderWebImageBytes));
+        } catch (IOException exc) {
+            LOGGER.log(Level.SEVERE, "IOException when loading page image ", exc);
+            return null;
+        }
+    }
 
     public void setup(DonatedOrgan organ, Map<Organ, Image> organPictureStore) {
         donatedOrgan = organ;
-
-        Image organImage = getOrganImage(organ.getOrganType(), organPictureStore);
-        if (organPicture != null) {
-            organPicture.setImage(organImage);
-        }
-
         nameLabel.setText(organ.getOrganType().toString());
-
-        timeToExpiry = donatedOrgan.getDurationUntilExpiry();
-
-        updateTime();
-
         donorNameLabel.setText(donatedOrgan.getDonor().getFullName());
-        String imageName;
-        if(State.getUiType() == UiType.TOUCH) {
-             imageName = "spiderweb";
-        } else { //standard
-            imageName = "donate_organs";
-        }
-        try (InputStream in = getClass().getResourceAsStream("/images/pages/" + imageName + ".png")) {
-            byte[] spiderWebImageBytes = IOUtils.toByteArray(in);
-            spiderWeb.setImage(new Image(new ByteArrayInputStream(spiderWebImageBytes)));
-        } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "IO Exception when loading image ", e);
+        updateTime();
+        updateOrganImage(organ.getOrganType(), organPictureStore);
+
+        switch (State.getUiType()) {
+            case TOUCH:
+                linkImage.setImage(spiderWebImage);
+                break;
+            case STANDARD:
+                linkImage.setImage(donateOrgansImage);
+                break;
         }
     }
 
@@ -77,8 +76,8 @@ public class DonatedOrganOverviewController extends SubController {
     }
 
     @FXML
-    private void openSpiderWebOrDonateOrgansPage() {
-        if(State.getUiType() == UiType.TOUCH) {
+    private void goToLinkPage() {
+        if (State.getUiType() == UiType.TOUCH) {
             new SpiderWebController(donatedOrgan.getDonor());
         } else { //standard
             MainController newMain = PageNavigator.openNewWindow();
@@ -90,18 +89,43 @@ public class DonatedOrganOverviewController extends SubController {
 
     }
 
-    private Image getOrganImage(Organ organ, Map<Organ, Image> organPictureStore) {
+    private void updateOrganImage(Organ organ, Map<Organ, Image> organPictureStore) {
+        // See if it has already been retrieved in the store
+        if (organPictureStore.containsKey(organ)) {
+            organPicture.setImage(organPictureStore.get(organ));
+        } else {
+            Task<byte[]> task = new Task<byte[]>() {
+                @Override
+                protected byte[] call() throws IOException {
+                    try (InputStream in = getClass().getResourceAsStream("/images/" + organ.toString() + ".png")) {
+                        return IOUtils.toByteArray(in);
+                    }
+                }
+            };
 
-        // Get it from the store
-        return organPictureStore.get(organ);
+            task.setOnSucceeded(event -> {
+                Image organIcon = new Image(new ByteArrayInputStream(task.getValue()));
+                organPicture.setImage(organIcon);
+                organPictureStore.put(organ, organIcon);
+            });
+
+            task.setOnFailed(event -> {
+                try {
+                    throw task.getException();
+                } catch (IOException exc) {
+                    LOGGER.log(Level.SEVERE, "IOException when loading default image.", exc);
+                } catch (Throwable exc) {
+                    LOGGER.log(Level.SEVERE, exc.getMessage(), exc);
+                }
+            });
+
+            new Thread(task).start();
+        }
     }
 
     public void updateTime() {
-
-        timeToExpiry = donatedOrgan.getDurationUntilExpiry();
+        Duration timeToExpiry = donatedOrgan.getDurationUntilExpiry();
         timeToExpiryLabel.setText("Expires in " + DurationFormatter.getFormattedDuration(timeToExpiry,
                 DurationFormat.X_HRS_Y_MINS_SECS));
-
     }
-
 }

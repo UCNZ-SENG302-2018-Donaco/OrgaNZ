@@ -11,11 +11,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import org.controlsfx.control.Notifications;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
@@ -41,7 +42,7 @@ public class DeceasedDonorDashboardOverviewController extends SubController {
     private static final Logger LOGGER = Logger.getLogger(DeceasedDonorDashboardOverviewController.class.getName());
 
     @FXML
-    private ImageView profilePicture, spiderWeb;
+    private ImageView profilePictureView, spiderWeb;
 
     @FXML
     private Label nameLabel, deathLabel, organCount;
@@ -51,10 +52,7 @@ public class DeceasedDonorDashboardOverviewController extends SubController {
     public void setup(Client donor, Map<Client, Image> profilePictureStore) {
         this.donor = donor;
 
-        Image profileImage = getProfilePicture(donor, profilePictureStore);
-        if (profilePicture != null) {
-            profilePicture.setImage(profileImage);
-        }
+        updateProfilePicture(donor, profilePictureStore);
 
         nameLabel.setText(donor.getFullName());
 
@@ -103,38 +101,47 @@ public class DeceasedDonorDashboardOverviewController extends SubController {
         }
     }
 
-    private Image getProfilePicture(Client client, Map<Client, Image> profilePictureStore) {
-
+    private void updateProfilePicture(Client client, Map<Client, Image> profilePictureStore) {
         // Try and get it from the store
-        Image profilePicture = profilePictureStore.get(client);
-
-        if (profilePicture == null) {
-
-            byte[] bytes;
-            try {
-                bytes = State.getImageManager().getClientImage(client.getUid());
-            } catch (NotFoundException ignored) {
-                try {
-                    bytes = State.getImageManager().getDefaultImage();
-                } catch (IOException e) {
-                    LOGGER.log(Level.SEVERE, "IO Exception when loading image ", e);
-                    return null;
+        if (profilePictureStore.containsKey(client)) {
+            profilePictureView.setImage(profilePictureStore.get(client));
+        } else {
+            // Retrieve the picture from the server in another thread
+            Task<byte[]> task = new Task<byte[]>() {
+                @Override
+                protected byte[] call() throws ServerRestException, IOException {
+                    try {
+                        return com.humanharvest.organz.state.State.getImageManager().getClientImage(client.getUid());
+                    } catch (NotFoundException exc) {
+                        return com.humanharvest.organz.state.State.getImageManager().getDefaultImage();
+                    }
                 }
-            } catch (ServerRestException e) {
-                PageNavigator
-                        .showAlert(AlertType.ERROR, "Server Error", "Something went wrong with the server. "
-                                + "Please try again later.", mainController.getStage());
-                LOGGER.log(Level.SEVERE, e.getMessage(), e);
-                return null;
-            }
+            };
 
-            profilePicture = new Image(new ByteArrayInputStream(bytes));
+            task.setOnSucceeded(event -> {
+                Image profilePicture = new Image(new ByteArrayInputStream(task.getValue()));
+                profilePictureView.setImage(profilePicture);
+                // Save it in the cache for future use without needing to retrieve it again
+                profilePictureStore.put(client, profilePicture);
+            });
 
-            // Save it in the store
-            profilePictureStore.put(client, profilePicture);
+            task.setOnFailed(event -> {
+                try {
+                    throw task.getException();
+                } catch (IOException exc) {
+                    LOGGER.log(Level.SEVERE, "IOException when loading default image.", exc);
+                } catch (ServerRestException exc) {
+                    LOGGER.log(Level.SEVERE, "", exc);
+                    Notifications.create()
+                            .title("Server Error")
+                            .text("A client's profile picture could not be retrieved from the server.")
+                            .showError();
+                } catch (Throwable exc) {
+                    LOGGER.log(Level.SEVERE, exc.getMessage(), exc);
+                }
+            });
 
+            new Thread(task).start();
         }
-        return profilePicture;
     }
-
 }

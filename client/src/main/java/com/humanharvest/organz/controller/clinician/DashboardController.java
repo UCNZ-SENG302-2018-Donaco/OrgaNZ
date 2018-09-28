@@ -1,15 +1,15 @@
 package com.humanharvest.organz.controller.clinician;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.PieChart.Data;
@@ -18,6 +18,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
+import org.controlsfx.control.Notifications;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DashboardStatistics;
@@ -29,11 +30,10 @@ import com.humanharvest.organz.controller.components.DonatedOrganCell;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.utilities.view.WindowContext;
-
-import org.apache.commons.io.IOUtils;
 
 public class DashboardController extends SubController {
 
@@ -60,7 +60,7 @@ public class DashboardController extends SubController {
     private final ObservableList<DonatedOrgan> observableOrgansToDonate = FXCollections.observableArrayList();
 
     private Map<Client, Image> profilePictureStore = new HashMap<>();
-    private Map<Organ, Image> organImageMap = generateOrganPictureStore();
+    private Map<Organ, Image> organImageMap = new HashMap<>();
 
     public DashboardController() {
         manager = State.getClientManager();
@@ -81,24 +81,16 @@ public class DashboardController extends SubController {
                 new Data("Receivers", statistics.getReceiverCount()),
                 new Data("Both", statistics.getDonorReceiverCount()),
                 new Data("Neither", statistics.getNeitherCount())
-
         );
         pieChart.setData(pieChartData);
     }
 
     @Override
     public void refresh() {
-        statistics = manager.getStatistics();
-        totalClientsNum.setText(String.valueOf(statistics.getClientCount()));
-        organsNum.setText(String.valueOf(statistics.getOrganCount()));
-        requestNum.setText(String.valueOf(statistics.getRequestCount()));
-
-        deceasedDonorsList.getItems().setAll(manager.getViableDeceasedDonors());
-
-        generatePieChartData();
-
+        updateStatistics();
+        updateRecentlyDeceasedDonors();
         updateOrgansToDonateList();
-
+        // Clear the cache of profile pictures (means they will be retrieved again)
         profilePictureStore.clear();
     }
 
@@ -107,12 +99,8 @@ public class DashboardController extends SubController {
      */
     @FXML
     private void initialize() {
-
         // Organs to donate setup
-        updateOrgansToDonateList();
-
         expiringOrgansList.setItems(observableOrgansToDonate);
-
         expiringOrgansList.setCellFactory(param -> {
             DonatedOrganCell item = new DonatedOrganCell(organImageMap);
             item.setMaxWidth(expiringOrgansList.getWidth());
@@ -120,16 +108,14 @@ public class DashboardController extends SubController {
         });
 
         // Recently deceased donors setup
-
         deceasedDonorsList.setItems(FXCollections.observableArrayList(manager.getViableDeceasedDonors()));
-
         deceasedDonorsList.setCellFactory(param -> {
             DeceasedDonorCell item = new DeceasedDonorCell(profilePictureStore);
             item.setMaxWidth(deceasedDonorsList.getWidth());
-
             return item;
         });
 
+        // Double clicking to open a deceased donor's profile
         deceasedDonorsList.setOnMouseClicked(mouseEvent -> {
             if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 2) {
                 Client client = deceasedDonorsList.getSelectionModel().getSelectedItem();
@@ -147,30 +133,72 @@ public class DashboardController extends SubController {
         });
     }
 
+    private void updateStatistics() {
+        Task<DashboardStatistics> task = new Task<DashboardStatistics>() {
+            @Override
+            protected DashboardStatistics call() throws ServerRestException {
+                return manager.getStatistics();
+            }
+        };
+
+        task.setOnSucceeded(success -> {
+            statistics = manager.getStatistics();
+            totalClientsNum.setText(String.valueOf(statistics.getClientCount()));
+            organsNum.setText(String.valueOf(statistics.getOrganCount()));
+            requestNum.setText(String.valueOf(statistics.getRequestCount()));
+            generatePieChartData();
+        });
+
+        task.setOnFailed(fail -> {
+            LOGGER.log(Level.SEVERE, task.getException().getMessage(), task.getException());
+            Notifications.create()
+                    .title("Server Error")
+                    .text("Could not retrieve statistics.")
+                    .showError();
+        });
+
+        new Thread(task).start();
+    }
+
+    private void updateRecentlyDeceasedDonors() {
+        Task<List<Client>> task = new Task<List<Client>>() {
+            @Override
+            protected List<Client> call() throws ServerRestException {
+                return manager.getViableDeceasedDonors();
+            }
+        };
+
+        task.setOnSucceeded(success -> deceasedDonorsList.getItems().setAll(task.getValue()));
+
+        task.setOnFailed(fail -> {
+            LOGGER.log(Level.SEVERE, task.getException().getMessage(), task.getException());
+            Notifications.create()
+                    .title("Server Error")
+                    .text("Could not retrieve recently deceased donor data.")
+                    .showError();
+        });
+
+        new Thread(task).start();
+    }
+
     private void updateOrgansToDonateList() {
-        observableOrgansToDonate.setAll(manager.getAllOrgansToDonate());
-    }
+        Task<Collection<DonatedOrgan>> task = new Task<Collection<DonatedOrgan>>() {
+            @Override
+            protected Collection<DonatedOrgan> call() throws ServerRestException {
+                return manager.getAllOrgansToDonate();
+            }
+        };
 
-    private Map<Organ, Image> generateOrganPictureStore() {
-        Map<Organ, Image> organPictureStore = new HashMap<>();
+        task.setOnSucceeded(success -> observableOrgansToDonate.setAll(task.getValue()));
 
-        for (Organ organ : Organ.values()) {
-            organPictureStore.put(organ, getOrganImage(organ));
-        }
+        task.setOnFailed(fail -> {
+            LOGGER.log(Level.SEVERE, task.getException().getMessage(), task.getException());
+            Notifications.create()
+                    .title("Server Error")
+                    .text("Could not retrieve recently donated organs data.")
+                    .showError();
+        });
 
-        return organPictureStore;
-    }
-
-    private Image getOrganImage(Organ organ) {
-        byte[] bytes;
-
-        try (InputStream in = getClass().getResourceAsStream("/images/" + organ.toString() + ".png")) {
-            bytes = IOUtils.toByteArray(in);
-            return new Image(new ByteArrayInputStream(bytes));
-
-        } catch (IOException ex) {
-            LOGGER.log(Level.SEVERE, "Organ image failed to load");
-            return null;
-        }
+        new Thread(task).start();
     }
 }
