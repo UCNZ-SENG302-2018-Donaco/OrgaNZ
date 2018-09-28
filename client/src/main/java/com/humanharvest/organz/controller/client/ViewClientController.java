@@ -9,7 +9,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -347,11 +346,7 @@ public class ViewClientController extends SubController {
 
         creationDate.setText(formatter.format(viewedClient.getCreatedTimestamp()));
 
-        if (viewedClient.getModifiedTimestamp() == null) {
-            lastModified.setText("Not yet modified.");
-        } else {
-            lastModified.setText(formatter.format(viewedClient.getModifiedTimestamp()));
-        }
+        displayLastModified();
         displayBMI();
         displayAge();
 
@@ -373,6 +368,14 @@ public class ViewClientController extends SubController {
             deathCity.setText(viewedClient.getCityOfDeath());
         } else {
             isDeadToggleGroup.selectToggle(aliveToggleBtn);
+        }
+    }
+
+    private void displayLastModified() {
+        if (viewedClient.getModifiedTimestamp() == null) {
+            lastModified.setText("Not yet modified.");
+        } else {
+            lastModified.setText(formatter.format(viewedClient.getModifiedTimestamp()));
         }
     }
 
@@ -752,9 +755,7 @@ public class ViewClientController extends SubController {
      */
     private void finishUpdateChanges() {
         PageNavigator.refreshAllWindows();
-        displayBMI();
-        displayAge();
-        lastModified.setText(formatter.format(viewedClient.getModifiedTimestamp()));
+        refreshData();
     }
 
     /**
