@@ -26,6 +26,8 @@ import javafx.scene.control.ComboBoxBase;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Skin;
 import javafx.scene.control.Skinnable;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TouchEvent;
 import javafx.scene.input.TouchPoint;
 import javafx.scene.layout.Pane;
@@ -45,6 +47,7 @@ import com.sun.javafx.scene.control.skin.VirtualFlow;
 import org.tuiofx.widgets.controls.KeyboardPane;
 import org.tuiofx.widgets.skin.ChoiceBoxSkinAndroid;
 import org.tuiofx.widgets.skin.KeyboardManager;
+import org.tuiofx.widgets.skin.MTButtonSkin;
 import org.tuiofx.widgets.skin.MTComboBoxListViewSkin;
 import org.tuiofx.widgets.skin.MTContextMenuSkin;
 import org.tuiofx.widgets.skin.OnScreenKeyboard;
@@ -294,7 +297,28 @@ public class FocusArea implements InvalidationListener {
         // Forwards the touch event to an important node.
         currentTouch.getImportantElement().ifPresent(node -> {
             NodeEventDispatcher eventDispatcher = (NodeEventDispatcher) node.getEventDispatcher();
-            eventDispatcher.dispatchCapturingEvent(event);
+
+            MouseEvent mouseEvent = new MouseEvent(MouseEvent.MOUSE_CLICKED,
+                    event.getTouchPoint().getX(),
+                    event.getTouchPoint().getY(),
+                    event.getTouchPoint().getScreenX(),
+                    event.getTouchPoint().getScreenY(),
+                    MouseButton.PRIMARY,
+                    1,
+                    false,
+                    false,
+                    false,
+                    false,
+                    true,
+                    false,
+                    false,
+                    true,
+                    false,
+                    true,
+                    event.getTouchPoint().getPickResult());
+
+            eventDispatcher.dispatchCapturingEvent(mouseEvent);
+            eventDispatcher.dispatchBubblingEvent(mouseEvent);
         });
 
         if (paneTouches.isEmpty()) {
