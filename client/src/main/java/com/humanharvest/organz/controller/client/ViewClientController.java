@@ -751,10 +751,10 @@ public class ViewClientController extends SubController {
      */
     private void finishUpdateChanges() {
         PageNavigator.refreshAllWindows();
-        refreshData();
+        refreshData(); // we want to force a refresh on this page
         displayBMI();
         displayAge();
-        lastModified.setText(formatter.format(viewedClient.getModifiedTimestamp())); // todo causes NPE
+        lastModified.setText(formatter.format(viewedClient.getModifiedTimestamp()));
     }
 
     /**
