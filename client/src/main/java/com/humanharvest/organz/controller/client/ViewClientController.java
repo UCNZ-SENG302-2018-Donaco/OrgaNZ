@@ -9,7 +9,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -752,6 +751,7 @@ public class ViewClientController extends SubController {
      */
     private void finishUpdateChanges() {
         PageNavigator.refreshAllWindows();
+        refreshData(); // we want to force a refresh on this page
         displayBMI();
         displayAge();
         lastModified.setText(formatter.format(viewedClient.getModifiedTimestamp()));
