@@ -95,7 +95,7 @@ public class DeceasedDonorDashboardOverviewController extends SubController {
             ProjectionHelper.stageClosing();
             new SpiderWebController(donor);
         } else { //standard
-            MainController newMain = PageNavigator.openNewWindow();
+            MainController newMain = PageNavigator.openNewWindow(mainController);
             newMain.setWindowContext(new WindowContext.WindowContextBuilder()
                     .setAsClinicianViewClientWindow()
                     .viewClient(donor).build());

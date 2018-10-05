@@ -171,6 +171,7 @@ public class RegisterOrganDonationController extends SubController {
         donatedOrgansTable.getSortOrder().clear();
         donatedOrgansTable.getSortOrder().add(timeUntilExpiryCol);
         sortedDonatedOrgans.comparatorProperty().bind(donatedOrgansTable.comparatorProperty());
+        donatedOrgansTable.setItems(sortedDonatedOrgans);
     }
 
     /**
@@ -296,7 +297,7 @@ public class RegisterOrganDonationController extends SubController {
             }
         });
 
-        clientTask.setOnFailed(err -> handleTaskError());
+        clientTask.setOnFailed(err -> handleTaskError(clientTask.getException()));
 
         new Thread(clientTask).start();
     }
@@ -339,7 +340,7 @@ public class RegisterOrganDonationController extends SubController {
             }
         });
 
-        transplantTask.setOnFailed(err -> handleTaskError());
+        transplantTask.setOnFailed(err -> handleTaskError(transplantTask.getException()));
 
         new Thread(transplantTask).start();
     }
@@ -351,7 +352,6 @@ public class RegisterOrganDonationController extends SubController {
                 .map(TransplantRequest::getRequestedOrgan)
                 .collect(Collectors.toCollection(() -> EnumSet.noneOf(Organ.class)));
 
-        // Set the checkbox as ticked if the client is registered to donate an organ
         for (Map.Entry<Organ, CheckBox> entry : organCheckBoxes.entrySet()) {
             // Highlight & add tooltip if this organ is/has been involved in a transplant request by this client
             if (allPreviouslyRequestedOrgans.contains(entry.getKey())) {
@@ -382,7 +382,7 @@ public class RegisterOrganDonationController extends SubController {
             }
         });
 
-        donationStatusTask.setOnFailed(err -> handleTaskError());
+        donationStatusTask.setOnFailed(err -> handleTaskError(donationStatusTask.getException()));
 
         new Thread(donationStatusTask).start();
     }
@@ -411,7 +411,7 @@ public class RegisterOrganDonationController extends SubController {
             }
         });
 
-        donatedOrgansTask.setOnFailed(err -> handleTaskError());
+        donatedOrgansTask.setOnFailed(err -> handleTaskError(donatedOrgansTask.getException()));
 
         new Thread(donatedOrgansTask).start();
     }
@@ -423,8 +423,13 @@ public class RegisterOrganDonationController extends SubController {
     private void handleTaskError() {
         Notifications.create()
                 .title("Server Error")
-                .text("Could not refresh the information for the donor.")
+                .text("Could not refresh donation information for this donor.")
                 .showError();
+    }
+
+    private void handleTaskError(Throwable exc) {
+        LOGGER.log(Level.SEVERE, exc.getMessage(), exc);
+        handleTaskError();
     }
 
     @Override
