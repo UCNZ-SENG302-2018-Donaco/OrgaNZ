@@ -2,6 +2,8 @@ package com.humanharvest.organz.utilities.validators;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
 import java.util.logging.Logger;
 
@@ -116,12 +118,50 @@ public final class ClientValidator {
                 !client.getDateOfBirth().isAfter(LocalDate.now());  // Catch future date of birth
     }
 
+    private static boolean deathDetailsValid(Client client) {
+        // Its ok if they are all empty
+        if (client.getDateOfDeath() == null && client.getTimeOfDeath() == null && client.getCountryOfDeath() == null
+                && client.getRegionOfDeath() == null && client.getCityOfDeath() == null) {
+            return true;
+        }
+
+        return dateTimeOfDeathIsValid(client) && countryOfDeathValid(client)
+                && regionOfDeathValid(client) && cityOfDeathValid(client);
+    }
+
     private static boolean dateOfDeathValid(Client client) {
         if (client.getDateOfDeath() != null) {
             // Catch date of death before date of birth
             return dateIsValid(client.getDateOfDeath()) &&
                     !client.getDateOfDeath().isBefore(client.getDateOfBirth());
         }
+        return true;
+    }
+
+    /**
+     * Returns true if they died in the past (or in the next 10 seconds)
+     */
+    private static boolean dateTimeOfDeathIsValid(Client client) {
+        LocalDate dateOfDeath = client.getDateOfDeath();
+        LocalTime timeOfDeath = client.getTimeOfDeath();
+        if (timeOfDeath == null || dateOfDeath == null) {
+            // if the date or time are null, then that should really have been caught before now
+            // (in deathDetailsValid())
+            return true;
+        }
+
+        return client.getDatetimeOfDeath().isBefore(LocalDateTime.now().plusSeconds(10));
+    }
+
+    private static boolean countryOfDeathValid(Client client) {
+        return true;
+    }
+
+    private static boolean regionOfDeathValid(Client client) {
+        return true;
+    }
+
+    private static boolean cityOfDeathValid(Client client) {
         return true;
     }
 

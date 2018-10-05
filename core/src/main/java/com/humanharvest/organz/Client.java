@@ -456,7 +456,11 @@ public class Client implements ConcurrencyControlledEntity {
 
     @JsonIgnore
     public LocalDateTime getDatetimeOfDeath() {
-        return LocalDateTime.of(dateOfDeath, timeOfDeath);
+        if (dateOfDeath == null || timeOfDeath == null) {
+            return null;
+        } else {
+            return LocalDateTime.of(dateOfDeath, timeOfDeath);
+        }
     }
 
     public String getRegionOfDeath() {
