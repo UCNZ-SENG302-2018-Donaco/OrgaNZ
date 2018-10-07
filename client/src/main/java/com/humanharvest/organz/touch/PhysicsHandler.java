@@ -25,9 +25,8 @@ public class PhysicsHandler {
     public void processPhysics() {
 
         for (FocusArea focusArea : MultitouchHandler.getFocusAreas()) {
-            boolean paneNotTouched = MultitouchHandler.findPaneTouches(focusArea.getPane()).isEmpty();
             boolean hasVelocity = focusArea.getVelocity().getX() != 0 || focusArea.getVelocity().getY() != 0;
-            if (paneNotTouched && hasVelocity && focusArea.isTranslatable()) {
+            if (!focusArea.isTouched() && hasVelocity && focusArea.isTranslatable()) {
                 processPhysics(focusArea);
             }
         }
