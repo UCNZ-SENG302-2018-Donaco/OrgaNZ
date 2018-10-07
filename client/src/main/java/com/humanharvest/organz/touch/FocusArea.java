@@ -486,43 +486,56 @@ public class FocusArea implements InvalidationListener {
         // Only process if we have touch history (ie, not a new touch)
         if (currentTouch.getLastCentre() != null) {
             // Translate the pane
-            Point2D delta = centre.subtract(currentTouch.getLastCentre());
-            delta = handleBoundsCheck(delta);
             if (translatable) {
-                prependTransform(new Translate(delta.getX(), delta.getY()));
+                handleTranslate(centre, currentTouch.getLastCentre());
             }
 
             // Scale the pane
             if (scalable) {
-                double scaleDifference =
+                double scaleDelta =
                         new Point2D(touchPoint.getX(), touchPoint.getY()).distance(
                                 otherTouch.getCurrentScreenPoint()) /
                                 currentTouch.getCurrentScreenPoint().distance(otherTouch.getCurrentScreenPoint());
 
-                Affine oldTransform = new Affine(transform);
-
-                Scale scaleTransform = new Scale(scaleDifference, scaleDifference, centre.getX(), centre.getY());
-                prependTransform(scaleTransform);
-
-                double currentMxx = transform.getMxx();
-                double currentMxy = transform.getMxy();
-                double scaleX = Math.sqrt(currentMxx * currentMxx + currentMxy * currentMxy);
-
-                if (scaleX < 0.25 || scaleX > 2) {
-                    setTransform(oldTransform);
-                }
+                handleScale(scaleDelta, centre);
             }
         }
 
         // Rotate the pane
-        if (rotatable) {
-            prependTransform(new Rotate(Math.toDegrees(angleDelta), centre.getX(), centre.getY()));
-        }
+        handleRotate(angleDelta, centre);
 
         // Update touch state
         currentTouch.setLastCentre(centre);
         otherTouch.setLastCentre(centre);
         currentTouch.setCurrentScreenPoint(touchPointPosition);
+    }
+
+    protected void handleTranslate(Point2D currentCentre, Point2D lastCentre) {
+        Point2D delta = currentCentre.subtract(lastCentre);
+        delta = handleBoundsCheck(delta);
+        prependTransform(new Translate(delta.getX(), delta.getY()));
+    }
+
+    protected void handleScale(double scaleDelta, Point2D centre) {
+        Affine oldTransform = new Affine(transform);
+
+        Scale scaleTransform = new Scale(scaleDelta, scaleDelta, centre.getX(), centre.getY());
+        prependTransform(scaleTransform);
+
+        double currentMxx = transform.getMxx();
+        double currentMxy = transform.getMxy();
+        double scaleX = Math.sqrt(currentMxx * currentMxx + currentMxy * currentMxy);
+
+        if (scaleX < 0.25 || scaleX > 2) {
+            setTransform(oldTransform);
+        }
+    }
+
+    protected void handleRotate(double angleDelta, Point2D centre) {
+        // Rotate the pane
+        if (rotatable) {
+            prependTransform(new Rotate(Math.toDegrees(angleDelta), centre.getX(), centre.getY()));
+        }
     }
 
     /**
@@ -531,7 +544,7 @@ public class FocusArea implements InvalidationListener {
      * @param delta The desired delta based on touch events.
      * @return The new bounds to apply.
      */
-    private Point2D handleBoundsCheck(Point2D delta) {
+    protected Point2D handleBoundsCheck(Point2D delta) {
 
         Pane rootPane = MultitouchHandler.getRootPane();
 

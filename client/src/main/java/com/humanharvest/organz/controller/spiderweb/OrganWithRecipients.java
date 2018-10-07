@@ -49,7 +49,6 @@ import com.humanharvest.organz.controller.client.ReceiverOverviewController;
 import com.humanharvest.organz.controller.components.ExpiryBarUtils;
 import com.humanharvest.organz.controller.components.PotentialRecipientCell;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.touch.FocusArea;
 import com.humanharvest.organz.touch.MatchesFocusArea;
 import com.humanharvest.organz.touch.MultitouchHandler;
 import com.humanharvest.organz.touch.OrganFocusArea;
@@ -99,12 +98,12 @@ public class OrganWithRecipients {
                 .openNewWindow(ORGAN_SIZE, ORGAN_SIZE, pane -> new OrganFocusArea(pane, this));
         newMain.getStyles().clear();
 
-        createOrganImage(newMain);
+        OrganFocusArea organFocusArea = createOrganImage(newMain);
 
         createLines();
 
         matchesPane = new Pane();
-        MatchesFocusArea matchesFocusArea = new MatchesFocusArea(matchesPane, this);
+        MatchesFocusArea matchesFocusArea = new MatchesFocusArea(matchesPane, this, organFocusArea);
         MultitouchHandler.addPane(matchesPane, matchesFocusArea);
         matchesFocusArea.setScalable(false);
         matchesFocusArea.setRotatable(false);
@@ -151,17 +150,18 @@ public class OrganWithRecipients {
         }
     }
 
-    private void createOrganImage(MainController newMain) {
+    private OrganFocusArea createOrganImage(MainController newMain) {
         organImageController = (OrganImageController) PageNavigator
                 .loadPage(Page.ORGAN_IMAGE, newMain);
         organImageController.loadImage(organ.getOrganType());
 
         organPane = newMain.getPane();
-        FocusArea organFocus = (FocusArea) organPane.getUserData();
+        OrganFocusArea organFocus = (OrganFocusArea) organPane.getUserData();
 
         organFocus.setScalable(false);
         organFocus.setCollidable(true);
         organFocus.setDisableHinting(true);
+        return organFocus;
     }
 
     private void createLines() {
