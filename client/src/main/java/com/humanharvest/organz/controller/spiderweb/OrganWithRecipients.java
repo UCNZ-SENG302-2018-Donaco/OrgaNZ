@@ -106,8 +106,6 @@ public class OrganWithRecipients {
         MatchesFocusArea matchesFocusArea = new MatchesFocusArea(matchesPane, this, organFocusArea);
         MultitouchHandler.addPane(matchesPane, matchesFocusArea);
         matchesFocusArea.setScalable(false);
-        matchesFocusArea.setRotatable(false);
-        matchesFocusArea.setTranslatable(false);
 
         enableHandlers();
 

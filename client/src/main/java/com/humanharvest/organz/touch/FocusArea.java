@@ -258,6 +258,10 @@ public class FocusArea implements InvalidationListener {
         }
     }
 
+    public boolean isTouched() {
+        return paneTouches != null && !paneTouches.isEmpty();
+    }
+
     protected void onTouchPressed(TouchEvent event, CurrentTouch currentTouch) {
 
         TouchPoint touchPoint = event.getTouchPoint();
@@ -463,7 +467,7 @@ public class FocusArea implements InvalidationListener {
     /**
      * Handles a touch event with two fingers on the pane. Will translate, rotate and scale the pane.
      */
-    private void handleDoubleTouch(
+    protected void handleDoubleTouch(
             Point2D touchPointPosition,
             TouchPoint touchPoint,
             CurrentTouch currentTouch,
