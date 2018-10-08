@@ -320,6 +320,8 @@ public class RegisterOrganDonationController extends SubController {
         // Disable organ donation registration pane if client is dead
         if (client.isDead()) {
             registerPane.setDisable(true);
+        } else {
+            registerPane.setDisable(false);
         }
     }
 
