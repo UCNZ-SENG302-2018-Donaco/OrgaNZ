@@ -18,7 +18,6 @@ import javafx.stage.Window;
 
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.controller.components.TouchAlertTextController;
 import com.humanharvest.organz.state.State;
 
 /**
@@ -141,24 +140,31 @@ public class PageNavigatorStandard implements IPageNavigator {
      * @param alertType the type of alert to show (can determine its style and button options).
      * @param title the text to show as the title and heading of the alert.
      * @param bodyText the text to show within the body of the alert.
-     * @param onResponse a callback for when an ok/cancel button is clicked.
+     * @param window the window to spawn the popup relative to.
+     * @param onOk a callback for when the ok button is clicked.
      */
     @Override
     public void showAlert(Alert.AlertType alertType, String title, String bodyText, Window window,
-            Consumer<Boolean> onResponse) {
+            Runnable onOk) {
         Alert alert = generateAlert(alertType, title, bodyText);
         Optional<ButtonType> result = alert.showAndWait();
-        if (onResponse != null) {
-            if (result.isPresent() && result.get() == ButtonType.OK) {
-                onResponse.accept(true);
-            } else {
-                onResponse.accept(false);
-            }
+
+        // If there is a callback, and the user clicked OK, respond
+        if (result.isPresent() && result.get() == ButtonType.OK && onOk != null) {
+            onOk.run();
         }
     }
 
+    /**
+     * Shows a pop-up alert with a text entry box, and awaits user input to input and confirm it (blocking).
+     *
+     * @param title the text to show as the title and heading of the alert.
+     * @param bodyText the text to show within the body of the alert.
+     * @param window the window to spawn the popup relative to.
+     * @param onSubmit Callback to return the input string to once the user clicks ok.
+     */
     @Override
-    public TouchAlertTextController showAlertWithText(String title, String bodyText, Window window) {
+    public void showAlertWithText(String title, String bodyText, Window window, Consumer<String> onSubmit) {
         TextInputDialog popup = new TextInputDialog();
         popup.setTitle(title);
         popup.setHeaderText(bodyText);
@@ -168,7 +174,9 @@ public class PageNavigatorStandard implements IPageNavigator {
             popup.getDialogPane().lookupButton(ButtonType.OK).setDisable(newValue.isEmpty());
         });
 
-        String response = popup.showAndWait().orElse("");
-        return new TouchAlertTextController(!response.isEmpty(), response);
+        Optional<String> response = popup.showAndWait();
+
+        // If they submitted, callback with the text
+        response.ifPresent(onSubmit);
     }
 }
