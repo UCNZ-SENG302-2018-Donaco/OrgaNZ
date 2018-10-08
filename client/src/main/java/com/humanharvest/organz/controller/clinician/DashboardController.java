@@ -16,12 +16,12 @@ import javafx.scene.chart.PieChart.Data;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
-import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DashboardStatistics;
 import com.humanharvest.organz.DonatedOrgan;
+import com.humanharvest.organz.controller.ClickUtilities;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.controller.components.DeceasedDonorCell;
@@ -29,9 +29,6 @@ import com.humanharvest.organz.controller.components.DonatedOrganCell;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
-import com.humanharvest.organz.utilities.view.Page;
-import com.humanharvest.organz.utilities.view.PageNavigator;
-import com.humanharvest.organz.utilities.view.WindowContext;
 
 import org.apache.commons.io.IOUtils;
 
@@ -130,20 +127,14 @@ public class DashboardController extends SubController {
             return item;
         });
 
-        deceasedDonorsList.setOnMouseClicked(mouseEvent -> {
-            if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 2) {
-                Client client = deceasedDonorsList.getSelectionModel().getSelectedItem();
-                if (client != null) {
-                    MainController newMain = PageNavigator.openNewWindow(mainController);
-                    if (newMain != null) {
-                        newMain.setWindowContext(new WindowContext.WindowContextBuilder()
-                                .setAsClinicianViewClientWindow()
-                                .viewClient(client)
-                                .build());
-                        PageNavigator.loadPage(Page.VIEW_CLIENT, newMain);
-                    }
-                }
-            }
+        deceasedDonorsList.setOnMouseClicked(mouseEvent ->
+                ClickUtilities.openClientOnDoubleClick(
+                        mouseEvent, deceasedDonorsList.getSelectionModel().getSelectedItem(), mainController));
+
+        expiringOrgansList.setOnMouseClicked(mouseEvent -> {
+            DonatedOrgan organ = expiringOrgansList.getSelectionModel().getSelectedItem();
+            Client client = organ == null ? null : organ.getDonor();
+            ClickUtilities.openClientOnDoubleClick(mouseEvent, client, mainController);
         });
     }
 
