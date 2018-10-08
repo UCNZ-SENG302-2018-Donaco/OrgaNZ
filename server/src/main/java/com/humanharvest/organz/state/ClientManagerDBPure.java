@@ -743,11 +743,12 @@ public class ClientManagerDBPure implements ClientManager {
             trns = session.beginTransaction();
 
             String queryString = "SELECT c.* FROM Client c \n"
-                    + "WHERE EXISTS (SELECT donating.Client_uid \n"
-                    + "              FROM Client_organsDonating AS donating\n"
-                    + "              WHERE donating.Client_uid=c.uid "
+                    + "WHERE EXISTS (SELECT donating.donor_uid \n"
+                    + "              FROM DonatedOrgan AS donating\n"
+                    + "              WHERE donating.donor_uid=c.uid "
+                    + "              AND donating.overrideReason IS NULL"
+                    + "              AND donating.available = TRUE"
                     + "              LIMIT 1)\n"
-                    + "      AND c.dateOfDeath IS NOT NULL\n"
                     + "ORDER BY c.dateOfDeath DESC";
 
             Query<Client> query = session.createNativeQuery(queryString, Client.class);
