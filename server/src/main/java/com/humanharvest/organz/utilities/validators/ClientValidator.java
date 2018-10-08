@@ -50,10 +50,13 @@ public final class ClientValidator {
         if (!dateOfBirthValid(client)) {
             errors.append("Date of birth must be in a valid format and must represent a date in the past.\n");
         } else if (!deathDetailsValid(client)) {
-            errors.append("Death details must either all be empty, or all filled in. If filled in, the time and "
-                    + "date of death must be in the past, and the date of birth must not be after the date of death. "
-                    + "The death country must be a valid country, the death region must be non-empty (and, if the "
-                    + "country is set to New Zealand, a valid NZ region), and the death city must be non-empty.\n");
+            errors.append("Death details must either all be empty, or all filled in.\n"
+                    + "If filled in, the time and date of death must be in the past,\n"
+                    + "and the date of birth must not be after the date of death.\n"
+                    + "The death country must be a valid country,\n"
+                    + "the death region must be non-empty "
+                    + "(and, if the country is set to New Zealand, a valid NZ region),\n"
+                    + "and the death city must be non-empty.\n");
         }
         if (!heightValid(client)) {
             errors.append("Height must be a non-negative number.\n");
