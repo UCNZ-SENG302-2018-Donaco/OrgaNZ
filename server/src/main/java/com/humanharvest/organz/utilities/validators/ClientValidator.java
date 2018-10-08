@@ -120,6 +120,9 @@ public final class ClientValidator {
                 !client.getDateOfBirth().isAfter(LocalDate.now());  // Catch future date of birth
     }
 
+    /**
+     * Returns true if the death details are all null, or are all valid.
+     */
     private static boolean deathDetailsValid(Client client) {
         // Its ok if they are all empty
         if (client.getDateOfDeath() == null && client.getTimeOfDeath() == null && client.getCountryOfDeath() == null
@@ -132,7 +135,7 @@ public final class ClientValidator {
     }
 
     /**
-     * Returns true if they died in the past (or in the next 10 seconds)
+     * Returns true if they died in the past (or in the next 10 seconds).
      */
     private static boolean dateTimeOfDeathIsValid(Client client) {
         LocalDate dateOfDeath = client.getDateOfDeath();
@@ -149,14 +152,24 @@ public final class ClientValidator {
                 && !dateOfBirth.isAfter(dateOfDeath);
     }
 
+    /**
+     * Returns true if the county isn't null.
+     */
     private static boolean countryOfDeathValid(Client client) {
         return client.getCountryOfDeath() != null;
     }
 
+    /**
+     * Returns true if the region isn't empty and, if the county is NZ, the region is a valid NZ region.
+     */
     private static boolean regionOfDeathValid(Client client) {
-        return RegionValidator.isValid(client.getCountryOfDeath(), client.getRegionOfDeath());
+        return NotEmptyStringValidator.isValidString(client.getRegion())
+                && RegionValidator.isValid(client.getCountryOfDeath(), client.getRegionOfDeath());
     }
 
+    /**
+     * Returns true if the city isn't empty.
+     */
     private static boolean cityOfDeathValid(Client client) {
         return NotEmptyStringValidator.isValidString(client.getCityOfDeath());
     }
