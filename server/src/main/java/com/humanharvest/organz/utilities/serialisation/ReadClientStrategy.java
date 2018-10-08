@@ -4,13 +4,21 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InvalidObjectException;
+import java.time.LocalTime;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.utilities.enums.Country;
+import com.humanharvest.organz.utilities.enums.Region;
 
 /**
  * A strategy that describes how to read the contents of a file as a series of {@link Client}s.
  */
 public interface ReadClientStrategy extends Closeable {
+
+    LocalTime DEFAULT_TIME_OF_DEATH = LocalTime.of(0, 0);
+    String DEFAULT_CITY_OF_DEATH = "Unspecified";
+    String DEFAULT_REGION_OF_DEATH = Region.UNSPECIFIED.toString();
+    Country DEFAULT_COUNTRY_OF_DEATH = Country.NZ;
 
     /**
      * Sets up the ReadClientStrategy to read from the given file.

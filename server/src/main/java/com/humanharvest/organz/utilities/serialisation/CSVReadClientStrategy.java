@@ -77,6 +77,21 @@ public class CSVReadClientStrategy implements ReadClientStrategy {
                         record.get(Header.city) + ", " +
                         record.get(Header.zip_code));
         client.setRegion(record.get(Header.region));
+        if (client.getDateOfDeath() != null) {
+            // The date of death has been set, so we need to set other death details if they aren't.
+            if (client.getTimeOfDeath() == null) {
+                client.setTimeOfDeath(DEFAULT_TIME_OF_DEATH);
+            }
+            if (client.getCityOfDeath() == null) {
+                client.setCityOfDeath(DEFAULT_CITY_OF_DEATH);
+            }
+            if (client.getRegionOfDeath() == null) {
+                client.setRegionOfDeath(DEFAULT_REGION_OF_DEATH);
+            }
+            if (client.getCountryOfDeath() == null) {
+                client.setCountryOfDeath(DEFAULT_COUNTRY_OF_DEATH);
+            }
+        }
         return client;
     }
 
