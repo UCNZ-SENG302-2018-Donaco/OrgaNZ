@@ -204,7 +204,7 @@ public class ClientResolverMemory implements ClientResolver {
             ModifyIllnessObject modifyIllnessObject) {
         BeanUtils.copyProperties(modifyIllnessObject, toModify, modifyIllnessObject.getUnmodifiedFields());
         if (modifyIllnessObject.getIsChronic() != null) { //quick and dirty fix for chronic not being set
-            toModify.setChronic(modifyIllnessObject.getIsChronic());
+            toModify.setIsChronic(modifyIllnessObject.getIsChronic());
         }
         return toModify;
     }
