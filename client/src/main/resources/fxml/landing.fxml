@@ -67,7 +67,7 @@
                 <Insets bottom="15.0" top="30.0"/>
               </VBox.margin>
             </Text>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="by Human Harvest Inc."/>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="by Donaco"/>
           </children>
         </VBox>
       </top>
