@@ -26,8 +26,6 @@ import javafx.scene.control.ComboBoxBase;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Skin;
 import javafx.scene.control.Skinnable;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TouchEvent;
 import javafx.scene.input.TouchPoint;
 import javafx.scene.layout.Pane;
@@ -44,10 +42,8 @@ import com.humanharvest.organz.utilities.Tuple;
 
 import com.sun.javafx.scene.NodeEventDispatcher;
 import com.sun.javafx.scene.control.skin.VirtualFlow;
-import org.tuiofx.widgets.controls.KeyboardPane;
 import org.tuiofx.widgets.skin.ChoiceBoxSkinAndroid;
 import org.tuiofx.widgets.skin.KeyboardManager;
-import org.tuiofx.widgets.skin.MTButtonSkin;
 import org.tuiofx.widgets.skin.MTComboBoxListViewSkin;
 import org.tuiofx.widgets.skin.MTContextMenuSkin;
 import org.tuiofx.widgets.skin.OnScreenKeyboard;
@@ -267,18 +263,22 @@ public class FocusArea implements InvalidationListener {
         currentTouch.setCurrentScreenPoint(new Point2D(touchPoint.getX(), touchPoint.getY()));
 
         try {
-            pane.toFront();
+//            pane.toFront();
         } catch (RuntimeException e) {
             LOGGER.log(Level.WARNING, "Runtime exception when setting pane to front", e);
         }
 
         OnScreenKeyboard<?> keyboard = KeyboardManager.getInstance().getKeyboard(pane);
-        ReflectionUtils.<KeyboardPane>getField(keyboard.getSkin(), "keyboardPane").toFront();
+//        ReflectionUtils.<KeyboardPane>getField(keyboard.getSkin(), "keyboardPane").toFront();
 
         // Forwards the touch event to an important node.
         currentTouch.getImportantElement().ifPresent(node -> {
             NodeEventDispatcher eventDispatcher = (NodeEventDispatcher) node.getEventDispatcher();
+            System.out.println("Dispatching event..."
+                    + "\nNODE: " + node.toString()
+                    + "\nEVENT: " + event.toString());
             eventDispatcher.dispatchCapturingEvent(event);
+            eventDispatcher.dispatchBubblingEvent(event);
         });
 
         if (paneTouches.size() == 1) {
@@ -297,28 +297,11 @@ public class FocusArea implements InvalidationListener {
         // Forwards the touch event to an important node.
         currentTouch.getImportantElement().ifPresent(node -> {
             NodeEventDispatcher eventDispatcher = (NodeEventDispatcher) node.getEventDispatcher();
-
-            MouseEvent mouseEvent = new MouseEvent(MouseEvent.MOUSE_CLICKED,
-                    event.getTouchPoint().getX(),
-                    event.getTouchPoint().getY(),
-                    event.getTouchPoint().getScreenX(),
-                    event.getTouchPoint().getScreenY(),
-                    MouseButton.PRIMARY,
-                    1,
-                    false,
-                    false,
-                    false,
-                    false,
-                    true,
-                    false,
-                    false,
-                    true,
-                    false,
-                    true,
-                    event.getTouchPoint().getPickResult());
-
-            eventDispatcher.dispatchCapturingEvent(mouseEvent);
-            eventDispatcher.dispatchBubblingEvent(mouseEvent);
+            System.out.println("Dispatching event..."
+                    + "\nNODE: " + node.toString()
+                    + "\nEVENT: " + event.toString());
+            eventDispatcher.dispatchCapturingEvent(event);
+            eventDispatcher.dispatchBubblingEvent(event);
         });
 
         if (paneTouches.isEmpty()) {

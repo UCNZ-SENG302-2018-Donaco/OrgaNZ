@@ -16,7 +16,12 @@
 
 .button,
 .button:focused {
-  -fx-skin: "org.tuiofx.widgets.skin.MTButtonSkin";
+  -fx-skin: "com.humanharvest.organz.skin.MTButtonSkin";
+}
+
+#key-button {
+  -fx-skin: "com.humanharvest.organz.skin.MTKeyboardButtonSkin";
+  -fx-background-color: #d3e9ff !important;
 }
 
 .scroll-pane {

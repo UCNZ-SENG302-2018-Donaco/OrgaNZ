@@ -22,6 +22,7 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.input.RotateEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.input.TouchEvent;
@@ -49,6 +50,12 @@ public final class MultitouchHandler {
         rootPane = root;
 
         root.addEventFilter(TouchEvent.ANY, MultitouchHandler::handleTouchEvent);
+
+        root.addEventFilter(MouseEvent.ANY, event -> {
+            if (event.isSynthesized()) {
+                event.consume();
+            }
+        });
 
         root.addEventFilter(ScrollEvent.ANY, event -> {
             if (event.isDirect()) {
