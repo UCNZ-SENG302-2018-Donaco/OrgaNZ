@@ -79,7 +79,7 @@ public class AppUI extends Application {
         Scene scene = new Scene(root);
 
         loadBackPane(root);
-        MultitouchHandler.initialise(root);
+        MultitouchHandler.initialise(root, State.isUseHackyMouseTouch());
 
         loadTouchMainPane();
 
@@ -174,10 +174,15 @@ public class AppUI extends Application {
             State.setUiType(State.UiType.STANDARD);
             PageNavigator.setInstance(new PageNavigatorStandard());
         }
+
+        Optional<String> hackyMouseTouch = getArgument("hmt");
+        if (hackyMouseTouch.isPresent()) {
+            State.setUseHackyMouseTouch(true);
+        }
     }
 
     /**
-     * Returns an the value of an argument, or empty if non exist. Will do a case insensative comparison, and look in
+     * Returns an the value of an argument, or empty if non exist. Will do a case insensitive comparison, and look in
      * both program arguments and environmental variables.
      */
     private Optional<String> getArgument(String argument) {
