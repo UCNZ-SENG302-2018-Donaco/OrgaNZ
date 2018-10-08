@@ -49,9 +49,11 @@ public final class ClientValidator {
         }
         if (!dateOfBirthValid(client)) {
             errors.append("Date of birth must be in a valid format and must represent a date in the past.\n");
-        } else if (!dateOfDeathValid(client)) {
-            errors.append("Date of death must be either empty, or a date in a valid format that represents a date "
-                    + "after the date of birth.\n");
+        } else if (!deathDetailsValid(client)) {
+            errors.append("Death details must either all be empty, or all filled in. If filled in, the time and "
+                    + "date of death must be in the past, and the date of birth must not be after the date of death. "
+                    + "The death country must be a valid country, the death region must be non-empty (and, if the "
+                    + "country is set to New Zealand, a valid NZ region), and the death city must be non-empty.\n");
         }
         if (!heightValid(client)) {
             errors.append("Height must be a non-negative number.\n");
@@ -129,40 +131,34 @@ public final class ClientValidator {
                 && regionOfDeathValid(client) && cityOfDeathValid(client);
     }
 
-    private static boolean dateOfDeathValid(Client client) {
-        if (client.getDateOfDeath() != null) {
-            // Catch date of death before date of birth
-            return dateIsValid(client.getDateOfDeath()) &&
-                    !client.getDateOfDeath().isBefore(client.getDateOfBirth());
-        }
-        return true;
-    }
-
     /**
      * Returns true if they died in the past (or in the next 10 seconds)
      */
     private static boolean dateTimeOfDeathIsValid(Client client) {
         LocalDate dateOfDeath = client.getDateOfDeath();
         LocalTime timeOfDeath = client.getTimeOfDeath();
-        if (timeOfDeath == null || dateOfDeath == null) {
-            // if the date or time are null, then that should really have been caught before now
+        LocalDate dateOfBirth = client.getDateOfBirth();
+        if (timeOfDeath == null || dateOfDeath == null || dateOfBirth == null) {
+            // if DOB or date or time of death are null, then that should really have been caught before now
             // (in deathDetailsValid())
             return true;
         }
 
-        return client.getDatetimeOfDeath().isBefore(LocalDateTime.now().plusSeconds(10));
+        // return true if the datetime of death is before (10 seconds in the future), and DOB isn't after the DOD.
+        return client.getDatetimeOfDeath().isBefore(LocalDateTime.now().plusSeconds(10))
+                && !dateOfBirth.isAfter(dateOfDeath);
     }
 
     private static boolean countryOfDeathValid(Client client) {
-        return true;
+        return client.getCountryOfDeath() != null;
     }
 
     private static boolean regionOfDeathValid(Client client) {
-        return true;
+        return RegionValidator.isValid(client.getCountryOfDeath(), client.getRegionOfDeath());
     }
 
     private static boolean cityOfDeathValid(Client client) {
-        return true;
+        return NotEmptyStringValidator.isValidString(client.getCityOfDeath());
     }
 
     private static boolean heightValid(Client client) {
