@@ -33,6 +33,7 @@ public class DeceasedDonorCell extends ListCell<Client> {
         if (empty || donor == null) {
             setText(null);
             setStyle(null);
+            setGraphic(null);
             return;
         }
 
