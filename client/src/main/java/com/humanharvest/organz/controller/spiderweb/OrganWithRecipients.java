@@ -202,6 +202,8 @@ public class OrganWithRecipients {
                     if (isInit) {
                         matchesPane.setVisible(false);
                         organImageController.matchCountIsVisible(true);
+                    } else {
+                        organImageController.matchCountIsVisible(!matchesPane.isVisible());
                     }
                 });
 
