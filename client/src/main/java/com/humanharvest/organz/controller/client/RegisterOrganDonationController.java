@@ -306,7 +306,7 @@ public class RegisterOrganDonationController extends SubController {
         // Set appropriate name on window title and name label
         String name = "";
         if (session.getLoggedInUserType() == UserType.CLIENT) {
-            mainController.setTitle("Donate  Organs: " + client.getPreferredNameFormatted());
+            mainController.setTitle("Donate Organs: " + client.getPreferredNameFormatted());
             name = client.getPreferredNameFormatted();
         } else if (windowContext.isClinViewClientWindow()) {
             mainController.setTitle("Donate Organs: " + client.getFullName());

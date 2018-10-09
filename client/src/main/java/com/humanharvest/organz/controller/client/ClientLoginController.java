@@ -41,7 +41,7 @@ public class ClientLoginController extends SubController {
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
-        mainController.setTitle("Client login");
+        mainController.setTitle("Client Login");
     }
 
     /**

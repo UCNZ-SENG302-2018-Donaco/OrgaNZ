@@ -132,7 +132,7 @@ public class ViewClinicianController extends SubController {
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
-        mainController.setTitle("Clinician profile: " + viewedClinician.getFullName());
+        mainController.setTitle("Clinician Profile: " + viewedClinician.getFullName());
         mainController.loadNavigation(menuBarPane);
         getViewedClinicianData();
         updateCountries();
@@ -187,7 +187,7 @@ public class ViewClinicianController extends SubController {
     private void getViewedClinicianData() {
         viewedClinician = State.getClinicianManager().getClinicianByStaffId(viewedClinician.getStaffId())
                 .orElseThrow(IllegalStateException::new);
-        mainController.setTitle("Clinician profile: " + viewedClinician.getFullName());
+        mainController.setTitle("Clinician Profile: " + viewedClinician.getFullName());
         password.setText(viewedClinician.getPassword());
         title.setText(viewedClinician.getFirstName());
 

@@ -61,7 +61,7 @@ public class CreateClientController extends SubController {
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
-        mainController.setTitle("Create a client");
+        mainController.setTitle("Create New Client");
 
         if (State.getSession() != null) { //they're a clinician or admin
             mainController.loadNavigation(menuBarPane);
