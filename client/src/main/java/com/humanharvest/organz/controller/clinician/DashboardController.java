@@ -106,6 +106,8 @@ public class DashboardController extends SubController {
             item.setMaxWidth(expiringOrgansList.getWidth());
             return item;
         });
+        
+        expiringOrgansList.setPlaceholder(new Label("No clients have died that were donating organs."));
 
         // Recently deceased donors setup
         deceasedDonorsList.setItems(FXCollections.observableArrayList(manager.getViableDeceasedDonors()));
@@ -131,6 +133,8 @@ public class DashboardController extends SubController {
                 }
             }
         });
+
+        deceasedDonorsList.setPlaceholder(new Label("No clients have died that were donating organs."));
     }
 
     private void updateStatistics() {
