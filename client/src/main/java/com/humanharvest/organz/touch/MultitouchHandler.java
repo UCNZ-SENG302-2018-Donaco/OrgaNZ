@@ -45,7 +45,7 @@ public final class MultitouchHandler {
     /**
      * Setup the event listeners for the root pane.
      */
-    public static void initialise(Pane root) {
+    public static void initialise(Pane root, boolean useHackyMouseTouch) {
         rootPane = root;
 
         root.addEventFilter(TouchEvent.ANY, MultitouchHandler::handleTouchEvent);
@@ -57,7 +57,9 @@ public final class MultitouchHandler {
         });
         root.addEventFilter(RotateEvent.ANY, Event::consume);
 
-//        HackyMouseTouch.initialise(root);
+        if (useHackyMouseTouch) {
+            HackyMouseTouch.initialise(root);
+        }
 
         physicsHandler = new PhysicsHandler(rootPane);
 
