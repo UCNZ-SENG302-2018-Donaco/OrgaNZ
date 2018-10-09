@@ -193,7 +193,7 @@ public class OrganWithRecipients {
                     }
                 };
 
-                matchesTask.setOnSucceeded(event -> {
+                matchesTask.setOnSucceeded(success -> {
                     List<TransplantRequest> potentialMatches = matchesTask.getValue();
                     setMatchPane(createMatchesPane(FXCollections.observableArrayList(potentialMatches)));
                     organImageController.setMatchCount(potentialMatches.size());
@@ -205,6 +205,15 @@ public class OrganWithRecipients {
                     } else {
                         organImageController.matchCountIsVisible(!matchesPane.isVisible());
                     }
+                });
+
+                matchesTask.setOnFailed(fail -> {
+                    LOGGER.log(Level.SEVERE, matchesTask.getException().getMessage(), matchesTask.getException());
+                    Notifications.create()
+                            .title("Server Error")
+                            .text(String.format("Could not retrieve potential matches for %s from the server.",
+                                    organ.getOrganType()))
+                            .showError();
                 });
 
                 new Thread(matchesTask).start();
@@ -220,10 +229,19 @@ public class OrganWithRecipients {
                     }
                 };
 
-                transplantTask.setOnSucceeded(event -> {
+                transplantTask.setOnSucceeded(success -> {
                     transplantRecord = transplantTask.getValue();
                     setMatchPane(createMatchPane(transplantRecord));
                     updateRecipientConnector();
+                });
+
+                transplantTask.setOnFailed(fail -> {
+                    LOGGER.log(Level.SEVERE, transplantTask.getException().getMessage(), transplantTask.getException());
+                    Notifications.create()
+                            .title("Server Error")
+                            .text(String.format("Could not retrieve the transplant for %s from the server.",
+                                    organ.getOrganType()))
+                            .showError();
                 });
 
                 new Thread(transplantTask).start();
