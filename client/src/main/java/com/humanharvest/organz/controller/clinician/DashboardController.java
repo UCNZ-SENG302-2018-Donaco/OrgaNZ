@@ -77,10 +77,10 @@ public class DashboardController extends SubController {
 
     private void generatePieChartData() {
         ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList(
-                new Data("Donors", statistics.getDonorCount()),
-                new Data("Receivers", statistics.getReceiverCount()),
-                new Data("Both", statistics.getDonorReceiverCount()),
-                new Data("Neither", statistics.getNeitherCount())
+                new Data("Donors (" + statistics.getDonorCount() + ")", statistics.getDonorCount()),
+                new Data("Receivers (" + statistics.getReceiverCount() + ")", statistics.getReceiverCount()),
+                new Data("Both (" + statistics.getDonorReceiverCount() + ")", statistics.getDonorReceiverCount()),
+                new Data("Neither (" + statistics.getNeitherCount() + ")", statistics.getNeitherCount())
         );
         pieChart.setData(pieChartData);
     }
