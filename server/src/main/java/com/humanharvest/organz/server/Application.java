@@ -36,6 +36,11 @@ public class Application {
         // Initialize storage with storage argument
         initStorage(namedArgs.get("storage"));
 
+        String imageDirectory = namedArgs.get("imagedir");
+        if (imageDirectory != null && !imageDirectory.isEmpty()) {
+            State.setImageDirectory(imageDirectory);
+        }
+
         LoggerSetup.setup("organz-server.log", Level.INFO);
 
         // Run Spring Boot Application (server)
