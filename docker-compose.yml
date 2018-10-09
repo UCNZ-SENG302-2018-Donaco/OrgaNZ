@@ -5,6 +5,7 @@ services:
     ports:
       - 8080:8080
     volumes:
+      - ~/organz2:/root/.organz
       - ~/organz:/home
       - organz:/volume
       - ~/:/home
