@@ -3,7 +3,7 @@ info:
   version: 1.0.10
   title: "Organz API"
   description: |
-    An API used to access the Human Harvest Inc server.
+    An API used to access the OrgaNZ server.
     Versioning: Adding new endpoints, adding parameters or key value pairs are all minor changes, as they are still valid with a past client.
       Major changes include: Modifying the data types of any parameters or values, removing key value pairs, removing endpoints. These CANNOT be pushed without maintaining a legacy version and upgrading the system to a new version.
 
