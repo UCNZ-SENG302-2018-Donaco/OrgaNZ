@@ -16,7 +16,6 @@ import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.DonatedOrgan.OrganState;
 import com.humanharvest.organz.controller.components.ExpiryBarUtils;
 import com.humanharvest.organz.touch.FocusArea;
-import com.humanharvest.organz.touch.MultitouchHandler;
 import com.humanharvest.organz.utilities.DurationFormatter.DurationFormat;
 
 public class LineFormatters {
@@ -103,7 +102,7 @@ public class LineFormatters {
         double xDelta = (organDiameter / 2.0) - scale * matchesPane.getBoundsInLocal().getWidth() / 2;
 
         // If not currently touching the matches pane
-        if (focusArea != null && MultitouchHandler.findPaneTouches(matchesPane).isEmpty()) {
+        if (focusArea != null && !focusArea.isTouched()) {
             Affine transform = new Affine();
             transform.prepend(new Scale(scale, scale));
             transform.prepend(new Translate(xDelta, 90));
