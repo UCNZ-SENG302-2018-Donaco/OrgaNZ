@@ -12,6 +12,7 @@ import javafx.beans.value.ObservableValueBase;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Alert.AlertType;
@@ -32,6 +33,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import org.controlsfx.control.CheckComboBox;
+import org.controlsfx.control.Notifications;
 import org.controlsfx.control.RangeSlider;
 
 import com.humanharvest.organz.Client;
@@ -44,7 +46,6 @@ import com.humanharvest.organz.utilities.enums.ClientType;
 import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
-import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.Page;
@@ -62,32 +63,25 @@ public class SearchClientsController extends SubController {
     private static final int AGE_UPPER_BOUND = 120;
 
     @FXML
-    private TextField searchBox, ageMinField, ageMaxField;
+    private Pane menuBarPane;
 
+    @FXML
+    private TextField searchBox, ageMinField, ageMaxField;
     @FXML
     private RangeSlider ageSlider;
-
     @FXML
     private CheckComboBox<Gender> birthGenderFilter;
-
     @FXML
     private CheckComboBox<Region> regionFilter;
-
     @FXML
     private ChoiceBox<ClientType> clientTypeFilter;
-
     @FXML
     private CheckComboBox<Organ> organsDonatingFilter, organsRequestingFilter;
-
     @FXML
     private HBox donatingFilterBox, requestingFilterBox;
 
     @FXML
-    private Pane menuBarPane;
-
-    @FXML
     private TableView<Client> tableView;
-
     @FXML
     private TableColumn<Client, Integer> idCol;
     @FXML
@@ -105,11 +99,11 @@ public class SearchClientsController extends SubController {
 
     @FXML
     private Pagination pagination;
-
     @FXML
     private Text displayingXToYOfZText;
 
     private ObservableList<Client> observableClientList = FXCollections.observableArrayList();
+    private Task<PaginatedClientList> latestRequest;
 
     private static <T extends Enum<T>> EnumSet<T> filterToSet(CheckComboBox<T> filter, Class<T> enumType) {
         EnumSet<T> enumSet = EnumSet.noneOf(enumType);
@@ -126,7 +120,6 @@ public class SearchClientsController extends SubController {
 
     @FXML
     private void initialize() {
-
         setupTable();
 
         tableView.setOnSort(o -> updateClientList());
@@ -214,7 +207,6 @@ public class SearchClientsController extends SubController {
                 MenuItem removeItem = new MenuItem("Delete");
                 removeItem.setOnAction(event -> {
                     deleteClient(row.getItem());
-                    PageNavigator.refreshAllWindows();
                 });
                 ContextMenu rowMenu = new ContextMenu(removeItem);
 
@@ -229,23 +221,37 @@ public class SearchClientsController extends SubController {
     }
 
     private void deleteClient(Client client) {
-        try {
-            State.getClientManager().removeClient(client);
-        } catch (NotFoundException e) {
-            LOGGER.log(Level.WARNING, "Client not found", e);
-            PageNavigator.showAlert(AlertType.WARNING, "Client not found", "The client could not be found on the "
-                    + "server, it may have been deleted", mainController.getStage());
-        } catch (ServerRestException e) {
-            LOGGER.log(Level.WARNING, e.getMessage(), e);
-            PageNavigator.showAlert(AlertType.WARNING, "Server error", "Could not apply changes on the server, "
-                    + "please try again later", mainController.getStage());
-        } catch (IfMatchFailedException e) {
-            LOGGER.log(Level.INFO, "If-Match did not match", e);
-            PageNavigator.showAlert(AlertType.WARNING, "Outdated Data",
-                    "The client has been modified since you retrieved the data.\nIf you would still like to "
-                            + "apply these changes please submit again, otherwise refresh the page to update the data.",
-                    mainController.getStage());
-        }
+        Task<Void> task = new Task<Void>() {
+            @Override
+            protected Void call() throws ServerRestException {
+                com.humanharvest.organz.state.State.getClientManager().removeClient(client);
+                return null;
+            }
+        };
+
+        task.setOnSucceeded(success -> PageNavigator.refreshAllWindows());
+
+        task.setOnFailed(fail -> {
+            try {
+                throw task.getException();
+            } catch (NotFoundException exc) {
+                LOGGER.log(Level.WARNING, "Client could not be deleted: NOT FOUND", exc);
+                PageNavigator.showAlert(AlertType.WARNING,
+                        "Client Not Found",
+                        "The client could not be found on the server, it may have been deleted",
+                        mainController.getStage());
+            } catch (ServerRestException exc) {
+                LOGGER.log(Level.WARNING, exc.getMessage(), exc);
+                PageNavigator.showAlert(AlertType.WARNING,
+                        "Server Error",
+                        "An error occurred when deleting the client.",
+                        mainController.getStage());
+            } catch (Throwable exc) {
+                LOGGER.log(Level.SEVERE, "Error occurred when deleting client.", exc);
+            }
+        });
+
+        new Thread(task).start();
     }
 
     /**
@@ -398,28 +404,52 @@ public class SearchClientsController extends SubController {
 
     private void updateClientList() {
         ClientSortPolicy sortPolicy = getSortPolicy();
-        PaginatedClientList newClients = State.getClientManager().getClients(
-                searchBox.getText(),
-                pagination.getCurrentPageIndex() * ROWS_PER_PAGE,
-                ROWS_PER_PAGE,
-                (int) ageSlider.getLowValue(),
-                (int) ageSlider.getHighValue(),
-                regionFilter.getCheckModel().getCheckedItems().stream().map(Enum::toString).collect(Collectors.toSet()),
-                filterToSet(birthGenderFilter, Gender.class),
-                clientTypeFilter.getValue(),
-                filterToSet(organsDonatingFilter, Organ.class),
-                filterToSet(organsRequestingFilter, Organ.class),
-                sortPolicy.getSortOption(),
-                sortPolicy.isReversed());
 
-        observableClientList.setAll(newClients.getClients());
+        Task<PaginatedClientList> task = new Task<PaginatedClientList>() {
+            @Override
+            protected PaginatedClientList call() throws ServerRestException {
+                return com.humanharvest.organz.state.State.getClientManager().getClients(
+                        searchBox.getText(),
+                        pagination.getCurrentPageIndex() * ROWS_PER_PAGE,
+                        ROWS_PER_PAGE,
+                        (int) ageSlider.getLowValue(),
+                        (int) ageSlider.getHighValue(),
+                        regionFilter.getCheckModel().getCheckedItems().stream()
+                                .map(Enum::toString)
+                                .collect(Collectors.toSet()),
+                        filterToSet(birthGenderFilter, Gender.class),
+                        clientTypeFilter.getValue(),
+                        filterToSet(organsDonatingFilter, Organ.class),
+                        filterToSet(organsRequestingFilter, Organ.class),
+                        sortPolicy.getSortOption(),
+                        sortPolicy.isReversed());
+            }
+        };
 
-        int newPageCount = Math.max(1, (newClients.getTotalResults() + ROWS_PER_PAGE - 1) / ROWS_PER_PAGE);
-        if (pagination.getPageCount() != newPageCount) {
-            pagination.setPageCount(newPageCount);
-        }
+        task.setOnSucceeded(success -> {
+            if (task == latestRequest) {
+                PaginatedClientList newClients = task.getValue();
+                observableClientList.setAll(newClients.getClients());
 
-        setupDisplayingXToYOfZText(newClients.getTotalResults());
+                // Refresh pagination with new values
+                int newPageCount = Math.max(1, (newClients.getTotalResults() + ROWS_PER_PAGE - 1) / ROWS_PER_PAGE);
+                if (pagination.getPageCount() != newPageCount) {
+                    pagination.setPageCount(newPageCount);
+                }
+                setupDisplayingXToYOfZText(newClients.getTotalResults());
+            }
+        });
+
+        task.setOnFailed(fail -> {
+            LOGGER.log(Level.SEVERE, task.getException().getMessage(), task.getException());
+            Notifications.create()
+                    .title("Server Error")
+                    .text("Could not retrieve clients from the server.")
+                    .showError();
+        });
+
+        latestRequest = task;
+        new Thread(task).start();
     }
 
     /**
