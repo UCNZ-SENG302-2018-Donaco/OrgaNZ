@@ -6,6 +6,8 @@ services:
       - 8080:8080
     volumes:
       - ~/organz:/home
+      - organz:/volume
+      - ~/:/home
 
 volumes:
   organz:
