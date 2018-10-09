@@ -3,6 +3,9 @@ services:
   web:
     build: .
     ports:
-    - 8080:8080
+      - 8080:8080
     volumes:
-    - ~/organz-docker:/home/.organz/
+      - ~/organz:/home
+
+volumes:
+  organz:
