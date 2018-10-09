@@ -86,6 +86,7 @@ public final class State {
     private static UiType uiType = UiType.STANDARD;
     private static Stage primaryStage;
     private static Client spiderwebDonor;
+    private static boolean useHackyMouseTouch;
 
     private State() {
     }
@@ -345,6 +346,14 @@ public final class State {
 
     public static void setUiType(UiType type) {
         uiType = type;
+    }
+
+    public static boolean isUseHackyMouseTouch() {
+        return useHackyMouseTouch;
+    }
+
+    public static void setUseHackyMouseTouch(boolean useHackyMouseTouch) {
+        State.useHackyMouseTouch = useHackyMouseTouch;
     }
 
     public static Client getSpiderwebDonor() {
