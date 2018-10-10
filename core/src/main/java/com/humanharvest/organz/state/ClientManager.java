@@ -10,6 +10,7 @@ import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DashboardStatistics;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.HistoryItem;
+import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.TransplantRecord;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.utilities.enums.ClientSortOptionsEnum;
@@ -49,6 +50,8 @@ public interface ClientManager {
     void removeClient(Client client);
 
     void applyChangesTo(Client client);
+
+    void applyChangesTo(MedicationRecord record);
 
     void applyChangesTo(DonatedOrgan organ);
 
