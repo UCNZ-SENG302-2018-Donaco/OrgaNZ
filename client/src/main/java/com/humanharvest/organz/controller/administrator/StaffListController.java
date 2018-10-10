@@ -43,7 +43,7 @@ public class StaffListController extends SubController {
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
-        mainController.setTitle("Staff list");
+        mainController.setTitle("Staff List");
         mainController.loadMenuBar(menuBarPane);
     }
 

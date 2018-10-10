@@ -122,7 +122,7 @@ public class StaffLoginController extends SubController {
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
-        mainController.setTitle("Staff login");
+        mainController.setTitle("Staff Login");
         if (State.getUiType() == UiType.TOUCH) {
             backButton.setVisible(false);
         }
