@@ -370,7 +370,8 @@ public class ClientManagerDBPure implements ClientManager {
         try (Session session = dbManager.getDBSession()) {
             trns = session.beginTransaction();
 
-            session.remove(client);
+            client = (Client) session.merge(client);
+            session.delete(client);
 
             trns.commit();
         } catch (RollbackException e) {
