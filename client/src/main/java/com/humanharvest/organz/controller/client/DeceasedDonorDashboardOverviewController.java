@@ -97,19 +97,21 @@ public class DeceasedDonorDashboardOverviewController extends DashboardOverviewC
             profilePictureView.setImage(profilePictureStore.get(client));
         } else {
             // Retrieve the picture from the server in a new thread
-            Task<byte[]> task = new Task<byte[]>() {
+            Task<Image> task = new Task<Image>() {
                 @Override
-                protected byte[] call() throws ServerRestException, IOException {
+                protected Image call() throws ServerRestException, IOException {
                     try {
-                        return com.humanharvest.organz.state.State.getImageManager().getClientImage(client.getUid());
+                        return new Image(new ByteArrayInputStream(
+                                com.humanharvest.organz.state.State.getImageManager().getClientImage(client.getUid())));
                     } catch (NotFoundException exc) {
-                        return com.humanharvest.organz.state.State.getImageManager().getDefaultImage();
+                        return new Image(new ByteArrayInputStream(
+                                com.humanharvest.organz.state.State.getImageManager().getDefaultImage()));
                     }
                 }
             };
 
             task.setOnSucceeded(event -> {
-                Image profilePicture = new Image(new ByteArrayInputStream(task.getValue()));
+                Image profilePicture = task.getValue();
                 profilePictureView.setImage(profilePicture);
                 // Save it in the cache for future use without needing to retrieve it again
                 profilePictureStore.put(client, profilePicture);
