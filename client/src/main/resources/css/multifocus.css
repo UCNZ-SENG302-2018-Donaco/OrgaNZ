@@ -23,6 +23,10 @@
   -fx-skin: "com.humanharvest.organz.skin.MTButtonSkin";
 }
 
+.toggle-button {
+  -fx-skin: "com.humanharvest.organz.skin.MTToggleButtonSkin";
+}
+
 #key-button {
   -fx-background-color: #d3e9ff !important;
 }
@@ -33,10 +37,6 @@
 
 .check-box {
   -fx-skin: "org.tuiofx.widgets.skin.MTCheckBoxSkin";
-}
-
-.toggle-button {
-  -fx-skin: "org.tuiofx.widgets.skin.ToggleButtonSkinAndroid";
 }
 
 .slider {

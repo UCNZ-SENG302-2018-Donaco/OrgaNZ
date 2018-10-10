@@ -15,6 +15,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuBar;
@@ -23,6 +24,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.RotateEvent;
 import javafx.scene.input.ScrollEvent;
@@ -181,6 +183,9 @@ public final class MultitouchHandler {
     static Optional<Node> getImportantElement(Node node) {
 
         while (node != null && !Objects.equals(node, rootPane)) {
+            if (node instanceof ToggleButton) {
+                return Optional.of(node);
+            }
             if (node instanceof Button) {
                 return Optional.of(node);
             }
@@ -206,6 +211,9 @@ public final class MultitouchHandler {
                 return Optional.of(node);
             }
             if (node instanceof ChoiceBox) {
+                return Optional.of(node);
+            }
+            if (node instanceof ComboBox) {
                 return Optional.of(node);
             }
             if (node instanceof Slider) {

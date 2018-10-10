@@ -1,6 +1,8 @@
 package com.humanharvest.organz.skin;
 
+import javafx.event.Event;
 import javafx.scene.control.ComboBox;
+import javafx.scene.input.TouchEvent;
 
 import org.tuiofx.widgets.skin.MTComboBoxListViewSkin;
 
@@ -8,6 +10,17 @@ public class CustomMTComboBoxListViewSkin<T> extends MTComboBoxListViewSkin<T> {
 
     public CustomMTComboBoxListViewSkin(ComboBox<T> comboBox) {
         super(comboBox);
+
+        getSkinnable().addEventFilter(TouchEvent.TOUCH_PRESSED, Event::consume);
+
+        getSkinnable().addEventFilter(TouchEvent.TOUCH_RELEASED, event -> {
+            if (getSkinnable().isShowing()) {
+                getSkinnable().hide();
+            } else {
+                getSkinnable().show();
+            }
+            event.consume();
+        });
     }
 
     /**
