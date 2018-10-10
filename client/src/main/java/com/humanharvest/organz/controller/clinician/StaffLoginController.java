@@ -57,6 +57,12 @@ public class StaffLoginController extends SubController {
                 "Staff ID is invalid", mainController.getStage());
     }
 
+    private static void invalidLoginDetailsAlert(MainController mainController) {
+        PageNavigator.showAlert(AlertType.ERROR, "Invalid login",
+                "The username and/or password you provided was invalid. Please try again.",
+                mainController.getStage());
+    }
+
     /**
      * Finds if there is a clinician with the staff id and password input and logs them in
      * Gives an alert if the password does not match the staff id
@@ -69,8 +75,7 @@ public class StaffLoginController extends SubController {
             clinician = State.getAuthenticationManager().loginClinician(id, password);
         } catch (AuthenticationException | ServerRestException e) {
             LOGGER.log(Level.INFO, e.getMessage(), e);
-            PageNavigator.showAlert(AlertType.ERROR, "Invalid login", e.getLocalizedMessage(),
-                    mainController.getStage());
+            invalidLoginDetailsAlert(mainController);
             return;
         }
 
@@ -91,8 +96,7 @@ public class StaffLoginController extends SubController {
             administrator = State.getAuthenticationManager().loginAdministrator(username, password);
         } catch (AuthenticationException | ServerRestException e) {
             LOGGER.log(Level.INFO, e.getMessage(), e);
-            PageNavigator.showAlert(AlertType.ERROR, "Invalid login", e.getLocalizedMessage(),
-                    mainController.getStage());
+            invalidLoginDetailsAlert(mainController);
             return;
         }
 
@@ -122,7 +126,7 @@ public class StaffLoginController extends SubController {
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
-        mainController.setTitle("Staff login");
+        mainController.setTitle("Staff Login");
         if (State.getUiType() == UiType.TOUCH) {
             backButton.setVisible(false);
         }

@@ -16,13 +16,13 @@ import javafx.scene.chart.PieChart.Data;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
-import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
 import org.controlsfx.control.Notifications;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DashboardStatistics;
 import com.humanharvest.organz.DonatedOrgan;
+import com.humanharvest.organz.controller.ClickUtilities;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.controller.components.DeceasedDonorCell;
@@ -78,10 +78,10 @@ public class DashboardController extends SubController {
 
     private void generatePieChartData() {
         ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList(
-                new Data("Donors", statistics.getDonorCount()),
-                new Data("Receivers", statistics.getReceiverCount()),
-                new Data("Both", statistics.getDonorReceiverCount()),
-                new Data("Neither", statistics.getNeitherCount())
+                new Data("Donors (" + statistics.getDonorCount() + ")", statistics.getDonorCount()),
+                new Data("Receivers (" + statistics.getReceiverCount() + ")", statistics.getReceiverCount()),
+                new Data("Both (" + statistics.getDonorReceiverCount() + ")", statistics.getDonorReceiverCount()),
+                new Data("Neither (" + statistics.getNeitherCount() + ")", statistics.getNeitherCount())
         );
         pieChart.setData(pieChartData);
     }
@@ -107,6 +107,8 @@ public class DashboardController extends SubController {
             item.setMaxWidth(expiringOrgansList.getWidth());
             return item;
         });
+        
+        expiringOrgansList.setPlaceholder(new Label("No clients have died that were donating organs."));
 
         // Recently deceased donors setup
         deceasedDonorsList.setItems(observableRecentlyDeceasedDonors);
@@ -117,21 +119,18 @@ public class DashboardController extends SubController {
         });
 
         // Double clicking to open a deceased donor's profile
-        deceasedDonorsList.setOnMouseClicked(mouseEvent -> {
-            if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 2) {
-                Client client = deceasedDonorsList.getSelectionModel().getSelectedItem();
-                if (client != null) {
-                    MainController newMain = PageNavigator.openNewWindow(mainController);
-                    if (newMain != null) {
-                        newMain.setWindowContext(new WindowContext.WindowContextBuilder()
-                                .setAsClinicianViewClientWindow()
-                                .viewClient(client)
-                                .build());
-                        PageNavigator.loadPage(Page.VIEW_CLIENT, newMain);
-                    }
-                }
-            }
+        deceasedDonorsList.setOnMouseClicked(mouseEvent ->
+                ClickUtilities.openClientOnDoubleClick(
+                        mouseEvent, deceasedDonorsList.getSelectionModel().getSelectedItem(), mainController));
+
+        // Double clicking to open the organ's deceased donor's profile
+        expiringOrgansList.setOnMouseClicked(mouseEvent -> {
+            DonatedOrgan organ = expiringOrgansList.getSelectionModel().getSelectedItem();
+            Client client = organ == null ? null : organ.getDonor();
+            ClickUtilities.openClientOnDoubleClick(mouseEvent, client, mainController);
         });
+
+        deceasedDonorsList.setPlaceholder(new Label("No clients have died that were donating organs."));
     }
 
     private void updateStatistics() {

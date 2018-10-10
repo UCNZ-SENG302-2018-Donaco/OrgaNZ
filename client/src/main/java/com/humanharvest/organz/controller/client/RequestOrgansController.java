@@ -424,11 +424,7 @@ public class RequestOrgansController extends SubController {
                         "Go to Medical History Page",
                         "Do you want to go to the medical history page to mark the disease that was cured?",
                         mainController.getStage(),
-                        isOk -> {
-                            if (isOk) {
-                                PageNavigator.loadPage(Page.VIEW_MEDICAL_HISTORY, mainController);
-                            }
-                        });
+                        () -> PageNavigator.loadPage(Page.VIEW_MEDICAL_HISTORY, mainController));
             }
         }
     }

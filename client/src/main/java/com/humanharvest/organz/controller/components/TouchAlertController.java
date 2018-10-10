@@ -1,6 +1,6 @@
 package com.humanharvest.organz.controller.components;
 
-import java.util.function.Consumer;
+import java.util.Locale;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -10,6 +10,8 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import com.humanharvest.organz.touch.MultitouchHandler;
+
+import org.springframework.util.StringUtils;
 
 public class TouchAlertController {
 
@@ -24,20 +26,24 @@ public class TouchAlertController {
 
     private Stage stage;
     private Pane pane;
-    private Consumer<Boolean> onResponse;
+    private Runnable onOk;
 
     @FXML
     public void initialize() {
         pageHolder.getStyleClass().add("window");
     }
 
+    private static String toSentenceCase(String input) {
+        return StringUtils.capitalize(input.toLowerCase(Locale.UK));
+    }
+
     public void setup(Alert.AlertType alertType, String title, String body, Stage stage, Pane pane,
-            Consumer<Boolean> onResponse) {
-        this.title.setText(alertType + ": " + title);
+            Runnable onOk) {
+        this.title.setText(toSentenceCase(alertType.toString()) + ": " + title);
         this.body.setText(body);
         this.stage = stage;
         this.pane = pane;
-        this.onResponse = onResponse;
+        this.onOk = onOk;
 
         if (alertType != Alert.AlertType.CONFIRMATION) {
             cancelButton.setVisible(false);
@@ -47,8 +53,8 @@ public class TouchAlertController {
 
     @FXML
     private void ok() {
-        if (onResponse != null) {
-            onResponse.accept(true);
+        if (onOk != null) {
+            onOk.run();
         }
         MultitouchHandler.removePane(pane);
         stage.close();
@@ -56,9 +62,6 @@ public class TouchAlertController {
 
     @FXML
     private void cancel() {
-        if (onResponse != null) {
-            onResponse.accept(false);
-        }
         MultitouchHandler.removePane(pane);
         stage.close();
     }

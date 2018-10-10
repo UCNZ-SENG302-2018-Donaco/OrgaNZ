@@ -64,7 +64,7 @@ public class CreateAdministratorController extends SubController {
     public void setup(MainController mainController) {
         super.setup(mainController);
         mainController.loadMenuBar(menuBarPane);
-        mainController.setTitle("Create a new administrator");
+        mainController.setTitle("Create New Administrator");
     }
 
     /**

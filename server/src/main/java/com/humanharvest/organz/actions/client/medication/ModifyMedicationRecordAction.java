@@ -68,7 +68,7 @@ public class ModifyMedicationRecordAction extends ClientAction {
         if (!Objects.equals(newStopped, oldStopped)) {
             record.setStopped(newStopped);
         }
-        manager.applyChangesTo(record.getClient());
+        manager.applyChangesTo(record);
     }
 
     @Override
@@ -80,7 +80,7 @@ public class ModifyMedicationRecordAction extends ClientAction {
         if (!Objects.equals(newStopped, oldStopped)) {
             record.setStopped(oldStopped);
         }
-        manager.applyChangesTo(record.getClient());
+        manager.applyChangesTo(record);
     }
 
     @Override

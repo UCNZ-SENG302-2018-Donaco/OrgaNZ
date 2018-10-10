@@ -18,8 +18,11 @@ public abstract class RegionValidator {
     }
 
     public static boolean isValid(Country country, String region) {
-        if (region != null && country == Country.NZ) {
-            // Verify region is valid
+        if (NotEmptyStringValidator.isInvalidString(region)) {
+            // empty region is valid
+            return true;
+        } else if (country == Country.NZ) {
+            // Verify region is a valid NZ region
             try {
                 Region.fromString(region);
             } catch (IllegalArgumentException e) {

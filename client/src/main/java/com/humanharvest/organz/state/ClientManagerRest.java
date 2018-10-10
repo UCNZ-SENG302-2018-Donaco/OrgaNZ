@@ -14,6 +14,7 @@ import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DashboardStatistics;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.HistoryItem;
+import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.TransplantRecord;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.utilities.enums.ClientSortOptionsEnum;
@@ -125,6 +126,11 @@ public class ClientManagerRest implements ClientManager {
 
     @Override
     public void applyChangesTo(Client client) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void applyChangesTo(MedicationRecord record) {
         throw new UnsupportedOperationException();
     }
 

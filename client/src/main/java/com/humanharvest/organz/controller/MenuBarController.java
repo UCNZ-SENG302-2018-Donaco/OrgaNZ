@@ -445,9 +445,7 @@ public class MenuBarController extends SubController {
                 "Confirm load from file",
                 "Loading from a file will overwrite all current data. Would you like to proceed?",
                 mainController.getStage(),
-                isOk -> {
-                    loadFile();
-                });
+                this::loadFile);
     }
 
     private void loadFile() {

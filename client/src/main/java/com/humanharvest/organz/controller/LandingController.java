@@ -18,7 +18,7 @@ public class LandingController extends SubController {
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
-        mainController.setTitle("Home");
+        mainController.setTitle("OrgaNZ");
     }
 
     /**

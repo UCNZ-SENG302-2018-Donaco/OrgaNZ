@@ -87,7 +87,7 @@ public class ModifyIllnessRecordAction extends ClientAction {
         }
 
         if (!Objects.equals(newChronic, oldChronic)) {
-            record.setChronic(newChronic);
+            record.setIsChronic(newChronic);
         }
         manager.applyChangesTo(record.getClient());
     }
@@ -104,7 +104,7 @@ public class ModifyIllnessRecordAction extends ClientAction {
         }
 
         if (!Objects.equals(newChronic, oldChronic)) {
-            record.setChronic(oldChronic);
+            record.setIsChronic(oldChronic);
         }
         manager.applyChangesTo(record.getClient());
     }
