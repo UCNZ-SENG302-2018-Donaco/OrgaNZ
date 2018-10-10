@@ -228,16 +228,17 @@ public class PageNavigatorTouch implements IPageNavigator {
     }
 
     /**
-     * Shows a pop-up alert of the given type, and awaits user input to dismiss it (blocking).
+     * Shows a pop-up alert of the given type, and awaits user input to dismiss it.
      *
      * @param alertType the type of alert to show (can determine its style and button options).
      * @param title the text to show as the title and heading of the alert.
      * @param bodyText the text to show within the body of the alert.
-     * @param onResponse a callback for when an ok/cancel button is clicked.
+     * @param window the window to spawn the popup relative to.
+     * @param onOk a callback for when the ok button is clicked.
      */
     @Override
     public void showAlert(Alert.AlertType alertType, String title, String bodyText, Window window,
-            Consumer<Boolean> onResponse) {
+            Runnable onOk) {
         LOGGER.info("Opening new window");
         try {
             Stage newStage = new Stage();
@@ -245,7 +246,7 @@ public class PageNavigatorTouch implements IPageNavigator {
             Pane mainPane = loader.load();
 
             TouchAlertController controller = loader.getController();
-            controller.setup(alertType, title, bodyText, newStage, mainPane, onResponse);
+            controller.setup(alertType, title, bodyText, newStage, mainPane, onOk);
 
             MultitouchHandler.addPane(mainPane);
 
@@ -255,15 +256,20 @@ public class PageNavigatorTouch implements IPageNavigator {
             });
 
         } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "Error loading new window\n", e);
-            if (onResponse != null) {
-                onResponse.accept(false);
-            }
+            LOGGER.log(Level.SEVERE, "Error loading new touch alert window\n", e);
         }
     }
 
+    /**
+     * Shows a pop-up alert with a text entry box, and awaits user input to input and confirm it.
+     *
+     * @param title the text to show as the title and heading of the alert.
+     * @param bodyText the text to show within the body of the alert.
+     * @param window the window to spawn the popup relative to.
+     * @param onSubmit Callback to return the input string to once the user clicks ok.
+     */
     @Override
-    public TouchAlertTextController showAlertWithText(String title, String bodyText, Window window) {
+    public void showAlertWithText(String title, String bodyText, Window window, Consumer<String> onSubmit) {
         LOGGER.info("Opening new window");
         try {
             Stage newStage = new Stage();
@@ -271,7 +277,7 @@ public class PageNavigatorTouch implements IPageNavigator {
             Pane mainPane = loader.load();
 
             TouchAlertTextController controller = loader.getController();
-            controller.setup(title, bodyText, newStage, mainPane);
+            controller.setup(title, bodyText, newStage, mainPane, onSubmit);
 
             MultitouchHandler.addPane(mainPane);
 
@@ -280,11 +286,8 @@ public class PageNavigatorTouch implements IPageNavigator {
                 mainPane.getTransforms().add(new Affine(transform));
             });
 
-            return controller;
-
         } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "Error loading new window\n", e);
-            return null;
+            LOGGER.log(Level.SEVERE, "Error loading new touch alert with text window\n", e);
         }
     }
 }

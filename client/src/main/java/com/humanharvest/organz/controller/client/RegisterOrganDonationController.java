@@ -37,7 +37,6 @@ import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.controller.components.DurationUntilExpiryCell;
 import com.humanharvest.organz.controller.components.ManualOverrideCell;
-import com.humanharvest.organz.controller.components.TouchAlertTextController;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
@@ -183,20 +182,9 @@ public class RegisterOrganDonationController extends SubController {
     private void handleOverride(DonatedOrgan donatedOrgan) {
         // Create a popup with a text field to enter the reason
 
-        TouchAlertTextController controller = PageNavigator.showTextAlert("Manually Override Organ",
-                "Enter the reason for overriding this organ:", mainController.getStage());
-
-        if (controller.getResultProperty().getValue() != null) {
-            if (controller.getResultProperty().getValue()) {
-                overrideOrgan(controller.getText(), donatedOrgan);
-            }
-        } else {
-            controller.getResultProperty().addListener((observable, oldValue, newValue) -> {
-                if (newValue) {
-                    overrideOrgan(controller.getText(), donatedOrgan);
-                }
-            });
-        }
+        PageNavigator.showTextAlert("Manually Override Organ",
+                "Enter the reason for overriding this organ:", mainController.getStage(),
+                response -> overrideOrgan(response, donatedOrgan));
     }
 
     private void overrideOrgan(String response, DonatedOrgan donatedOrgan) {
@@ -235,20 +223,9 @@ public class RegisterOrganDonationController extends SubController {
      */
     private void handleEditOverride(DonatedOrgan donatedOrgan) {
 
-        TouchAlertTextController controller = PageNavigator.showTextAlert("Edit Manual Override",
-                "Enter the reason for overriding this organ:", mainController.getStage());
-
-        if (controller.getResultProperty().getValue() != null) {
-            if (controller.getResultProperty().getValue()) {
-                editOverride(controller.getText(), donatedOrgan);
-            }
-        } else {
-            controller.getResultProperty().addListener((observable, oldValue, newValue) -> {
-                if (newValue) {
-                    editOverride(controller.getText(), donatedOrgan);
-                }
-            });
-        }
+        PageNavigator.showTextAlert("Edit Manual Override",
+                "Enter the reason for overriding this organ:", mainController.getStage(),
+                response -> editOverride(response, donatedOrgan));
     }
 
     private void editOverride(String response, DonatedOrgan donatedOrgan) {
@@ -306,7 +283,7 @@ public class RegisterOrganDonationController extends SubController {
         // Set appropriate name on window title and name label
         String name = "";
         if (session.getLoggedInUserType() == UserType.CLIENT) {
-            mainController.setTitle("Donate  Organs: " + client.getPreferredNameFormatted());
+            mainController.setTitle("Donate Organs: " + client.getPreferredNameFormatted());
             name = client.getPreferredNameFormatted();
         } else if (windowContext.isClinViewClientWindow()) {
             mainController.setTitle("Donate Organs: " + client.getFullName());

@@ -7,7 +7,6 @@ import javafx.stage.Window;
 
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.controller.components.TouchAlertTextController;
 
 /**
  * Utility class for controlling navigation between pages.
@@ -107,21 +106,30 @@ public final class PageNavigator {
     }
 
     /**
-     * Shows a pop-up alert of the given type, and awaits user input to dismiss it (blocking).
+     * Shows a pop-up alert of the given type, and awaits user input to dismiss it.
      *
      * @param alertType the type of alert to show (can determine its style and button options).
      * @param title the text to show as the title and heading of the alert.
      * @param bodyText the text to show within the body of the alert.
-     * @param window The window to translate the new alert to
-     * @param onResponse a callback for when an ok/cancel button is clicked.
+     * @param window the window to spawn the popup relative to.
+     * @param onOk a callback for when the ok button is clicked.
      */
     public static void showAlert(Alert.AlertType alertType, String title, String bodyText, Window window,
-            Consumer<Boolean> onResponse) {
-        instance.showAlert(alertType, title, bodyText, window, onResponse);
+            Runnable onOk) {
+        instance.showAlert(alertType, title, bodyText, window, onOk);
     }
 
-    public static TouchAlertTextController showTextAlert(String title, String bodyText, Window window) {
-        return instance.showAlertWithText(title, bodyText, window);
+    /**
+     * Shows a pop-up alert with a text entry box, and awaits user input to input and confirm it.
+     *
+     * @param title the text to show as the title and heading of the alert.
+     * @param bodyText the text to show within the body of the alert.
+     * @param window the window to spawn the popup relative to.
+     * @param onSubmit Callback to return the input string to once the user clicks ok.
+     */
+    public static void showTextAlert(String title, String bodyText, Window window,
+            Consumer<String> onSubmit) {
+        instance.showAlertWithText(title, bodyText, window, onSubmit);
     }
 
     public static IPageNavigator getInstance() {
