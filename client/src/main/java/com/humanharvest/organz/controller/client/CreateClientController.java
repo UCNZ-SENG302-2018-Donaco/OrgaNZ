@@ -103,9 +103,7 @@ public class CreateClientController extends SubController {
                         "Duplicate Client Warning",
                         "This client is a duplicate of one that already exists. Would you still like to create it?",
                         mainController.getStage(),
-                        isOk -> {
-                            createClientLogic();
-                        });
+                        this::createClientLogic);
             } else {
                 createClientLogic();
             }
