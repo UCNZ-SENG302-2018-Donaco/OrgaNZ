@@ -11,6 +11,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+
 <VBox prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.client.CreateClientController">
   <VBox fx:id="menuBarPane" maxWidth="1.7976931348623157E308" />
   <BorderPane VBox.vgrow="ALWAYS">
@@ -70,7 +71,7 @@
           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
         </rowConstraints>
         <children>
-          <Label alignment="CENTER" contentDisplay="CENTER" text="Create a client" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+          <Label alignment="CENTER" contentDisplay="CENTER" text="Create Client" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
             <font>
               <Font size="24.0" />
             </font>
