@@ -69,7 +69,7 @@
           </graphic></Button>
         <Label fx:id="titleText" GridPane.columnIndex="5" GridPane.halignment="CENTER">
           <font>
-            <Font name="System Bold" size="20.0" />
+            <Font size="14.0" />
           </font></Label>
         <ToggleButton fx:id="projectButton" mnemonicParsing="false" onAction="#projectWindow" GridPane.columnIndex="7">
           <graphic>
