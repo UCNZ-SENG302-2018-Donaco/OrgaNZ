@@ -112,7 +112,7 @@ public class IllnessRecord {
         return isChronic;
     }
 
-    public void setChronic(Boolean chronic) {
+    public void setIsChronic(Boolean chronic) {
         isChronic = chronic;
     }
 

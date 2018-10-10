@@ -3,6 +3,7 @@ package com.humanharvest.organz.utilities.serialisation;
 import java.io.File;
 import java.io.IOException;
 import java.io.InvalidObjectException;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -13,6 +14,8 @@ import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.ProcedureRecord;
 import com.humanharvest.organz.TransplantRequest;
+import com.humanharvest.organz.utilities.enums.Country;
+import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.validators.ClientValidator;
 
 /**
@@ -22,6 +25,11 @@ import com.humanharvest.organz.utilities.validators.ClientValidator;
 public class ClientImporter {
 
     private static final Logger LOGGER = Logger.getLogger(ClientImporter.class.getName());
+
+    private static final LocalTime DEFAULT_TIME_OF_DEATH = LocalTime.of(0, 0);
+    private static final String DEFAULT_CITY_OF_DEATH = "Unspecified";
+    private static final String DEFAULT_REGION_OF_DEATH = Region.UNSPECIFIED.toString();
+    private static final Country DEFAULT_COUNTRY_OF_DEATH = Country.NZ;
 
     private final ReadClientStrategy readStrategy;
 
@@ -81,6 +89,8 @@ public class ClientImporter {
                         // No more clients to read
                         finished = true;
                     } else {
+                        fixDeathDetails(client);
+
                         // Check that retrieved client was valid
                         String errors = ClientValidator.validate(client);
                         if (errors != null) {
@@ -104,6 +114,32 @@ public class ClientImporter {
         } finally {
             readStrategy.close();
             imported = true;
+        }
+    }
+
+    private void fixDeathDetails(Client client) {
+        if (client.getDateOfDeath() != null) {
+            // The date of death has been set, so we need to set other death details if they aren't.
+            if (client.getTimeOfDeath() == null) {
+                client.setTimeOfDeath(DEFAULT_TIME_OF_DEATH);
+            }
+            if (client.getCityOfDeath() == null) {
+                client.setCityOfDeath(DEFAULT_CITY_OF_DEATH);
+            }
+            if (client.getRegionOfDeath() == null) {
+                if (client.getRegion() != null) {
+                    client.setRegionOfDeath(client.getRegion());
+                } else {
+                    client.setRegionOfDeath(DEFAULT_REGION_OF_DEATH);
+                }
+            }
+            if (client.getCountryOfDeath() == null) {
+                if (client.getCountry() != null) {
+                    client.setCountryOfDeath(client.getCountry());
+                } else {
+                    client.setCountryOfDeath(DEFAULT_COUNTRY_OF_DEATH);
+                }
+            }
         }
     }
 

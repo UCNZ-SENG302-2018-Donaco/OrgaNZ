@@ -74,7 +74,7 @@ public class ReceiverOverviewController extends SubController {
     private void setClientFields() {
 
         // Set name, age, weight, and height
-        name.setText(recipient.getPreferredNameFormatted());
+        name.setText(recipient.getFullName());
         Double nameSize = Math.min(name.getFont().getSize(), 300.0 / name.getText().length());
         Font nameFont = Font.font(null, FontWeight.SEMI_BOLD, nameSize);
         name.setFont(nameFont);
@@ -90,7 +90,7 @@ public class ReceiverOverviewController extends SubController {
         if (donor != null && recipient.getHospital() != null && donor.getHospital() != null) {
             Duration timeBetweenHospitals = recipient.getHospital().calculateTimeTo(donor.getHospital());
             if (timeBetweenHospitals.isZero()) {
-                travelTime.setText("None");
+                travelTime.setText("At the same hospital");
             } else {
                 travelTime.setText(DurationFormatter.getFormattedDuration(timeBetweenHospitals, DurationFormat.BIGGEST)
                         + String.format(Locale.UK, "%n(%.0f km)",
@@ -142,7 +142,7 @@ public class ReceiverOverviewController extends SubController {
             requestedTime.setText("");
         } else {
             Duration waitTime = request.getTimeSinceRequest();
-            requestedTime.setText("Waiting " +
+            requestedTime.setText("Waited " +
                     DurationFormatter.getFormattedDuration(waitTime, DurationFormat.BIGGEST));
         }
     }

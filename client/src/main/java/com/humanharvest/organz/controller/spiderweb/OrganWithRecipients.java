@@ -49,7 +49,6 @@ import com.humanharvest.organz.controller.client.ReceiverOverviewController;
 import com.humanharvest.organz.controller.components.ExpiryBarUtils;
 import com.humanharvest.organz.controller.components.PotentialRecipientCell;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.touch.FocusArea;
 import com.humanharvest.organz.touch.MatchesFocusArea;
 import com.humanharvest.organz.touch.MultitouchHandler;
 import com.humanharvest.organz.touch.OrganFocusArea;
@@ -99,16 +98,14 @@ public class OrganWithRecipients {
                 .openNewWindow(ORGAN_SIZE, ORGAN_SIZE, pane -> new OrganFocusArea(pane, this));
         newMain.getStyles().clear();
 
-        createOrganImage(newMain);
+        OrganFocusArea organFocusArea = createOrganImage(newMain);
 
         createLines();
 
         matchesPane = new Pane();
-        MatchesFocusArea matchesFocusArea = new MatchesFocusArea(matchesPane, this);
+        MatchesFocusArea matchesFocusArea = new MatchesFocusArea(matchesPane, this, organFocusArea);
         MultitouchHandler.addPane(matchesPane, matchesFocusArea);
         matchesFocusArea.setScalable(false);
-        matchesFocusArea.setRotatable(false);
-        matchesFocusArea.setTranslatable(false);
 
         enableHandlers();
 
@@ -151,17 +148,18 @@ public class OrganWithRecipients {
         }
     }
 
-    private void createOrganImage(MainController newMain) {
+    private OrganFocusArea createOrganImage(MainController newMain) {
         organImageController = (OrganImageController) PageNavigator
                 .loadPage(Page.ORGAN_IMAGE, newMain);
         organImageController.loadImage(organ.getOrganType());
 
         organPane = newMain.getPane();
-        FocusArea organFocus = (FocusArea) organPane.getUserData();
+        OrganFocusArea organFocus = (OrganFocusArea) organPane.getUserData();
 
         organFocus.setScalable(false);
         organFocus.setCollidable(true);
         organFocus.setDisableHinting(true);
+        return organFocus;
     }
 
     private void createLines() {
@@ -193,7 +191,7 @@ public class OrganWithRecipients {
                     }
                 };
 
-                matchesTask.setOnSucceeded(event -> {
+                matchesTask.setOnSucceeded(success -> {
                     List<TransplantRequest> potentialMatches = matchesTask.getValue();
                     setMatchPane(createMatchesPane(FXCollections.observableArrayList(potentialMatches)));
                     organImageController.setMatchCount(potentialMatches.size());
@@ -202,7 +200,18 @@ public class OrganWithRecipients {
                     if (isInit) {
                         matchesPane.setVisible(false);
                         organImageController.matchCountIsVisible(true);
+                    } else {
+                        organImageController.matchCountIsVisible(!matchesPane.isVisible());
                     }
+                });
+
+                matchesTask.setOnFailed(fail -> {
+                    LOGGER.log(Level.SEVERE, matchesTask.getException().getMessage(), matchesTask.getException());
+                    Notifications.create()
+                            .title("Server Error")
+                            .text(String.format("Could not retrieve potential matches for %s from the server.",
+                                    organ.getOrganType()))
+                            .showError();
                 });
 
                 new Thread(matchesTask).start();
@@ -218,10 +227,19 @@ public class OrganWithRecipients {
                     }
                 };
 
-                transplantTask.setOnSucceeded(event -> {
+                transplantTask.setOnSucceeded(success -> {
                     transplantRecord = transplantTask.getValue();
                     setMatchPane(createMatchPane(transplantRecord));
                     updateRecipientConnector();
+                });
+
+                transplantTask.setOnFailed(fail -> {
+                    LOGGER.log(Level.SEVERE, transplantTask.getException().getMessage(), transplantTask.getException());
+                    Notifications.create()
+                            .title("Server Error")
+                            .text(String.format("Could not retrieve the transplant for %s from the server.",
+                                    organ.getOrganType()))
+                            .showError();
                 });
 
                 new Thread(transplantTask).start();
