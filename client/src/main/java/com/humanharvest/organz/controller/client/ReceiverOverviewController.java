@@ -90,7 +90,7 @@ public class ReceiverOverviewController extends SubController {
         if (donor != null && recipient.getHospital() != null && donor.getHospital() != null) {
             Duration timeBetweenHospitals = recipient.getHospital().calculateTimeTo(donor.getHospital());
             if (timeBetweenHospitals.isZero()) {
-                travelTime.setText("None");
+                travelTime.setText("At the same hospital");
             } else {
                 travelTime.setText(DurationFormatter.getFormattedDuration(timeBetweenHospitals, DurationFormat.BIGGEST)
                         + String.format(Locale.UK, "%n(%.0f km)",
@@ -142,7 +142,7 @@ public class ReceiverOverviewController extends SubController {
             requestedTime.setText("");
         } else {
             Duration waitTime = request.getTimeSinceRequest();
-            requestedTime.setText("Waiting " +
+            requestedTime.setText("Waited " +
                     DurationFormatter.getFormattedDuration(waitTime, DurationFormat.BIGGEST));
         }
     }
