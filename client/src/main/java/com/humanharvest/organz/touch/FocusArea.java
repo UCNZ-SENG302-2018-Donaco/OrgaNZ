@@ -300,6 +300,7 @@ public class FocusArea implements InvalidationListener {
             System.out.println("Dispatching event..."
                     + "\nNODE: " + node.toString()
                     + "\nEVENT: " + event.toString());
+
             eventDispatcher.dispatchCapturingEvent(event);
             eventDispatcher.dispatchBubblingEvent(event);
         });
@@ -637,7 +638,7 @@ public class FocusArea implements InvalidationListener {
 
         public TextFieldSkinConsumer(Skin<?> skin) {
             this.skin = skin;
-            keyboard = ReflectionUtils.getField(skin, "keyboard");
+            keyboard = ReflectionUtils.getField(TextFieldSkinAndroid.class, skin, "keyboard");
             detachKeyboard = ReflectionUtils.getMethodReference(skin, "detachKeyboard",
                     OnScreenKeyboard.class, EventTarget.class);
         }

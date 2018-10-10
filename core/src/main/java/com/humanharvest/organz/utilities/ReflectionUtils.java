@@ -17,8 +17,12 @@ public abstract class ReflectionUtils {
     }
 
     public static <T> T getField(Object o, String fieldName) {
+        return getField(o.getClass(), o, fieldName);
+    }
+
+    public static <T> T getField(Class<?> clazz, Object o, String fieldName) {
         try {
-            Field field = o.getClass().getDeclaredField(fieldName);
+            Field field = clazz.getDeclaredField(fieldName);
             field.setAccessible(true);
             return (T) field.get(o);
         } catch (NoSuchFieldException | IllegalAccessException e) {
