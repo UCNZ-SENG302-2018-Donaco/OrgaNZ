@@ -74,7 +74,7 @@ public class ReceiverOverviewController extends SubController {
     private void setClientFields() {
 
         // Set name, age, weight, and height
-        name.setText(recipient.getPreferredNameFormatted());
+        name.setText(recipient.getFullName());
         Double nameSize = Math.min(name.getFont().getSize(), 300.0 / name.getText().length());
         Font nameFont = Font.font(null, FontWeight.SEMI_BOLD, nameSize);
         name.setFont(nameFont);
