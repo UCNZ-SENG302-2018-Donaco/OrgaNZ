@@ -25,6 +25,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.RotateEvent;
 import javafx.scene.input.ScrollEvent;
@@ -217,6 +218,9 @@ public final class MultitouchHandler {
                 return Optional.of(node);
             }
             if (node instanceof Slider) {
+                return Optional.of(node);
+            }
+            if (node instanceof ImageView) {
                 return Optional.of(node);
             }
 
