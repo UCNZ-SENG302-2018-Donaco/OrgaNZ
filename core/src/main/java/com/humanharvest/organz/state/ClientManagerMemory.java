@@ -255,6 +255,22 @@ public class ClientManagerMemory implements ClientManager {
     }
 
     @Override
+    public void applyChangesTo(MedicationRecord medicationRecord) {
+        Client client = medicationRecord.getClient();
+
+        // Add IDs to each medication
+        long nextId = client.getMedications().stream()
+                .mapToLong(record -> record.getId() == null ? 0 : record.getId())
+                .max().orElse(0) + 1;
+        for (MedicationRecord record : client.getMedications()) {
+            if (record.getId() == null) {
+                record.setId(nextId);
+                nextId++;
+            }
+        }
+    }
+
+    @Override
     public void applyChangesTo(DonatedOrgan donatedOrgan) {
         // Ensure that all records associated with the client have an id
         Client client = donatedOrgan.getDonor();

@@ -232,7 +232,12 @@ public final class MultitouchHandler {
      * Adds a pane to the root pane. Also sets up the focus area.
      */
     public static void addPane(Pane pane) {
-        FocusArea focusArea = new FocusArea(pane);
+        FocusArea focusArea;
+        if (pane.getUserData() == null) {
+            focusArea = new FocusArea(pane);
+        } else {
+            focusArea = (FocusArea) pane.getUserData();
+        }
         addPane(pane, focusArea);
     }
 

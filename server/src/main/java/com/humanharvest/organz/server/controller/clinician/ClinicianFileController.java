@@ -16,15 +16,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Provides handlers for requests to these endpoints:
- * - GET /clients/file
- * - POST /clients/file
- * Both endpoints require administrator access.
+ * - GET /clincians/file
+ * All endpoints require administrator access.
  */
 @RestController
 public class ClinicianFileController {
 
     @GetMapping("/clinicians/file")
-    public ResponseEntity<byte[]> exportClients(
+    public ResponseEntity<byte[]> exportClinicians(
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
             throws AuthenticationException, IOException {
 

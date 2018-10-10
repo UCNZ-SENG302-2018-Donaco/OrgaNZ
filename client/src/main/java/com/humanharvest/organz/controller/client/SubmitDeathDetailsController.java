@@ -169,7 +169,7 @@ public class SubmitDeathDetailsController extends SubController {
 
     @FXML
     private void cancel() {
-        mainController.getStage().close();
+        mainController.closeWindow();
     }
 
     private void makeRequest(ModifyClientObject modifyClientObject) {
