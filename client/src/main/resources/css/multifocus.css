@@ -16,8 +16,6 @@
   -fx-skin: "com.humanharvest.organz.skin.MTDatePickerSkin";
 }
 
-/* All below are defaults from TuioFX. All above are custom */
-
 .button,
 .button:focused {
   -fx-skin: "com.humanharvest.organz.skin.MTButtonSkin";
@@ -54,4 +52,8 @@
 
 .list-cell {
   -fx-skin: "org.tuiofx.widgets.skin.MTListCellSkin";
+}
+
+.list-view {
+  -fx-skin: "com.humanharvest.organz.skin.MTListViewSkin";
 }

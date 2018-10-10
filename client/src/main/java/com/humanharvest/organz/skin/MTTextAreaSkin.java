@@ -12,23 +12,30 @@ import org.tuiofx.widgets.skin.TextAreaSkinAndroid;
 
 public class MTTextAreaSkin extends TextAreaSkinAndroid {
 
+    private final ClickHelper clickHelper = new ClickHelper();
+
     public MTTextAreaSkin(TextArea textInput) {
         super(textInput);
 
         getSkinnable().addEventFilter(TouchEvent.TOUCH_PRESSED, event -> {
+            clickHelper.calculateClickCount(event);
+
             EventTarget eventTarget = findTextArea(event.getTarget());
-            getBehavior().mousePressed(convertTouchEvent(event, eventTarget, MouseEvent.MOUSE_PRESSED));
+            getBehavior().mousePressed(convertTouchEvent(event, eventTarget, clickHelper.getClickCount(),
+                    MouseEvent.MOUSE_PRESSED));
             event.consume();
         });
 
         getSkinnable().addEventFilter(TouchEvent.TOUCH_RELEASED, event -> {
+
             EventTarget eventTarget = findTextArea(event.getTarget());
-            getBehavior().mouseReleased(convertTouchEvent(event, eventTarget, MouseEvent.MOUSE_RELEASED));
+            getBehavior().mouseReleased(convertTouchEvent(event, eventTarget, clickHelper.getClickCount(),
+                    MouseEvent.MOUSE_RELEASED));
             event.consume();
         });
     }
 
-    private EventTarget findTextArea(EventTarget target) {
+    private static EventTarget findTextArea(EventTarget target) {
 
         EventTarget node = target;
 

@@ -12,18 +12,24 @@ import org.tuiofx.widgets.skin.TextFieldSkinAndroid;
 
 public class MTTextFieldSkin extends TextFieldSkinAndroid {
 
+    private final ClickHelper clickHelper = new ClickHelper();
+
     public MTTextFieldSkin(TextField textInput) {
         super(textInput);
 
         getSkinnable().addEventFilter(TouchEvent.TOUCH_PRESSED, event -> {
+            clickHelper.calculateClickCount(event);
+
             EventTarget eventTarget = findTextField(event.getTarget());
-            getBehavior().mousePressed(convertTouchEvent(event, eventTarget, MouseEvent.MOUSE_PRESSED));
+            getBehavior().mousePressed(convertTouchEvent(event, eventTarget, clickHelper.getClickCount(),
+                    MouseEvent.MOUSE_PRESSED));
             event.consume();
         });
 
         getSkinnable().addEventFilter(TouchEvent.TOUCH_RELEASED, event -> {
             EventTarget eventTarget = findTextField(event.getTarget());
-            getBehavior().mouseReleased(convertTouchEvent(event, eventTarget, MouseEvent.MOUSE_RELEASED));
+            getBehavior().mouseReleased(convertTouchEvent(event, eventTarget, clickHelper.getClickCount(),
+                    MouseEvent.MOUSE_RELEASED));
             event.consume();
         });
     }
