@@ -4,6 +4,10 @@
   -fx-skin: "com.humanharvest.organz.skin.MTContextMenuSkin";
 }
 
+.choice-box {
+  -fx-skin: "com.humanharvest.organz.skin.MTChoiceBoxSkin";
+}
+
 .combo-box {
   -fx-skin: "com.humanharvest.organz.skin.CustomMTComboBoxListViewSkin";
 }
@@ -29,10 +33,6 @@
 
 .check-box {
   -fx-skin: "org.tuiofx.widgets.skin.MTCheckBoxSkin";
-}
-
-.choice-box {
-  -fx-skin: "org.tuiofx.widgets.skin.ChoiceBoxSkinAndroid";
 }
 
 .toggle-button {
