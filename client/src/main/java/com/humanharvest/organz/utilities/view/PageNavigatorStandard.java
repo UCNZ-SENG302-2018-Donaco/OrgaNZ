@@ -19,6 +19,7 @@ import javafx.stage.Window;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.validators.NotEmptyStringValidator;
 
 /**
  * Utility class for controlling navigation between pages.
@@ -170,10 +171,15 @@ public class PageNavigatorStandard implements IPageNavigator {
         popup.setTitle(title);
         popup.setHeaderText(bodyText);
         popup.setContentText(instructions);
-        popup.getDialogPane().lookupButton(ButtonType.OK).setDisable(true);
-        popup.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
-            popup.getDialogPane().lookupButton(ButtonType.OK).setDisable(newValue.isEmpty());
-        });
+
+        // Disable the OK button if there is no prefilled text
+        popup.getDialogPane().lookupButton(ButtonType.OK)
+                .setDisable(NotEmptyStringValidator.isInvalidString(prefilledText));
+
+        // Disable the OK button when the textfield is cleared
+        popup.getEditor().textProperty()
+                .addListener((observable, oldValue, newValue) ->
+                        popup.getDialogPane().lookupButton(ButtonType.OK).setDisable(newValue.isEmpty()));
 
         Optional<String> response = popup.showAndWait();
 

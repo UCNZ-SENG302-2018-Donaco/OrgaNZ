@@ -18,7 +18,7 @@
         <HBox alignment="CENTER_RIGHT" fillHeight="false" spacing="15.0" BorderPane.alignment="CENTER_RIGHT">
           <children>
             <Button fx:id="cancelButton" cancelButton="true" mnemonicParsing="false" onAction="#cancel" text="Cancel" />
-            <Button defaultButton="true" mnemonicParsing="false" onAction="#ok" text="OK" />
+            <Button fx:id="okButton" defaultButton="true" mnemonicParsing="false" onAction="#ok" text="OK" />
           </children>
         </HBox>
       </bottom>

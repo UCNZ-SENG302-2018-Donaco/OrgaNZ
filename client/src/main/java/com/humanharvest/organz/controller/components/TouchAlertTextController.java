@@ -3,12 +3,14 @@ package com.humanharvest.organz.controller.components;
 import java.util.function.Consumer;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import com.humanharvest.organz.touch.MultitouchHandler;
+import com.humanharvest.organz.utilities.validators.NotEmptyStringValidator;
 
 public class TouchAlertTextController {
 
@@ -18,7 +20,8 @@ public class TouchAlertTextController {
     private Pane pageHolder;
     @FXML
     private TextField textInput;
-
+    @FXML
+    private Button okButton;
     private Stage stage;
     private Pane pane;
     private Consumer<String> onSubmit;
@@ -41,6 +44,13 @@ public class TouchAlertTextController {
         this.stage = stage;
         this.pane = pane;
         this.onSubmit = onSubmit;
+
+        // Disable the OK button if there is no prefilled text
+        okButton.setDisable(NotEmptyStringValidator.isInvalidString(prefilledText));
+
+        // Disable the OK button when the textfield is cleared
+        this.textInput.textProperty()
+                .addListener((observable, oldValue, newValue) -> okButton.setDisable(newValue.isEmpty()));
     }
 
     @FXML
