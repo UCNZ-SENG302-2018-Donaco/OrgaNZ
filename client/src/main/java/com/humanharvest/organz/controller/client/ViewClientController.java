@@ -84,6 +84,7 @@ public class ViewClientController extends SubController {
     private final ClientManager manager;
     private Client viewedClient;
     private File imageToUpload;
+    private boolean deleteImage;
 
     @FXML
     private Pane menuBarPane, deathDetailsPane;
@@ -506,7 +507,7 @@ public class ViewClientController extends SubController {
      * input, this photo is set as the client's profile picture (and will be uploaded when the user clicks Apply).
      */
     @FXML
-    public void choosePhoto() {
+    public void choosePhotoClicked() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Upload Profile Image");
         fileChooser.getExtensionFilters().addAll(
@@ -525,6 +526,7 @@ public class ViewClientController extends SubController {
             } else {
                 imageToUpload = selectedFile;
                 deletePhotoButton.setDisable(false);
+                deleteImage = false;
                 imageView.setImage(new Image(imageToUpload.toURI().toString()));
             }
         }
@@ -543,7 +545,6 @@ public class ViewClientController extends SubController {
         };
 
         task.setOnSucceeded(success -> {
-            finishUpdateChanges();
             imageToUpload = null;
         });
 
@@ -580,7 +581,23 @@ public class ViewClientController extends SubController {
      * Sets the profile image to null and refreshes the image.
      */
     @FXML
-    public void deletePhoto() {
+    public void deletePhotoClicked() {
+        deleteImage = true;
+        imageToUpload = null;
+        deletePhotoButton.setDisable(true);
+        try {
+            imageView.setImage(new Image(new ByteArrayInputStream(
+                    com.humanharvest.organz.state.State.getImageManager().getDefaultImage())));
+        } catch (IOException | ServerRestException exc) {
+            LOGGER.log(Level.INFO, exc.getMessage(), exc);
+            PageNavigator.showAlert(AlertType.WARNING,
+                    "Default File Couldn't Be Retrieved",
+                    "The default image could not be retrieved from the server.",
+                    mainController.getStage());
+        }
+    }
+
+    private void deleteImage() {
         Task<Void> task = new Task<Void>() {
             @Override
             protected Void call() throws ServerRestException {
@@ -590,7 +607,7 @@ public class ViewClientController extends SubController {
             }
         };
 
-        task.setOnSucceeded(success -> finishUpdateChanges());
+        task.setOnSucceeded(success -> deleteImage = false);
 
         task.setOnFailed(fail -> {
             LOGGER.log(Level.SEVERE, task.getException().getMessage(), task.getException());
@@ -833,7 +850,7 @@ public class ViewClientController extends SubController {
      * @param modifyClientObject The object to apply the changes from.
      */
     private void applyChanges(ModifyClientObject modifyClientObject) {
-        if (modifyClientObject.getModifiedFields().isEmpty() && imageToUpload == null) {
+        if (modifyClientObject.getModifiedFields().isEmpty() && imageToUpload == null && !deleteImage) {
             // Literally nothing was changed
             Notifications.create()
                     .title("No changes were made.")
@@ -855,6 +872,9 @@ public class ViewClientController extends SubController {
                 if (imageToUpload != null) {
                     uploadImage();
                     actionText += "\nChanged profile picture.";
+                } else if (deleteImage) {
+                    deleteImage();
+                    actionText += "\nRemoved profile picture.";
                 }
                 Notifications.create()
                         .title("Updated Client")
