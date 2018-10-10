@@ -58,6 +58,7 @@ public class DashboardController extends SubController {
     private ListView<DonatedOrgan> expiringOrgansList;
 
     private final ObservableList<DonatedOrgan> observableOrgansToDonate = FXCollections.observableArrayList();
+    private final ObservableList<Client> observableRecentlyDeceasedDonors = FXCollections.observableArrayList();
 
     private Map<Client, Image> profilePictureStore = new HashMap<>();
     private Map<Organ, Image> organImageMap = new HashMap<>();
@@ -110,7 +111,7 @@ public class DashboardController extends SubController {
         expiringOrgansList.setPlaceholder(new Label("No clients have died that were donating organs."));
 
         // Recently deceased donors setup
-        deceasedDonorsList.setItems(FXCollections.observableArrayList(manager.getViableDeceasedDonors()));
+        deceasedDonorsList.setItems(observableRecentlyDeceasedDonors);
         deceasedDonorsList.setCellFactory(param -> {
             DeceasedDonorCell item = new DeceasedDonorCell(profilePictureStore);
             item.setMaxWidth(deceasedDonorsList.getWidth());
@@ -141,7 +142,7 @@ public class DashboardController extends SubController {
         };
 
         task.setOnSucceeded(success -> {
-            statistics = manager.getStatistics();
+            statistics = task.getValue();
             totalClientsNum.setText(String.valueOf(statistics.getClientCount()));
             organsNum.setText(String.valueOf(statistics.getOrganCount()));
             requestNum.setText(String.valueOf(statistics.getRequestCount()));
@@ -167,7 +168,7 @@ public class DashboardController extends SubController {
             }
         };
 
-        task.setOnSucceeded(success -> deceasedDonorsList.getItems().setAll(task.getValue()));
+        task.setOnSucceeded(success -> observableRecentlyDeceasedDonors.setAll(task.getValue()));
 
         task.setOnFailed(fail -> {
             LOGGER.log(Level.SEVERE, task.getException().getMessage(), task.getException());

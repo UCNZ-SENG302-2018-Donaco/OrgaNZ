@@ -56,17 +56,17 @@ public class DonatedOrganOverviewController extends DashboardOverviewController 
         if (organPictureStore.containsKey(organ)) {
             organPicture.setImage(organPictureStore.get(organ));
         } else {
-            Task<byte[]> task = new Task<byte[]>() {
+            Task<Image> task = new Task<Image>() {
                 @Override
-                protected byte[] call() throws IOException {
+                protected Image call() throws IOException {
                     try (InputStream in = getClass().getResourceAsStream("/images/" + organ.toString() + ".png")) {
-                        return IOUtils.toByteArray(in);
+                        return new Image(new ByteArrayInputStream(IOUtils.toByteArray(in)));
                     }
                 }
             };
 
             task.setOnSucceeded(event -> {
-                Image organIcon = new Image(new ByteArrayInputStream(task.getValue()));
+                Image organIcon = task.getValue();
                 organPicture.setImage(organIcon);
                 organPictureStore.put(organ, organIcon);
             });
