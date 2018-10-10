@@ -64,7 +64,7 @@
             </Label>
          </children>
       </GridPane>
-    <ImageView fx:id="linkImage" fitHeight="50.0" onMouseClicked="#goToLinkPage" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2">
+    <ImageView fx:id="linkImage" fitHeight="50.0" onMouseClicked="#goToLinkPage" onTouchPressed="#goToLinkPage" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2">
          <HBox.margin>
             <Insets left="10.0" />
          </HBox.margin>
