@@ -55,7 +55,6 @@ import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.controller.components.ClientFullNameCell;
 import com.humanharvest.organz.controller.components.DurationUntilExpiryCell;
 import com.humanharvest.organz.controller.components.FormattedLocalDateTimeCell;
-import com.humanharvest.organz.controller.components.TouchAlertTextController;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
@@ -440,12 +439,8 @@ public class OrgansToDonateController extends SubController {
                     "Unsupported organ transplant location",
                     "The hospital does not support this type of organ transplant. Do you wish to continue?",
                     mainController.getStage(),
-                    isOk -> {
-                        if (isOk) {
-                            finishTransplantRequest(request, organToDonate,
-                                    transplantHospital, transplantDate, receiver);
-                        }
-                    });
+                    () -> finishTransplantRequest(
+                            request, organToDonate, transplantHospital, transplantDate, receiver));
 
             return;
         }
@@ -548,20 +543,9 @@ public class OrgansToDonateController extends SubController {
     private void openManuallyExpireDialog() {
         // Create a popup with a text field to enter the reason
 
-        TouchAlertTextController controller = PageNavigator.showTextAlert("Manually Override Organ",
-                "Enter the reason for overriding this organ:", mainController.getStage());
-
-        if (controller.getResultProperty().getValue() != null) {
-            if (controller.getResultProperty().getValue()) {
-                overrideOrgan(controller.getText());
-            }
-        } else {
-            controller.getResultProperty().addListener((observable, oldValue, newValue) -> {
-                if (newValue) {
-                    overrideOrgan(controller.getText());
-                }
-            });
-        }
+        PageNavigator.showTextAlert("Manually Override Organ",
+                "Enter the reason for overriding this organ:", mainController.getStage(),
+                this::overrideOrgan);
     }
 
     private void overrideOrgan(String reason) {

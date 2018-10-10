@@ -164,9 +164,7 @@ public class SubmitDeathDetailsController extends SubController {
         PageNavigator.showAlert(AlertType.CONFIRMATION,
                 "Are you sure you want to mark this client as dead?",
                 "This will cancel all waiting transplant requests for this client.", mainController.getStage(),
-                isOk -> {
-                    makeRequest(modifyClientObject);
-                });
+                () -> makeRequest(modifyClientObject));
     }
 
     @FXML

@@ -1,7 +1,5 @@
 package com.humanharvest.organz.controller.components;
 
-import java.util.function.Consumer;
-
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -24,7 +22,7 @@ public class TouchAlertController {
 
     private Stage stage;
     private Pane pane;
-    private Consumer<Boolean> onResponse;
+    private Runnable onOk;
 
     @FXML
     public void initialize() {
@@ -32,12 +30,12 @@ public class TouchAlertController {
     }
 
     public void setup(Alert.AlertType alertType, String title, String body, Stage stage, Pane pane,
-            Consumer<Boolean> onResponse) {
+            Runnable onOk) {
         this.title.setText(alertType + ": " + title);
         this.body.setText(body);
         this.stage = stage;
         this.pane = pane;
-        this.onResponse = onResponse;
+        this.onOk = onOk;
 
         if (alertType != Alert.AlertType.CONFIRMATION) {
             cancelButton.setVisible(false);
@@ -47,8 +45,8 @@ public class TouchAlertController {
 
     @FXML
     private void ok() {
-        if (onResponse != null) {
-            onResponse.accept(true);
+        if (onOk != null) {
+            onOk.run();
         }
         MultitouchHandler.removePane(pane);
         stage.close();
@@ -56,9 +54,6 @@ public class TouchAlertController {
 
     @FXML
     private void cancel() {
-        if (onResponse != null) {
-            onResponse.accept(false);
-        }
         MultitouchHandler.removePane(pane);
         stage.close();
     }
