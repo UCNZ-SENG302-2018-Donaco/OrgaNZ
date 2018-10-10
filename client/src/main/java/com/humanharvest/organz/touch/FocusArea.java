@@ -16,7 +16,6 @@ import java.util.logging.Logger;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.event.Event;
-import javafx.event.EventDispatchChain;
 import javafx.event.EventTarget;
 import javafx.geometry.Point2D;
 import javafx.scene.CacheHint;
@@ -43,7 +42,6 @@ import com.humanharvest.organz.utilities.ReflectionException;
 import com.humanharvest.organz.utilities.ReflectionUtils;
 import com.humanharvest.organz.utilities.Tuple;
 
-import com.sun.javafx.event.EventDispatchChainImpl;
 import com.sun.javafx.scene.NodeEventDispatcher;
 import com.sun.javafx.scene.control.skin.VirtualFlow;
 import org.tuiofx.widgets.controls.KeyboardPane;
@@ -287,9 +285,11 @@ public class FocusArea implements InvalidationListener {
 
         // Forwards the touch event to an important node.
         currentTouch.getImportantElement().ifPresent(node -> {
-            NodeEventDispatcher eventDispatcher = (NodeEventDispatcher) node.getEventDispatcher();
-            eventDispatcher.dispatchCapturingEvent(event);
-            eventDispatcher.dispatchBubblingEvent(event);
+            if (node.getScene() != null) {
+                NodeEventDispatcher eventDispatcher = (NodeEventDispatcher) node.getEventDispatcher();
+                eventDispatcher.dispatchCapturingEvent(event);
+                eventDispatcher.dispatchBubblingEvent(event);
+            }
         });
     }
 
@@ -297,9 +297,11 @@ public class FocusArea implements InvalidationListener {
 
         // Forwards the touch event to an important node.
         currentTouch.getImportantElement().ifPresent(node -> {
-            NodeEventDispatcher eventDispatcher = (NodeEventDispatcher) node.getEventDispatcher();
-            eventDispatcher.dispatchCapturingEvent(event);
-            eventDispatcher.dispatchBubblingEvent(event);
+            if (node.getScene() != null) {
+                NodeEventDispatcher eventDispatcher = (NodeEventDispatcher) node.getEventDispatcher();
+                eventDispatcher.dispatchCapturingEvent(event);
+                eventDispatcher.dispatchBubblingEvent(event);
+            }
         });
 
         if (paneTouches.isEmpty()) {
