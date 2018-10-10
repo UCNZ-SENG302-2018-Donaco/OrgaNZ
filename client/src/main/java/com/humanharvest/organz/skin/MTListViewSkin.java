@@ -14,7 +14,7 @@ import javafx.scene.input.TouchEvent;
 import com.sun.javafx.scene.control.skin.ListCellSkin;
 import com.sun.javafx.scene.control.skin.ListViewSkin;
 
-public class MTListViewSkin<T> extends ListViewSkin<T> {
+public class MTListViewSkin<T> extends ListViewSkin<T> implements IgnoreSynthesized {
 
     private static final PseudoClass PRESSED_PSEUDO_CLASS = PseudoClass.getPseudoClass("pressed");
 

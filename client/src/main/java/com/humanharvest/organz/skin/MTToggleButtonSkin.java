@@ -5,7 +5,7 @@ import javafx.scene.input.TouchEvent;
 
 import com.sun.javafx.scene.control.skin.ToggleButtonSkin;
 
-public class MTToggleButtonSkin extends ToggleButtonSkin {
+public class MTToggleButtonSkin extends ToggleButtonSkin implements IgnoreSynthesized {
 
     public MTToggleButtonSkin(ToggleButton toggleButton) {
         super(toggleButton);

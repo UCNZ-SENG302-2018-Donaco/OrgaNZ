@@ -10,7 +10,7 @@ import javafx.scene.input.TouchEvent;
 
 import org.tuiofx.widgets.skin.TextAreaSkinAndroid;
 
-public class MTTextAreaSkin extends TextAreaSkinAndroid {
+public class MTTextAreaSkin extends TextAreaSkinAndroid implements IgnoreSynthesized {
 
     private final ClickHelper clickHelper = new ClickHelper();
 

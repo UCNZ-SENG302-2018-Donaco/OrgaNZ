@@ -6,7 +6,7 @@ import javafx.scene.input.TouchEvent;
 
 import org.tuiofx.widgets.skin.MTComboBoxListViewSkin;
 
-public class CustomMTComboBoxListViewSkin<T> extends MTComboBoxListViewSkin<T> {
+public class CustomMTComboBoxListViewSkin<T> extends MTComboBoxListViewSkin<T> implements IgnoreSynthesized {
 
     public CustomMTComboBoxListViewSkin(ComboBox<T> comboBox) {
         super(comboBox);

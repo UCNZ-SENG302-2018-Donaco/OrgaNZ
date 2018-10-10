@@ -5,7 +5,7 @@ import javafx.scene.input.TouchEvent;
 
 import com.sun.javafx.scene.control.skin.ButtonSkin;
 
-public class MTButtonSkin extends ButtonSkin {
+public class MTButtonSkin extends ButtonSkin implements IgnoreSynthesized {
     public MTButtonSkin(Button button) {
         super(button);
 

@@ -6,7 +6,7 @@ import javafx.scene.input.TouchEvent;
 
 import com.sun.javafx.scene.control.skin.ChoiceBoxSkin;
 
-public class MTChoiceBoxSkin<T> extends ChoiceBoxSkin<T> {
+public class MTChoiceBoxSkin<T> extends ChoiceBoxSkin<T> implements IgnoreSynthesized {
 
     public MTChoiceBoxSkin(ChoiceBox<T> checkbox) {
         super(checkbox);

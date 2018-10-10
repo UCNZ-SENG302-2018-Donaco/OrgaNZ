@@ -19,6 +19,8 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuBar;
+import javafx.scene.control.Skin;
+import javafx.scene.control.Skinnable;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
@@ -32,6 +34,8 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.input.TouchEvent;
 import javafx.scene.input.TouchPoint;
 import javafx.scene.layout.Pane;
+
+import com.humanharvest.organz.skin.IgnoreSynthesized;
 
 import com.sun.javafx.scene.control.skin.VirtualFlow;
 import org.tuiofx.widgets.controls.KeyButton;
@@ -60,7 +64,23 @@ public final class MultitouchHandler {
 
         root.addEventFilter(MouseEvent.ANY, event -> {
             if (event.isSynthesized()) {
-                event.consume();
+                Node node = (Node) event.getTarget();
+                while (!Objects.equals(node, rootPane) && node != null) {
+                    if (node instanceof Skinnable) {
+                        Skin<?> skin = ((Skinnable)node).getSkin();
+                        if (skin instanceof IgnoreSynthesized) {
+                            event.consume();
+                            return;
+                        }
+                    }
+
+                    if (node instanceof IgnoreSynthesized) {
+                        event.consume();
+                        return;
+                    }
+
+                    node = node.getParent();
+                }
             }
         });
 
