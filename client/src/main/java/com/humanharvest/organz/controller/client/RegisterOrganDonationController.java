@@ -295,11 +295,7 @@ public class RegisterOrganDonationController extends SubController {
         fullName.setText(name);
 
         // Disable organ donation registration pane if client is dead
-        if (client.isDead()) {
-            registerPane.setDisable(true);
-        } else {
-            registerPane.setDisable(false);
-        }
+        registerPane.setDisable(client.isDead());
     }
 
     private void refreshTransplants() {
