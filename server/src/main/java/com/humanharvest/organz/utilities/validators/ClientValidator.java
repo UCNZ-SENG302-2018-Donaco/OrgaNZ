@@ -2,6 +2,8 @@ package com.humanharvest.organz.utilities.validators;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeParseException;
 import java.util.logging.Logger;
 
@@ -47,9 +49,14 @@ public final class ClientValidator {
         }
         if (!dateOfBirthValid(client)) {
             errors.append("Date of birth must be in a valid format and must represent a date in the past.\n");
-        } else if (!dateOfDeathValid(client)) {
-            errors.append("Date of death must be either empty, or a date in a valid format that represents a date "
-                    + "after the date of birth.\n");
+        } else if (!deathDetailsValid(client)) {
+            errors.append("Death details must either all be empty, or all filled in.\n"
+                    + "If filled in, the time and date of death must be in the past,\n"
+                    + "and the date of birth must not be after the date of death.\n"
+                    + "The death country must be a valid country,\n"
+                    + "the death region must be non-empty "
+                    + "(and, if the country is set to New Zealand, a valid NZ region),\n"
+                    + "and the death city must be non-empty.\n");
         }
         if (!heightValid(client)) {
             errors.append("Height must be a non-negative number.\n");
@@ -116,13 +123,58 @@ public final class ClientValidator {
                 !client.getDateOfBirth().isAfter(LocalDate.now());  // Catch future date of birth
     }
 
-    private static boolean dateOfDeathValid(Client client) {
-        if (client.getDateOfDeath() != null) {
-            // Catch date of death before date of birth
-            return dateIsValid(client.getDateOfDeath()) &&
-                    !client.getDateOfDeath().isBefore(client.getDateOfBirth());
+    /**
+     * Returns true if the death details are all null, or are all valid.
+     */
+    private static boolean deathDetailsValid(Client client) {
+        // Its ok if they are all empty
+        if (client.getDateOfDeath() == null && client.getTimeOfDeath() == null && client.getCountryOfDeath() == null
+                && client.getRegionOfDeath() == null && client.getCityOfDeath() == null) {
+            return true;
         }
-        return true;
+
+        return dateTimeOfDeathIsValid(client) && countryOfDeathValid(client)
+                && regionOfDeathValid(client) && cityOfDeathValid(client);
+    }
+
+    /**
+     * Returns true if they died in the past (or in the next 10 seconds).
+     */
+    private static boolean dateTimeOfDeathIsValid(Client client) {
+        LocalDate dateOfDeath = client.getDateOfDeath();
+        LocalTime timeOfDeath = client.getTimeOfDeath();
+        LocalDate dateOfBirth = client.getDateOfBirth();
+        if (timeOfDeath == null || dateOfDeath == null || dateOfBirth == null) {
+            // if DOB or date or time of death are null, then that should really have been caught before now
+            // (in deathDetailsValid())
+            return true;
+        }
+
+        // return true if the datetime of death is before (10 seconds in the future), and DOB isn't after the DOD.
+        return client.getDatetimeOfDeath().isBefore(LocalDateTime.now().plusSeconds(10))
+                && !dateOfBirth.isAfter(dateOfDeath);
+    }
+
+    /**
+     * Returns true if the county isn't null.
+     */
+    private static boolean countryOfDeathValid(Client client) {
+        return client.getCountryOfDeath() != null;
+    }
+
+    /**
+     * Returns true if the region isn't empty and, if the county is NZ, the region is a valid NZ region.
+     */
+    private static boolean regionOfDeathValid(Client client) {
+        return NotEmptyStringValidator.isValidString(client.getRegion())
+                && RegionValidator.isValid(client.getCountryOfDeath(), client.getRegionOfDeath());
+    }
+
+    /**
+     * Returns true if the city isn't empty.
+     */
+    private static boolean cityOfDeathValid(Client client) {
+        return NotEmptyStringValidator.isValidString(client.getCityOfDeath());
     }
 
     private static boolean heightValid(Client client) {

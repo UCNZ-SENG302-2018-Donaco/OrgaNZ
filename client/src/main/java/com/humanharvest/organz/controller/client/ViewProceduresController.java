@@ -62,8 +62,6 @@ public class ViewProceduresController extends SubController {
     private Client client;
 
     @FXML
-    private Pane sidebarPane;
-    @FXML
     private Pane newProcedurePane, procedureButtonsPane, menuBarPane;
 
     @FXML
@@ -385,9 +383,9 @@ public class ViewProceduresController extends SubController {
         pastProcedureView.sort();
 
         if (session.getLoggedInUserType() == UserType.CLIENT) {
-            mainController.setTitle("View Procedures:  " + client.getPreferredNameFormatted());
+            mainController.setTitle("View Procedures: " + client.getPreferredNameFormatted());
         } else if (windowContext.isClinViewClientWindow()) {
-            mainController.setTitle("View Procedures:  " + client.getFullName());
+            mainController.setTitle("View Procedures: " + client.getFullName());
 
         }
 

@@ -8,7 +8,6 @@ import javafx.stage.Window;
 
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.controller.components.TouchAlertTextController;
 
 public interface IPageNavigator {
 
@@ -85,15 +84,24 @@ public interface IPageNavigator {
     }
 
     /**
-     * Shows a pop-up alert of the given type, and awaits user input to dismiss it (blocking).
+     * Shows a pop-up alert of the given type, and awaits user input to dismiss it.
      *
      * @param alertType the type of alert to show (can determine its style and button options).
      * @param title the text to show as the title and heading of the alert.
      * @param bodyText the text to show within the body of the alert.
-     * @param onResponse a callback for when an ok/cancel button is clicked.
+     * @param window the window to spawn the popup relative to.
+     * @param onOk a callback for when the ok button is clicked.
      */
-    void showAlert(Alert.AlertType alertType, String title, String bodyText, Window window,
-            Consumer<Boolean> onResponse);
+    void showAlert(Alert.AlertType alertType, String title, String bodyText, Window window, Runnable onOk);
 
-    TouchAlertTextController showAlertWithText(String title, String bodyText, Window window);
+    /**
+     * Shows a pop-up alert with a text entry box, and awaits user input to input and confirm it.
+     *
+     * @param title the text to show as the title and heading of the alert.
+     * @param bodyText the text to show within the body of the alert.
+     * @param window the window to spawn the popup relative to.
+     * @param onSubmit Callback to return the input string to once the user clicks ok.
+     */
+    void showAlertWithText(String title, String bodyText, String instructions, String prefilledText,
+            Window window, Consumer<String> onSubmit);
 }

@@ -38,7 +38,7 @@ public class CommandLineController extends SubController {
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
-        mainController.setTitle("Administrator command line interface");
+        mainController.setTitle("Administrator Command-Line Interface");
         mainController.loadMenuBar(menuBarPane);
     }
 

@@ -22,6 +22,7 @@ import com.humanharvest.organz.views.client.Views;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 
 @JsonAutoDetect(fieldVisibility = Visibility.ANY,
@@ -218,6 +219,11 @@ public class DonatedOrgan {
 
     public String getOverrideReason() {
         return overrideReason;
+    }
+
+    @JsonIgnore
+    public String getRawOverrideReason() {
+        return overrideReason.split("\n")[0];
     }
 
     /**

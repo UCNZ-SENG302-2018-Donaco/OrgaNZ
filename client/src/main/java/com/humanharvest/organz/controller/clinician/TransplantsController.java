@@ -121,7 +121,7 @@ public class TransplantsController extends SubController {
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
-        mainController.setTitle("Transplant requests");
+        mainController.setTitle("Transplant Requests");
         mainController.loadNavigation(menuBarPane);
         refresh();
     }

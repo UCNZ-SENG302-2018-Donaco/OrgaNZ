@@ -27,7 +27,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
@@ -35,6 +34,7 @@ import org.controlsfx.control.CheckComboBox;
 import org.controlsfx.control.RangeSlider;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.controller.ClickUtilities;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.state.Session.UserType;
@@ -47,9 +47,7 @@ import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
-import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
-import com.humanharvest.organz.utilities.view.WindowContext;
 import com.humanharvest.organz.views.client.ClientSortPolicy;
 import com.humanharvest.organz.views.client.PaginatedClientList;
 
@@ -120,7 +118,7 @@ public class SearchClientsController extends SubController {
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
-        mainController.setTitle("Client search");
+        mainController.setTitle("Search Clients");
         mainController.loadNavigation(menuBarPane);
     }
 
@@ -333,21 +331,9 @@ public class SearchClientsController extends SubController {
         });
 
         //When double clicking on a client, open their account on a new page
-        tableView.setOnMouseClicked(mouseEvent -> {
-            if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 2) {
-                Client client = tableView.getSelectionModel().getSelectedItem();
-                if (client != null) {
-                    MainController newMain = PageNavigator.openNewWindow(mainController);
-                    if (newMain != null) {
-                        newMain.setWindowContext(new WindowContext.WindowContextBuilder()
-                                .setAsClinicianViewClientWindow()
-                                .viewClient(client)
-                                .build());
-                        PageNavigator.loadPage(Page.VIEW_CLIENT, newMain);
-                    }
-                }
-            }
-        });
+        tableView.setOnMouseClicked(mouseEvent ->
+                ClickUtilities.openClientOnDoubleClick(
+                        mouseEvent, tableView.getSelectionModel().getSelectedItem(), mainController));
     }
 
     /**

@@ -25,6 +25,7 @@ import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DashboardStatistics;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.HistoryItem;
+import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.TransplantRecord;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.database.DBManager;
@@ -69,10 +70,11 @@ public class ClientManagerDBPure implements ClientManager {
         List<Client> clients;
 
         try (Session session = dbManager.getDBSession()) {
-            session.beginTransaction();
+            Transaction trns = session.beginTransaction();
             clients = session
                     .createQuery("FROM Client", Client.class)
                     .getResultList();
+            trns.commit();
         }
 
         return clients == null ? new ArrayList<>() : clients;
@@ -326,6 +328,8 @@ public class ClientManagerDBPure implements ClientManager {
             int totalCount = Integer.parseInt(countQuery.uniqueResult().toString());
             List<Client> clients = mainQuery.getResultList();
 
+            trns.commit();
+
             return new PaginatedClientList(clients, totalCount);
 
         } catch (RollbackException e) {
@@ -366,7 +370,8 @@ public class ClientManagerDBPure implements ClientManager {
         try (Session session = dbManager.getDBSession()) {
             trns = session.beginTransaction();
 
-            session.remove(client);
+            client = (Client) session.merge(client);
+            session.delete(client);
 
             trns.commit();
         } catch (RollbackException e) {
@@ -377,6 +382,11 @@ public class ClientManagerDBPure implements ClientManager {
     @Override
     public void applyChangesTo(Client client) {
         applyChangesToObject(client);
+    }
+
+    @Override
+    public void applyChangesTo(MedicationRecord record) {
+        applyChangesToObject(record);
     }
 
     @Override
@@ -743,11 +753,12 @@ public class ClientManagerDBPure implements ClientManager {
             trns = session.beginTransaction();
 
             String queryString = "SELECT c.* FROM Client c \n"
-                    + "WHERE EXISTS (SELECT donating.Client_uid \n"
-                    + "              FROM Client_organsDonating AS donating\n"
-                    + "              WHERE donating.Client_uid=c.uid "
+                    + "WHERE EXISTS (SELECT donating.donor_uid \n"
+                    + "              FROM DonatedOrgan AS donating\n"
+                    + "              WHERE donating.donor_uid=c.uid "
+                    + "              AND donating.overrideReason IS NULL"
+                    + "              AND donating.available = TRUE"
                     + "              LIMIT 1)\n"
-                    + "      AND c.dateOfDeath IS NOT NULL\n"
                     + "ORDER BY c.dateOfDeath DESC";
 
             Query<Client> query = session.createNativeQuery(queryString, Client.class);
@@ -758,6 +769,8 @@ public class ClientManagerDBPure implements ClientManager {
                     clients.add(client);
                 }
             }
+
+            trns.commit();
 
             return clients;
 

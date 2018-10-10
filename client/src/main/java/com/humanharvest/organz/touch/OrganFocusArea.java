@@ -21,6 +21,8 @@ public class OrganFocusArea extends FocusArea {
             Toolkit.getDefaultToolkit().getDesktopProperty("awt.multiClickInterval") == null ? 200 :
                     (int) Toolkit.getDefaultToolkit().getDesktopProperty("awt.multiClickInterval");
 
+    private MatchesFocusArea matchesFocusArea;
+
     private final OrganWithRecipients organWithRecipients;
     private final Timer doubleClickTimer;
     private TimerTask currentClickTimer;
@@ -32,6 +34,10 @@ public class OrganFocusArea extends FocusArea {
         super(pane);
         this.organWithRecipients = organWithRecipients;
         doubleClickTimer = new Timer();
+    }
+
+    protected void setMatchesFocusArea(MatchesFocusArea matchesFocusArea) {
+        this.matchesFocusArea = matchesFocusArea;
     }
 
     @Override
@@ -90,5 +96,15 @@ public class OrganFocusArea extends FocusArea {
                 countsAsClick = false;
             }
         }
+    }
+
+    @Override
+    public boolean isTouched() {
+        // Do the standard isTouched, but also if there is a corresponding matchesFocusArea, check it's also untouched
+        return super.isTouched() || (matchesFocusArea != null && matchesFocusArea.isTouched());
+    }
+
+    protected boolean isSpecificallyTouched() {
+        return super.isTouched();
     }
 }

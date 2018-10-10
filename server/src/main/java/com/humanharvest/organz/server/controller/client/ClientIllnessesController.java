@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.IllnessRecord;
+import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.actions.client.illness.AddIllnessRecordAction;
 import com.humanharvest.organz.actions.client.illness.DeleteIllnessRecordAction;
 import com.humanharvest.organz.actions.client.illness.ModifyIllnessRecordByObjectAction;
@@ -57,7 +58,7 @@ public class ClientIllnessesController {
     public ResponseEntity<IllnessRecord> patchIllness(
             @PathVariable int uid,
             @PathVariable int id,
-            @RequestBody ModifyIllnessObject modifyIllnessObject,
+            @RequestBody ModifyIllnessObject newIllnessDetails,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
             throws InvalidRequestException {
 
@@ -79,33 +80,25 @@ public class ClientIllnessesController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        if (!ModifyIllnessValidator.isValid(modifyIllnessObject)) {
+        if (!ModifyIllnessValidator.isValid(newIllnessDetails)) {
             throw new InvalidRequestException();
         }
 
-        if (record.getIsChronic() && modifyIllnessObject.getCuredDate() != null) {
+        if (record.getIsChronic() && newIllnessDetails.getCuredDate() != null) {
             //Cured date is trying to be set while disease is chronic.
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        if (modifyIllnessObject.getIllnessName() == null) {
-            modifyIllnessObject.setIllnessName(record.getIllnessName());
-        }
-        if (modifyIllnessObject.getDiagnosisDate() == null) {
-            modifyIllnessObject.setDiagnosisDate(record.getDiagnosisDate());
-        }
-        if (modifyIllnessObject.getIsChronic() == null) {
-            modifyIllnessObject.setIsChronic(record.getIsChronic());
-        }
 
         //Create the old details to allow undoable action
-        ModifyIllnessObject oldIllnessRecord = new ModifyIllnessObject();
+        ModifyIllnessObject oldIllnessDetails = new ModifyIllnessObject();
         //Copy the values from the current record to our old record
-        BeanUtils.copyProperties(record, oldIllnessRecord, modifyIllnessObject.getUnmodifiedFields());
+        BeanUtils.copyProperties(record, oldIllnessDetails, newIllnessDetails.getUnmodifiedFields());
+
         //Make the action (this is a new action)
-        ModifyIllnessRecordByObjectAction action = new ModifyIllnessRecordByObjectAction(record,
-                State.getClientManager(), oldIllnessRecord, modifyIllnessObject);
-        //Execute action, this would correspond to a specific users invoker in full version
+        Action action = new ModifyIllnessRecordByObjectAction(
+                record, State.getClientManager(), oldIllnessDetails, newIllnessDetails);
+
         State.getActionInvoker(authToken).execute(action);
 
         HttpHeaders headers = new HttpHeaders();

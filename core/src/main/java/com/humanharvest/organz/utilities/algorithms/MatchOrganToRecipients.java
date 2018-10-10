@@ -303,6 +303,7 @@ public abstract class MatchOrganToRecipients {
                     && donor.getBloodType() != null && recipient.getBloodType() != null
                     && donor.getBloodType() == recipient.getBloodType()
                     && agesMatch(donor.getAge(), recipient.getAge())
+                    && recipient.isAlive()
                     && transplantRequest.getStatus() == TransplantRequestStatus.WAITING) {
                 potentialTransplantRequests.add(transplantRequest);
             }
