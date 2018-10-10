@@ -252,7 +252,7 @@ public class PageNavigatorTouch implements IPageNavigator {
 
             // Set the positioning based off the calling window if it is valid.
             getWindowTransform(window).ifPresent(transform -> {
-                mainPane.getTransforms().add(new Affine(transform));
+                ((FocusArea) mainPane.getUserData()).setTransform(new Affine(transform));
             });
 
         } catch (IOException e) {
@@ -284,7 +284,7 @@ public class PageNavigatorTouch implements IPageNavigator {
 
             // Set the positioning based off the calling window if it is valid.
             getWindowTransform(window).ifPresent(transform -> {
-                mainPane.getTransforms().add(new Affine(transform));
+                ((FocusArea) mainPane.getUserData()).setTransform(new Affine(transform));
             });
 
         } catch (IOException e) {
