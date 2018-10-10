@@ -20,6 +20,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.input.MouseEvent;
@@ -30,6 +31,9 @@ import javafx.scene.input.TouchPoint;
 import javafx.scene.layout.Pane;
 
 import com.sun.javafx.scene.control.skin.VirtualFlow;
+import org.tuiofx.widgets.controls.KeyButton;
+import org.tuiofx.widgets.controls.KeyboardPane;
+import org.tuiofx.widgets.event.KeyButtonEvent;
 
 public final class MultitouchHandler {
 
@@ -125,6 +129,33 @@ public final class MultitouchHandler {
     }
 
     /**
+     * Finds the keyboard pane this node belongs to, or Optional.empty() if the node doesn't belong to any keyboard
+     * pane.
+     */
+    private static Optional<KeyboardPane> findKeyboard(Node node) {
+        if (node == null) {
+            return Optional.empty();
+        }
+
+        Node intersectNode = node;
+        // Traverse the node parent history, until the parent doesn't exist or is the root pane.
+        while (!Objects.equals(intersectNode.getParent(), rootPane)) {
+            intersectNode = intersectNode.getParent();
+            if (intersectNode == null) {
+                return Optional.empty();
+            }
+        }
+
+        if (intersectNode instanceof KeyboardPane) {
+            return Optional.of((KeyboardPane) intersectNode);
+        }
+
+        // Also has org.tuiofx.widgets.controls.KeyboardPane
+
+        return Optional.empty();
+    }
+
+    /**
      * Gets or creates a current touch state from a given TouchPoint.
      */
     private static CurrentTouch getCurrentTouch(TouchPoint touchPoint) {
@@ -136,6 +167,7 @@ public final class MultitouchHandler {
         if (currentTouch == null) {
             currentTouch = new CurrentTouch(
                     findPane(touchPoint.getPickResult().getIntersectedNode()).orElse(null),
+                    findKeyboard(touchPoint.getPickResult().getIntersectedNode()).orElse(null),
                     getImportantElement(touchPoint.getPickResult().getIntersectedNode()).orElse(null));
             touches.set(touchPoint.getId(), currentTouch);
         }
@@ -153,6 +185,9 @@ public final class MultitouchHandler {
                 return Optional.of(node);
             }
             if (node instanceof TextField) {
+                return Optional.of(node);
+            }
+            if (node instanceof TextArea) {
                 return Optional.of(node);
             }
             if (node instanceof ListView) {
@@ -276,7 +311,26 @@ public final class MultitouchHandler {
             focusArea.handleTouchEvent(event, currentTouch);
         });
 
+        currentTouch.getKeyboardPane().ifPresent(keyboardPane -> {
+            if (event.getEventType() == TouchEvent.TOUCH_RELEASED) {
+                KeyButton keyButton = getKeyButton((Node) event.getTarget());
+                if (keyButton != null) {
+                    keyButton.fireEvent(new KeyButtonEvent(keyButton, KeyButtonEvent.SHORT_PRESSED));
+                }
+            }
+        });
+
         event.consume();
+    }
+
+    private static KeyButton getKeyButton(Node target) {
+        while (target != null && !(target instanceof KeyboardPane)) {
+            if (target instanceof KeyButton) {
+                return (KeyButton) target;
+            }
+            target = target.getParent();
+        }
+        return null;
     }
 
     /**

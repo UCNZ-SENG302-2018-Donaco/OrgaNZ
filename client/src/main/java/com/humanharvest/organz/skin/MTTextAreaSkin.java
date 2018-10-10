@@ -4,36 +4,36 @@ import static com.humanharvest.organz.touch.TouchUtils.convertTouchEvent;
 
 import javafx.event.EventTarget;
 import javafx.scene.Node;
-import javafx.scene.control.TextField;
+import javafx.scene.control.TextArea;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TouchEvent;
 
-import org.tuiofx.widgets.skin.TextFieldSkinAndroid;
+import org.tuiofx.widgets.skin.TextAreaSkinAndroid;
 
-public class MTTextFieldSkin extends TextFieldSkinAndroid {
+public class MTTextAreaSkin extends TextAreaSkinAndroid {
 
-    public MTTextFieldSkin(TextField textInput) {
+    public MTTextAreaSkin(TextArea textInput) {
         super(textInput);
 
         getSkinnable().addEventFilter(TouchEvent.TOUCH_PRESSED, event -> {
-            EventTarget eventTarget = findTextField(event.getTarget());
+            EventTarget eventTarget = findTextArea(event.getTarget());
             getBehavior().mousePressed(convertTouchEvent(event, eventTarget, MouseEvent.MOUSE_PRESSED));
             event.consume();
         });
 
         getSkinnable().addEventFilter(TouchEvent.TOUCH_RELEASED, event -> {
-            EventTarget eventTarget = findTextField(event.getTarget());
+            EventTarget eventTarget = findTextArea(event.getTarget());
             getBehavior().mouseReleased(convertTouchEvent(event, eventTarget, MouseEvent.MOUSE_RELEASED));
             event.consume();
         });
     }
 
-    private EventTarget findTextField(EventTarget target) {
+    private EventTarget findTextArea(EventTarget target) {
 
         EventTarget node = target;
 
         while (node instanceof Node) {
-            if (node instanceof TextField) {
+            if (node instanceof TextArea) {
                 return node;
             }
 
@@ -43,5 +43,3 @@ public class MTTextFieldSkin extends TextFieldSkinAndroid {
         return target;
     }
 }
-
-

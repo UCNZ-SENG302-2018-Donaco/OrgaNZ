@@ -36,18 +36,20 @@ import javafx.scene.transform.Transform;
 import javafx.scene.transform.Translate;
 
 import com.humanharvest.organz.skin.MTDatePickerSkin;
+import com.humanharvest.organz.skin.MTTextAreaSkin;
+import com.humanharvest.organz.skin.MTTextFieldSkin;
 import com.humanharvest.organz.utilities.ReflectionException;
 import com.humanharvest.organz.utilities.ReflectionUtils;
 import com.humanharvest.organz.utilities.Tuple;
 
 import com.sun.javafx.scene.NodeEventDispatcher;
 import com.sun.javafx.scene.control.skin.VirtualFlow;
+import org.tuiofx.widgets.controls.KeyboardPane;
 import org.tuiofx.widgets.skin.ChoiceBoxSkinAndroid;
 import org.tuiofx.widgets.skin.KeyboardManager;
 import org.tuiofx.widgets.skin.MTComboBoxListViewSkin;
 import org.tuiofx.widgets.skin.MTContextMenuSkin;
 import org.tuiofx.widgets.skin.OnScreenKeyboard;
-import org.tuiofx.widgets.skin.TextAreaSkinAndroid;
 import org.tuiofx.widgets.skin.TextFieldSkinAndroid;
 import org.tuiofx.widgets.utils.Util;
 
@@ -119,13 +121,13 @@ public class FocusArea implements InvalidationListener {
         if (node instanceof Skinnable) {
             Skin<?> skin = ((Skinnable) node).getSkin();
 
-            if (skin instanceof TextFieldSkinAndroid) {
+            if (skin instanceof MTTextFieldSkin) {
                 skinHandlers.add(new TextFieldSkinConsumer(skin));
             } else if (skin instanceof MTComboBoxListViewSkin) {
                 skinHandlers.add(new ComboBoxListSkinConsumer(skin));
             } else if (skin instanceof MTContextMenuSkin) {
                 skinHandlers.add(new ContextMenuSkinConsumer(skin));
-            } else if (skin instanceof TextAreaSkinAndroid) {
+            } else if (skin instanceof MTTextAreaSkin) {
                 skinHandlers.add(new TextAreaSkinConsumer(skin));
             } else if (skin instanceof ChoiceBoxSkinAndroid) {
                 skinHandlers.add(new ChoiceBoxSkinConsumer((Skin<ChoiceBox<?>>) skin));
@@ -263,23 +265,13 @@ public class FocusArea implements InvalidationListener {
         currentTouch.setCurrentScreenPoint(new Point2D(touchPoint.getX(), touchPoint.getY()));
 
         try {
-//            pane.toFront();
+            pane.toFront();
         } catch (RuntimeException e) {
             LOGGER.log(Level.WARNING, "Runtime exception when setting pane to front", e);
         }
 
         OnScreenKeyboard<?> keyboard = KeyboardManager.getInstance().getKeyboard(pane);
-//        ReflectionUtils.<KeyboardPane>getField(keyboard.getSkin(), "keyboardPane").toFront();
-
-        // Forwards the touch event to an important node.
-        currentTouch.getImportantElement().ifPresent(node -> {
-            NodeEventDispatcher eventDispatcher = (NodeEventDispatcher) node.getEventDispatcher();
-            System.out.println("Dispatching event..."
-                    + "\nNODE: " + node.toString()
-                    + "\nEVENT: " + event.toString());
-            eventDispatcher.dispatchCapturingEvent(event);
-            eventDispatcher.dispatchBubblingEvent(event);
-        });
+        ReflectionUtils.<KeyboardPane>getField(keyboard.getSkin(), "keyboardPane").toFront();
 
         if (paneTouches.size() == 1) {
             // Informs the focus area nodes of a touch event
@@ -290,6 +282,13 @@ public class FocusArea implements InvalidationListener {
         } else {
             currentScrollingPane = Optional.empty();
         }
+
+        // Forwards the touch event to an important node.
+        currentTouch.getImportantElement().ifPresent(node -> {
+            NodeEventDispatcher eventDispatcher = (NodeEventDispatcher) node.getEventDispatcher();
+            eventDispatcher.dispatchCapturingEvent(event);
+            eventDispatcher.dispatchBubblingEvent(event);
+        });
     }
 
     protected void onTouchReleased(TouchEvent event, CurrentTouch currentTouch) {
@@ -297,10 +296,6 @@ public class FocusArea implements InvalidationListener {
         // Forwards the touch event to an important node.
         currentTouch.getImportantElement().ifPresent(node -> {
             NodeEventDispatcher eventDispatcher = (NodeEventDispatcher) node.getEventDispatcher();
-            System.out.println("Dispatching event..."
-                    + "\nNODE: " + node.toString()
-                    + "\nEVENT: " + event.toString());
-
             eventDispatcher.dispatchCapturingEvent(event);
             eventDispatcher.dispatchBubblingEvent(event);
         });
@@ -669,6 +664,10 @@ public class FocusArea implements InvalidationListener {
 
         @Override
         public void accept(EventTarget t) {
+            if (t == skin.getSkinnable() || ((Node)t).getParent() == skin.getSkinnable()) {
+                return;
+            }
+
             try {
                 detachKeyboard.invoke(skin, keyboard, t);
             } catch (IllegalAccessException | InvocationTargetException e) {

@@ -20,7 +20,6 @@
 }
 
 #key-button {
-  -fx-skin: "com.humanharvest.organz.skin.MTKeyboardButtonSkin";
   -fx-background-color: #d3e9ff !important;
 }
 
@@ -49,7 +48,7 @@
 }
 
 .text-area {
-  -fx-skin: "org.tuiofx.widgets.skin.TextAreaSkinAndroid";
+  -fx-skin: "com.humanharvest.organz.skin.MTTextAreaSkin";
   -fx-cursor: default;
 }
 
