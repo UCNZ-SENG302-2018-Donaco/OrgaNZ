@@ -31,9 +31,6 @@ import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
-import com.humanharvest.organz.utilities.view.Page;
-import com.humanharvest.organz.utilities.view.PageNavigator;
-import com.humanharvest.organz.utilities.view.WindowContext;
 
 public class DashboardController extends SubController {
 
@@ -99,28 +96,18 @@ public class DashboardController extends SubController {
      */
     @FXML
     private void initialize() {
-        // Organs to donate setup
+
+        // Expiring Organs setup
+
         expiringOrgansList.setItems(observableOrgansToDonate);
         expiringOrgansList.setCellFactory(param -> {
             DonatedOrganCell item = new DonatedOrganCell(organImageMap);
             item.setMaxWidth(expiringOrgansList.getWidth());
             return item;
         });
-        
-        expiringOrgansList.setPlaceholder(new Label("No clients have died that were donating organs."));
 
-        // Recently deceased donors setup
-        deceasedDonorsList.setItems(FXCollections.observableArrayList(manager.getViableDeceasedDonors()));
-        deceasedDonorsList.setCellFactory(param -> {
-            DeceasedDonorCell item = new DeceasedDonorCell(profilePictureStore);
-            item.setMaxWidth(deceasedDonorsList.getWidth());
-            return item;
-        });
-
-        // Double clicking to open a deceased donor's profile
-        deceasedDonorsList.setOnMouseClicked(mouseEvent ->
-                ClickUtilities.openClientOnDoubleClick(
-                        mouseEvent, deceasedDonorsList.getSelectionModel().getSelectedItem(), mainController));
+        //Placeholders
+        expiringOrgansList.setPlaceholder(new Label("Loading expiring organs..."));
 
         // Double clicking to open the organ's deceased donor's profile
         expiringOrgansList.setOnMouseClicked(mouseEvent -> {
@@ -129,7 +116,23 @@ public class DashboardController extends SubController {
             ClickUtilities.openClientOnDoubleClick(mouseEvent, client, mainController);
         });
 
-        deceasedDonorsList.setPlaceholder(new Label("No clients have died that were donating organs."));
+        // Recently Deceased Donors setup
+
+        deceasedDonorsList.setItems(FXCollections.observableArrayList(manager.getViableDeceasedDonors()));
+        deceasedDonorsList.setCellFactory(param -> {
+            DeceasedDonorCell item = new DeceasedDonorCell(profilePictureStore);
+            item.setMaxWidth(deceasedDonorsList.getWidth());
+            return item;
+        });
+
+        // Placeholders
+        deceasedDonorsList.setPlaceholder(new Label("Loading recently deceased donors..."));
+
+        // Double clicking to open a deceased donor's profile
+        deceasedDonorsList.setOnMouseClicked(mouseEvent ->
+                ClickUtilities.openClientOnDoubleClick(
+                        mouseEvent, deceasedDonorsList.getSelectionModel().getSelectedItem(), mainController));
+
     }
 
     private void updateStatistics() {
@@ -160,6 +163,7 @@ public class DashboardController extends SubController {
     }
 
     private void updateRecentlyDeceasedDonors() {
+        deceasedDonorsList.setPlaceholder(new Label("Loading recently deceased donors..."));
         Task<List<Client>> task = new Task<List<Client>>() {
             @Override
             protected List<Client> call() throws ServerRestException {
@@ -167,7 +171,10 @@ public class DashboardController extends SubController {
             }
         };
 
-        task.setOnSucceeded(success -> deceasedDonorsList.getItems().setAll(task.getValue()));
+        task.setOnSucceeded(success -> {
+            deceasedDonorsList.getItems().setAll(task.getValue());
+            deceasedDonorsList.setPlaceholder(new Label("There are no clients with available organs."));
+        });
 
         task.setOnFailed(fail -> {
             LOGGER.log(Level.SEVERE, task.getException().getMessage(), task.getException());
@@ -181,6 +188,7 @@ public class DashboardController extends SubController {
     }
 
     private void updateOrgansToDonateList() {
+        expiringOrgansList.setPlaceholder(new Label("Loading expiring organs..."));
         Task<Collection<DonatedOrgan>> task = new Task<Collection<DonatedOrgan>>() {
             @Override
             protected Collection<DonatedOrgan> call() throws ServerRestException {
@@ -188,7 +196,10 @@ public class DashboardController extends SubController {
             }
         };
 
-        task.setOnSucceeded(success -> observableOrgansToDonate.setAll(task.getValue()));
+        task.setOnSucceeded(success -> {
+            observableOrgansToDonate.setAll(task.getValue());
+            expiringOrgansList.setPlaceholder(new Label("There are no clients with available organs."));
+        });
 
         task.setOnFailed(fail -> {
             LOGGER.log(Level.SEVERE, task.getException().getMessage(), task.getException());
