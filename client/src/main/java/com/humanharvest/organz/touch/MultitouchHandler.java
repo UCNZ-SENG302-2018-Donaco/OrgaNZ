@@ -240,7 +240,7 @@ public final class MultitouchHandler {
             if (node instanceof Slider) {
                 return Optional.of(node);
             }
-            if (node instanceof ImageView) {
+            if (node instanceof ImageView && node.getStyleClass().contains("overviewLink")) {
                 return Optional.of(node);
             }
 
