@@ -23,6 +23,7 @@ import java.util.logging.Logger;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.SortedList;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
@@ -117,8 +118,9 @@ public class ViewClientController extends SubController {
     @FXML
     private GridPane dateOfDeathPane;
 
-    private ObservableList<Country> observableEnabledCountries = FXCollections.observableArrayList();
-    private ObservableList<Hospital> observableHospitals = FXCollections.observableArrayList();
+    private final ObservableList<Country> observableEnabledCountries = FXCollections.observableArrayList();
+    private final ObservableList<Hospital> observableHospitals = FXCollections.observableArrayList();
+    private final SortedList<Hospital> sortedHospitals = new SortedList<>(observableHospitals);
 
     public ViewClientController() {
         manager = State.getClientManager();
@@ -178,9 +180,9 @@ public class ViewClientController extends SubController {
         gender.setItems(FXCollections.observableArrayList(Gender.values()));
         genderIdentity.setItems(FXCollections.observableArrayList(Gender.values()));
         btype.setItems(FXCollections.observableArrayList(BloodType.values()));
-        hospital.setItems(observableHospitals);
+        hospital.setItems(sortedHospitals);
+        sortedHospitals.setComparator(Comparator.comparing(Hospital::getName));
         updateHospitals();
-        hospital.getItems().sort(Comparator.comparing(Hospital::getName));
         regionCB.setItems(FXCollections.observableArrayList(Region.values()));
         deathRegionCB.setItems(FXCollections.observableArrayList(Region.values()));
         country.setItems(observableEnabledCountries);
@@ -252,6 +254,8 @@ public class ViewClientController extends SubController {
         };
 
         retrieveClient.setOnSucceeded(success -> {
+            viewedClient = retrieveClient.getValue();
+
             // Update all fields in the view with new data
             updateClientFields();
             loadImage();
@@ -349,7 +353,14 @@ public class ViewClientController extends SubController {
 
         task.setOnSucceeded(success -> {
             observableHospitals.setAll(task.getValue());
-            FXCollections.sort(observableHospitals, Comparator.comparing(Hospital::getName));
+            if (viewedClient == null || viewedClient.getHospital() == null) {
+                hospital.setValue(null);
+            } else {
+                hospital.setValue(hospital.getItems().stream()
+                        .filter(hospitalItem -> hospitalItem.getId().equals(viewedClient.getHospital().getId()))
+                        .findFirst()
+                        .orElse(null));
+            }
         });
 
         task.setOnFailed(fail -> {
