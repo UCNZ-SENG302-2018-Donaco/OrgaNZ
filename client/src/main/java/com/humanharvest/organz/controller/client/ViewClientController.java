@@ -14,7 +14,6 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.format.FormatStyle;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Locale;
 import java.util.Objects;
@@ -119,6 +118,7 @@ public class ViewClientController extends SubController {
     private GridPane dateOfDeathPane;
 
     private ObservableList<Country> observableEnabledCountries = FXCollections.observableArrayList();
+    private ObservableList<Hospital> observableHospitals = FXCollections.observableArrayList();
 
     public ViewClientController() {
         manager = State.getClientManager();
@@ -178,9 +178,8 @@ public class ViewClientController extends SubController {
         gender.setItems(FXCollections.observableArrayList(Gender.values()));
         genderIdentity.setItems(FXCollections.observableArrayList(Gender.values()));
         btype.setItems(FXCollections.observableArrayList(BloodType.values()));
-        Set<Hospital> hospitalSet = State.getConfigManager().getHospitals();
-        ObservableList<Hospital> hospitals = FXCollections.observableArrayList(new ArrayList<>(hospitalSet));
-        hospital.setItems(hospitals);
+        hospital.setItems(observableHospitals);
+        updateHospitals();
         hospital.getItems().sort(Comparator.comparing(Hospital::getName));
         regionCB.setItems(FXCollections.observableArrayList(Region.values()));
         deathRegionCB.setItems(FXCollections.observableArrayList(Region.values()));
@@ -340,6 +339,30 @@ public class ViewClientController extends SubController {
         new Thread(task).start();
     }
 
+    private void updateHospitals() {
+        Task<Set<Hospital>> task = new Task<Set<Hospital>>() {
+            @Override
+            protected Set<Hospital> call() throws ServerRestException {
+                return com.humanharvest.organz.state.State.getConfigManager().getHospitals();
+            }
+        };
+
+        task.setOnSucceeded(success -> {
+            observableHospitals.setAll(task.getValue());
+            FXCollections.sort(observableHospitals, Comparator.comparing(Hospital::getName));
+        });
+
+        task.setOnFailed(fail -> {
+            LOGGER.log(Level.SEVERE, task.getException().getMessage(), task.getException());
+            Notifications.create()
+                    .title("Server Error")
+                    .text("Could not retrieve hospitals from the server.")
+                    .showError();
+        });
+
+        new Thread(task).start();
+    }
+
     /**
      * Updates all of the fields of the client.
      */
@@ -446,9 +469,7 @@ public class ViewClientController extends SubController {
             }
         };
 
-        task.setOnSucceeded(event -> {
-            imageView.setImage(task.getValue());
-        });
+        task.setOnSucceeded(event -> imageView.setImage(task.getValue()));
 
         task.setOnFailed(event -> {
             try {
@@ -494,30 +515,54 @@ public class ViewClientController extends SubController {
                 imageToUpload = selectedFile;
                 deletePhotoButton.setDisable(false);
                 imageView.setImage(new Image(imageToUpload.toURI().toString()));
-
             }
         }
-
     }
 
-    public void uploadImage() {
-        try (InputStream in = new FileInputStream(imageToUpload)) {
-            State.getImageManager().postClientImage(viewedClient.getUid(), IOUtils.toByteArray(in));
+    private void uploadImage() {
+        Task<Void> task = new Task<Void>() {
+            @Override
+            protected Void call() throws IOException, ServerRestException {
+                try (InputStream in = new FileInputStream(imageToUpload)) {
+                    com.humanharvest.organz.state.State.getImageManager()
+                            .postClientImage(viewedClient.getUid(), IOUtils.toByteArray(in));
+                }
+                return null;
+            }
+        };
 
-        } catch (FileNotFoundException e) {
-            LOGGER.log(Level.INFO, e.getMessage(), e);
-            PageNavigator.showAlert(AlertType.WARNING, "File Couldn't Be Found",
-                    "This file was not found.", mainController.getStage());
-        } catch (IOException e) {
-            LOGGER.log(Level.INFO, e.getMessage(), e);
-            PageNavigator.showAlert(AlertType.WARNING, "File Couldn't Be Read",
-                    "This file could not be read. Ensure you are uploading a valid .png or .jpg",
-                    mainController.getStage());
-        } catch (ServerRestException e) {
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
-            PageNavigator.showAlert(AlertType.ERROR, "Server Error", "Something went wrong with the server. "
-                    + "Please try again later.", mainController.getStage());
-        }
+        task.setOnSucceeded(success -> {
+            finishUpdateChanges();
+            imageToUpload = null;
+        });
+
+        task.setOnFailed(fail -> {
+            try {
+                throw task.getException();
+            } catch (FileNotFoundException exc) {
+                LOGGER.log(Level.INFO, exc.getMessage(), exc);
+                PageNavigator.showAlert(AlertType.WARNING,
+                        "File Couldn't Be Found",
+                        "This file was not found.",
+                        mainController.getStage());
+            } catch (IOException exc) {
+                LOGGER.log(Level.INFO, exc.getMessage(), exc);
+                PageNavigator.showAlert(AlertType.WARNING,
+                        "File Couldn't Be Read",
+                        "This file could not be read. Ensure you are uploading a valid .png or .jpg",
+                        mainController.getStage());
+            } catch (ServerRestException exc) {
+                LOGGER.log(Level.SEVERE, exc.getMessage(), exc);
+                PageNavigator.showAlert(AlertType.ERROR,
+                        "Server Error",
+                        "Something went wrong with the server. Please try again later.",
+                        mainController.getStage());
+            } catch (Throwable exc) {
+                LOGGER.log(Level.SEVERE, exc.getMessage(), exc);
+            }
+        });
+
+        new Thread(task).start();
     }
 
     /**
@@ -525,14 +570,26 @@ public class ViewClientController extends SubController {
      */
     @FXML
     public void deletePhoto() {
-        try {
-            State.getImageManager().deleteClientImage(viewedClient.getUid());
-            refreshData();
-        } catch (ServerRestException e) {
-            PageNavigator.showAlert(AlertType.ERROR, "Server Error", "Something went wrong with the server. "
-                    + "Please try again later.", mainController.getStage());
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
-        }
+        Task<Void> task = new Task<Void>() {
+            @Override
+            protected Void call() throws ServerRestException {
+                com.humanharvest.organz.state.State.getImageManager()
+                        .deleteClientImage(viewedClient.getUid());
+                return null;
+            }
+        };
+
+        task.setOnSucceeded(success -> finishUpdateChanges());
+
+        task.setOnFailed(fail -> {
+            LOGGER.log(Level.SEVERE, task.getException().getMessage(), task.getException());
+            Notifications.create()
+                    .title("Server Error")
+                    .text("A server error occurred when trying to delete the client's photo.")
+                    .showError();
+        });
+
+        new Thread(task).start();
     }
 
     /**
@@ -772,13 +829,20 @@ public class ViewClientController extends SubController {
                     .text("No changes were made to the client.")
                     .showWarning();
         } else {
-            try {
-                State.getClientResolver().modifyClientDetails(viewedClient, modifyClientObject);
+            Task<Void> task = new Task<Void>() {
+                @Override
+                protected Void call() throws ServerRestException {
+                    com.humanharvest.organz.state.State.getClientResolver()
+                            .modifyClientDetails(viewedClient, modifyClientObject);
+                    return null;
+                }
+            };
+
+            task.setOnSucceeded(success -> {
                 String actionText = modifyClientObject.toString();
 
                 if (imageToUpload != null) {
                     uploadImage();
-                    imageToUpload = null;
                     actionText += "\nChanged profile picture.";
                 }
                 Notifications.create()
@@ -787,14 +851,23 @@ public class ViewClientController extends SubController {
                         .showInformation();
 
                 finishUpdateChanges();
+            });
 
-            } catch (NotFoundException e) {
-                AlertHelper.showNotFoundAlert(LOGGER, e, mainController);
-            } catch (ServerRestException e) {
-                AlertHelper.showRestAlert(LOGGER, e, mainController);
-            } catch (IfMatchFailedException e) {
-                AlertHelper.showIfMatchAlert(LOGGER, e, mainController);
-            }
+            task.setOnFailed(fail -> {
+                try {
+                    throw task.getException();
+                } catch (NotFoundException e) {
+                    AlertHelper.showNotFoundAlert(LOGGER, e, mainController);
+                } catch (ServerRestException e) {
+                    AlertHelper.showRestAlert(LOGGER, e, mainController);
+                } catch (IfMatchFailedException e) {
+                    AlertHelper.showIfMatchAlert(LOGGER, e, mainController);
+                } catch (Throwable exc) {
+                    LOGGER.log(Level.SEVERE, exc.getMessage(), exc);
+                }
+            });
+
+            new Thread(task).start();
         }
     }
 
