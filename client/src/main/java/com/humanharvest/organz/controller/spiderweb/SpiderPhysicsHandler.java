@@ -25,10 +25,9 @@ public class SpiderPhysicsHandler extends PhysicsHandler {
         super.processPhysics();
 
         for (FocusArea focusArea : MultitouchHandler.getFocusAreas()) {
-            boolean paneTouched = !MultitouchHandler.findPaneTouches(focusArea.getPane()).isEmpty();
 
             // Skip if touched or not moveable
-            if (paneTouched || !focusArea.isTranslatable() || !focusArea.isCollidable()) {
+            if (focusArea.isTouched() || !focusArea.isTranslatable() || !focusArea.isCollidable()) {
                 continue;
             }
 
@@ -38,8 +37,7 @@ public class SpiderPhysicsHandler extends PhysicsHandler {
             for (FocusArea otherFocusArea : MultitouchHandler.getFocusAreas()) {
 
                 // If the other pane isn't moveable due to being touched or not collidable
-                boolean otherNotMoveable = !MultitouchHandler.findPaneTouches(otherFocusArea.getPane()).isEmpty()
-                        || !otherFocusArea.isCollidable();
+                boolean otherNotMoveable = otherFocusArea.isTouched() || !otherFocusArea.isCollidable();
 
                 // Skip if the same object or not moveable
                 if (Objects.equals(focusArea, otherFocusArea) || otherNotMoveable) {
