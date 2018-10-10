@@ -200,9 +200,9 @@ public class ViewMedicationsController extends SubController {
     @Override
     public void refresh() {
         if (session.getLoggedInUserType() == UserType.CLIENT) {
-            mainController.setTitle("View Medications:  " + client.getPreferredNameFormatted());
+            mainController.setTitle("View Medications: " + client.getPreferredNameFormatted());
         } else if (windowContext.isClinViewClientWindow()) {
-            mainController.setTitle("View Medications:  " + client.getFullName());
+            mainController.setTitle("View Medications: " + client.getFullName());
         }
         refreshMedicationLists();
     }

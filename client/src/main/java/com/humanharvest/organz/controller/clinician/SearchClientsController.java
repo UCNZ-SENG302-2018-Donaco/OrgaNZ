@@ -118,7 +118,7 @@ public class SearchClientsController extends SubController {
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
-        mainController.setTitle("Client search");
+        mainController.setTitle("Search Clients");
         mainController.loadNavigation(menuBarPane);
     }
 

@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
@@ -27,6 +28,9 @@ import com.humanharvest.organz.views.ActionResponseView;
  * admins/clinicians who are using the touch application.
  */
 public class TouchActionsBarController extends SubController {
+
+    @FXML
+    private Label titleText;
 
     @FXML
     private Button logoutButton;
@@ -56,7 +60,6 @@ public class TouchActionsBarController extends SubController {
     private Pane entireMenubarPane;
 
     private static final Logger LOGGER = Logger.getLogger(TouchActionsBarController.class.getName());
-
 
     /**
      * Setup the menu bar colours, buttons, and hamburger.
@@ -171,6 +174,14 @@ public class TouchActionsBarController extends SubController {
         }
 
         projectButton.setSelected(mainController.isProjecting());
+
+        String titleValue;
+        if (State.isUnsavedChanges()) {
+            titleValue = "*" + mainController.getTitle();
+        } else {
+            titleValue = mainController.getTitle();
+        }
+        titleText.setText(titleValue);
     }
 
     @FXML
@@ -263,5 +274,9 @@ public class TouchActionsBarController extends SubController {
             ProjectionHelper.stageClosing();
             mainController.setProjecting(false);
         }
+    }
+
+    public void setTitle(String title) {
+        titleText.setText(title);
     }
 }

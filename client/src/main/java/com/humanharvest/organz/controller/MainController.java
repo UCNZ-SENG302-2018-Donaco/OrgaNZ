@@ -248,11 +248,17 @@ public class MainController {
      * Updates the title of the window, inserting an asterisk if there are unsaved changes.
      */
     private void updateTitle() {
+        String titleValue;
         if (State.isUnsavedChanges()) {
-            stage.setTitle("*" + title);
+            titleValue = "*" + title;
         } else {
-            stage.setTitle(title);
+            titleValue = title;
         }
+
+        if (touchActionsBarController != null) {
+            touchActionsBarController.setTitle(titleValue);
+        }
+        stage.setTitle(titleValue);
     }
 
     public List<String> getStyles() {
