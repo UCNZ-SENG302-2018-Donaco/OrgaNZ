@@ -13,7 +13,7 @@ import com.humanharvest.organz.touch.MultitouchHandler;
 public class TouchAlertTextController {
 
     @FXML
-    private Text title;
+    private Text title, heading, instructions;
     @FXML
     private Pane pageHolder;
     @FXML
@@ -32,8 +32,12 @@ public class TouchAlertTextController {
         pageHolder.getStyleClass().add("window");
     }
 
-    public void setup(String title, String body, Stage stage, Pane pane, Consumer<String> onSubmit) {
+    public void setup(String title, String body, String instructions, String prefilledText,
+            Stage stage, Pane pane, Consumer<String> onSubmit) {
         this.title.setText(title);
+        this.heading.setText(body);
+        this.instructions.setText(instructions);
+        this.textInput.setText(prefilledText);
         this.stage = stage;
         this.pane = pane;
         this.onSubmit = onSubmit;

@@ -269,7 +269,8 @@ public class PageNavigatorTouch implements IPageNavigator {
      * @param onSubmit Callback to return the input string to once the user clicks ok.
      */
     @Override
-    public void showAlertWithText(String title, String bodyText, Window window, Consumer<String> onSubmit) {
+    public void showAlertWithText(String title, String bodyText, String instructions, String prefilledText,
+            Window window, Consumer<String> onSubmit) {
         LOGGER.info("Opening new window");
         try {
             Stage newStage = new Stage();
@@ -277,7 +278,7 @@ public class PageNavigatorTouch implements IPageNavigator {
             Pane mainPane = loader.load();
 
             TouchAlertTextController controller = loader.getController();
-            controller.setup(title, bodyText, newStage, mainPane, onSubmit);
+            controller.setup(title, bodyText, instructions, prefilledText, newStage, mainPane, onSubmit);
 
             MultitouchHandler.addPane(mainPane);
 

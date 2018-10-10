@@ -544,7 +544,7 @@ public class OrgansToDonateController extends SubController {
         // Create a popup with a text field to enter the reason
 
         PageNavigator.showTextAlert("Manually Override Organ",
-                "Enter the reason for overriding this organ:", mainController.getStage(),
+                "Enter the reason for overriding this organ:", "Reason:", mainController.getStage(),
                 this::overrideOrgan);
     }
 

@@ -164,11 +164,12 @@ public class PageNavigatorStandard implements IPageNavigator {
      * @param onSubmit Callback to return the input string to once the user clicks ok.
      */
     @Override
-    public void showAlertWithText(String title, String bodyText, Window window, Consumer<String> onSubmit) {
-        TextInputDialog popup = new TextInputDialog();
+    public void showAlertWithText(String title, String bodyText, String instructions, String prefilledText,
+            Window window, Consumer<String> onSubmit) {
+        TextInputDialog popup = new TextInputDialog(prefilledText);
         popup.setTitle(title);
         popup.setHeaderText(bodyText);
-        popup.setContentText("Reason:");
+        popup.setContentText(instructions);
         popup.getDialogPane().lookupButton(ButtonType.OK).setDisable(true);
         popup.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
             popup.getDialogPane().lookupButton(ButtonType.OK).setDisable(newValue.isEmpty());
