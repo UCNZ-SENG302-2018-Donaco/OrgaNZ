@@ -183,7 +183,7 @@ public class RegisterOrganDonationController extends SubController {
         // Create a popup with a text field to enter the reason
 
         PageNavigator.showTextAlert("Manually Override Organ",
-                "Enter the reason for overriding this organ:", mainController.getStage(),
+                "Enter the reason for overriding this organ:", "Reason: ", mainController.getStage(),
                 response -> overrideOrgan(response, donatedOrgan));
     }
 
@@ -224,7 +224,9 @@ public class RegisterOrganDonationController extends SubController {
     private void handleEditOverride(DonatedOrgan donatedOrgan) {
 
         PageNavigator.showTextAlert("Edit Manual Override",
-                "Enter the reason for overriding this organ:", mainController.getStage(),
+                "Enter the reason for overriding this organ:",
+                "Reason: ", donatedOrgan.getRawOverrideReason(),
+                mainController.getStage(),
                 response -> editOverride(response, donatedOrgan));
     }
 
