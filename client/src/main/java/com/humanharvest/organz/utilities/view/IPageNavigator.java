@@ -102,5 +102,6 @@ public interface IPageNavigator {
      * @param window the window to spawn the popup relative to.
      * @param onSubmit Callback to return the input string to once the user clicks ok.
      */
-    void showAlertWithText(String title, String bodyText, Window window, Consumer<String> onSubmit);
+    void showAlertWithText(String title, String bodyText, String instructions, String prefilledText,
+            Window window, Consumer<String> onSubmit);
 }

@@ -14,7 +14,6 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.format.FormatStyle;
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Locale;
 import java.util.Objects;
@@ -24,6 +23,8 @@ import java.util.logging.Logger;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.SortedList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -83,9 +84,10 @@ public class ViewClientController extends SubController {
     private final ClientManager manager;
     private Client viewedClient;
     private File imageToUpload;
+    private boolean deleteImage;
 
     @FXML
-    private Pane menuBarPane, sidebarPane, deathDetailsPane;
+    private Pane menuBarPane, deathDetailsPane;
     @FXML
     private Label creationDate, lastModified, legalNameLabel, dobLabel, heightLabel, weightLabel, ageDisplayLabel,
             ageLabel, bmiLabel, fullName, dodLabel, timeOfDeathLabel, countryOfDeathLabel, regionOfDeathLabel,
@@ -116,6 +118,10 @@ public class ViewClientController extends SubController {
     private ToggleButton aliveToggleBtn, deadToggleBtn;
     @FXML
     private GridPane dateOfDeathPane;
+
+    private final ObservableList<Country> observableEnabledCountries = FXCollections.observableArrayList();
+    private final ObservableList<Hospital> observableHospitals = FXCollections.observableArrayList();
+    private final SortedList<Hospital> sortedHospitals = new SortedList<>(observableHospitals);
 
     public ViewClientController() {
         manager = State.getClientManager();
@@ -175,13 +181,13 @@ public class ViewClientController extends SubController {
         gender.setItems(FXCollections.observableArrayList(Gender.values()));
         genderIdentity.setItems(FXCollections.observableArrayList(Gender.values()));
         btype.setItems(FXCollections.observableArrayList(BloodType.values()));
-        Set<Hospital> hospitalSet = State.getConfigManager().getHospitals();
-        ObservableList<Hospital> hospitals = FXCollections.observableArrayList(new ArrayList<>(hospitalSet));
-        hospital.setItems(hospitals);
-        hospital.getItems().sort(Comparator.comparing(Hospital::getName));
+        hospital.setItems(sortedHospitals);
+        sortedHospitals.setComparator(Comparator.comparing(Hospital::getName));
+        updateHospitals();
         regionCB.setItems(FXCollections.observableArrayList(Region.values()));
         deathRegionCB.setItems(FXCollections.observableArrayList(Region.values()));
-        setEnabledCountries();
+        country.setItems(observableEnabledCountries);
+        deathCountry.setItems(observableEnabledCountries);
 
         // Add listeners to switch input types for region depending on if the country is NZ
         country.valueProperty().addListener(change -> enableAppropriateRegionInput(country, regionCB, regionTF));
@@ -240,47 +246,62 @@ public class ViewClientController extends SubController {
     private void refreshData() {
         setEnabledCountries();
 
-        // Refresh client data from server
-        try {
-            viewedClient = manager.getClientByID(viewedClient.getUid()).orElseThrow(ServerRestException::new);
-        } catch (ServerRestException e) {
-            AlertHelper.showRestAlert(LOGGER, e, mainController);
-            return;
-        }
-        // Update all fields in the view with new data
-        updateClientFields();
-        loadImage();
-
-        // Set window title accordingly
-        mainController.refreshNavigation();
-        if (session.getLoggedInUserType() == UserType.CLIENT) {
-            mainController.setTitle("View Client: " + viewedClient.getPreferredNameFormatted());
-            aliveToggleBtn.setDisable(true);
-            deadToggleBtn.setDisable(true);
-            deathDetailsPane.setDisable(true);
-        } else if (windowContext.isClinViewClientWindow()) {
-            mainController.setTitle("View Client: " + viewedClient.getFullName());
-
-            // client is dead - disable resurrecting
-            aliveToggleBtn.setDisable(viewedClient.isDead());
-            deadToggleBtn.setDisable(viewedClient.isDead());
-
-            // date of death is not editable - disable editing of date and time
-            deathDatePicker.setDisable(!viewedClient.getDateOfDeathIsEditable());
-            deathTimeField.setDisable(!viewedClient.getDateOfDeathIsEditable());
-            if (!viewedClient.getDateOfDeathIsEditable()) {
-                Tooltip tooltip = new Tooltip(
-                        "Date and time of death is not editable, "
-                                + "because at least one organ has been manually overridden. "
-                                + "To edit the date and/or time, please cancel all manual overrides.");
-                Tooltip.install(dateOfDeathPane, tooltip);
+        Task<Client> retrieveClient = new Task<Client>() {
+            @Override
+            protected Client call() throws ServerRestException {
+                return manager.getClientByID(viewedClient.getUid())
+                        .orElseThrow(NotFoundException::new);
             }
-        }
+        };
 
-        // Run these to reset all labels to correct colours
-        checkMandatoryFields();
-        checkNonMandatoryFields();
-        checkDeathDetailsFields();
+        retrieveClient.setOnSucceeded(success -> {
+            viewedClient = retrieveClient.getValue();
+
+            // Update all fields in the view with new data
+            updateClientFields();
+            loadImage();
+
+            // Set window title accordingly
+            mainController.refreshNavigation();
+            if (session.getLoggedInUserType() == UserType.CLIENT) {
+                mainController.setTitle("View Client: " + viewedClient.getPreferredNameFormatted());
+                aliveToggleBtn.setDisable(true);
+                deadToggleBtn.setDisable(true);
+                deathDetailsPane.setDisable(true);
+            } else if (windowContext.isClinViewClientWindow()) {
+                mainController.setTitle("View Client: " + viewedClient.getFullName());
+
+                // client is dead - disable resurrecting
+                aliveToggleBtn.setDisable(viewedClient.isDead());
+                deadToggleBtn.setDisable(viewedClient.isDead());
+
+                // date of death is not editable - disable editing of date and time
+                deathDatePicker.setDisable(!viewedClient.getDateOfDeathIsEditable());
+                deathTimeField.setDisable(!viewedClient.getDateOfDeathIsEditable());
+                if (!viewedClient.getDateOfDeathIsEditable()) {
+                    Tooltip tooltip = new Tooltip(
+                            "Date and time of death is not editable, "
+                                    + "because at least one organ has been manually overridden. "
+                                    + "To edit the date and/or time, please cancel all manual overrides.");
+                    Tooltip.install(dateOfDeathPane, tooltip);
+                }
+            }
+
+            // Run these to reset all labels to correct colours
+            checkMandatoryFields();
+            checkNonMandatoryFields();
+            checkDeathDetailsFields();
+        });
+
+        retrieveClient.setOnFailed(fail -> {
+            LOGGER.log(Level.SEVERE, retrieveClient.getException().getMessage(), retrieveClient.getException());
+            Notifications.create()
+                    .title("Server Error")
+                    .text("Could not retrieve the client's data from the server.")
+                    .showError();
+        });
+
+        new Thread(retrieveClient).start();
     }
 
     private boolean hasChanges() {
@@ -300,11 +321,58 @@ public class ViewClientController extends SubController {
      * Sets which countries are enabled for the country/deathCountry dropdowns.
      */
     private void setEnabledCountries() {
-        ObservableList<Country> enabledCountries = FXCollections.observableArrayList(
-                State.getConfigManager().getAllowedCountries());
-        FXCollections.sort(enabledCountries);
-        country.setItems(enabledCountries);
-        deathCountry.setItems(enabledCountries);
+        Task<Set<Country>> task = new Task<Set<Country>>() {
+            @Override
+            protected Set<Country> call() throws ServerRestException {
+                return com.humanharvest.organz.state.State.getConfigManager().getAllowedCountries();
+            }
+        };
+
+        task.setOnSucceeded(success -> {
+            observableEnabledCountries.setAll(task.getValue());
+            FXCollections.sort(observableEnabledCountries);
+        });
+
+        task.setOnFailed(fail -> {
+            LOGGER.log(Level.SEVERE, task.getException().getMessage(), task.getException());
+            Notifications.create()
+                    .title("Server Error")
+                    .text("Could not retrieve enabled countries from the server.")
+                    .showError();
+        });
+
+        new Thread(task).start();
+    }
+
+    private void updateHospitals() {
+        Task<Set<Hospital>> task = new Task<Set<Hospital>>() {
+            @Override
+            protected Set<Hospital> call() throws ServerRestException {
+                return com.humanharvest.organz.state.State.getConfigManager().getHospitals();
+            }
+        };
+
+        task.setOnSucceeded(success -> {
+            observableHospitals.setAll(task.getValue());
+            if (viewedClient == null || viewedClient.getHospital() == null) {
+                hospital.setValue(null);
+            } else {
+                hospital.setValue(hospital.getItems().stream()
+                        .filter(hospitalItem -> hospitalItem.getId().equals(viewedClient.getHospital().getId()))
+                        .findFirst()
+                        .orElse(null));
+            }
+        });
+
+        task.setOnFailed(fail -> {
+            LOGGER.log(Level.SEVERE, task.getException().getMessage(), task.getException());
+            Notifications.create()
+                    .title("Server Error")
+                    .text("Could not retrieve hospitals from the server.")
+                    .showError();
+        });
+
+        new Thread(task).start();
     }
 
     /**
@@ -398,27 +466,40 @@ public class ViewClientController extends SubController {
      * Loads the viewed profiles image
      */
     private void loadImage() {
-        byte[] bytes;
-        try {
-            deletePhotoButton.setDisable(false);
-            bytes = State.getImageManager().getClientImage(viewedClient.getUid());
-        } catch (NotFoundException ignored) {
-            try {
-                deletePhotoButton.setDisable(true);
-                bytes = State.getImageManager().getDefaultImage();
-            } catch (IOException e) {
-                LOGGER.log(Level.SEVERE, "IO Exception when loading image ", e);
-                return;
+        // Retrieve the picture from the server in a new thread
+        Task<Image> task = new Task<Image>() {
+            @Override
+            protected Image call() throws ServerRestException, IOException {
+                try {
+                    return new Image(new ByteArrayInputStream(
+                            com.humanharvest.organz.state.State.getImageManager()
+                                    .getClientImage(viewedClient.getUid())));
+                } catch (NotFoundException exc) {
+                    return new Image(new ByteArrayInputStream(
+                            com.humanharvest.organz.state.State.getImageManager().getDefaultImage()));
+                }
             }
-        } catch (ServerRestException e) {
-            PageNavigator.showAlert(AlertType.ERROR, "Server Error", "Something went wrong with the server. "
-                    + "Please try again later.", mainController.getStage());
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
-            return;
-        }
+        };
 
-        Image image = new Image(new ByteArrayInputStream(bytes));
-        imageView.setImage(image);
+        task.setOnSucceeded(event -> imageView.setImage(task.getValue()));
+
+        task.setOnFailed(event -> {
+            try {
+                throw task.getException();
+            } catch (IOException exc) {
+                LOGGER.log(Level.SEVERE, "IOException when loading default image.", exc);
+            } catch (ServerRestException exc) {
+                LOGGER.log(Level.SEVERE, "", exc);
+                Notifications.create()
+                        .title("Server Error")
+                        .text("A client's profile picture could not be retrieved from the server.")
+                        .showError();
+            } catch (Throwable exc) {
+                LOGGER.log(Level.SEVERE, exc.getMessage(), exc);
+            }
+        });
+
+        new Thread(task).start();
     }
 
     /**
@@ -426,7 +507,7 @@ public class ViewClientController extends SubController {
      * input, this photo is set as the client's profile picture (and will be uploaded when the user clicks Apply).
      */
     @FXML
-    public void choosePhoto() {
+    public void choosePhotoClicked() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Upload Profile Image");
         fileChooser.getExtensionFilters().addAll(
@@ -445,46 +526,98 @@ public class ViewClientController extends SubController {
             } else {
                 imageToUpload = selectedFile;
                 deletePhotoButton.setDisable(false);
+                deleteImage = false;
                 imageView.setImage(new Image(imageToUpload.toURI().toString()));
-
             }
         }
-
     }
 
-    public void uploadImage() {
-        try (InputStream in = new FileInputStream(imageToUpload)) {
-            State.getImageManager().postClientImage(viewedClient.getUid(), IOUtils.toByteArray(in));
+    private void uploadImage() {
+        Task<Void> task = new Task<Void>() {
+            @Override
+            protected Void call() throws IOException, ServerRestException {
+                try (InputStream in = new FileInputStream(imageToUpload)) {
+                    com.humanharvest.organz.state.State.getImageManager()
+                            .postClientImage(viewedClient.getUid(), IOUtils.toByteArray(in));
+                }
+                return null;
+            }
+        };
 
-        } catch (FileNotFoundException e) {
-            LOGGER.log(Level.INFO, e.getMessage(), e);
-            PageNavigator.showAlert(AlertType.WARNING, "File Couldn't Be Found",
-                    "This file was not found.", mainController.getStage());
-        } catch (IOException e) {
-            LOGGER.log(Level.INFO, e.getMessage(), e);
-            PageNavigator.showAlert(AlertType.WARNING, "File Couldn't Be Read",
-                    "This file could not be read. Ensure you are uploading a valid .png or .jpg",
-                    mainController.getStage());
-        } catch (ServerRestException e) {
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
-            PageNavigator.showAlert(AlertType.ERROR, "Server Error", "Something went wrong with the server. "
-                    + "Please try again later.", mainController.getStage());
-        }
+        task.setOnSucceeded(success -> {
+            imageToUpload = null;
+        });
+
+        task.setOnFailed(fail -> {
+            try {
+                throw task.getException();
+            } catch (FileNotFoundException exc) {
+                LOGGER.log(Level.INFO, exc.getMessage(), exc);
+                PageNavigator.showAlert(AlertType.WARNING,
+                        "File Couldn't Be Found",
+                        "This file was not found.",
+                        mainController.getStage());
+            } catch (IOException exc) {
+                LOGGER.log(Level.INFO, exc.getMessage(), exc);
+                PageNavigator.showAlert(AlertType.WARNING,
+                        "File Couldn't Be Read",
+                        "This file could not be read. Ensure you are uploading a valid .png or .jpg",
+                        mainController.getStage());
+            } catch (ServerRestException exc) {
+                LOGGER.log(Level.SEVERE, exc.getMessage(), exc);
+                PageNavigator.showAlert(AlertType.ERROR,
+                        "Server Error",
+                        "Something went wrong with the server. Please try again later.",
+                        mainController.getStage());
+            } catch (Throwable exc) {
+                LOGGER.log(Level.SEVERE, exc.getMessage(), exc);
+            }
+        });
+
+        new Thread(task).start();
     }
 
     /**
      * Sets the profile image to null and refreshes the image.
      */
     @FXML
-    public void deletePhoto() {
+    public void deletePhotoClicked() {
+        deleteImage = true;
+        imageToUpload = null;
+        deletePhotoButton.setDisable(true);
         try {
-            State.getImageManager().deleteClientImage(viewedClient.getUid());
-            refreshData();
-        } catch (ServerRestException e) {
-            PageNavigator.showAlert(AlertType.ERROR, "Server Error", "Something went wrong with the server. "
-                    + "Please try again later.", mainController.getStage());
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+            imageView.setImage(new Image(new ByteArrayInputStream(
+                    com.humanharvest.organz.state.State.getImageManager().getDefaultImage())));
+        } catch (IOException | ServerRestException exc) {
+            LOGGER.log(Level.INFO, exc.getMessage(), exc);
+            PageNavigator.showAlert(AlertType.WARNING,
+                    "Default File Couldn't Be Retrieved",
+                    "The default image could not be retrieved from the server.",
+                    mainController.getStage());
         }
+    }
+
+    private void deleteImage() {
+        Task<Void> task = new Task<Void>() {
+            @Override
+            protected Void call() throws ServerRestException {
+                com.humanharvest.organz.state.State.getImageManager()
+                        .deleteClientImage(viewedClient.getUid());
+                return null;
+            }
+        };
+
+        task.setOnSucceeded(success -> deleteImage = false);
+
+        task.setOnFailed(fail -> {
+            LOGGER.log(Level.SEVERE, task.getException().getMessage(), task.getException());
+            Notifications.create()
+                    .title("Server Error")
+                    .text("A server error occurred when trying to delete the client's photo.")
+                    .showError();
+        });
+
+        new Thread(task).start();
     }
 
     /**
@@ -717,21 +850,31 @@ public class ViewClientController extends SubController {
      * @param modifyClientObject The object to apply the changes from.
      */
     private void applyChanges(ModifyClientObject modifyClientObject) {
-        if (modifyClientObject.getModifiedFields().isEmpty() && imageToUpload == null) {
+        if (modifyClientObject.getModifiedFields().isEmpty() && imageToUpload == null && !deleteImage) {
             // Literally nothing was changed
             Notifications.create()
                     .title("No changes were made.")
                     .text("No changes were made to the client.")
                     .showWarning();
         } else {
-            try {
-                State.getClientResolver().modifyClientDetails(viewedClient, modifyClientObject);
+            Task<Void> task = new Task<Void>() {
+                @Override
+                protected Void call() throws ServerRestException {
+                    com.humanharvest.organz.state.State.getClientResolver()
+                            .modifyClientDetails(viewedClient, modifyClientObject);
+                    return null;
+                }
+            };
+
+            task.setOnSucceeded(success -> {
                 String actionText = modifyClientObject.toString();
 
                 if (imageToUpload != null) {
                     uploadImage();
-                    imageToUpload = null;
                     actionText += "\nChanged profile picture.";
+                } else if (deleteImage) {
+                    deleteImage();
+                    actionText += "\nRemoved profile picture.";
                 }
                 Notifications.create()
                         .title("Updated Client")
@@ -739,14 +882,23 @@ public class ViewClientController extends SubController {
                         .showInformation();
 
                 finishUpdateChanges();
+            });
 
-            } catch (NotFoundException e) {
-                AlertHelper.showNotFoundAlert(LOGGER, e, mainController);
-            } catch (ServerRestException e) {
-                AlertHelper.showRestAlert(LOGGER, e, mainController);
-            } catch (IfMatchFailedException e) {
-                AlertHelper.showIfMatchAlert(LOGGER, e, mainController);
-            }
+            task.setOnFailed(fail -> {
+                try {
+                    throw task.getException();
+                } catch (NotFoundException e) {
+                    AlertHelper.showNotFoundAlert(LOGGER, e, mainController);
+                } catch (ServerRestException e) {
+                    AlertHelper.showRestAlert(LOGGER, e, mainController);
+                } catch (IfMatchFailedException e) {
+                    AlertHelper.showIfMatchAlert(LOGGER, e, mainController);
+                } catch (Throwable exc) {
+                    LOGGER.log(Level.SEVERE, exc.getMessage(), exc);
+                }
+            });
+
+            new Thread(task).start();
         }
     }
 

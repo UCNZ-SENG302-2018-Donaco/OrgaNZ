@@ -23,6 +23,7 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -62,7 +63,6 @@ import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.DonatedOrganSortOptionsEnum;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
-import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.Page;
@@ -87,6 +87,8 @@ public class OrgansToDonateController extends SubController {
     private final ObservableList<Hospital> hospitals = FXCollections.observableArrayList();
     private final FilteredList<Hospital> filteredHospitals = new FilteredList<>(hospitals);
     private final SortedList<Hospital> sortedHospitals = new SortedList<>(filteredHospitals);
+
+    private final ObservableList<Client> observablePotentialRecipients = FXCollections.observableArrayList();
 
     @FXML
     private Pane menuBarPane;
@@ -156,7 +158,7 @@ public class OrgansToDonateController extends SubController {
     @FXML
     private void initialize() {
         setupOrgansTable();
-        placeholder = new Label("Select an available organ to show potential recipients");
+        placeholder = new Label("Select an available organ to show potential recipients.");
         placeholder.setWrapText(true);
         placeholder.setPadding(new Insets(0, 0, 0, 8));
         placeholder.setTextFill(Color.GREY);
@@ -239,10 +241,15 @@ public class OrgansToDonateController extends SubController {
             }
         });
 
+        potentialRecipients.setItems(observablePotentialRecipients);
+
         tableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             // Showing potential matches for the donated organ
             potentialRecipients.getItems().clear();
-            if (newValue != null) {
+            if (newValue == null) {
+                placeholder.setText("Select an available organ to show potential recipients.");
+            } else {
+                placeholder.setText("Loading potential matches...");
                 displayMatches(newValue);
             }
         });
@@ -296,6 +303,8 @@ public class OrgansToDonateController extends SubController {
         timeUntilExpiryCol.setComparator(Comparator.nullsFirst(Comparator.naturalOrder()));
 
         sortedOrgansToDonate.comparatorProperty().bind(tableView.comparatorProperty());
+
+        tableView.setItems(sortedOrgansToDonate);
     }
 
     /**
@@ -320,24 +329,42 @@ public class OrgansToDonateController extends SubController {
         filterOrgans();
         filterRegions();
 
-        PaginatedDonatedOrgansList newOrgansToDonate = manager.getAllOrgansToDonate(
-                pagination.getCurrentPageIndex() * ROWS_PER_PAGE,
-                ROWS_PER_PAGE,
-                regionsToFilter,
-                organsToFilter,
-                sortPolicy.getSortOption(),
-                sortPolicy.isReversed());
+        Task<PaginatedDonatedOrgansList> task = new Task<PaginatedDonatedOrgansList>() {
+            @Override
+            protected PaginatedDonatedOrgansList call() throws ServerRestException {
+                return manager.getAllOrgansToDonate(
+                        pagination.getCurrentPageIndex() * ROWS_PER_PAGE,
+                        ROWS_PER_PAGE,
+                        regionsToFilter,
+                        organsToFilter,
+                        sortPolicy.getSortOption(),
+                        sortPolicy.isReversed());
+            }
+        };
 
-        observableOrgansToDonate.setAll(newOrgansToDonate.getDonatedOrgans().stream()
-                .map(DonatedOrganView::getDonatedOrgan)
-                .collect(Collectors.toList()));
+        task.setOnSucceeded(success -> {
+            PaginatedDonatedOrgansList newOrgansToDonate = task.getValue();
+            observableOrgansToDonate.setAll(newOrgansToDonate.getDonatedOrgans().stream()
+                    .map(DonatedOrganView::getDonatedOrgan)
+                    .collect(Collectors.toList()));
 
-        int newPageCount = Math.max(1, (newOrgansToDonate.getTotalResults() + ROWS_PER_PAGE - 1) / ROWS_PER_PAGE);
-        if (pagination.getPageCount() != newPageCount) {
-            pagination.setPageCount(newPageCount);
-        }
+            // Update pagination with new values
+            int newPageCount = Math.max(1, (newOrgansToDonate.getTotalResults() + ROWS_PER_PAGE - 1) / ROWS_PER_PAGE);
+            if (pagination.getPageCount() != newPageCount) {
+                pagination.setPageCount(newPageCount);
+            }
+            setupDisplayingXToYOfZText(newOrgansToDonate.getTotalResults());
+        });
 
-        setupDisplayingXToYOfZText(newOrgansToDonate.getTotalResults());
+        task.setOnFailed(fail -> {
+            LOGGER.log(Level.SEVERE, task.getException().getMessage(), task.getException());
+            Notifications.create()
+                    .title("Server Error")
+                    .text("Could not retrieve organs to donate from the server.")
+                    .showError();
+        });
+
+        new Thread(task).start();
     }
 
     private void scheduleOptionsEnabled(boolean state) {
@@ -507,75 +534,112 @@ public class OrgansToDonateController extends SubController {
     }
 
     private void displayMatches(DonatedOrgan selectedOrgan) {
-        try {
-            boolean noPossibleHospital = State.getConfigManager().getHospitals()
-                    .stream()
-                    .noneMatch(hospital -> hospital.hasTransplantProgram(selectedOrgan.getOrganType()));
+        // Retrieve matches
+        Task<List<Client>> getMatchesTask = new Task<List<Client>>() {
+            @Override
+            protected List<Client> call() throws ServerRestException {
+                return manager.getOrganMatches(selectedOrgan);
+            }
+        };
 
-            if (noPossibleHospital) {
-                potentialRecipients.setItems(FXCollections.emptyObservableList());
+        getMatchesTask.setOnSucceeded(success -> {
+            List<Client> matches = getMatchesTask.getValue();
+            observablePotentialRecipients.setAll(matches);
+            if (matches.isEmpty()) {
+                placeholder.setText("No potential recipients for this organ.");
+            }
+        });
+
+        getMatchesTask.setOnFailed(fail -> {
+            LOGGER.log(Level.SEVERE, getMatchesTask.getException().getMessage(), getMatchesTask.getException());
+            Notifications.create()
+                    .title("Server Error")
+                    .text("Could not retrieve potential matches for this organ from the server.")
+                    .showError();
+        });
+
+        // Check if possible, then get matches
+        Task<Boolean> checkPossibleTask = new Task<Boolean>() {
+            @Override
+            protected Boolean call() throws ServerRestException {
+                return com.humanharvest.organz.state.State.getConfigManager().getHospitals().stream()
+                        .anyMatch(hospital -> hospital.hasTransplantProgram(selectedOrgan.getOrganType()));
+            }
+        };
+
+        checkPossibleTask.setOnSucceeded(success -> {
+            if (checkPossibleTask.getValue()) {
+                new Thread(getMatchesTask).start();
+            } else {
+                observablePotentialRecipients.clear();
                 placeholder.setText("There are no hospitals that can transplant this organ. "
                         + "Please contact your system administrator.");
-            } else {
-                List<Client> matches = State.getClientManager().getOrganMatches(selectedOrgan);
-                potentialRecipients.setItems(FXCollections.observableArrayList(matches));
-
-                if (matches.isEmpty()) {
-                    placeholder.setText("No potential recipients for this organ");
-                }
             }
+        });
 
-        } catch (NotFoundException e) {
-            LOGGER.log(Level.WARNING, "Organ not found", e);
+        checkPossibleTask.setOnFailed(fail -> {
+            LOGGER.log(Level.SEVERE, checkPossibleTask.getException().getMessage(), checkPossibleTask.getException());
             Notifications.create()
-                    .title("Organ not found")
-                    .text("The organ could not be found on the server, it may have been deleted")
-                    .showWarning();
-        } catch (ServerRestException e) {
-            LOGGER.log(Level.WARNING, e.getMessage(), e);
-            Notifications.create()
-                    .title("Server error")
-                    .text("Could not access the server, please try again later")
+                    .title("Server Error")
+                    .text("Could not retrieve hospitals from the server.")
                     .showError();
-        }
+        });
+
+        new Thread(checkPossibleTask).start();
     }
 
     private void openManuallyExpireDialog() {
         // Create a popup with a text field to enter the reason
 
         PageNavigator.showTextAlert("Manually Override Organ",
-                "Enter the reason for overriding this organ:", mainController.getStage(),
+                "Enter the reason for overriding this organ:", "Reason:", mainController.getStage(),
                 this::overrideOrgan);
     }
 
     private void overrideOrgan(String reason) {
-        try {
-            StringBuilder overrideReason = new StringBuilder(reason);
-            overrideReason.append("\n").append(LocalDateTime.now().format(dateTimeFormat));
-            if (session.getLoggedInUserType() == UserType.CLINICIAN) {
-                overrideReason.append(String.format("%nOverriden by clinician %d (%s)",
-                        session.getLoggedInClinician().getStaffId(), session.getLoggedInClinician().getFullName()));
-            } else if (session.getLoggedInUserType() == UserType.ADMINISTRATOR) {
-                overrideReason.append(String.format("%nOverriden by admin '%s'.",
-                        session.getLoggedInAdministrator().getUsername()));
-            }
-            State.getClientResolver().manuallyOverrideOrgan(selectedOrgan, overrideReason.toString());
-            PageNavigator.refreshAllWindows();
-        } catch (IfMatchFailedException exc) {
-            // TODO deal with outdated error
-        } catch (NotFoundException e) {
-            LOGGER.log(Level.WARNING, e.getMessage(), e);
-            Notifications.create()
-                    .title("Client/Organ Not Found")
-                    .text("The client/donated organ could not be found on the server; it may have been deleted.")
-                    .showWarning();
-        } catch (ServerRestException e) {
-            LOGGER.log(Level.WARNING, e.getMessage(), e);
-            Notifications.create()
-                    .title("Server Error")
-                    .text("A server error occurred when overriding this donated organ; please try again later.")
-                    .showError();
+        // Create the override reason
+        StringBuilder overrideReason = new StringBuilder(reason);
+        overrideReason.append("\n").append(LocalDateTime.now().format(dateTimeFormat));
+        if (session.getLoggedInUserType() == UserType.CLINICIAN) {
+            overrideReason.append(String.format("%nOverriden by clinician %d (%s)",
+                    session.getLoggedInClinician().getStaffId(), session.getLoggedInClinician().getFullName()));
+        } else if (session.getLoggedInUserType() == UserType.ADMINISTRATOR) {
+            overrideReason.append(String.format("%nOverriden by admin '%s'.",
+                    session.getLoggedInAdministrator().getUsername()));
         }
+
+        Task<Void> task = new Task<Void>() {
+            @Override
+            protected Void call() throws ServerRestException {
+                com.humanharvest.organz.state.State.getClientResolver()
+                        .manuallyOverrideOrgan(selectedOrgan, overrideReason.toString());
+                return null;
+            }
+        };
+
+        task.setOnSucceeded(success -> PageNavigator.refreshAllWindows());
+
+        task.setOnFailed(fail -> {
+            try {
+                throw task.getException();
+            } catch (NotFoundException exc) {
+                LOGGER.log(Level.WARNING, exc.getMessage(), exc);
+                Notifications.create()
+                        .title("Client/Organ Not Found")
+                        .text("The client/donated organ could not be found on the server; it may have been deleted.")
+                        .showWarning();
+            } catch (ServerRestException exc) {
+                LOGGER.log(Level.WARNING, exc.getMessage(), exc);
+                Notifications.create()
+                        .title("Server Error")
+                        .text("A server error occurred when overriding this donated organ; please try again later.")
+                        .showError();
+            } catch (Throwable exc) {
+                LOGGER.log(Level.SEVERE, "Error occurred when overriding organ.", exc);
+            }
+        });
+
+        new Thread(task).start();
     }
 
     /**
@@ -587,7 +651,6 @@ public class OrgansToDonateController extends SubController {
         // Only refresh this page if they have not selected a potential recipient
         if (potentialRecipients.getSelectionModel().getSelectedItems().size() != 1) {
             updateOrgansToDonateList();
-            tableView.setItems(sortedOrgansToDonate);
         }
     }
 

@@ -62,8 +62,6 @@ public class ViewProceduresController extends SubController {
     private Client client;
 
     @FXML
-    private Pane sidebarPane;
-    @FXML
     private Pane newProcedurePane, procedureButtonsPane, menuBarPane;
 
     @FXML

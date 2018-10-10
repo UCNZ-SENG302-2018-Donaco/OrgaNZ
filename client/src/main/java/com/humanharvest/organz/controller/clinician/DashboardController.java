@@ -55,6 +55,7 @@ public class DashboardController extends SubController {
     private ListView<DonatedOrgan> expiringOrgansList;
 
     private final ObservableList<DonatedOrgan> observableOrgansToDonate = FXCollections.observableArrayList();
+    private final ObservableList<Client> observableRecentlyDeceasedDonors = FXCollections.observableArrayList();
 
     private Map<Client, Image> profilePictureStore = new HashMap<>();
     private Map<Organ, Image> organImageMap = new HashMap<>();
@@ -106,10 +107,6 @@ public class DashboardController extends SubController {
             return item;
         });
 
-        //Placeholders
-        expiringOrgansList.setPlaceholder(new Label("Loading expiring organs..."));
-
-        // Double clicking to open the organ's deceased donor's profile
         expiringOrgansList.setOnMouseClicked(mouseEvent -> {
             DonatedOrgan organ = expiringOrgansList.getSelectionModel().getSelectedItem();
             Client client = organ == null ? null : organ.getDonor();
@@ -117,7 +114,6 @@ public class DashboardController extends SubController {
         });
 
         // Recently Deceased Donors setup
-
         deceasedDonorsList.setItems(FXCollections.observableArrayList(manager.getViableDeceasedDonors()));
         deceasedDonorsList.setCellFactory(param -> {
             DeceasedDonorCell item = new DeceasedDonorCell(profilePictureStore);
@@ -144,7 +140,7 @@ public class DashboardController extends SubController {
         };
 
         task.setOnSucceeded(success -> {
-            statistics = manager.getStatistics();
+            statistics = task.getValue();
             totalClientsNum.setText(String.valueOf(statistics.getClientCount()));
             organsNum.setText(String.valueOf(statistics.getOrganCount()));
             requestNum.setText(String.valueOf(statistics.getRequestCount()));
@@ -172,7 +168,7 @@ public class DashboardController extends SubController {
         };
 
         task.setOnSucceeded(success -> {
-            deceasedDonorsList.getItems().setAll(task.getValue());
+            observableRecentlyDeceasedDonors.setAll(task.getValue());
             deceasedDonorsList.setPlaceholder(new Label("There are no clients with available organs."));
         });
 

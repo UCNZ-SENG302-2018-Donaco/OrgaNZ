@@ -4,12 +4,15 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Pagination;
@@ -22,6 +25,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import org.controlsfx.control.CheckComboBox;
+import org.controlsfx.control.Notifications;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.TransplantRequest;
@@ -32,6 +36,7 @@ import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
+import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
@@ -43,6 +48,7 @@ import com.humanharvest.organz.views.client.PaginatedTransplantList;
  */
 public class TransplantsController extends SubController {
 
+    private static final Logger LOGGER = Logger.getLogger(TransplantsController.class.getName());
     private static final int ROWS_PER_PAGE = 30;
     private static final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("d MMM yyyy hh:mm a");
 
@@ -132,6 +138,7 @@ public class TransplantsController extends SubController {
     @FXML
     private void initialize() {
         setupTable();
+
         for (Region region : Region.values()) {
             regionChoice.getItems().add(region.toString());
         }
@@ -149,16 +156,6 @@ public class TransplantsController extends SubController {
 
         //On pagination update call createPage
         pagination.setPageFactory(this::createPage);
-
-        //Link the sorted list sort to the tableView sort
-        sortedTransplants.comparatorProperty().bind(tableView.comparatorProperty());
-        //Bind the tableView to the sorted list
-        tableView.setItems(sortedTransplants);
-
-        //Set initial pagination
-        int numberOfPages = Math.max(1, (sortedTransplants.size() + ROWS_PER_PAGE - 1) / ROWS_PER_PAGE);
-        pagination.setPageCount(numberOfPages);
-        createPage(pagination.getCurrentPageIndex());
     }
 
     /**
@@ -185,6 +182,13 @@ public class TransplantsController extends SubController {
         // Format all the datetime cells
         dateTimeCol.setCellFactory(cell -> new FormattedLocalDateTimeCell<>(dateTimeFormat));
 
+        // Sets the comparator for sorting by organ column.
+        organCol.setComparator(Comparator.comparing(Organ::toString));
+
+        // Sets the comparator for sorting by region column.
+        // Nulls are ordered first, then alphabetical order of the region name.
+        regionCol.setComparator(Comparator.nullsFirst(Comparator.naturalOrder()));
+
         // Colour each row if it is a request for an organ that the client is also registered to donate.
         tableView.setRowFactory(row -> colourIfDonatedAndRequested());
 
@@ -206,30 +210,46 @@ public class TransplantsController extends SubController {
             }
         });
 
-        // Sets the comparator for sorting by organ column.
-        organCol.setComparator(Comparator.comparing(Organ::toString));
+        // Link the sorted list sort to the tableView sort
+        sortedTransplants.comparatorProperty().bind(tableView.comparatorProperty());
 
-        // Sets the comparator for sorting by region column.
-
-        //Nulls are ordered first, then alphabetical order of the region name.
-        regionCol.setComparator(Comparator.nullsFirst(Comparator.naturalOrder()));
+        // Bind the tableView to the sorted list
+        tableView.setItems(sortedTransplants);
     }
 
     private void updateTransplantRequestList() {
-        PaginatedTransplantList newTransplantRequests = manager.getAllCurrentTransplantRequests(
-                pagination.getCurrentPageIndex() * ROWS_PER_PAGE,
-                ROWS_PER_PAGE,
-                new HashSet<>(regionChoice.getCheckModel().getCheckedItems()),
-                new HashSet<>(organChoice.getCheckModel().getCheckedItems()));
+        Task<PaginatedTransplantList> task = new Task<PaginatedTransplantList>() {
+            @Override
+            protected PaginatedTransplantList call() throws ServerRestException {
+                return manager.getAllCurrentTransplantRequests(
+                        pagination.getCurrentPageIndex() * ROWS_PER_PAGE,
+                        ROWS_PER_PAGE,
+                        new HashSet<>(regionChoice.getCheckModel().getCheckedItems()),
+                        new HashSet<>(organChoice.getCheckModel().getCheckedItems()));
+            }
+        };
 
-        observableTransplants.setAll(newTransplantRequests.getTransplantRequests());
+        task.setOnSucceeded(success -> {
+            PaginatedTransplantList results = task.getValue();
+            observableTransplants.setAll(results.getTransplantRequests());
 
-        int newPageCount = Math.max(1, (newTransplantRequests.getTotalResults() + ROWS_PER_PAGE - 1) / ROWS_PER_PAGE);
-        if (pagination.getPageCount() != newPageCount) {
-            pagination.setPageCount(newPageCount);
-        }
+            // Refresh pagination using new data
+            int newPageCount = Math.max(1, (results.getTotalResults() + ROWS_PER_PAGE - 1) / ROWS_PER_PAGE);
+            if (pagination.getPageCount() != newPageCount) {
+                pagination.setPageCount(newPageCount);
+            }
+            setupDisplayingXToYOfZText(results.getTotalResults());
+        });
 
-        setupDisplayingXToYOfZText(newTransplantRequests.getTotalResults());
+        task.setOnFailed(fail -> {
+            LOGGER.log(Level.SEVERE, task.getException().getMessage(), task.getException());
+            Notifications.create()
+                    .title("Server Error")
+                    .text("Could not retrieve transplant requests from the server.")
+                    .showError();
+        });
+
+        new Thread(task).start();
     }
 
     /**

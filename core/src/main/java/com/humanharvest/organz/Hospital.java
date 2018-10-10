@@ -57,9 +57,9 @@ public class Hospital {
 
     @JsonView(Views.Overview.class)
     private String name;
-    @JsonView(Views.Details.class)
+    @JsonView(Views.Overview.class)
     private double latitude = Double.NaN;
-    @JsonView(Views.Details.class)
+    @JsonView(Views.Overview.class)
     private double longitude = Double.NaN;
     @JsonView(Views.Details.class)
     private String address;
