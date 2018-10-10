@@ -21,6 +21,7 @@
         <ColumnConstraints hgrow="NEVER" minWidth="10.0" />
         <ColumnConstraints hgrow="NEVER" minWidth="10.0" />
         <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="10.0" />
+            <ColumnConstraints hgrow="NEVER" maxWidth="35.0" prefWidth="40.0" />
         <ColumnConstraints hgrow="NEVER" minWidth="10.0" />
         <ColumnConstraints hgrow="NEVER" minWidth="10.0" />
         <ColumnConstraints hgrow="NEVER" minWidth="10.0" />
@@ -70,7 +71,7 @@
           <font>
             <Font name="System Bold" size="20.0" />
           </font></Label>
-        <ToggleButton fx:id="projectButton" mnemonicParsing="false" onAction="#projectWindow" GridPane.columnIndex="6">
+        <ToggleButton fx:id="projectButton" mnemonicParsing="false" onAction="#projectWindow" GridPane.columnIndex="7">
           <graphic>
             <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
               <image>
@@ -79,14 +80,14 @@
             </ImageView>
           </graphic>
         </ToggleButton>
-        <Button fx:id="duplicateButton" mnemonicParsing="false" onAction="#duplicateWindow" GridPane.columnIndex="7">
+        <Button fx:id="duplicateButton" mnemonicParsing="false" onAction="#duplicateWindow" GridPane.columnIndex="8">
           <graphic>
             <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
               <image>
                 <Image url="/images/actions/duplicate.png" />
               </image></ImageView>
           </graphic></Button>
-        <Button fx:id="logoutButton" mnemonicParsing="false" onAction="#logout" GridPane.columnIndex="8">
+        <Button fx:id="logoutButton" mnemonicParsing="false" onAction="#logout" GridPane.columnIndex="9">
           <graphic>
             <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
               <image>
@@ -94,7 +95,7 @@
               </image>
             </ImageView>
           </graphic></Button>
-        <Button fx:id="exitButton" mnemonicParsing="false" onAction="#exit" GridPane.columnIndex="9">
+        <Button fx:id="exitButton" mnemonicParsing="false" onAction="#exit" GridPane.columnIndex="10">
           <graphic>
             <ImageView fitHeight="25.0" fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
               <image>
