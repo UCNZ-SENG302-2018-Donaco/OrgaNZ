@@ -141,7 +141,16 @@ public class SpiderWebController extends SubController {
         HBox buttons = new HBox();
         buttons.setSpacing(10);
         buttons.getChildren().addAll(exitButton, homeButton, resetButton);
-        canvas.getChildren().add(buttons);
+
+        MainController buttonsMain = PageNavigator.openNewWindow();
+        buttonsMain.getStyles().clear();
+        buttonsMain.setPage(Page.BACKDROP, buttons);
+
+        FocusArea buttonsFocusArea = (FocusArea) buttonsMain.getPane().getUserData();
+        buttonsFocusArea.setTranslatable(false);
+        buttonsFocusArea.setRotatable(false);
+        buttonsFocusArea.setScalable(false);
+        buttonsFocusArea.setCollidable(false);
     }
 
     /**
