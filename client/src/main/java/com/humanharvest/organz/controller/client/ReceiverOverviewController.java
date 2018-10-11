@@ -1,5 +1,7 @@
 package com.humanharvest.organz.controller.client;
 
+import static com.humanharvest.organz.touch.TouchUtils.convertTouchEvent;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.time.Duration;
@@ -15,6 +17,8 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TouchEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -27,6 +31,7 @@ import com.humanharvest.organz.TransplantRecord;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
+import com.humanharvest.organz.skin.ClickHelper;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.DurationFormatter;
 import com.humanharvest.organz.utilities.DurationFormatter.DurationFormat;
@@ -46,6 +51,8 @@ public class ReceiverOverviewController extends SubController {
     private Client donor;
     private TransplantRequest request;
     private Pane matchesPane;
+
+    private final ClickHelper clickHelper = new ClickHelper();
 
     @FXML
     private ImageView imageView;
@@ -103,11 +110,21 @@ public class ReceiverOverviewController extends SubController {
         // Set wait time
         updateWaitTime();
 
-        // Track the adding of panes with the spiderweb pane collection.
         receiverVBox.setOnMouseClicked(mouseEvent -> {
             if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 2) {
                 openRecipientWindow();
             }
+        });
+
+        receiverVBox.addEventHandler(TouchEvent.TOUCH_RELEASED, event -> {
+            clickHelper.calculateClickCount(event);
+
+            MouseEvent mouseEvent = convertTouchEvent(event, event.getTarget(),
+                    clickHelper.getClickCount(),
+                    MouseEvent.MOUSE_CLICKED);
+
+            receiverVBox.getOnMouseClicked().handle(mouseEvent);
+            event.consume();
         });
     }
 

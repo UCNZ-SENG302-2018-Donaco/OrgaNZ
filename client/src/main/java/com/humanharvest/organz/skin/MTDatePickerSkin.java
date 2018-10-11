@@ -1,10 +1,13 @@
 package com.humanharvest.organz.skin;
 
+import static com.humanharvest.organz.touch.TouchUtils.convertTouchEvent;
+
 import java.time.LocalDate;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.BooleanPropertyBase;
 import javafx.css.PseudoClass;
+import javafx.event.Event;
 import javafx.event.EventTarget;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
@@ -17,7 +20,7 @@ import javafx.scene.transform.Rotate;
 import com.sun.javafx.scene.control.skin.DatePickerSkin;
 import org.tuiofx.widgets.utils.Util;
 
-public class MTDatePickerSkin extends DatePickerSkin {
+public class MTDatePickerSkin extends DatePickerSkin implements IgnoreSynthesized {
 
     private static final PseudoClass PRESSED_PSEUDO_CLASS = PseudoClass.getPseudoClass("pressed");
 
@@ -104,6 +107,29 @@ public class MTDatePickerSkin extends DatePickerSkin {
             this.getPopupContent().addEventHandler(TouchEvent.TOUCH_PRESSED, event -> touchPressed.setValue(true));
         }
 
+        getSkinnable().addEventFilter(TouchEvent.TOUCH_RELEASED, event -> {
+            EventTarget eventTarget = findDatePicker(event.getTarget());
+            getBehavior().mouseReleased(convertTouchEvent(event, eventTarget, 1,
+                    MouseEvent.MOUSE_RELEASED));
+            event.consume();
+        });
+
+        getPopupContent().addEventFilter(TouchEvent.TOUCH_RELEASED, Event::consume);
+    }
+
+    private static EventTarget findDatePicker(EventTarget target) {
+
+        EventTarget node = target;
+
+        while (node instanceof Node) {
+            if (node instanceof DatePicker) {
+                return node;
+            }
+
+            node = ((Node)node).getParent();
+        }
+
+        return target;
     }
 
     private boolean isComboBoxOrButton(EventTarget target, ComboBoxBase<LocalDate> comboBoxBase) {

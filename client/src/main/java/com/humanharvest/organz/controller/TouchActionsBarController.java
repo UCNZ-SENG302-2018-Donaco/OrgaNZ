@@ -84,7 +84,7 @@ public class TouchActionsBarController extends SubController {
         if (!ProjectionHelper.canProject()) {
             projectButton.setDisable(true);
         }
-        hamburger.addEventHandler(MouseEvent.MOUSE_CLICKED, e -> toggleSidebar(mainController.getDrawer()));
+        hamburger.setOnAction(event -> toggleSidebar(mainController.getDrawer()));
 
         if (State.getSpiderwebDonor() != null) {
             logoutButton.setDisable(true);

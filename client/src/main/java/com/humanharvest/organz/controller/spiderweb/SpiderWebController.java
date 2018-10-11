@@ -1,12 +1,15 @@
 package com.humanharvest.organz.controller.spiderweb;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.CacheHint;
@@ -35,6 +38,7 @@ import com.humanharvest.organz.touch.PhysicsHandler;
 import com.humanharvest.organz.touch.PointUtils;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
+import com.humanharvest.organz.utilities.view.PageNavigatorTouch;
 import com.humanharvest.organz.utilities.view.WindowContext;
 
 /**
@@ -141,7 +145,16 @@ public class SpiderWebController extends SubController {
         HBox buttons = new HBox();
         buttons.setSpacing(10);
         buttons.getChildren().addAll(exitButton, homeButton, resetButton);
-        canvas.getChildren().add(buttons);
+
+        MainController buttonsMain = PageNavigator.openNewWindow(300, 25);
+        buttonsMain.getStyles().clear();
+        buttonsMain.setPage(Page.BACKDROP, buttons);
+
+        FocusArea buttonsFocusArea = (FocusArea) buttonsMain.getPane().getUserData();
+        buttonsFocusArea.setTranslatable(false);
+        buttonsFocusArea.setRotatable(false);
+        buttonsFocusArea.setScalable(false);
+        buttonsFocusArea.setCollidable(false);
     }
 
     /**
@@ -224,6 +237,14 @@ public class SpiderWebController extends SubController {
         List<MainController> toClose = new ArrayList<>(State.getMainControllers());
         toClose.forEach(MainController::closeWindow);
         rootPane.getChildren().clear();
+
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            Pane backPane = loader.load(PageNavigatorTouch.class.getResourceAsStream(Page.BACKDROP.getPath()));
+            rootPane.getChildren().add(backPane);
+        } catch (IOException exc) {
+            LOGGER.log(Level.SEVERE, exc.getMessage(), exc);
+        }
 
         // We need to close the Timeline to clear resources
         organWithRecipientsList.forEach(OrganWithRecipients::closeRefresher);

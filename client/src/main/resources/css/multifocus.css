@@ -4,6 +4,10 @@
   -fx-skin: "com.humanharvest.organz.skin.MTContextMenuSkin";
 }
 
+.choice-box {
+  -fx-skin: "com.humanharvest.organz.skin.MTChoiceBoxSkin";
+}
+
 .combo-box {
   -fx-skin: "com.humanharvest.organz.skin.CustomMTComboBoxListViewSkin";
 }
@@ -12,11 +16,17 @@
   -fx-skin: "com.humanharvest.organz.skin.MTDatePickerSkin";
 }
 
-/* All below are defaults from TuioFX. All above are custom */
-
 .button,
 .button:focused {
-  -fx-skin: "org.tuiofx.widgets.skin.MTButtonSkin";
+  -fx-skin: "com.humanharvest.organz.skin.MTButtonSkin";
+}
+
+.toggle-button {
+  -fx-skin: "com.humanharvest.organz.skin.MTToggleButtonSkin";
+}
+
+#key-button {
+  -fx-background-color: #d3e9ff !important;
 }
 
 .scroll-pane {
@@ -27,27 +37,23 @@
   -fx-skin: "org.tuiofx.widgets.skin.MTCheckBoxSkin";
 }
 
-.choice-box {
-  -fx-skin: "org.tuiofx.widgets.skin.ChoiceBoxSkinAndroid";
-}
-
-.toggle-button {
-  -fx-skin: "org.tuiofx.widgets.skin.ToggleButtonSkinAndroid";
-}
-
 .slider {
   -fx-skin: "org.tuiofx.widgets.skin.MTSliderSkin";
 }
 
 .text-field {
-  -fx-skin: "org.tuiofx.widgets.skin.TextFieldSkinAndroid";
+  -fx-skin: "com.humanharvest.organz.skin.MTTextFieldSkin";
 }
 
 .text-area {
-  -fx-skin: "org.tuiofx.widgets.skin.TextAreaSkinAndroid";
+  -fx-skin: "com.humanharvest.organz.skin.MTTextAreaSkin";
   -fx-cursor: default;
 }
 
 .list-cell {
   -fx-skin: "org.tuiofx.widgets.skin.MTListCellSkin";
+}
+
+.list-view {
+  -fx-skin: "com.humanharvest.organz.skin.MTListViewSkin";
 }

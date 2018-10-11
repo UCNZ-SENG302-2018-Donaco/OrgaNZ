@@ -17,8 +17,12 @@ public abstract class ReflectionUtils {
     }
 
     public static <T> T getField(Object o, String fieldName) {
+        return getField(o.getClass(), o, fieldName);
+    }
+
+    public static <T> T getField(Class<?> clazz, Object o, String fieldName) {
         try {
-            Field field = o.getClass().getDeclaredField(fieldName);
+            Field field = clazz.getDeclaredField(fieldName);
             field.setAccessible(true);
             return (T) field.get(o);
         } catch (NoSuchFieldException | IllegalAccessException e) {
@@ -27,8 +31,12 @@ public abstract class ReflectionUtils {
     }
 
     public static <T> void setField(Object o, String fieldName, T value) {
+        setField(o.getClass(), o, fieldName, value);
+    }
+
+    public static <T> void setField(Class<?> clazz, Object o, String fieldName, T value) {
         try {
-            Field field = o.getClass().getDeclaredField(fieldName);
+            Field field = clazz.getDeclaredField(fieldName);
             field.setAccessible(true);
             field.set(o, value);
         } catch (NoSuchFieldException | IllegalAccessException e) {
@@ -60,7 +68,11 @@ public abstract class ReflectionUtils {
     }
 
     public static <T> T invoke(Object o, String methodName, Object... parameters) {
-        Method method = findMethod(o.getClass().getDeclaredMethods(), methodName, parameters.length);
+        return invoke(o.getClass(), o, methodName, parameters);
+    }
+
+    public static <T> T invoke(Class<?> clazz, Object o, String methodName, Object... parameters) {
+        Method method = findMethod(clazz.getDeclaredMethods(), methodName, parameters.length);
         Objects.requireNonNull(method);
         method.setAccessible(true);
         try {

@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<HBox maxHeight="50.0" prefHeight="50.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.client.DonatedOrganOverviewController">
+<HBox maxHeight="50.0" prefHeight="50.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.client.DonatedOrganOverviewController">
   <children>
       <BorderPane prefHeight="50.0" prefWidth="50.0" style="-fx-background-color: #dddddd;">
          <center>
@@ -64,7 +64,7 @@
             </Label>
          </children>
       </GridPane>
-    <ImageView fx:id="linkImage" fitHeight="50.0" onMouseClicked="#goToLinkPage" fitWidth="50.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="2">
+    <ImageView fx:id="linkImage" fitHeight="50.0" fitWidth="50.0" onMouseClicked="#goToLinkPage" onTouchPressed="#goToLinkPage" pickOnBounds="true" preserveRatio="true" styleClass="overviewLink" GridPane.columnIndex="2">
          <HBox.margin>
             <Insets left="10.0" />
          </HBox.margin>
