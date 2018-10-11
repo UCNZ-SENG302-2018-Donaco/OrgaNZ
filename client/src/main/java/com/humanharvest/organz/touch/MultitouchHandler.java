@@ -50,8 +50,13 @@ public final class MultitouchHandler {
 
     private static Pane rootPane;
     private static PhysicsHandler physicsHandler;
+    private static boolean handlingTouch = true;
 
     private MultitouchHandler() {
+    }
+
+    public static void handleTouch(boolean enabled) {
+        handlingTouch = enabled;
     }
 
     /**
@@ -339,26 +344,28 @@ public final class MultitouchHandler {
     }
 
     private static void handleTouchEvent(TouchEvent event) {
-        TouchPoint touchPoint = event.getTouchPoint();
-        CurrentTouch currentTouch = getCurrentTouch(touchPoint);
+        if (handlingTouch) {
+            TouchPoint touchPoint = event.getTouchPoint();
+            CurrentTouch currentTouch = getCurrentTouch(touchPoint);
 
-        if (event.getEventType() == TouchEvent.TOUCH_RELEASED) {
-            removeCurrentTouch(touchPoint);
-        }
-
-        currentTouch.getPane().ifPresent(pane -> {
-            FocusArea focusArea = (FocusArea) pane.getUserData();
-            focusArea.handleTouchEvent(event, currentTouch);
-        });
-
-        currentTouch.getKeyboardPane().ifPresent(keyboardPane -> {
             if (event.getEventType() == TouchEvent.TOUCH_RELEASED) {
-                KeyButton keyButton = getKeyButton((Node) event.getTarget());
-                if (keyButton != null) {
-                    keyButton.fireEvent(new KeyButtonEvent(keyButton, KeyButtonEvent.SHORT_PRESSED));
-                }
+                removeCurrentTouch(touchPoint);
             }
-        });
+
+            currentTouch.getPane().ifPresent(pane -> {
+                FocusArea focusArea = (FocusArea) pane.getUserData();
+                focusArea.handleTouchEvent(event, currentTouch);
+            });
+
+            currentTouch.getKeyboardPane().ifPresent(keyboardPane -> {
+                if (event.getEventType() == TouchEvent.TOUCH_RELEASED) {
+                    KeyButton keyButton = getKeyButton((Node) event.getTarget());
+                    if (keyButton != null) {
+                        keyButton.fireEvent(new KeyButtonEvent(keyButton, KeyButtonEvent.SHORT_PRESSED));
+                    }
+                }
+            });
+        }
 
         event.consume();
     }

@@ -54,6 +54,7 @@ import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.touch.MultitouchHandler;
 import com.humanharvest.organz.utilities.enums.BloodType;
 import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Gender;
@@ -508,6 +509,7 @@ public class ViewClientController extends SubController {
      */
     @FXML
     public void choosePhotoClicked() {
+        MultitouchHandler.handleTouch(false);
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Upload Profile Image");
         fileChooser.getExtensionFilters().addAll(
@@ -515,6 +517,8 @@ public class ViewClientController extends SubController {
         );
 
         File selectedFile = fileChooser.showOpenDialog(State.getPrimaryStage());
+        MultitouchHandler.handleTouch(true);
+
         if (selectedFile != null) {
             if (selectedFile.length() > MAX_FILE_SIZE) {
                 PageNavigator.showAlert(AlertType.WARNING, "Image Size Too Large",

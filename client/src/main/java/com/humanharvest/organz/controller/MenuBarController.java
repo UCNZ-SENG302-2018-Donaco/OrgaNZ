@@ -34,6 +34,7 @@ import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.state.State.UiType;
+import com.humanharvest.organz.touch.MultitouchHandler;
 import com.humanharvest.organz.utilities.CacheManager;
 import com.humanharvest.organz.utilities.exceptions.BadRequestException;
 import com.humanharvest.organz.utilities.view.Page;
@@ -374,6 +375,7 @@ public class MenuBarController extends SubController {
     @FXML
     private void saveClients() {
         try {
+            MultitouchHandler.handleTouch(false);
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Save Clients File");
             fileChooser.setInitialDirectory(
@@ -382,6 +384,8 @@ public class MenuBarController extends SubController {
             );
             fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON files (*.json)", "*.json"));
             File file = fileChooser.showSaveDialog(mainController.getStage());
+            MultitouchHandler.handleTouch(true);
+
             if (file != null) {
                 try (FileOutputStream output = new FileOutputStream(file)) {
                     output.write(State.getFileResolver().exportClients());
@@ -407,6 +411,7 @@ public class MenuBarController extends SubController {
     @FXML
     private void saveClinicians() {
         try {
+            MultitouchHandler.handleTouch(false);
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Save Clinicians File");
             fileChooser.setInitialDirectory(
@@ -415,6 +420,8 @@ public class MenuBarController extends SubController {
             );
             fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON files (*.json)", "*.json"));
             File file = fileChooser.showSaveDialog(mainController.getStage());
+            MultitouchHandler.handleTouch(true);
+
             if (file != null) {
                 try (FileOutputStream output = new FileOutputStream(file)) {
                     output.write(State.getFileResolver().exportClinicians());
@@ -449,6 +456,7 @@ public class MenuBarController extends SubController {
     }
 
     private void loadFile() {
+        MultitouchHandler.handleTouch(false);
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Load Clients File");
         try {
@@ -462,6 +470,7 @@ public class MenuBarController extends SubController {
                 "JSON/CSV files (*.json, *.csv)",
                 "*.json", "*.csv"));
         File file = fileChooser.showOpenDialog(State.getPrimaryStage());
+        MultitouchHandler.handleTouch(true);
 
         if (file != null) {
             String format = getFileExtension(file.getName());
