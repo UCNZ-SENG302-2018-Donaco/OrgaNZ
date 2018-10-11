@@ -242,6 +242,7 @@ public class SpiderWebController extends SubController {
             FXMLLoader loader = new FXMLLoader();
             Pane backPane = loader.load(PageNavigatorTouch.class.getResourceAsStream(Page.BACKDROP.getPath()));
             rootPane.getChildren().add(backPane);
+            backPane.resize(rootPane.getWidth(), rootPane.getHeight());
         } catch (IOException exc) {
             LOGGER.log(Level.SEVERE, exc.getMessage(), exc);
         }

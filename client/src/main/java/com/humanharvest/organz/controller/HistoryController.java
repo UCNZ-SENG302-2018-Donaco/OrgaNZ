@@ -40,7 +40,7 @@ public class HistoryController extends SubController {
     @FXML
     private TableView<HistoryItem> historyTable;
     @FXML
-    private Pane sidebarPane, menuBarPane;
+    private Pane menuBarPane;
 
     public HistoryController() {
         this.session = State.getSession();
@@ -70,7 +70,7 @@ public class HistoryController extends SubController {
             mainController.setTitle("System History");
         }
 
-        sortedHistoryItems.setComparator(Comparator.comparing(HistoryItem::getTimestamp));
+        sortedHistoryItems.setComparator(Comparator.comparing(HistoryItem::getTimestamp).reversed());
         historyTable.setItems(sortedHistoryItems);
 
         mainController.loadNavigation(menuBarPane);
