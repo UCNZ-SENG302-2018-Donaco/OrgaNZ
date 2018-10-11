@@ -146,7 +146,7 @@ public class SpiderWebController extends SubController {
         buttons.setSpacing(10);
         buttons.getChildren().addAll(exitButton, homeButton, resetButton);
 
-        MainController buttonsMain = PageNavigator.openNewWindow();
+        MainController buttonsMain = PageNavigator.openNewWindow(300, 25);
         buttonsMain.getStyles().clear();
         buttonsMain.setPage(Page.BACKDROP, buttons);
 
