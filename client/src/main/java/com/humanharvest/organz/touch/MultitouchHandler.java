@@ -243,6 +243,9 @@ public final class MultitouchHandler {
             if (node instanceof ImageView && node.getStyleClass().contains("overviewLink")) {
                 return Optional.of(node);
             }
+            if (node.getStyleClass().contains("recipient-pane")) {
+                return Optional.of(node);
+            }
 
             // Pagination buttons
             if (Objects.equals(
