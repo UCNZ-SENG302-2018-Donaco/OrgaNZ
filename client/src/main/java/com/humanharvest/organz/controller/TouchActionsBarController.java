@@ -130,7 +130,9 @@ public class TouchActionsBarController extends SubController {
     private void navigateHome() {
         // We need to navigate to our dashboard (for now we're just loading the search clients page).
         PageNavigator.loadPage(Page.DASHBOARD, mainController);
-        ProjectionHelper.updateProjection(mainController);
+        if (mainController.isProjecting()) {
+            ProjectionHelper.updateProjection(mainController);
+        }
     }
 
     /**
