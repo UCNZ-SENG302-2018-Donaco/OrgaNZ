@@ -97,9 +97,7 @@ public class DashboardController extends SubController {
      */
     @FXML
     private void initialize() {
-
         // Expiring Organs setup
-
         expiringOrgansList.setItems(observableOrgansToDonate);
         expiringOrgansList.setCellFactory(param -> {
             DonatedOrganCell item = new DonatedOrganCell(organImageMap);
@@ -113,16 +111,13 @@ public class DashboardController extends SubController {
             ClickUtilities.openClientOnDoubleClick(mouseEvent, client, mainController);
         });
 
-        // Recently Deceased Donors setup
-        deceasedDonorsList.setItems(FXCollections.observableArrayList(manager.getViableDeceasedDonors()));
+        // Recently deceased donors setup
+        deceasedDonorsList.setItems(observableRecentlyDeceasedDonors);
         deceasedDonorsList.setCellFactory(param -> {
             DeceasedDonorCell item = new DeceasedDonorCell(profilePictureStore);
             item.setMaxWidth(deceasedDonorsList.getWidth());
             return item;
         });
-
-        // Placeholders
-        deceasedDonorsList.setPlaceholder(new Label("Loading recently deceased donors..."));
 
         // Double clicking to open a deceased donor's profile
         deceasedDonorsList.setOnMouseClicked(mouseEvent ->
