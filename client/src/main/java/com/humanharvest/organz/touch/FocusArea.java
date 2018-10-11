@@ -36,6 +36,8 @@ import javafx.scene.transform.Transform;
 import javafx.scene.transform.Translate;
 
 import com.humanharvest.organz.skin.MTDatePickerSkin;
+import com.humanharvest.organz.skin.MTTextAreaSkin;
+import com.humanharvest.organz.skin.MTTextFieldSkin;
 import com.humanharvest.organz.utilities.ReflectionException;
 import com.humanharvest.organz.utilities.ReflectionUtils;
 import com.humanharvest.organz.utilities.Tuple;
@@ -48,7 +50,6 @@ import org.tuiofx.widgets.skin.KeyboardManager;
 import org.tuiofx.widgets.skin.MTComboBoxListViewSkin;
 import org.tuiofx.widgets.skin.MTContextMenuSkin;
 import org.tuiofx.widgets.skin.OnScreenKeyboard;
-import org.tuiofx.widgets.skin.TextAreaSkinAndroid;
 import org.tuiofx.widgets.skin.TextFieldSkinAndroid;
 import org.tuiofx.widgets.utils.Util;
 
@@ -120,13 +121,13 @@ public class FocusArea implements InvalidationListener {
         if (node instanceof Skinnable) {
             Skin<?> skin = ((Skinnable) node).getSkin();
 
-            if (skin instanceof TextFieldSkinAndroid) {
+            if (skin instanceof MTTextFieldSkin) {
                 skinHandlers.add(new TextFieldSkinConsumer(skin));
             } else if (skin instanceof MTComboBoxListViewSkin) {
                 skinHandlers.add(new ComboBoxListSkinConsumer(skin));
             } else if (skin instanceof MTContextMenuSkin) {
                 skinHandlers.add(new ContextMenuSkinConsumer(skin));
-            } else if (skin instanceof TextAreaSkinAndroid) {
+            } else if (skin instanceof MTTextAreaSkin) {
                 skinHandlers.add(new TextAreaSkinConsumer(skin));
             } else if (skin instanceof ChoiceBoxSkinAndroid) {
                 skinHandlers.add(new ChoiceBoxSkinConsumer((Skin<ChoiceBox<?>>) skin));
@@ -276,12 +277,6 @@ public class FocusArea implements InvalidationListener {
         OnScreenKeyboard<?> keyboard = KeyboardManager.getInstance().getKeyboard(pane);
         ReflectionUtils.<KeyboardPane>getField(keyboard.getSkin(), "keyboardPane").toFront();
 
-        // Forwards the touch event to an important node.
-        currentTouch.getImportantElement().ifPresent(node -> {
-            NodeEventDispatcher eventDispatcher = (NodeEventDispatcher) node.getEventDispatcher();
-            eventDispatcher.dispatchCapturingEvent(event);
-        });
-
         if (paneTouches.size() == 1) {
             // Informs the focus area nodes of a touch event
             setLastPosition(System.nanoTime(), PointUtils.getCentreOfNode(pane));
@@ -291,14 +286,26 @@ public class FocusArea implements InvalidationListener {
         } else {
             currentScrollingPane = Optional.empty();
         }
+
+        // Forwards the touch event to an important node.
+        currentTouch.getImportantElement().ifPresent(node -> {
+            if (node.getScene() != null) {
+                NodeEventDispatcher eventDispatcher = (NodeEventDispatcher) node.getEventDispatcher();
+                eventDispatcher.dispatchCapturingEvent(event);
+                eventDispatcher.dispatchBubblingEvent(event);
+            }
+        });
     }
 
     protected void onTouchReleased(TouchEvent event, CurrentTouch currentTouch) {
 
         // Forwards the touch event to an important node.
         currentTouch.getImportantElement().ifPresent(node -> {
-            NodeEventDispatcher eventDispatcher = (NodeEventDispatcher) node.getEventDispatcher();
-            eventDispatcher.dispatchCapturingEvent(event);
+            if (node.getScene() != null) {
+                NodeEventDispatcher eventDispatcher = (NodeEventDispatcher) node.getEventDispatcher();
+                eventDispatcher.dispatchCapturingEvent(event);
+                eventDispatcher.dispatchBubblingEvent(event);
+            }
         });
 
         if (paneTouches.isEmpty()) {
@@ -647,7 +654,7 @@ public class FocusArea implements InvalidationListener {
 
         public TextFieldSkinConsumer(Skin<?> skin) {
             this.skin = skin;
-            keyboard = ReflectionUtils.getField(skin, "keyboard");
+            keyboard = ReflectionUtils.getField(TextFieldSkinAndroid.class, skin, "keyboard");
             detachKeyboard = ReflectionUtils.getMethodReference(skin, "detachKeyboard",
                     OnScreenKeyboard.class, EventTarget.class);
         }
@@ -678,6 +685,10 @@ public class FocusArea implements InvalidationListener {
 
         @Override
         public void accept(EventTarget t) {
+            if (t == skin.getSkinnable() || ((Node)t).getParent() == skin.getSkinnable()) {
+                return;
+            }
+
             try {
                 detachKeyboard.invoke(skin, keyboard, t);
             } catch (IllegalAccessException | InvocationTargetException e) {

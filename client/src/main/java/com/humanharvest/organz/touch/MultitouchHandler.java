@@ -15,20 +15,32 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuBar;
+import javafx.scene.control.Skin;
+import javafx.scene.control.Skinnable;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.input.RotateEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.input.TouchEvent;
 import javafx.scene.input.TouchPoint;
 import javafx.scene.layout.Pane;
 
+import com.humanharvest.organz.skin.IgnoreSynthesized;
+
 import com.sun.javafx.scene.control.skin.VirtualFlow;
+import org.tuiofx.widgets.controls.KeyButton;
+import org.tuiofx.widgets.controls.KeyboardPane;
+import org.tuiofx.widgets.event.KeyButtonEvent;
 
 public final class MultitouchHandler {
 
@@ -49,6 +61,28 @@ public final class MultitouchHandler {
         rootPane = root;
 
         root.addEventFilter(TouchEvent.ANY, MultitouchHandler::handleTouchEvent);
+
+        root.addEventFilter(MouseEvent.ANY, event -> {
+            if (event.isSynthesized()) {
+                Node node = (Node) event.getTarget();
+                while (!Objects.equals(node, rootPane) && node != null) {
+                    if (node instanceof Skinnable) {
+                        Skin<?> skin = ((Skinnable)node).getSkin();
+                        if (skin instanceof IgnoreSynthesized) {
+                            event.consume();
+                            return;
+                        }
+                    }
+
+                    if (node instanceof IgnoreSynthesized) {
+                        event.consume();
+                        return;
+                    }
+
+                    node = node.getParent();
+                }
+            }
+        });
 
         root.addEventFilter(ScrollEvent.ANY, event -> {
             if (event.isDirect()) {
@@ -118,6 +152,33 @@ public final class MultitouchHandler {
     }
 
     /**
+     * Finds the keyboard pane this node belongs to, or Optional.empty() if the node doesn't belong to any keyboard
+     * pane.
+     */
+    private static Optional<KeyboardPane> findKeyboard(Node node) {
+        if (node == null) {
+            return Optional.empty();
+        }
+
+        Node intersectNode = node;
+        // Traverse the node parent history, until the parent doesn't exist or is the root pane.
+        while (!Objects.equals(intersectNode.getParent(), rootPane)) {
+            intersectNode = intersectNode.getParent();
+            if (intersectNode == null) {
+                return Optional.empty();
+            }
+        }
+
+        if (intersectNode instanceof KeyboardPane) {
+            return Optional.of((KeyboardPane) intersectNode);
+        }
+
+        // Also has org.tuiofx.widgets.controls.KeyboardPane
+
+        return Optional.empty();
+    }
+
+    /**
      * Gets or creates a current touch state from a given TouchPoint.
      */
     private static CurrentTouch getCurrentTouch(TouchPoint touchPoint) {
@@ -129,6 +190,7 @@ public final class MultitouchHandler {
         if (currentTouch == null) {
             currentTouch = new CurrentTouch(
                     findPane(touchPoint.getPickResult().getIntersectedNode()).orElse(null),
+                    findKeyboard(touchPoint.getPickResult().getIntersectedNode()).orElse(null),
                     getImportantElement(touchPoint.getPickResult().getIntersectedNode()).orElse(null));
             touches.set(touchPoint.getId(), currentTouch);
         }
@@ -142,10 +204,16 @@ public final class MultitouchHandler {
     static Optional<Node> getImportantElement(Node node) {
 
         while (node != null && !Objects.equals(node, rootPane)) {
+            if (node instanceof ToggleButton) {
+                return Optional.of(node);
+            }
             if (node instanceof Button) {
                 return Optional.of(node);
             }
             if (node instanceof TextField) {
+                return Optional.of(node);
+            }
+            if (node instanceof TextArea) {
                 return Optional.of(node);
             }
             if (node instanceof ListView) {
@@ -166,7 +234,16 @@ public final class MultitouchHandler {
             if (node instanceof ChoiceBox) {
                 return Optional.of(node);
             }
+            if (node instanceof ComboBox) {
+                return Optional.of(node);
+            }
             if (node instanceof Slider) {
+                return Optional.of(node);
+            }
+            if (node instanceof ImageView && node.getStyleClass().contains("overviewLink")) {
+                return Optional.of(node);
+            }
+            if (node.getStyleClass().contains("recipient-pane")) {
                 return Optional.of(node);
             }
 
@@ -274,7 +351,26 @@ public final class MultitouchHandler {
             focusArea.handleTouchEvent(event, currentTouch);
         });
 
+        currentTouch.getKeyboardPane().ifPresent(keyboardPane -> {
+            if (event.getEventType() == TouchEvent.TOUCH_RELEASED) {
+                KeyButton keyButton = getKeyButton((Node) event.getTarget());
+                if (keyButton != null) {
+                    keyButton.fireEvent(new KeyButtonEvent(keyButton, KeyButtonEvent.SHORT_PRESSED));
+                }
+            }
+        });
+
         event.consume();
+    }
+
+    private static KeyButton getKeyButton(Node target) {
+        while (target != null && !(target instanceof KeyboardPane)) {
+            if (target instanceof KeyButton) {
+                return (KeyButton) target;
+            }
+            target = target.getParent();
+        }
+        return null;
     }
 
     /**

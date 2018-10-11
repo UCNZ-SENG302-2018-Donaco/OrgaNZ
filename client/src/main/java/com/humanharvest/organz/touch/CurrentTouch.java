@@ -6,19 +6,23 @@ import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 
+import org.tuiofx.widgets.controls.KeyboardPane;
+
 /**
  * The state of a finger touching the screen.
  */
 class CurrentTouch {
 
     private final Optional<Pane> pane;
+    private final Optional<KeyboardPane> keyboardPane;
     private final Optional<Node> importantElement;
 
     private Point2D currentScreenPoint;
     private Point2D lastCentre;
 
-    public CurrentTouch(Pane pane, Node importantElement) {
+    public CurrentTouch(Pane pane, KeyboardPane keyboardPane, Node importantElement) {
         this.pane = Optional.ofNullable(pane);
+        this.keyboardPane = Optional.ofNullable(keyboardPane);
         this.importantElement = Optional.ofNullable(importantElement);
     }
 
@@ -27,6 +31,13 @@ class CurrentTouch {
      */
     public Optional<Pane> getPane() {
         return pane;
+    }
+
+    /**
+     * Returns the keyboard pane this finger controls.
+     */
+    public Optional<KeyboardPane> getKeyboardPane() {
+        return keyboardPane;
     }
 
     /**
