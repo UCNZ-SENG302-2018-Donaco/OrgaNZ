@@ -53,3 +53,7 @@ For more information on the design decisions that were made, please refer to the
 
 To see an example of a file that loads in the user data, please direct your attention to
 `doc/examples/11300_clients.csv`.
+
+## Demonstration
+
+For a quick video showing the app in action, see https://youtu.be/mG5o0Ly3CCo
