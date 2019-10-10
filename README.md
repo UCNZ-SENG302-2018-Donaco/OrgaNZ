@@ -1,5 +1,7 @@
 # SENG302 Team 700: Donaco
-![alt text](https://eng-git.canterbury.ac.nz/seng302-2018/team-700/uploads/aa0996125ee57a65f6db44f06e51d034/ORGANZ.png "OrgaNZ Logo")
+![OrgaNZ logo](https://eng-git.canterbury.ac.nz/seng302-2018/team-700/uploads/aa0996125ee57a65f6db44f06e51d034/ORGANZ.png "OrgaNZ Logo")
+
+![OrgaNZ demo](https://olliechick.co.nz/images/organz.jpg "OrgaNZ demo")
 
 ## Team Info
 Developers:
