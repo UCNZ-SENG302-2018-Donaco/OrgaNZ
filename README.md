@@ -1,7 +1,7 @@
 # SENG302 Team 700: Donaco
 ![OrgaNZ logo](https://eng-git.canterbury.ac.nz/seng302-2018/team-700/uploads/aa0996125ee57a65f6db44f06e51d034/ORGANZ.png "OrgaNZ Logo")
 
-![OrgaNZ demo](https://olliechick.co.nz/images/organz.jpg "OrgaNZ demo")
+[![OrgaNZ demo](https://olliechick.co.nz/images/organz.jpg "OrgaNZ demo")](https://youtu.be/mG5o0Ly3CCo)
 
 ## Team Info
 Developers:
@@ -60,4 +60,4 @@ Note that the server and database are no longer running, so if you want to run t
 
 ## Demonstration
 
-For a quick video showing the app in action, see https://youtu.be/mG5o0Ly3CCo
+For a quick video showing the app in action, see https://youtu.be/mG5o0Ly3CCo.
