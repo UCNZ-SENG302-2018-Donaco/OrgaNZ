@@ -1,5 +1,5 @@
 # SENG302 Team 700: Donaco
-![OrgaNZ logo](https://eng-git.canterbury.ac.nz/seng302-2018/team-700/uploads/aa0996125ee57a65f6db44f06e51d034/ORGANZ.png "OrgaNZ Logo")
+![OrgaNZ logo](https://olliechick.co.nz/images/organz-logo.png "OrgaNZ Logo")
 
 [![OrgaNZ demo](https://olliechick.co.nz/images/organz.jpg "OrgaNZ demo")](https://youtu.be/mG5o0Ly3CCo)
 
@@ -48,15 +48,15 @@ All applicable copyright notices and licenses for the libraries used are provide
 
 ## Usage
 
-Please refer to the documentation found in [`doc/User_Manual.pdf`](../master/doc/User_Manual.pdf) to find out more on how to use the application.
+Please refer to the documentation found in [`doc/User_Manual.pdf`](../main/doc/User_Manual.pdf) to find out more on how to use the application.
 
 For more information on the design decisions that were made, please refer to the documentation found in
-[`doc/design_decisions.md`](../master/doc/design_decisions.md).
+[`doc/design_decisions.md`](../main/doc/design_decisions.md).
 
 To see an example of a file that loads in the user data, please direct your attention to
-[`doc/examples/11300_clients.csv`](../master/doc/examples/11300_clients.csv).
+[`doc/examples/11300_clients.csv`](../main/doc/examples/11300_clients.csv).
 
-Note that the server and database are no longer running, so if you want to run the program, you will have to run the server, specify where this server is when you run the client, and change [the hibernate config file](https://github.com/UCNZ-SENG302-2018-Donaco/OrgaNZ/blob/master/server/src/main/resources/hibernate.cfg.xml) to point to a database.
+Note that the server and database are no longer running, so if you want to run the program, you will have to run the server, specify where this server is when you run the client, and change [the hibernate config file](../main/server/src/main/resources/hibernate.cfg.xml) to point to a database.
 
 ## Demonstration
 
